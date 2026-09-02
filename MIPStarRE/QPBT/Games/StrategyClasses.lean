@@ -5,20 +5,26 @@ import MIPStarRE.QPBT.State
 /-! # Strategy classes and symmetric games
 
 This module defines projective, commuting, consistent, PCC, and SPCC strategy
-predicates from `blueprint/src/chapter/ch12_qpbt_games.tex:90-170`, with source
-definitions in `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:58-218`.
+predicates from `blueprint/src/chapter/ch12_qpbt_games.tex:89-169`, with source
+definitions in `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:68-180`.
 -/
 
 namespace MIPStarRE.QPBT
 
+universe u
+
 open MIPStarRE.LDT MIPStarRE.Quantum
 
-/-- A tensor-product strategy is projective when both answer measurements are. -/
+/-- Projectivity from `def:projective-strategy-general`, blueprint
+`ch12_qpbt_games.tex:90-101`, paper `06_nonlocal_games_and_mipstar.tex:68-72`. -/
 def Strategy.IsProjective {G : Game} (S : Strategy G) : Prop :=
   (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (S.A x)) ∧
     ∀ y, MIPStarRE.QPBT.Measurement.IsProjective (S.B y)
 
-/-- A symmetric game has one question and answer alphabet and symmetric data. -/
+/-- Symmetric games from `def:symmetric-game`, blueprint
+`ch12_qpbt_games.tex:98-107`, paper `06_nonlocal_games_and_mipstar.tex:74-92`.
+The source equalities of question and answer alphabets are encoded by single
+shared carriers, matching its compact notation. -/
 structure SymmetricGame where
   Question : Type
   Answer : Type
@@ -35,7 +41,8 @@ structure SymmetricGame where
 attribute [instance] SymmetricGame.questionFintype SymmetricGame.answerFintype
   SymmetricGame.questionDecidableEq SymmetricGame.answerDecidableEq
 
-/-- Forget symmetry and view a symmetric game as a general game. -/
+/-- Lean-only coercion supporting `def:symmetric-game`, blueprint
+`ch12_qpbt_games.tex:98-107`, paper `06_nonlocal_games_and_mipstar.tex:74-92`. -/
 def SymmetricGame.toGame (G : SymmetricGame) : Game where
   QuestionA := G.Question
   QuestionB := G.Question
@@ -45,7 +52,10 @@ def SymmetricGame.toGame (G : SymmetricGame) : Game where
   μ_prob := G.μ_prob
   decide := G.decide
 
-/-- A strategy for a symmetric game uses one local space and one measurement family. -/
+/-- Symmetric strategies from `def:symmetric-game`, blueprint
+`ch12_qpbt_games.tex:98-107`, paper `06_nonlocal_games_and_mipstar.tex:74-92`.
+The source equalities of local spaces and measurements are encoded by one
+shared local carrier and one measurement family. -/
 structure SymmetricStrategy (G : SymmetricGame) where
   ι : Type
   [ιFintype : Fintype ι]
@@ -57,7 +67,8 @@ structure SymmetricStrategy (G : SymmetricGame) where
 
 attribute [instance] SymmetricStrategy.ιFintype SymmetricStrategy.ιDecidableEq
 
-/-- Forget the symmetry witness and obtain a general tensor-product strategy. -/
+/-- Lean-only coercion supporting `def:symmetric-game`, blueprint
+`ch12_qpbt_games.tex:98-107`, paper `06_nonlocal_games_and_mipstar.tex:74-92`. -/
 def SymmetricStrategy.toStrategy {G : SymmetricGame} (S : SymmetricStrategy G) :
     Strategy G.toGame where
   ιA := S.ι
@@ -67,71 +78,83 @@ def SymmetricStrategy.toStrategy {G : SymmetricGame} (S : SymmetricStrategy G) :
   A := S.M
   B := S.M
 
-/-- Commutation of two measurement families on a common local space. -/
-def IsCommutingOn {X α β ι : Type*}
-    [Fintype X] [DecidableEq X] [Fintype α] [DecidableEq α] [Fintype β]
+/-- Common-space commutation from `def:comm-strategy`, blueprint
+`ch12_qpbt_games.tex:135-142`, paper `06_nonlocal_games_and_mipstar.tex:132-142`. -/
+def IsCommutingOn {X Y α β ι : Type*}
+    [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
+    [Fintype α] [DecidableEq α] [Fintype β]
     [DecidableEq β] [Fintype ι] [DecidableEq ι]
-    (μ : Distribution X) (A : X → α → Op ι) (B : X → β → Op ι) : Prop :=
-  ∀ x, 0 < μ.weight x → ∀ a b, Commute (A x a) (B x b)
+    (μ : Distribution (X × Y)) (A : X → Measurement α ι)
+    (B : Y → Measurement β ι) : Prop :=
+  ∀ x y, 0 < μ.weight (x, y) → ∀ a b, Commute ((A x).effect a) ((B y).effect b)
 
-/-- A strategy is commuting when its local spaces can be identified and the
-transported measurement families commute on the support. -/
-def Strategy.IsCommuting {G : Game} (S : Strategy G) : Prop :=
-  ∃ e : S.ιA ≃ S.ιB,
-    IsCommutingOn G.μ
-      (fun xy a => (S.A xy.1).effect a)
-      (fun xy b => reindexOp e ((S.B xy.2).effect b))
+private def transportOp {d₁ d₂ : Type u} (h : d₁ = d₂) (M : Op d₂) : Op d₁ :=
+  h.symm ▸ M
 
-/-- Consistency of one measurement on a bipartite state. -/
+/-- Transported common-space form of `def:comm-strategy`, blueprint
+`ch12_qpbt_games.tex:135-142`, paper `06_nonlocal_games_and_mipstar.tex:132-142`. -/
+def Strategy.IsCommuting {G : Game} (S : Strategy G) (hι : S.ιA = S.ιB) : Prop :=
+  ∀ x y, 0 < G.μ.weight (x, y) → ∀ a b,
+    Commute ((S.A x).effect a) (transportOp hι ((S.B y).effect b))
+
+/-- Measurement consistency from `def:consistent-measurement`, blueprint
+`ch12_qpbt_games.tex:144-157`, paper `06_nonlocal_games_and_mipstar.tex:144-160`. -/
 def Measurement.IsConsistentOn {α ι : Type*}
     [Fintype α] [DecidableEq α] [Fintype ι] [DecidableEq ι]
     (M : Measurement α ι) (ψ : EuclideanSpace ℂ (ι × ι)) : Prop :=
   ∀ a, (heteroKron (M.effect a) 1).mulVec ψ =
     (heteroKron 1 (M.effect a)).mulVec ψ
 
-/-- Consistency of both families of a general strategy on a common state. -/
-def IsConsistentStrategyOn {α β ι : Type*}
+/-- General strategy consistency from `def:consistent-strategy`, blueprint
+`ch12_qpbt_games.tex:159-162`, paper `06_nonlocal_games_and_mipstar.tex:162-174`. -/
+def IsConsistentStrategyOn {X Y α β ι : Type*}
+    [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
     [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
     [Fintype ι] [DecidableEq ι]
-    (A : α → Measurement β ι) (B : α → Measurement β ι)
+    (A : X → Measurement α ι) (B : Y → Measurement β ι)
     (ψ : EuclideanSpace ℂ (ι × ι)) : Prop :=
   (∀ x, MIPStarRE.QPBT.Measurement.IsConsistentOn (A x) ψ) ∧
-    ∀ x, MIPStarRE.QPBT.Measurement.IsConsistentOn (B x) ψ
+    ∀ y, MIPStarRE.QPBT.Measurement.IsConsistentOn (B y) ψ
 
-/-- Consistency for a symmetric strategy. -/
+/-- Symmetric strategy consistency from `def:consistent-strategy`, blueprint
+`ch12_qpbt_games.tex:159-162`, paper `06_nonlocal_games_and_mipstar.tex:162-174`. -/
 def SymmetricStrategy.IsConsistent {G : SymmetricGame}
     (S : SymmetricStrategy G) : Prop :=
   ∀ x, MIPStarRE.QPBT.Measurement.IsConsistentOn (S.M x) S.ψ
 
-/-- Projective, consistent, commuting strategy predicate on a common space. -/
+/-- The PCC predicate `def:spcc`, blueprint `ch12_qpbt_games.tex:166-169`,
+paper `06_nonlocal_games_and_mipstar.tex:176-180`. -/
 def Strategy.IsPCC {G : Game} {ι : Type*}
     [Fintype ι] [DecidableEq ι]
     (μ : Distribution (G.QuestionA × G.QuestionB))
     (A : G.QuestionA → Measurement G.AnswerA ι)
     (B : G.QuestionB → Measurement G.AnswerB ι)
-    (ψ : EuclideanSpace ℂ (ι × ι)) : Prop :=
+  (ψ : EuclideanSpace ℂ (ι × ι)) : Prop :=
   (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (A x)) ∧
     (∀ y, MIPStarRE.QPBT.Measurement.IsProjective (B y)) ∧
-    (∀ x, MIPStarRE.QPBT.Measurement.IsConsistentOn (A x) ψ) ∧
-    (∀ y, MIPStarRE.QPBT.Measurement.IsConsistentOn (B y) ψ) ∧
-      IsCommutingOn μ (fun xy a => (A xy.1).effect a)
-        (fun xy b => (B xy.2).effect b)
+    IsConsistentStrategyOn A B ψ ∧ IsCommutingOn μ A B
 
-/-- Symmetric projective, consistent, commuting predicate. -/
+/-- The SPCC predicate `def:spcc`, blueprint `ch12_qpbt_games.tex:166-169`,
+paper `06_nonlocal_games_and_mipstar.tex:176-180`. -/
 def SymmetricStrategy.IsSPCC {G : SymmetricGame}
-    (S : SymmetricStrategy G) : Prop :=
+  (S : SymmetricStrategy G) : Prop :=
   (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (S.M x)) ∧ S.IsConsistent ∧
-    IsCommutingOn G.μ (fun xy a => (S.M xy.1).effect a)
-      (fun xy b => (S.M xy.2).effect b)
+    IsCommutingOn G.μ S.M S.M
 
-/-- Source symmetrization statement; attainment remains a proof obligation. -/
+/-- Source symmetrization statement `lem:symmetric-strat`, blueprint
+`ch12_qpbt_games.tex:112-132`, paper `06_nonlocal_games_and_mipstar.tex:94-130`.
+The attainment defect is `rem:symmetric-strat-limit` and is tracked in
+`docs/paper-gaps/qpbt_symmetrization-attainment.tex`. -/
 theorem exists_symmetric_projective_strategy (G : SymmetricGame) (ε : ℝ)
     (hε : 0 ≤ ε) (h : G.toGame.value = 1 - ε) :
     ∃ S : SymmetricStrategy G, S.toStrategy.IsProjective ∧
       1 - ε ≤ S.toStrategy.value := by
   sorry
 
-/-- Established symmetrization from a concrete strategy, used by downstream proofs. -/
+/-- Lean-only given-strategy form associated with `lem:symmetric-strat`, blueprint
+`ch12_qpbt_games.tex:112-132`, paper `06_nonlocal_games_and_mipstar.tex:94-130`.
+The source attainment distinction is tracked in
+`docs/paper-gaps/qpbt_symmetrization-attainment.tex`. -/
 theorem exists_symmetric_projective_strategy_of_strategy (G : SymmetricGame)
     (ε : ℝ) (S₀ : Strategy G.toGame) (h : 1 - ε ≤ S₀.value) :
     ∃ S : SymmetricStrategy G, S.toStrategy.IsProjective ∧

@@ -15,7 +15,8 @@ namespace MIPStarRE.QPBT
 
 open MIPStarRE.LDT MIPStarRE.Quantum
 
-/-- Off-diagonal consistency defect for two operator families on a state. -/
+/-- The off-diagonal defect in `def:consistency`, blueprint
+`ch12_qpbt_games.tex:181-191`, paper `06_nonlocal_games_and_mipstar.tex:232-248`. -/
 noncomputable def consistencyDefect {X α ι : Type*}
     [Fintype X] [DecidableEq X] [Fintype α] [DecidableEq α]
     [Fintype ι] [DecidableEq ι]
@@ -27,7 +28,8 @@ noncomputable def consistencyDefect {X α ι : Type*}
         (inner ℂ ψ ((EuclideanSpace.equiv ι ℂ).symm
           ((A x a * B x b).mulVec ψ))).re)
 
-/-- The relation `A ≃_δ B` from `def:consistency`. -/
+/-- The quantitative relation in `def:consistency`, blueprint
+`ch12_qpbt_games.tex:181-191`, paper `06_nonlocal_games_and_mipstar.tex:232-248`. -/
 def IsConsistentWithin {X α ι : Type*}
     [Fintype X] [DecidableEq X] [Fintype α] [DecidableEq α]
     [Fintype ι] [DecidableEq ι]
@@ -35,38 +37,40 @@ def IsConsistentWithin {X α ι : Type*}
     (ψ : EuclideanSpace ℂ ι) (δ : ℝ) : Prop :=
   consistencyDefect μ A B ψ ≤ δ
 
-/-- Operator distance with a unit answer alphabet, used for sums of effects. -/
+/-- Unit-alphabet specialization of `def:povm-distance`, blueprint
+`ch12_qpbt_games.tex:203-210`, paper `06_nonlocal_games_and_mipstar.tex:258-271`. -/
 noncomputable def opDistSq {X ι : Type*}
     [Fintype X] [DecidableEq X] [Fintype ι] [DecidableEq ι]
     (μ : Distribution X) (M N : X → Op ι) (ψ : EuclideanSpace ℂ ι) : ℝ :=
   opFamilyDistSq μ (fun x (_ : Unit) => M x) (fun x (_ : Unit) => N x) ψ
 
+/-- Lean-only unfolding lemma for the unit-alphabet specialization of
+`def:povm-distance`, blueprint `ch12_qpbt_games.tex:203-210`, paper
+`06_nonlocal_games_and_mipstar.tex:258-271`. -/
 theorem opDistSq_eq_opFamilyDistSq {X ι : Type*}
     [Fintype X] [DecidableEq X] [Fintype ι] [DecidableEq ι]
     (μ : Distribution X) (M N : X → Op ι) (ψ : EuclideanSpace ℂ ι) :
     opDistSq μ M N ψ = opFamilyDistSq μ (fun x (_ : Unit) => M x)
       (fun x (_ : Unit) => N x) ψ := rfl
 
-/-- Explicit transports and quantitative bounds for close bundled strategies. -/
-structure AreCloseStrategies (G : Game)
-    {ιA ιB ιA' ιB' : Type*}
-    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
-    [Fintype ιA'] [DecidableEq ιA'] [Fintype ιB'] [DecidableEq ιB']
-    (ψ : EuclideanSpace ℂ (ιA × ιB))
-    (ψ' : EuclideanSpace ℂ (ιA' × ιB'))
-    (A : G.QuestionA → Measurement G.AnswerA ιA)
-    (A' : G.QuestionA → Measurement G.AnswerA ιA')
-    (B : G.QuestionB → Measurement G.AnswerB ιB)
-    (B' : G.QuestionB → Measurement G.AnswerB ιB') (δ : ℝ) where
-  transportA : ιA ≃ ιA'
-  transportB : ιB ≃ ιB'
-  state : stateDistSq ψ (reindexState
-      (Equiv.prodCongr transportA.symm transportB.symm) ψ') ≤ δ
+/-- The strategy-distance relation `def:strategy-distance`, with local
+identifications induced by explicit type equalities; blueprint
+`ch12_qpbt_games.tex:212-219`, paper `06_nonlocal_games_and_mipstar.tex:273-285`.
+Both operator distances use the source-permitted state vector `S.ψ`. -/
+structure AreCloseStrategies (G : Game) (S S' : Strategy G) (δ : ℝ) : Prop where
+  /-- Explicit equality of Alice's local spaces. -/
+  hA : S.ιA = S'.ιA
+  /-- Explicit equality of Bob's local spaces. -/
+  hB : S.ιB = S'.ιB
+  state : stateDistSq S.ψ (reindexState
+      (Equiv.prodCongr (Equiv.cast hA).symm (Equiv.cast hB).symm) S'.ψ) ≤ δ
   alice : opFamilyDistSq (G.μ.map Prod.fst)
-      (fun x a => heteroKron ((A x).effect a) 1)
-      (fun x a => heteroKron (reindexOp transportA ((A' x).effect a)) 1) ψ ≤ δ
+      (fun x a => heteroKron ((S.A x).effect a) 1)
+      (fun x a => heteroKron (reindexOp (Equiv.cast hA) ((S'.A x).effect a)) 1)
+      S.ψ ≤ δ
   bob : opFamilyDistSq (G.μ.map Prod.snd)
-      (fun y b => heteroKron 1 ((B y).effect b))
-      (fun y b => heteroKron 1 (reindexOp transportB ((B' y).effect b))) ψ ≤ δ
+      (fun y b => heteroKron 1 ((S.B y).effect b))
+      (fun y b => heteroKron 1 (reindexOp (Equiv.cast hB) ((S'.B y).effect b)))
+      S.ψ ≤ δ
 
 end MIPStarRE.QPBT
