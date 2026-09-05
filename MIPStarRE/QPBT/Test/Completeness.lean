@@ -86,38 +86,6 @@ private theorem distribution_map_map {α β γ : Type*}
     · rintro ⟨⟨ha1, -⟩, hae⟩
       exact ⟨ha1, hae⟩
 
-/-- Formalization-only auxiliary: the push-forward of a uniform distribution
-does not depend on the finiteness and decidability data used to form it. -/
-private theorem map_uniformDistribution_congr {α γ : Type*}
-    (i₁ i₂ : Fintype α) (j₁ j₂ : DecidableEq α) (k₁ k₂ : Nonempty α)
-    (d₁ d₂ : DecidableEq γ) (e : α → γ) :
-    @Distribution.map α γ d₁ (@uniformDistribution α i₁ j₁ k₁) e =
-      @Distribution.map α γ d₂ (@uniformDistribution α i₂ j₂ k₂) e := by
-  have hi : i₁ = i₂ := Subsingleton.elim _ _
-  have hj : j₁ = j₂ := funext fun _ => funext fun _ => Subsingleton.elim _ _
-  have hd : d₁ = d₂ := funext fun _ => funext fun _ => Subsingleton.elim _ _
-  subst hi
-  subst hj
-  subst hd
-  rfl
-
-/-- Formalization-only auxiliary: a uniformly seeded typed bind does not depend
-on the finiteness and decidability data used to form it. -/
-private theorem bind_map_uniformDistribution_congr {α β γ : Type*}
-    (i₁ i₂ : Fintype β) (j₁ j₂ : DecidableEq β) (k₁ k₂ : Nonempty β)
-    (d₁ d₂ : DecidableEq γ) (μ : Distribution α) (g : α → β → γ) :
-    @Distribution.bind α γ d₁ μ
-        (fun a => @Distribution.map β γ d₁ (@uniformDistribution β i₁ j₁ k₁) (g a)) =
-      @Distribution.bind α γ d₂ μ
-        (fun a => @Distribution.map β γ d₂ (@uniformDistribution β i₂ j₂ k₂) (g a)) := by
-  have hi : i₁ = i₂ := Subsingleton.elim _ _
-  have hj : j₁ = j₂ := funext fun _ => funext fun _ => Subsingleton.elim _ _
-  have hd : d₁ = d₂ := funext fun _ => funext fun _ => Subsingleton.elim _ _
-  subst hi
-  subst hj
-  subst hd
-  rfl
-
 /-- Formalization-only auxiliary: every point of a finite type carries the same
 uniform weight. -/
 private theorem uniform_weight_apply (α : Type*)
@@ -239,11 +207,11 @@ theorem pauliQuestionDistribution_eq_typedCL (P : AdmissibleParams) :
       Subtype.val_injective hmem
       (fun uv z => ((uv.1, pauliCL P uv.1 z), (uv.2, pauliCL P uv.2 z)))]
     unfold pauliQuestionDistribution
-    exact map_uniformDistribution_congr _ _ _ _ _ _ _ _ _
+    congr!
   rw [← hmine]
   simp only [typedCLDistribution, graphDistribution, clDistribution,
     distribution_map_map]
-  exact bind_map_uniformDistribution_congr _ _ _ _ _ _ _ _ _ _
+  congr!
 
 /-! ### Symmetry of the Pauli basis test -/
 
