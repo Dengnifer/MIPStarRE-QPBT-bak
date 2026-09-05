@@ -30,11 +30,6 @@ noncomputable section
 
 /-! ## Algebraic preliminaries -/
 
-/-- The binary phase is its own inverse. Paper
-`references/qpbt-paper/04_preliminaries.tex:1052-1081`. -/
-theorem phaseSign_mul_self (t : ZMod 2) : phaseSign t * phaseSign t = 1 := by
-  by_cases h : t = 0 <;> simp [phaseSign, h]
-
 /-- The binary phase is a real scalar. Paper
 `references/qpbt-paper/04_preliminaries.tex:1052-1081`. -/
 theorem star_phaseSign' (t : ZMod 2) : star (phaseSign t) = phaseSign t := by
@@ -255,7 +250,7 @@ theorem exists_twistedCommutator_avg_le :
                   (phaseSign (gammaValue P ω.1 ω.2.1 ω.2.2.1 ω.2.2.2) •
                     (S.pointObs .bob .Z ω.2.2.2 ω.2.1 *
                       S.pointObs .bob .X ω.2.2.1 ω.1)) :=
-            MagicSquareRigidity.heteroKron_sub_right _ _ _
+            heteroKron_sub_right _ _ _
           rw [← MagicSquareRigidity.heteroKron_smul_right]
           exact h1
         rw [hop]

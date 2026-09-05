@@ -340,7 +340,7 @@ theorem msVarObsA_anticommutator_le (S : Strategy msGame) (ε : ℝ) (hε : 0 �
               obsOf ((S.A (.var 0)).postprocess msBitOrZero)))
         (1 : Op (S.ιB × Option MsAnswer)) := by
     simp only [heteroKron_mul, one_mul, sub_neg_eq_add, naimarkInflation_mul,
-      ← MagicSquareRigidity.heteroKron_add_left, naimarkInflation_add]
+      ← heteroKron_add_left, naimarkInflation_add]
   rw [hL, norm_heteroKron_naimarkInflation_one] at htrans
   have hclose := MagicSquareRigidity.msVarObsA_anticommute S ε hwin
   rw [msVarObsA_eq, msVarObsA_eq] at hclose

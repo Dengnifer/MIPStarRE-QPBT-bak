@@ -35,23 +35,6 @@ open MIPStarRE.Quantum
 
 noncomputable section
 
-namespace DistanceCalculus
-
-/-- The state quadratic form of a positive operator is nonnegative.
-Formalization-only auxiliary for `def:consistency`, blueprint
-`ch12_qpbt_games.tex:195-208`, paper
-`references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:232-248`. -/
-theorem stateQForm_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (ψ : EuclideanSpace ℂ ι) {M : Op ι} (hM : 0 ≤ M) :
-    0 ≤ stateQForm ψ M := by
-  have h := quadratic_form_mono hM ψ
-  have hzero : applyOperatorToState (0 : Op ι) ψ = 0 := by
-    simp [applyOperatorToState]
-  rw [hzero, inner_zero_right, Complex.zero_re] at h
-  exact h
-
-end DistanceCalculus
-
 /-- Reindexing an operator along an equivalence preserves positivity.
 Formalization-only auxiliary for the placement bipartitions of
 `def:expanded-state`, blueprint `ch14_qpbt_observables.tex:876-922`, paper
