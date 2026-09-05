@@ -2560,3 +2560,63 @@ This file is the raw feed for `local/protocols/EVOLUTION.md`.
   `results/telemetry/design-decisions.md` register.
 - **First application:** #172 (rigidity statement) re-routed from a codex lane to a Fable math-fix
   session at 22:38Z.
+
+## 2026-09-06 — Issue 118 prerequisite merge exceeds file ownership
+
+- Session `prover-118-20260906-01`, head `691b671`: integrating committed
+  prerequisite `fe74413` with the primary checkout's hooks produced conflicts
+  including `MIPStarRE/QPBT/Combining/Apply.lean`, which the task excludes.
+  The merge was aborted and the original Lean tree restored; no conflict
+  resolution, hook bypass, full build, or commit was attempted. The proof
+  inspection also found unrestricted point-error quantification in the target
+  helper. See `local/briefs/issue-118-pasting-interface-obstruction.md` for the
+  source comparison and the distinction between this obstruction and a proved
+  counterexample. Owner reconciliation of the prerequisite histories is needed
+  before continuing integration within this file-ownership boundary.
+
+## 2026-09-06 — Issue 118 hook recovery and prerequisite triage
+
+- Session `orc-118-20260906-01`, branch head `691b671`, checked live GitHub
+  evidence at approximately 2026-09-05T19:22Z. The primary hook installer
+  diagnosed the missing branch-local `.githooks/reference-transaction`.
+  Set only this worktree's `core.hooksPath` to
+  `/home/drx/MIPStarRE-qpbt/.githooks`; Git resolves its pre-commit hook there.
+  All three primary hooks are executable and pass `sh -n`; the primary
+  merge-loss guard exists. The primary pre-commit invocation passed with an
+  empty index. This is wiring verification, not validation of a proposed
+  commit. The installer's branch-local layout check still fails, as expected;
+  only the dispatcher preflight exception is applicable. No integrity check
+  was disabled, and no shared hook configuration was changed.
+- PR #202 remains open at `559275a117cf3e7430f9e895002d9a0075ca2c30`, with
+  `auto-fix-codex` and an exact-head unresolved F1: explicit citation scanning
+  treats `ch13_qpbt_test.tex` as an unknown label. The prescribed repair is
+  label-shaped explicit tokens plus filename-and-label regression coverage.
+  No matching active fixer was observed in the host process inspection.
+  Its worktree has pre-existing telemetry edits; these were not staged,
+  committed, reset, or stashed. The labelled autofix would dispatch an agent,
+  contrary to this session's explicit no-subagent instruction, so it was not
+  launched. No review finding or status was edited.
+- PRs #205, #212, and #213 remain open and unmerged. Rechecked the
+  `lem:qld-xz-lines` proof, especially its invocation of `lem:pasting` with
+  the constructed point error, against `Lines.lean` and the blueprint.
+  The existing `local/briefs/issue-118-pasting-interface-obstruction.md`
+  correctly identifies an unresolved quantitative dependence, not a proved
+  counterexample. Preserve the source-facing statement and retain the actual
+  point error in any proposed internal estimate; do not silently assume a
+  bound on an arbitrary supplied witness. No Lean or blueprint changes were
+  made. The old #118 merge-conflict marker remains because integration and
+  the documented helper-interface decision still require attention.
+- The existing #119 branch is clean at `cb6d86d` and contains `691b671` as
+  an ancestor. Its `Apply.lean` still has the two conditional extended-line
+  constructor holes and the global-pair constructor hole. No replacement
+  stack or worker was created; dispatch is blocked by the no-subagent rule.
+- GitHub reports #73 closed as completed at 2026-09-04T03:18:17Z. After a
+  second live closed-state check, the authorized removal found its marker
+  already absent; a subsequent filesystem check confirmed absence. This
+  session therefore verified retirement but did not perform it. Preserve
+  concurrent operator work rather than recreate the marker.
+- Stopped on prerequisites without a merge, full build, Lean validation,
+  independent review, commit, or push. The initial empty index and the
+  pre-existing obstruction brief were preserved. Operational follow-up:
+  reconcile the no-subagent instruction with the requested labelled autofix
+  and #119 dispatch before starting either existing workflow.
