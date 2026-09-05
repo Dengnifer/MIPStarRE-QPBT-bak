@@ -349,11 +349,13 @@ theorem subLineBranchRaw_map_joint (P : AdmissibleParams) (kind : LineKind)
     refine Distribution.map_bijective_eq _ _
       (fun w : ((((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P)) ×
         (ScalarQ P.toLdParams × ScalarQ P.toLdParams)) ×
-      ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P))) => ((w.2.1, (w.1.2.1, w.1.1.1)), (w.2.2, (w.1.2.2, w.1.1.2))))
+      ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P))) =>
+        ((w.2.1, (w.1.2.1, w.1.1.1)), (w.2.2, (w.1.2.2, w.1.1.2))))
       (fun u : (((Fin P.m → PauliScalar P) ×
         (ScalarQ P.toLdParams × (Fin P.m → PauliScalar P))) ×
       ((Fin P.m → PauliScalar P) ×
-        (ScalarQ P.toLdParams × (Fin P.m → PauliScalar P)))) => (((u.1.2.2, u.2.2.2), (u.1.2.1, u.2.2.1)), (u.1.1, u.2.1)))
+        (ScalarQ P.toLdParams × (Fin P.m → PauliScalar P)))) =>
+        (((u.1.2.2, u.2.2.2), (u.1.2.1, u.2.2.1)), (u.1.1, u.2.1)))
       (fun _ => rfl) (fun _ => rfl) ?_ ?_
     · intro a
       simp only [Distribution.prod_support, Finset.mem_product]
@@ -487,6 +489,66 @@ theorem subLineBranchRaw_map_joint (P : AdmissibleParams) (kind : LineKind)
       (fun w => ((subLineSourceLine P kind w.1.1 w.1.2.1 w.1.2.2,
           subLineSourceLine P kind w.2.1 w.2.2.1 w.2.2.2),
         (w.1.1, w.2.1)))).symm
+
+/-! ## The two one-point projected marginals of one branch -/
+
+/-- At a fixed line kind and a fixed extended coordinate, the joint law of the
+two source lines of a sampled triple together with the source `X` block of a
+uniform point of its extended line is the `X` component law of the two indices
+of that branch.  Blueprint `ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem subLineBranchRaw_map_projX (P : AdmissibleParams) (kind : LineKind)
+    (k : Fin (2 * P.m + 2)) :
+    (Distribution.prod
+        (Distribution.prod (uniformDistribution (SubLinePointDir P))
+          (Distribution.prod (subLineSeedDist P (subLineXIndex P k))
+            (subLineSeedDist P (subLineZIndex P k))))
+        (uniformDistribution (DirectScalarQ P.extendedDirectLd))).map
+      (fun p => ((subLineTripleOf P kind k p.1).2,
+        projX (directPointToPauli P
+          ((subLineTripleOf P kind k p.1).1.base +
+            p.2 • (subLineTripleOf P kind k p.1).1.direction)))) =
+      subLineXComponentDist P
+        (kind, (subLineXIndex P k, subLineZIndex P k)) := by
+  classical
+  have h := congrArg
+    (fun D : Distribution ((LineDesc P.toLdParams × LineDesc P.toLdParams) ×
+        ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P))) =>
+      Distribution.map D (fun z => (z.1, z.2.1)))
+    (subLineBranchRaw_map_joint P kind k)
+  simp only [Distribution.map_map] at h
+  refine Eq.trans h ?_
+  exact (subLineXComponentDist_eq_map_prod P kind (subLineXIndex P k)
+    (subLineZIndex P k)).symm
+
+/-- At a fixed line kind and a fixed extended coordinate, the joint law of the
+two source lines of a sampled triple together with the source `Z` block of a
+uniform point of its extended line is the `Z` component law of the two indices
+of that branch.  Blueprint `ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem subLineBranchRaw_map_projZ (P : AdmissibleParams) (kind : LineKind)
+    (k : Fin (2 * P.m + 2)) :
+    (Distribution.prod
+        (Distribution.prod (uniformDistribution (SubLinePointDir P))
+          (Distribution.prod (subLineSeedDist P (subLineXIndex P k))
+            (subLineSeedDist P (subLineZIndex P k))))
+        (uniformDistribution (DirectScalarQ P.extendedDirectLd))).map
+      (fun p => ((subLineTripleOf P kind k p.1).2,
+        projZ (directPointToPauli P
+          ((subLineTripleOf P kind k p.1).1.base +
+            p.2 • (subLineTripleOf P kind k p.1).1.direction)))) =
+      subLineZComponentDist P
+        (kind, (subLineXIndex P k, subLineZIndex P k)) := by
+  classical
+  have h := congrArg
+    (fun D : Distribution ((LineDesc P.toLdParams × LineDesc P.toLdParams) ×
+        ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P))) =>
+      Distribution.map D (fun z => (z.1, z.2.2)))
+    (subLineBranchRaw_map_joint P kind k)
+  simp only [Distribution.map_map] at h
+  refine Eq.trans h ?_
+  exact (subLineZComponentDist_eq_map_prod P kind (subLineXIndex P k)
+    (subLineZIndex P k)).symm
 
 end
 
