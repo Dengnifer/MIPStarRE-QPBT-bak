@@ -2125,6 +2125,129 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 
 
 
+\begin{lemma}[Formalization support for the identification of the two scalar
+	fields]
+	\label{lem:qld-sublines-scalar-transport}
+	\lean{MIPStarRE.QPBT.directBlockToPauliEquiv}
+	\lean{MIPStarRE.QPBT.directPointToPauliEquiv}
+	\lean{MIPStarRE.QPBT.projX_directPointToPauli_eq}
+	\lean{MIPStarRE.QPBT.projZ_directPointToPauli_eq}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_directPointToPauli}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_directBlockToPauli}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_projX_projZ_pauli}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_lineRepMap_add_smul_comp}
+	\leanok
+	\uses{def:combine-map, lem:qld-sublines-uniform-line-point,
+		lem:qld-sublines-extended-blocks}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	transport that the sampling procedure of Lemma~\ref{lem:qld-sublines}
+	performs whenever it reads an extended point, which lives over the scalar
+	field of the extended dimension, as a pair of source points, which live
+	over the scalar field of the Pauli basis test. The identification of the
+	two fields is a field isomorphism, so applying it coordinatewise is a
+	bijection of $\F_q^{2m+2}$ with itself and a bijection of $\F_q^m$ with
+	itself; the $X$ and $Z$ blocks of a transported extended point are the
+	transports of its blocks. Consequently a uniformly random extended point
+	and a uniformly random source block stay uniformly random after transport,
+	and the two transported source blocks of a uniformly random extended point
+	are independent and uniformly random. Finally, evaluating a function at the
+	point of a uniformly random affine parameter on the line through the
+	canonical representative, in a fixed direction, of a uniformly random point
+	has the same law as evaluating it at a uniformly random point.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, lem:qld-sublines-uniform-line-point}
+	A coordinatewise field isomorphism is inverted coordinatewise, which gives
+	the two bijections, and the block identities hold coordinate by coordinate.
+	Relabelling along a bijection preserves uniformity, which gives the two
+	transport statements. For the pair of blocks, the two untransported blocks
+	of a uniformly random extended point are already independent and uniformly
+	random by Lemma~\ref{lem:qld-sublines-extended-blocks}, and the pair of
+	transports is the relabelling of that product law along the product of the
+	two block bijections; a product of uniform laws is the uniform law of the
+	product. The last statement is the push-forward along the given function of
+	Lemma~\ref{lem:qld-sublines-uniform-line-point}.
+\end{proof}
+
+\begin{lemma}[Formalization support for the branch data of the sub-line
+	sampling procedure]
+	\label{lem:qld-sublines-branch-directions}
+	\lean{MIPStarRE.QPBT.extendedCoordinate_cases}
+	\lean{MIPStarRE.QPBT.directPointToPauli_add}
+	\lean{MIPStarRE.QPBT.directPointToPauli_smul}
+	\lean{MIPStarRE.QPBT.subLineFirstIndex}
+	\lean{MIPStarRE.QPBT.subLineXIndex}
+	\lean{MIPStarRE.QPBT.subLineZIndex}
+	\lean{MIPStarRE.QPBT.subLineXIndex_embX}
+	\lean{MIPStarRE.QPBT.subLineXIndex_embZ}
+	\lean{MIPStarRE.QPBT.subLineXIndex_alphaVar}
+	\lean{MIPStarRE.QPBT.subLineXIndex_betaVar}
+	\lean{MIPStarRE.QPBT.subLineZIndex_embX}
+	\lean{MIPStarRE.QPBT.subLineZIndex_embZ}
+	\lean{MIPStarRE.QPBT.subLineZIndex_alphaVar}
+	\lean{MIPStarRE.QPBT.subLineZIndex_betaVar}
+	\lean{MIPStarRE.QPBT.subLineExtDirection}
+	\lean{MIPStarRE.QPBT.subLineSourceDirection}
+	\lean{MIPStarRE.QPBT.projX_subLineExtDirection_mem_span}
+	\lean{MIPStarRE.QPBT.projZ_subLineExtDirection_mem_span}
+	\lean{MIPStarRE.QPBT.lineRepMap_projX_directPointToPauli_lineRepMap}
+	\lean{MIPStarRE.QPBT.lineRepMap_projZ_directPointToPauli_lineRepMap}
+	\leanok
+	\uses{def:combine-map, def:ld-question-distribution,
+		def:line-representative, lem:qld-sublines-truncated-blocks,
+		lem:qld-sublines-scalar-transport}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the data
+	that one branch of the sampling procedure of Lemma~\ref{lem:qld-sublines}
+	derives from a line kind, a stored extended coordinate $k$ and an
+	unrestricted extended direction $w$, namely the direction of the extended
+	line: the elementary direction at $k$ in the axis branch, and the vector
+	obtained from $w$ by replacing by $0$ every coordinate preceding $k$ in the
+	diagonal branch. Every extended coordinate is an $X$-block coordinate, a
+	$Z$-block coordinate, or one of the two scalar coordinates. Assign to the
+	branch the source $X$ index equal to $k$ when $k$ is an $X$-block
+	coordinate and equal to the first coordinate otherwise, and the source $Z$
+	index equal to $k$ when $k$ is a $Z$-block coordinate and equal to the
+	first coordinate otherwise; the source direction of a branch is the
+	elementary direction at that index in the axis branch, and the given source
+	block with the coordinates preceding that index replaced by $0$ in the
+	diagonal branch. With these assignments the $X$ block of the direction of
+	the extended line lies in the line spanned by the source $X$ direction, and
+	the $Z$ block lies in the line spanned by the source $Z$ direction. The
+	identification of the two scalar fields is additive and carries a scalar
+	multiple to the multiple by the identified scalar. Consequently, replacing
+	an extended point by its canonical representative in the direction of the
+	extended line changes neither the canonical representative of its $X$ block
+	in the direction of the source $X$ line nor that of its $Z$ block in the
+	direction of the source $Z$ line.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, def:ld-question-distribution,
+		def:line-representative, lem:qld-sublines-truncated-blocks}
+	The trichotomy of extended coordinates compares the coordinate number with
+	$m$, $2m$ and $2m+1$. The two membership statements are a case distinction
+	over that trichotomy and over the two branches. In the axis branch the
+	blocks of an elementary direction are computed in
+	Lemma~\ref{lem:qld-sublines-uniform-line-point}: the block containing the
+	coordinate receives the elementary direction at the assigned index, which
+	spans itself, and the other block vanishes, and $0$ lies in every line. In
+	the diagonal branch the blocks are computed in
+	Lemma~\ref{lem:qld-sublines-truncated-blocks}: at an $X$-block coordinate
+	the $X$ block is truncated at the assigned index and the $Z$ block is
+	untruncated, which is the truncation at the first coordinate assigned
+	there; at a $Z$-block coordinate the $X$ block vanishes and the $Z$ block
+	is truncated at the assigned index; at a scalar coordinate both blocks
+	vanish. Additivity and homogeneity of the identification hold coordinate by
+	coordinate. For the last statement, a point differs from its canonical
+	representative by a multiple of the direction
+	(Lemma~\ref{lem:line-rep-kernel}), so after transport each source block
+	differs from the corresponding block of the representative by a multiple of
+	the source block of the extended direction, hence by a multiple of the
+	source direction; canonical representatives are unchanged by translation
+	along their own direction.
+\end{proof}
+
 \begin{remark}[Property~3 of the sub-line distribution]
 	\label{rem:qld-sublines-property-three}
 	The source proof of Lemma~\ref{lem:qld-4-13} in \cite{Ji2020MIPStar}

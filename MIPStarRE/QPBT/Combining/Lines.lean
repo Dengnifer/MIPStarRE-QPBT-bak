@@ -2,10 +2,12 @@ import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
 import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
 import MIPStarRE.QPBT.Combining.Lines.SubLineBind
 import MIPStarRE.QPBT.Combining.Lines.SubLineBlocks
+import MIPStarRE.QPBT.Combining.Lines.SubLineBranch
 import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
 import MIPStarRE.QPBT.Combining.Lines.SubLineSeed
 import MIPStarRE.QPBT.Combining.Lines.SubLineSupport
+import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
 import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
 import MIPStarRE.QPBT.Combining.Points
 import MIPStarRE.QPBT.Combining.Witnesses
