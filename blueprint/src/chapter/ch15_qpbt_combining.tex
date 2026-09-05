@@ -1905,6 +1905,13 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	\lean{MIPStarRE.QPBT.projZ_coordinateDirection_embX}
 	\lean{MIPStarRE.QPBT.projZ_coordinateDirection_alphaVar}
 	\lean{MIPStarRE.QPBT.projZ_coordinateDirection_betaVar}
+	\lean{MIPStarRE.QPBT.embX_val}
+	\lean{MIPStarRE.QPBT.embZ_val}
+	\lean{MIPStarRE.QPBT.alphaVar_val}
+	\lean{MIPStarRE.QPBT.betaVar_val}
+	\lean{MIPStarRE.QPBT.directPointToPauli_mem_linePoints}
+	\lean{MIPStarRE.QPBT.projX_mem_linePoints}
+	\lean{MIPStarRE.QPBT.projZ_mem_linePoints}
 	\leanok
 	\uses{def:line-representative, def:line, def:combine-map,
 		def:line-point-dist}
@@ -1921,11 +1928,21 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	for the elementary direction $e_k$ of $\F_q^{2m+2}$ the $X$ block is $e_i$
 	when $k$ is the $i$-th $X$-block coordinate and $0$ when $k$ is a
 	$Z$-block coordinate or one of the two scalar coordinates $\alpha$ and
-	$\beta$; symmetrically for the $Z$ block.
+	$\beta$; symmetrically for the $Z$ block. The $i$-th $X$-block
+	coordinate is the coordinate $i$ of $\F_q^{2m+2}$, the $i$-th
+	$Z$-block coordinate is the coordinate $m+i$, and the two scalar
+	coordinates are $2m$ and $2m+1$. Finally, the identification of the
+	extended scalar field with the source scalar field carries a point of a
+	line to a point of the transported line; and if the $X$ block of the
+	direction of a line of $\F_q^{2m+2}$ lies in the span of
+	$w_X \in \F_q^m$, then the $X$ block of every point of that line lies
+	on the line of $\F_q^m$ through $L^{\mathrm{Ln}}_{w_X}$ of the $X$
+	block of the base, in direction $w_X$; symmetrically for the $Z$ block.
 \end{lemma}
 \begin{proof}
 	\leanok
-	\uses{def:line-representative, def:combine-map, lem:line-rep-kernel}
+	\uses{def:line-representative, def:combine-map, lem:line-rep-kernel,
+		prop:line-equiv, lem:line-rep-incidence}
 	The span of the zero vector is trivial and a point differs from its
 	canonical representative by an element of the span of the direction
 	(Lemma~\ref{lem:line-rep-kernel}), so for $v = 0$ that representative is
@@ -1942,7 +1959,16 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	the composition of the coordinate relabelling of
 	Definition~\ref{def:combine-map} with the injection of a summand, hence
 	injective, and the block computations follow from the fact that $e_k$ has
-	coordinate $1$ at $k$ and $0$ at every other coordinate.
+	coordinate $1$ at $k$ and $0$ at every other coordinate; the same
+	relabelling computes the four coordinate values. The identification of
+	the two scalar fields acts coordinatewise by a field isomorphism, so it
+	carries $u + t v$ to the transported base plus the image of $t$ times
+	the transported direction. For the last statement the $X$ block of
+	$u + t v$ is the $X$ block of $u$ plus a multiple of $w_X$, and the $X$
+	block of $u$ lies on the line through its canonical representative in
+	direction $w_X$ by Lemma~\ref{lem:line-rep-incidence}, so that line is
+	unchanged when its base point is moved along $w_X$
+	(Proposition~\ref{prop:line-equiv}).
 \end{proof}
 
 \begin{remark}[Property~3 of the sub-line distribution]

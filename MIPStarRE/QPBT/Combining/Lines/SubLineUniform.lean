@@ -228,6 +228,83 @@ theorem projZ_coordinateDirection_betaVar {K : Type*} [Field K] {m : ℕ} :
     simpa using (finCombineEquiv m).symm.injective h
   simp [projZ, coordinateDirection, hne]
 
+/-! ## The coordinates occupied by the two blocks -/
+
+/-- The `i`-th `X`-block coordinate of the extended space is its `i`-th
+coordinate.  Blueprint `ch15_qpbt_combining.tex:445-480`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:970-989`. -/
+theorem embX_val (m : ℕ) (i : Fin m) : (embX m i).val = i.val := rfl
+
+/-- The `i`-th `Z`-block coordinate of the extended space is its `(m + i)`-th
+coordinate.  Blueprint `ch15_qpbt_combining.tex:445-480`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:970-989`. -/
+theorem embZ_val (m : ℕ) (i : Fin m) : (embZ m i).val = m + i.val := rfl
+
+/-- The extended coordinate carrying the first scalar is the coordinate
+`2 m`.  Blueprint `ch15_qpbt_combining.tex:445-480`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:970-989`. -/
+theorem alphaVar_val (m : ℕ) : (alphaVar m).val = 2 * m := by
+  simp [alphaVar, finCombineEquiv]
+
+/-- The extended coordinate carrying the second scalar is the coordinate
+`2 m + 1`.  Blueprint `ch15_qpbt_combining.tex:445-480`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:970-989`. -/
+theorem betaVar_val (m : ℕ) : (betaVar m).val = 2 * m + 1 := by
+  simp [betaVar, finCombineEquiv]
+
+/-! ## The blocks of a point of an extended line -/
+
+/-- Transporting the extended scalar field to the source scalar field carries
+a point of a line to a point of the transported line, since the transport is
+a coordinatewise field isomorphism.  Blueprint
+`ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem directPointToPauli_mem_linePoints (P : AdmissibleParams)
+    {b d x : Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd}
+    (hx : x ∈ linePoints b d) :
+    directPointToPauli P x ∈
+      linePoints (directPointToPauli P b) (directPointToPauli P d) := by
+  obtain ⟨t, rfl⟩ := hx
+  refine ⟨extendedDirectScalarEquiv P t, ?_⟩
+  funext i
+  simp [directPointToPauli]
+
+/-- The `X` block of a point of a line lies on the source line through the
+canonical representative of the `X` block of the base, as soon as the `X`
+block of the direction is a multiple of the source direction.  Blueprint
+`ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem projX_mem_linePoints {K : Type*} [Field K] {m : ℕ}
+    (b d : Fin (2 * m + 2) → K) (dX : Fin m → K)
+    (hd : projX d ∈ Submodule.span K ({dX} : Set (Fin m → K)))
+    {x : Fin (2 * m + 2) → K} (hx : x ∈ linePoints b d) :
+    projX x ∈ linePoints (lineRepMap dX (projX b)) dX := by
+  obtain ⟨t, rfl⟩ := hx
+  obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hd
+  rw [linePoints_eq_of_mem _ dX (projX b)
+    (mem_linePoints_lineRepMap dX (projX b))]
+  refine ⟨t * c, ?_⟩
+  rw [projX_add, projX_smul, ← hc]
+  module
+
+/-- The `Z` block of a point of a line lies on the source line through the
+canonical representative of the `Z` block of the base, as soon as the `Z`
+block of the direction is a multiple of the source direction.  Blueprint
+`ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem projZ_mem_linePoints {K : Type*} [Field K] {m : ℕ}
+    (b d : Fin (2 * m + 2) → K) (dZ : Fin m → K)
+    (hd : projZ d ∈ Submodule.span K ({dZ} : Set (Fin m → K)))
+    {x : Fin (2 * m + 2) → K} (hx : x ∈ linePoints b d) :
+    projZ x ∈ linePoints (lineRepMap dZ (projZ b)) dZ := by
+  obtain ⟨t, rfl⟩ := hx
+  obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hd
+  rw [linePoints_eq_of_mem _ dZ (projZ b)
+    (mem_linePoints_lineRepMap dZ (projZ b))]
+  refine ⟨t * c, ?_⟩
+  rw [projZ_add, projZ_smul, ← hc]
+  module
+
 end
 
 end MIPStarRE.QPBT
