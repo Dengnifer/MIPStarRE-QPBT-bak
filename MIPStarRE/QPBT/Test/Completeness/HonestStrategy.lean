@@ -45,16 +45,6 @@ variable {K ι : Type*} [Field K] [Fintype K] [DecidableEq K] [Algebra (ZMod 2) 
 
 /-! ### The generalized Pauli basis measurement -/
 
-/-- The generalized Pauli observable at the zero label is the identity.  This is
-the normalization implicit in `def:generalized-pauli`, blueprint
-`blueprint/src/chapter/ch11_qpbt_algebra.tex:529-571`, paper origin
-`references/qpbt-paper/04_preliminaries.tex:1052-1096`. -/
-theorem tauObservable_zero (W : PauliKind) :
-    tauObservable W (0 : ι → K) = 1 := by
-  have hmul := tauObservable_mul W (0 : ι → K) 0
-  rw [add_zero, tauObservable_sq] at hmul
-  exact hmul.symm
-
 /-- Every generalized Pauli projector is positive semidefinite: it is the
 rank-one projector onto the corresponding basis vector of
 `def:generalized-pauli`, blueprint `ch11_qpbt_algebra.tex:529-571`, paper origin
