@@ -58,7 +58,13 @@ theorem exists_extendedLinesWitness_ofPointsWitness :
 lines 1020--1034.
 
 The `_ofPointsWitness` companion is the conditional, Lean-only form retained
-for calculations that already have a point witness. -/
+for calculations that already have a point witness.
+
+The proof is exactly that passage: the point witness of `lem:qld-4-10` is
+supplied by `exists_combinedPointsWitness` and fed to
+`exists_extendedLinesWitness_ofPointsWitness`.  Both of those source lemmas are
+still unproved, so the axiom closure of this declaration contains `sorryAx`
+until they are discharged. -/
 theorem exists_extendedLinesWitness :
     ∃ deltaQ : ℝ → ℝ, IsPolyErr deltaQ ∧
       ∃ deltaCombine : ℝ → ℝ → ℝ, IsPolyErr₂ deltaCombine ∧
@@ -67,7 +73,12 @@ theorem exists_extendedLinesWitness :
             Nonempty (ExtendedLinesWitness S points
               (deltaCombine ((P.m : ℝ) ^ 2 * ε)
                 ((P.m * P.d : ℕ) / (P.q : ℝ)))) := by
-  sorry
+  obtain ⟨deltaQ, hdeltaQ, hpoints⟩ := exists_combinedPointsWitness
+  obtain ⟨deltaCombine, hdeltaCombine, hlines⟩ :=
+    exists_extendedLinesWitness_ofPointsWitness
+  refine ⟨deltaQ, hdeltaQ, deltaCombine, hdeltaCombine, fun P ε S => ?_⟩
+  obtain ⟨points⟩ := hpoints P ε S
+  exact ⟨points, hlines P ε (deltaQ ε) S points⟩
 
 /-- Construction of the extended-line measurements with the estimate actually
 delivered by the first proof route, `C * m * poly(epsilon, md / q)`.
@@ -94,7 +105,11 @@ theorem exists_extendedLinesWitness_established_ofPointsWitness :
 
 /-- Source-facing construction for the established auxiliary estimate.  This is
 the same Lean-only bound as `exists_extendedLinesWitness_established_ofPointsWitness`,
-with the point witness existentially supplied rather than assumed. -/
+with the point witness existentially supplied rather than assumed.
+
+As for the source-facing declaration, the proof is the passage from the
+conditional form using `exists_combinedPointsWitness`; the axiom closure
+therefore contains `sorryAx` until those two lemmas are discharged. -/
 theorem exists_extendedLinesWitness_established :
     ∃ deltaQ : ℝ → ℝ, IsPolyErr deltaQ ∧
       ∃ C : ℝ, 0 < C ∧
@@ -104,7 +119,13 @@ theorem exists_extendedLinesWitness_established :
               Nonempty (ExtendedLinesWitness S points
                 (C * (P.m : ℝ) *
                   deltaCombine ε ((P.m * P.d : ℕ) / (P.q : ℝ)))) := by
-  sorry
+  obtain ⟨deltaQ, hdeltaQ, hpoints⟩ := exists_combinedPointsWitness
+  obtain ⟨C, hC, deltaCombine, hdeltaCombine, hlines⟩ :=
+    exists_extendedLinesWitness_established_ofPointsWitness
+  refine ⟨deltaQ, hdeltaQ, C, hC, deltaCombine, hdeltaCombine,
+    fun P ε S => ?_⟩
+  obtain ⟨points⟩ := hpoints P ε S
+  exact ⟨points, hlines P ε (deltaQ ε) S points⟩
 
 /-- Construction of the projective global polynomial-pair measurements from
 `lem:qld-4-7`, paper lines 1267--1274.  The statement has the source's universal
