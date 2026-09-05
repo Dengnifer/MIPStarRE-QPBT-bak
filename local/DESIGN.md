@@ -96,6 +96,14 @@ documented failure modes. Sources are cited in `local/protocols/*.md`.
 11. **Faithfulness policy is unchanged.** AGENTS.md's faithful-formalization
     rules, anti-pattern catalog, and statement-integrity audits apply to QPBT
     exactly as to LDT.
+12. **Merge inputs do not disappear silently.** Before a merge commit, the
+    merge-loss guard compares the staged result with the pre-merge branch,
+    every best merge base, and `MERGE_HEAD`. An incoming path may be absent
+    only when the branch deleted a path present at a merge base. An
+    unambiguous incoming-only change may return to the unchanged branch blob
+    only when Git recorded a conflict. The pending-index check and the
+    pre-update reference transaction together cover manual and automatic
+    merge commits.
 
 ## Naming and identity conventions
 
@@ -110,9 +118,10 @@ documented failure modes. Sources are cited in `local/protocols/*.md`.
 - **Fix commits**: `autofix.sh`'s subjects are prefixed `[codex-auto-fix]` /
   `[codex-review-fix]` exactly (the review-gate skip regex depends on them);
   operator and worker repairs use plain `fix(...)` subjects and are reviewed.
-- **Agent sessions**: `<role>-<issue|scope>-<yyyymmdd>-<seq>` with roles
-  `orc, prover, reviewer, simplifier, blueprint, splitter, scout`. Dispatched
-  only via `local/bin/dispatch.sh`, which records the codex `thread_id`,
+- **Codex sessions**: `<role>-<issue|scope>-<yyyymmdd>-<seq>` with roles
+  `orc, prover, reviewer, simplifier, blueprint, splitter, scout`, plus
+  `mathfix` for astra after its availability is reported on #26.
+  Dispatched only via `local/bin/dispatch.sh`, which records the codex `thread_id`,
   captures the `--json` event stream to
   `results/telemetry/sessions/<name>.jsonl`, and appends a summary line to
   `results/telemetry/sessions.jsonl`. Archiving a session = final status line
@@ -138,9 +147,13 @@ All appends are one-line JSON; schemas documented in `protocols/meta.md`.
 ## Model policy
 
 - codex CLI (`gpt-5.6-sol`, ultra effort) drives orchestrator/prover/reviewer/
-  simplifier sessions (`codex exec`, `codex exec review`).
-- Claude-side subagents: easy/mechanical tasks run on Opus-tier; Fable-tier is
-  reserved for hard reasoning (proof strategy, protocol synthesis, adversarial
-  verification).
+  simplifier sessions (`codex exec`, `codex exec review`); `dispatch.sh` also
+  admits the `mathfix` role for astra only after `owner-tools/astra-poll.sh`
+  reports availability on #26.
+- Claude-side subagents: easy/mechanical tasks run on Opus-tier. The current
+  `mathfix` lane is Claude Fable 5.1, launched by the owner session through its
+  Agent tool and recorded in `results/telemetry/owner-sessions.jsonl`; Fable
+  otherwise remains reserved for hard reasoning (proof strategy, protocol
+  synthesis, adversarial verification).
 - Reviewer and prover roles must be **different sessions** — a session never
   reviews its own diff.
