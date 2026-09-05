@@ -1984,6 +1984,103 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	fields preserves $0$ and $1$.
 \end{proof}
 
+\begin{lemma}[Formalization support for the blocks of a truncated extended
+	direction]
+	\label{lem:qld-sublines-truncated-blocks}
+	\lean{MIPStarRE.QPBT.prefixProjection_of_val_zero}
+	\lean{MIPStarRE.QPBT.projX_directPrefixProjection_embX}
+	\lean{MIPStarRE.QPBT.projX_directPrefixProjection_embZ}
+	\lean{MIPStarRE.QPBT.projX_directPrefixProjection_alphaVar}
+	\lean{MIPStarRE.QPBT.projX_directPrefixProjection_betaVar}
+	\lean{MIPStarRE.QPBT.projZ_directPrefixProjection_embZ}
+	\lean{MIPStarRE.QPBT.projZ_directPrefixProjection_embX}
+	\lean{MIPStarRE.QPBT.projZ_directPrefixProjection_alphaVar}
+	\lean{MIPStarRE.QPBT.projZ_directPrefixProjection_betaVar}
+	\leanok
+	\uses{def:combine-map, def:ld-question-distribution}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	block computation that the proof of Lemma~\ref{lem:qld-sublines} performs
+	whenever it reads the two source blocks of the direction of an extended
+	diagonal line. Let $v \in \F_q^{2m+2}$ and let $k$ be an extended
+	coordinate, and write $v^{(k)}$ for the vector obtained from $v$ by
+	replacing by $0$ every coordinate preceding $k$, as in
+	Definition~\ref{def:ld-question-distribution}. If $k$ is the $i$-th
+	$X$-block coordinate, then the $X$ block of $v^{(k)}$ is the vector
+	obtained from the $X$ block of $v$ by replacing by $0$ every coordinate
+	preceding $i$, and the $Z$ block of $v^{(k)}$ is the $Z$ block of $v$
+	unchanged. If $k$ is the $i$-th $Z$-block coordinate, then the $X$ block
+	of $v^{(k)}$ vanishes and the $Z$ block of $v^{(k)}$ is the vector
+	obtained from the $Z$ block of $v$ by replacing by $0$ every coordinate
+	preceding $i$. If $k$ is one of the two scalar coordinates $\alpha$ and
+	$\beta$, both blocks of $v^{(k)}$ vanish. All four statements are recorded
+	after transport along the identification of the extended scalar field with
+	the source scalar field. Finally, replacing by $0$ every coordinate
+	preceding the first coordinate changes nothing.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, def:ld-question-distribution}
+	By Lemma~\ref{lem:qld-sublines-uniform-line-point} the $i$-th $X$-block
+	coordinate is the coordinate $i$ of $\F_q^{2m+2}$, the $i$-th $Z$-block
+	coordinate is the coordinate $m+i$, and the two scalar coordinates are
+	$2m$ and $2m+1$. Each assertion is therefore the comparison of two
+	coordinate numbers: an $X$-block coordinate precedes an $X$-block
+	coordinate exactly when it does so in the source space, precedes every
+	$Z$-block coordinate and both scalar coordinates, and is preceded by no
+	$Z$-block coordinate; a $Z$-block coordinate precedes a $Z$-block
+	coordinate exactly when it does so in the source space, and precedes both
+	scalar coordinates. The identification of the two scalar fields is a field
+	isomorphism, so it preserves $0$ and commutes with the case distinction.
+	No coordinate precedes the first one, which gives the last assertion.
+\end{proof}
+
+
+\begin{lemma}[Formalization support for the rewriting rules of dependent
+	mixtures]
+	\label{lem:qld-sublines-mixture-rules}
+	\lean{MIPStarRE.QPBT.Distribution.bind_map_left}
+	\lean{MIPStarRE.QPBT.Distribution.bind_congr_support}
+	\lean{MIPStarRE.QPBT.Distribution.bind_const}
+	\lean{MIPStarRE.QPBT.Distribution.bind_bind}
+	\lean{MIPStarRE.QPBT.Distribution.prod_bind_left}
+	\lean{MIPStarRE.QPBT.Distribution.bind_uniform_fin_two}
+	\leanok
+	\uses{def:line-point-dist}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	rewriting rules for dependent mixtures of finitely supported laws that the
+	sampling procedure of Lemma~\ref{lem:qld-sublines} uses when it exchanges
+	the order in which the mixture parameter, the auxiliary randomness and the
+	sampled point are drawn. Let $\mu$ be a finitely supported law on a set
+	$A$ and let $a \mapsto \nu_a$ be a family of finitely supported laws. The
+	mixture of the family $b \mapsto \nu_b$ along the push-forward of $\mu$ by
+	a map $f$ is the mixture of the family $a \mapsto \nu_{f(a)}$ along $\mu$.
+	The mixture depends on the family only through its values on the support
+	of $\mu$. If $\mu$ is a probability law, the mixture of a constant family
+	is that constant law. Mixing a family of mixtures along $\mu$ agrees with
+	mixing the mixed family along the mixture of $\mu$. The product of a
+	mixture with a fixed independent second factor is the mixture of the
+	products. Finally, the equal mixture of two laws is the mixture indexed by
+	a uniformly random label with two values.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:line-point-dist}
+	All six identities are comparisons of supports and of weights. The support
+	of a mixture is the union of the supports of the mixed laws over the
+	support of the index law, and its weight at a point is the sum over that
+	support of the index weight times the mixed weight. For the first
+	identity, grouping the support of $\mu$ into the fibers of $f$ turns the
+	sum over the image into the sum over the source. The second is immediate,
+	the third uses that the index weights sum to one and that a probability
+	law has nonempty support, and the fourth exchanges the two summations and
+	extends the inner one by the terms outside a support, which vanish. The
+	fifth follows by factoring the weight of the fixed second factor out of
+	the sum, and the sixth evaluates the two-term sum against the uniform
+	weight $1/2$.
+\end{proof}
+
+
+
 \begin{remark}[Property~3 of the sub-line distribution]
 	\label{rem:qld-sublines-property-three}
 	The source proof of Lemma~\ref{lem:qld-4-13} in \cite{Ji2020MIPStar}
