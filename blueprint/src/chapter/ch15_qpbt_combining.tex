@@ -1237,6 +1237,89 @@ Joint projectivity and the agreement identity convert its supplied
 squared-distance self-consistency bound into a consistency-defect bound.
 \end{proof}
 
+\begin{lemma}[Point marginals on line-point samples]
+\label{lem:combined-point-line-sampling}
+\lean{MIPStarRE.QPBT.avgOver_linePointDist_point}
+\lean{MIPStarRE.QPBT.avgOver_prod_linePointDist_points}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.postprocess_fst_effect}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.postprocess_snd_effect}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.marginal_X_linePoint_distance_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.marginal_Z_linePoint_distance_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.self_consistency_linePoint_defect_le}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.opFamilyDistSq_postprocess_some}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.opFamilyDistSq_postprocess_some_pair}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.consistencyDefect_postprocess_some_pair}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.marginal_X_option_linePoint_distance_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.marginal_Z_option_linePoint_distance_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.completed_fst_effect}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.completed_snd_effect}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.self_consistency_completed_linePoint_defect_le}
+\leanok
+\uses{lem:combined-point-marginals-supplied-error, lem:alnf, lem:dlnf,
+ def:line-point-dist, fact:agreement}
+This is an auxiliary assertion for a supplied joint point witness with error
+$t$. Sample $(\ell_X,x)$ and $(\ell_Z,z)$ independently from $D_{\Line}$.
+The point pair $(x,z)$ is uniform and independent, so both marginal
+squared-distance bounds remain $4t$, and the joint self-consistency defect
+remains at most $t$. These bounds also hold after completing each field-valued
+answer alphabet with a zero outcome $\bot$.
+
+More precisely, write $\overline Q$ for the relabeling
+$(a,b)\mapsto(a,b)$ into $(\F_q\cup\{\bot\})^2$. Taking either marginal of
+$\overline Q$ gives exactly the zero-completion of the corresponding marginal
+of $Q$. Completion preserves squared distance, for both single and pair
+answer alphabets, and preserves the pair consistency defect exactly.
+The completed joint self-consistency defect is at most $t$.
+\end{lemma}
+\begin{proof}
+\leanok
+The axis and diagonal laws both have uniform point marginals. Their equal
+mixture therefore does too; independence gives the uniform pair law.
+Postprocessing by either projection sums the appropriate fibers, and
+composition of relabelings proves the two completed marginal identities.
+All additional effects are zero, so summation of squared distances over the
+completed alphabet gives the original sum. The same zero-effect calculation
+preserves the consistency defect, so the transported self-consistency bound
+also survives completion.
+\end{proof}
+
+\begin{lemma}[Line marginals with both errors retained]
+\label{lem:combined-line-marginals-both-errors}
+\lean{MIPStarRE.QPBT.exists_expLine_point_same_placement_distance_le}
+\lean{MIPStarRE.QPBT.exists_combinedPoints_line_marginal_distance_le}
+\lean{MIPStarRE.QPBT.exists_combinedPoints_line_marginal_defect_le}
+\leanok
+\uses{lem:combined-point-line-sampling, lem:qld-comm-cons,
+ lem:qld-comm-line-cons, fact:triangle, fact:agreement}
+There is a universal $C\geq1$ such that the following auxiliary assertion
+holds for every projective setting with strategy error $\eps$ and every
+supplied joint point witness with error $t$. For every directed pair of
+opposite placements, under $D_{\Line}\times D_{\Line}$, each completed
+marginal of $Q$ on the first placement has squared distance, and also
+consistency defect, at most
+\[
+ 8t+C(\eps+\sqrt{\eps})
+\]
+from the corresponding evaluated expanded line measurement on the second
+placement. The answer alphabet includes $\bot$ on both sides. Moreover, on
+a single placement the evaluated line and completed point measurements have
+squared distance at most $C'(\eps+\sqrt{\eps})$ for a universal $C'\geq1$.
+No comparison with a line is assumed of the supplied point witness.
+\end{lemma}
+\begin{proof}
+\leanok
+Item 3 of Lemma~\ref{lem:qld-comm-line-cons} compares an evaluated line with
+the opposite point measurement at cost $C_L\sqrt{\eps}$. Point
+self-consistency from Lemma~\ref{lem:qld-comm-cons} compares that point
+measurement with the point measurement on the line's own placement at cost
+$C_P\eps$. The squared triangle inequality gives the same-placement bound
+with $C'=2(C_P+C_L)$. Transport it to the product line-point law, reverse
+the distance, and combine it with the marginal bound $4t$. A second squared
+triangle inequality gives $8t+2C'(\eps+\sqrt{\eps})$. Both marginal and
+evaluated-line measurements are postprocessings of projective measurements,
+so the agreement identity bounds their consistency defect by this distance.
+\end{proof}
+
 \begin{lemma}[The constructed paired-line POVM]
 \label{lem:combined-line-sandwich-construction}
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
@@ -1296,7 +1379,7 @@ $X_{f_X}IX_{f_X}=X_{f_X}$ by projectivity.
 \end{lemma}
 \begin{proof}
 	\uses{def:expanded-line-measurement, lem:qld-4-10, fact:add-a-proj,
-		lem:combined-point-marginals-supplied-error, lem:combined-line-sandwich-construction,
+		lem:combined-line-marginals-both-errors, lem:combined-line-sandwich-construction,
 		lem:cool-closeness-fact, lem:qld-comm-line-cons, fact:agreement,
 		fact:data-processing, lem:pasting, lem:schwartz-zippel-total-degree,
 		def:symmetric-equivalents}

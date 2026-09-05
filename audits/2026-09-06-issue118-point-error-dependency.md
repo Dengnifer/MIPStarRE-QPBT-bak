@@ -1,5 +1,184 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 3: completed marginals on the product line-point law
+
+Session `mathfix-118-20260906-03`, on baseline
+`a571fe01c1dd9d35f834ebcfba78fe9ade87c69f`. The cumulative count is **3 of
+10**; the original budget anchor remains September 5, 2026, 19:24 UTC.
+Cumulative working time is operator-owned and was not supplied separately.
+This attempt continues the construction rather than adopting a speculative
+signature for the arbitrary-point helper.
+
+### Mathematical result
+
+Write `t = deltaQ` for the supplied point error. There is a universal
+constant `C >= 1`, preceding all parameters, strategies, point witnesses,
+and directed opposite placements, such that both completed point marginals
+have squared distance and consistency defect at most
+
+\[
+  8t+C(\varepsilon+\sqrt{\varepsilon})
+\]
+
+from the corresponding evaluated expanded line measurement, on the product
+of two line-point laws. The completed joint self-consistency defect is at
+most `t`. These are the actual marginal measurements of the supplied joint
+measurement after the relabeling `(a,b) -> (some a,some b)`, not measurements
+assumed equal to its marginals. The relations are proved for every directed
+opposite placement, with no identification of the players' local spaces.
+
+The proof uses `lem:alnf` and `lem:dlnf` to obtain uniform point marginals of
+the mixed line-point law. Independent sampling then gives the uniform point
+pair law. Fiber sums identify the two postprocessings, and composition of
+postprocessings proves that completion commutes with taking either marginal.
+The added answers have zero effect, so completing one or both answer
+coordinates preserves squared distance exactly. These identities transport
+the existing `4t` estimates without changing their constants.
+
+Let `Cp` and `Cl` be the universal constants in `expPoint_self_cons` and
+`expLine_point_cons'`. The latter compares a line on the second placement
+with a point on the first placement at squared distance `Cl * sqrt(epsilon)`.
+The former compares that point with the point on the second placement at
+distance `Cp * epsilon`. The squared triangle inequality therefore gives
+the same-placement line--point bound
+`2 * (Cp + Cl) * (epsilon + sqrt(epsilon))`. A second squared triangle
+inequality with the transported `4t` marginal bound gives the displayed
+bound, with `C = 4 * (Cp + Cl)`. Projectivity of all relevant
+postprocessings, followed by `fact:agreement`, bounds each consistency
+defect by its squared distance. The joint self-consistency estimate is
+transported and completed in the same way.
+
+The proof is valid at zero strategy error and retains the `8t` term. At
+`t = 0`, it retains the strategy-error contribution. No division by either
+error, small-error assumption, or replacement point witness occurs. Large
+errors cause no exception: the upper bounds remain valid, though not sharp.
+This proves sufficiency of these intermediate constants, not optimality.
+
+### Conditional collision obstruction and remaining construction
+
+The printed paired-line assertion is `lem:qld-xz-lines`, paper
+`14_analysis_of_the_pauli_basis_test.tex:882-894`: its constructed points
+admit consistent paired-line POVMs with error polynomial in `epsilon,md/q`
+and the stated axis-degree support. Its proof invokes `lem:pasting` at
+lines 950--963. The pasting lemma requires a collision estimate **on every
+positive-mass conditional fiber**, not merely an unconditional estimate.
+The old helper's omission of the arbitrary supplied `t` remains an
+unsupported strengthening; no counterexample to the printed existence
+theorem is asserted.
+
+There is an additional obstruction to applying the collision predicate
+directly to the unchanged completed evaluation law. The diagonal CL map
+allows a zero projected direction (source `def:line-point-dist`,
+`08_classical_and_quantum_low_degree_tests.tex:276-287`; Lean
+`Test/LowDegreeGame.lean`, `ldDLineCL`, and `Observables/LineDefs.lean`).
+For such a line, every parameter represents its base point. The distinct
+coefficient polynomials `T` and `T + 1`, when `md >= 1`, are nonconstant
+functions of the parameter. Neither has a value in the universal-parameter
+sense of `EvaluatesTo`; both completed evaluations are `none`. Their
+collision probability on that conditional fiber is therefore one, not
+`md/q` when `md < q`. Zero projected directions have positive sampling
+mass, since the raw zero direction has positive uniform mass. This is a
+mathematical counterexample to that direct conditional-collision claim,
+not a Lean-verified counterexample theorem and not a counterexample to
+paired-line consistency. The existing zero-direction completion is
+documented in `docs/paper-gaps/qpbt_win-implications-corrections.tex`.
+
+One possible next argument is to restrict the *proof's distribution* to
+nonzero directions, establish conditional uniformity and the polynomial
+root bound there, and restore the excluded mass using the unit bound for
+POVM consistency. This does not change the game, the witness fields, or
+the mathematical definition of evaluation. Its normalization factors and
+excluded mass have not been proved here. An alternative direct estimate
+on degenerate fibers has not been established either. Thus no game change
+is shown necessary, and no owner decision authorizing one is requested.
+
+The exact remaining obligations are:
+
+1. Handle the zero-direction fibers without asserting the false direct
+   collision predicate; prove the nondegenerate conditional law and the
+   collision estimate, together with the needed mass/normalization bounds.
+2. Reindex the already proved completed marginal relations into the
+   bipartite presentation of one-sided `exists_pasting_error`, retaining
+   both errors. For the existing X-outer sandwich, instantiate `G2` with X
+   and `G1` with Z, and explicitly exchange the answer coordinates.
+3. Apply pasting for all directed opposite placements and identify its
+   output with the existing `combinedLineMeasurement`. Do not replace that
+   measurement or the supplied points.
+4. Only after this proof, correct the internal helper's error dependence,
+   specialize to the constructed `K * epsilon^(1/8)` point error, and
+   prove the additive polynomial composition including the excluded mass.
+5. Adapt both arbitrary-point helpers in `Apply.lean`, retaining its
+   source-facing statements and the separate established-error restriction.
+
+### Use analysis and statement integrity
+
+The complete inherited source and blueprint descendant inventory in attempt
+1 below still applies. The direct paper uses are restricted averages
+(1058--1061), extended-line construction and degree (1118--1132), and
+extended-line consistency (1241--1246). Subsequent uses are global pairs
+(1278--1282) and the extraction calculations at 1423, 1465--1492, 1584,
+1627, and 1671. Their mathematical sufficiency is **not** certified by
+these intermediate marginal lemmas.
+
+The two new auxiliary blueprint nodes are
+`lem:combined-point-line-sampling` and
+`lem:combined-line-marginals-both-errors`. Their statements display the
+supplied error and the completed answer alphabet explicitly. They support,
+but do not complete, the source-labelled combined-line theorem. Its
+`notready` status is preserved. Claims 17-2/17-3 and all `Apply.lean`
+statements remain unchanged. The affected Lean import consumers are
+`EvalDeficit`, `SubLineDeficit`, `Claims`, QPBT, and the project root;
+`Apply` is also a required explicit validation target.
+
+Statement audit: the new lemmas assume only a projective setting, an
+existing point witness at its supplied error, and directed opposite
+placements. Their conclusions are exactly the completed marginal bounds
+stated above, not the source existence theorem. The source assumptions,
+conclusion, games, witnesses, and public `exists_combinedLinesWitness`
+statement are unchanged. Verdict: faithful auxiliary estimates with
+explicit error dependence; no converged correction or minimality claim.
+
+### Validation record
+
+All eighteen new declarations pass the axiom audit with exactly `propext`,
+`Classical.choice`, and `Quot.sound`; none depends on `sorryAx`. The changed
+`Lines.lean` type-checks and emits a fresh private artifact. Using it, fresh
+checks of `EvalDeficit`, `SubLineDeficit`, `Claims`, `Apply`, QPBT, and the
+project root all exit zero. The existing one line-helper hole and three
+`Apply` holes remain; there is no new hole or proof bypass. The completed
+self-consistency proof uses exact preservation of defect under completion,
+avoiding the expensive repeated projective-comparison elaboration tested
+earlier in this attempt.
+
+The declaration checker resolves all **1,816** blueprint declarations,
+including the eighteen new links. Blueprint web generation succeeds. Its
+distinct warning messages are identical to attempt 2, including unresolved
+`lem:qld-sublines-restricted-blocks` and `lem:qld-sublines-seed-blocks` and
+the existing bibliography warnings. The synchronization check still reports
+the **231 baseline stale entries**; no unrelated entries are removed.
+The LaTeX convention check passes, and the paper-gap style check has zero
+changed note files. The hook installation check passes for this worktree.
+Logs and axiom-check source are `/tmp/issue118-attempt3-*`.
+
+Use the private artifacts **before** the worktree artifacts
+in `LEAN_PATH`: `lake env` prepends its own paths to an inherited
+`LEAN_PATH`, so set the prefix inside its child shell. Initial experiments
+with the inherited variable alone are superseded by the explicitly
+prefixed checks. No full baseline rebuild, shared-cache write, subagent,
+other-worktree edit, push, post, review, or merge is performed.
+
+At September 5, 2026, 21:18 UTC (September 6, 05:18 +0800), this attempt
+has used approximately 26 minutes; elapsed wall time since the original
+anchor is approximately 114 minutes, not cumulative working time. The
+attempt limit has not been reached and no definition/game change has been
+shown necessary. The commit identifier is in the final session report.
+
+Draft unposted #27 announcement: **Attempt 3 proves completed point--line
+marginals at `8*deltaQ + C*(epsilon + sqrt(epsilon))` and completed joint
+self-consistency at `deltaQ`; conditional collisions, pasting, and
+specialization remain open. No correction is adopted.** No adopted-result
+event or design decision is appropriate; the operator owns telemetry.
+
 ## Attempt 2: proved point marginals and the paired-line construction
 
 Session `mathfix-118-20260906-02`, starting September 6, 2026,
