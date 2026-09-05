@@ -2573,6 +2573,47 @@ on registers $\mathsf{A}\mathsf{A}'$, the second tensor factor is placed on
 registers $\mathsf{B}\mathsf{A}''$, and the sums range over
 $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 
+\begin{lemma}[Formalization support for Lemma~\ref{lem:qld-4-13}: replacing one factor of an overlap]
+	\label{lem:overlap-gap-distance}
+	\lean{MIPStarRE.QPBT.abs_overlap_gap_le_sqrt_of_opFamilyDistSq}
+	\leanok
+	\uses{def:povm-distance, def:consistency, def:expanded-state}
+	This formalization-only auxiliary is not a named statement of the paper;
+	it isolates the Cauchy--Schwarz step shared by the three claims stated
+	below. Let $\mu$ be a probability distribution on a question set, let
+	$\{A^x_a\}_a$ be a measurement for each question $x$, let $\{B^x_a\}_a$
+	and $\{C^x_a\}_a$ be two families of operators indexed by the same
+	outcomes, and let $\ket{\psi}$ be a unit vector. If
+	\[
+		\E_{x \sim \mu} \sum_a
+		\big\lVert (B^x_a - C^x_a) \ket{\psi} \big\rVert^2 \le \zeta ,
+	\]
+	then
+	\[
+		\Big\lvert \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a B^x_a \ket{\psi}
+		- \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a C^x_a \ket{\psi}
+		\Big\rvert \le \sqrt{\zeta} .
+	\]
+	Neither $\{B^x_a\}_a$ nor $\{C^x_a\}_a$ is assumed to be a measurement, so
+	the estimate also applies to an ordered product of two point effects.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:povm-distance}
+	Each effect $A^x_a$ is Hermitian, so
+	$\Re \bra{\psi} A^x_a (B^x_a - C^x_a) \ket{\psi}$ equals the real part of
+	the inner product of $A^x_a \ket{\psi}$ with
+	$(B^x_a - C^x_a) \ket{\psi}$. Summing over $a$ and applying the
+	Cauchy--Schwarz inequality bounds the modulus of that sum by
+	$\big(\sum_a \lVert A^x_a \psi \rVert^2\big)^{1/2}
+	\big(\sum_a \lVert (B^x_a - C^x_a) \psi \rVert^2\big)^{1/2}$. Since
+	$0 \le A^x_a \le \Id$ gives $(A^x_a)^2 \le A^x_a$ and the effects sum to
+	$\Id$, the first factor is at most $\lVert \psi \rVert = 1$. Averaging
+	over $x$ and applying the Cauchy--Schwarz inequality once more against
+	the probability weights replaces the average of the square roots by the
+	square root of the average.
+\end{proof}
+
 \begin{lemma}[Replacing the combined point measurement by the ordered product]
 	\label{lem:claim-17-1}
 	\lean{MIPStarRE.QPBT.subline_replace_by_ordered_product}
