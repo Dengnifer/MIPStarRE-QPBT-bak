@@ -2248,6 +2248,136 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	along their own direction.
 \end{proof}
 
+\begin{lemma}[Formalization support for products and push-forwards of
+	finitely supported laws]
+	\label{lem:qld-sublines-product-rules}
+	\lean{MIPStarRE.QPBT.Distribution.support_nonempty_of_isProbability}
+	\lean{MIPStarRE.QPBT.Distribution.prod_map_left}
+	\lean{MIPStarRE.QPBT.Distribution.prod_map_fst}
+	\lean{MIPStarRE.QPBT.Distribution.prod_map_of_fst}
+	\lean{MIPStarRE.QPBT.Distribution.prod_map_eq_bind}
+	\leanok
+	\uses{def:line-point-dist}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	rewriting rules relating products and push-forwards of finitely supported
+	laws that the sampling procedure of Lemma~\ref{lem:qld-sublines} uses. Let
+	$\mu$ and $\nu$ be finitely supported laws on sets $A$ and $B$. A law of
+	total mass $1$ has a nonempty support. The product of the push-forward of
+	$\mu$ by a map $f$ with $\nu$ is the push-forward of the product of $\mu$
+	and $\nu$ by the map acting by $f$ on the first coordinate. If $\nu$ is a
+	probability law, the first marginal of the product of $\mu$ and $\nu$ is
+	$\mu$, so reading a function of the first coordinate on the product is
+	reading it on $\mu$. Finally, the push-forward of the product of $\mu$ and
+	$\nu$ by a map $g$ is the mixture along $\mu$ of the push-forwards of $\nu$
+	by the partial maps $b \mapsto g(a,b)$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:line-point-dist}
+	Each assertion compares supports and weights. The support of a product is
+	the product of the supports and its weight is the product of the weights,
+	so a fiber of a map acting on one coordinate alone is a product of a fiber
+	with a full support, and the sum over that product factors. If the total
+	mass of $\nu$ is $1$ the second factor of that product contributes the
+	factor $1$; if the support of $\nu$ were empty its total mass would be $0$.
+	For the last assertion, the fiber of $g$ over a point is summed by first
+	summing over the second coordinate and then over the first.
+\end{proof}
+
+\begin{lemma}[Formalization support for the sampling procedure of the sub-line
+	distribution]
+	\label{lem:qld-sublines-sampling}
+	\lean{MIPStarRE.QPBT.SubLinePointDir}
+	\lean{MIPStarRE.QPBT.SubLineRaw}
+	\lean{MIPStarRE.QPBT.subLineSeedDist}
+	\lean{MIPStarRE.QPBT.subLineSeedDist_isProbability}
+	\lean{MIPStarRE.QPBT.subLineRawDist}
+	\lean{MIPStarRE.QPBT.subLineRawDist_isProbability}
+	\lean{MIPStarRE.QPBT.subLineExtLineOfSample}
+	\lean{MIPStarRE.QPBT.subLineExtLine}
+	\lean{MIPStarRE.QPBT.subLineSourceLine}
+	\lean{MIPStarRE.QPBT.subLineTripleOf}
+	\lean{MIPStarRE.QPBT.subLineBranchDist}
+	\lean{MIPStarRE.QPBT.subLineDist}
+	\lean{MIPStarRE.QPBT.subLineExtLine_kind}
+	\lean{MIPStarRE.QPBT.subLineExtLine_direction}
+	\lean{MIPStarRE.QPBT.subLineExtLine_base}
+	\lean{MIPStarRE.QPBT.subLineSourceLine_kind}
+	\lean{MIPStarRE.QPBT.subLineSourceLine_direction}
+	\lean{MIPStarRE.QPBT.subLineSourceLine_base}
+	\lean{MIPStarRE.QPBT.exists_raw_of_mem_subLineDist_support}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_xDirection}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_zDirection}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_xSpan}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_zSpan}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_xBase}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_zBase}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_incidence}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_compatibility}
+	\lean{MIPStarRE.QPBT.subLineTripleOf_axis_closure}
+	\lean{MIPStarRE.QPBT.subLineDist_isProbability}
+	\lean{MIPStarRE.QPBT.subLineBranchDist_map_fst}
+	\lean{MIPStarRE.QPBT.subLineDist_map_fst}
+	\leanok
+	\uses{def:combine-map, def:ith-restricted-line,
+		def:ld-question-distribution, def:line-point-dist,
+		def:line-representative, lem:qld-sublines-branch-directions,
+		lem:qld-sublines-extended-blocks, lem:qld-sublines-product-rules,
+		lem:qld-sublines-restricted-blocks, lem:qld-sublines-seed-blocks}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	sampling procedure used in the proof of Lemma~\ref{lem:qld-sublines} and
+	its elementary properties. Draw a line kind among the two kinds with equal
+	probability, an extended coordinate $k$ uniformly, an extended point and an
+	extended direction uniformly and independently, and two scalar seeds
+	independently and uniformly in the coordinate-index fibers of the source
+	$X$ index and the source $Z$ index of the branch. The sampled triple
+	consists of the canonical line of the drawn kind through the extended point
+	in the branch direction, together with the two source lines of the same
+	kind decoded from the two coordinate blocks of the extended point and
+	direction and from the two seeds. Every triple in the support of the
+	resulting law arises in this way from auxiliary randomness whose two seeds
+	name the two indices of the branch. Each source line then carries the
+	branch source direction at its index and has as base the canonical
+	representative, in its own direction, of the corresponding block of the
+	base of the extended line; the corresponding block of the direction of the
+	extended line lies in the line spanned by the source direction. Hence every
+	point of the extended line projects onto both source lines, the triple
+	carries affine data compatible in the sense of
+	Definition~\ref{def:combine-map}, and an extended axis line has
+	axis-parallel source lines. The law is a probability law and its
+	extended-line marginal is the extended-line marginal of the directly
+	indexed line-point law.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, def:ith-restricted-line,
+		def:ld-question-distribution, def:line-point-dist,
+		def:line-representative, lem:qld-sublines-branch-directions,
+		lem:qld-sublines-extended-blocks, lem:qld-sublines-product-rules,
+		lem:qld-sublines-restricted-blocks, lem:qld-sublines-seed-blocks}
+	The description of the support is read off the support of a mixture, of a
+	push-forward and of a normalized restriction. The evaluations of the two
+	source lines are the definitions of the two decoders, in which the stored
+	coordinate is the coordinate named by the seed; on the support that
+	coordinate is the index assigned to the branch, which gives the direction
+	and the base of each source line. The incidence and the two spanning
+	statements are Lemma~\ref{lem:qld-sublines-branch-directions} together with
+	the incidence criterion of
+	Lemma~\ref{lem:qld-sublines-extended-blocks}, once the base of the extended
+	line is replaced by the drawn point, which changes no canonical
+	representative of a source block. Compatibility follows from the same two
+	facts: a point differs from its canonical representative by a multiple of
+	the direction, and the source block of the extended direction is a multiple
+	of the source direction. Total mass is preserved by mixtures,
+	push-forwards, products and normalized restrictions. For the extended-line
+	marginal, the two seeds are independent of the extended point and direction
+	and carry total mass $1$, so they may be marginalized out by
+	Lemma~\ref{lem:qld-sublines-product-rules}; the remaining mixture over the
+	extended coordinate of the uniform law of the extended point and direction
+	is the uniform law of an extended direct sample under the index-first
+	decomposition.
+\end{proof}
+
 \begin{remark}[Property~3 of the sub-line distribution]
 	\label{rem:qld-sublines-property-three}
 	The source proof of Lemma~\ref{lem:qld-4-13} in \cite{Ji2020MIPStar}

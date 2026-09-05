@@ -3,8 +3,10 @@ import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
 import MIPStarRE.QPBT.Combining.Lines.SubLineBind
 import MIPStarRE.QPBT.Combining.Lines.SubLineBlocks
 import MIPStarRE.QPBT.Combining.Lines.SubLineBranch
+import MIPStarRE.QPBT.Combining.Lines.SubLineConstruct
 import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
+import MIPStarRE.QPBT.Combining.Lines.SubLineProduct
 import MIPStarRE.QPBT.Combining.Lines.SubLineSeed
 import MIPStarRE.QPBT.Combining.Lines.SubLineSupport
 import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
