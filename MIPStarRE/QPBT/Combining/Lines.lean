@@ -1,5 +1,6 @@
 import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
 import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
+import MIPStarRE.QPBT.Combining.Lines.SubLineSupport
 import MIPStarRE.QPBT.Combining.Points
 import MIPStarRE.QPBT.Combining.Witnesses
 

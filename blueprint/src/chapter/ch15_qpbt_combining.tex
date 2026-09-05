@@ -1693,6 +1693,56 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	formulations follow from the same conditional uniformity.
 \end{proof}
 
+\begin{lemma}[Formalization support for the sub-line sampling procedure]
+	\label{lem:qld-sublines-generating-laws}
+	\lean{MIPStarRE.QPBT.Distribution.restrict_map}
+	\lean{MIPStarRE.QPBT.ldSeedEvent}
+	\lean{MIPStarRE.QPBT.ldSeedEvent_decidablePred}
+	\lean{MIPStarRE.QPBT.ldSeedEvent_positive}
+	\lean{MIPStarRE.QPBT.aLineDescOf_ldALineCL}
+	\lean{MIPStarRE.QPBT.dLineDescOf_ldDLineCL}
+	\lean{MIPStarRE.QPBT.restrictedALineDist_eq_map_restrict}
+	\lean{MIPStarRE.QPBT.restrictedDLineDist_eq_map_restrict}
+	\leanok
+	\uses{def:ith-restricted-line, def:line-point-dist,
+		def:line-representative, def:ld-question-distribution}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	generating description of the restricted line-point distributions that the
+	proof of Lemma~\ref{lem:qld-sublines} uses whenever it identifies the law
+	of a projected pair $(\ell_X, u_X)$. Fix $i \in \{1, \dots, m\}$ and let
+	$z$ be an ambient vector of
+	Definition~\ref{def:ld-question-distribution}, carrying a point block $u$,
+	a scalar seed $s$ and a direction block $w$, distributed uniformly and
+	conditioned on the event $\chi(s) = i$; that event has positive
+	probability. Then $D_{\mathrm{ALine},i}$ is the law of the pair consisting
+	of the axis-parallel line in direction $e_{\chi(s)}$ through the canonical
+	representative of $u$ and of the point $u$ itself, and
+	$D_{\mathrm{DLine},i}$ is the law of the pair consisting of the diagonal
+	line whose direction is the prefix projection of $w$ at $\chi(s)$, through
+	the canonical representative of $u$, and of the point $u$ itself. Two
+	auxiliary facts enter: restricting a push-forward distribution to an event
+	is the push-forward of the restriction to the pre-image of that event, and
+	the two line decoders are unchanged by the conditioning maps of
+	Definition~\ref{def:ld-question-distribution}.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:ith-restricted-line, def:line-representative,
+		def:ld-question-distribution}
+	The restricted laws of Definition~\ref{def:ith-restricted-line} condition
+	the ambient uniform law on the coordinate-index event before decoding, and
+	every conditioning map retains the scalar seed, so that event is the
+	stated one on the ambient vector. Its mass is positive because the fiber
+	$\chi^{-1}(i)$ contains a seed. The decoders apply the canonical
+	representative map of Definition~\ref{def:line-representative} to a point
+	block already put through the same map, and in the diagonal case apply the
+	prefix projection to a direction block already projected at the same
+	index; both maps are idempotent, so the decoded descriptions agree with
+	those computed from the ambient vector directly. Commuting the
+	conditioning past the push-forward then gives the two displayed
+	identities.
+\end{proof}
+
 \begin{remark}[Property~3 of the sub-line distribution]
 	\label{rem:qld-sublines-property-three}
 	The source proof of Lemma~\ref{lem:qld-4-13} in \cite{Ji2020MIPStar}
