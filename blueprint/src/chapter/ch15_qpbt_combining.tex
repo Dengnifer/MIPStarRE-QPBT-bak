@@ -1890,6 +1890,61 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	scalar conditions hold by definition.
 \end{proof}
 
+\begin{lemma}[Formalization support for uniform points of a line and for the
+	blocks of an elementary direction]
+	\label{lem:qld-sublines-uniform-line-point}
+	\lean{MIPStarRE.QPBT.lineRepMap_zero_apply}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_lineRepMap_add_smul}
+	\lean{MIPStarRE.QPBT.embX_injective}
+	\lean{MIPStarRE.QPBT.embZ_injective}
+	\lean{MIPStarRE.QPBT.projX_coordinateDirection_embX}
+	\lean{MIPStarRE.QPBT.projX_coordinateDirection_embZ}
+	\lean{MIPStarRE.QPBT.projX_coordinateDirection_alphaVar}
+	\lean{MIPStarRE.QPBT.projX_coordinateDirection_betaVar}
+	\lean{MIPStarRE.QPBT.projZ_coordinateDirection_embZ}
+	\lean{MIPStarRE.QPBT.projZ_coordinateDirection_embX}
+	\lean{MIPStarRE.QPBT.projZ_coordinateDirection_alphaVar}
+	\lean{MIPStarRE.QPBT.projZ_coordinateDirection_betaVar}
+	\leanok
+	\uses{def:line-representative, def:line, def:combine-map,
+		def:line-point-dist}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the two
+	geometric inputs used by the sampling procedure of
+	Lemma~\ref{lem:qld-sublines} when it identifies the law of a uniformly
+	random point of the sampled line and when it reads the blocks of an
+	axis-parallel direction. For the zero direction the canonical linear map
+	of Definition~\ref{def:line-representative} is the identity,
+	$L^{\mathrm{Ln}}_0(u) = u$. For an arbitrary direction $v \in \F_q^n$, if
+	$u \in \F_q^n$ and $t \in \F_q$ are independent and uniformly random, then
+	$L^{\mathrm{Ln}}_v(u) + t v$ is uniformly random in $\F_q^n$. The two
+	block embeddings of Definition~\ref{def:combine-map} are injective, and
+	for the elementary direction $e_k$ of $\F_q^{2m+2}$ the $X$ block is $e_i$
+	when $k$ is the $i$-th $X$-block coordinate and $0$ when $k$ is a
+	$Z$-block coordinate or one of the two scalar coordinates $\alpha$ and
+	$\beta$; symmetrically for the $Z$ block.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:line-representative, def:combine-map, lem:line-rep-kernel}
+	The span of the zero vector is trivial and a point differs from its
+	canonical representative by an element of the span of the direction
+	(Lemma~\ref{lem:line-rep-kernel}), so for $v = 0$ that representative is
+	the point itself. For the uniformity statement it suffices that every
+	fibre of $(u, t) \mapsto L^{\mathrm{Ln}}_v(u) + t v$ has exactly $q$
+	elements. If $v = 0$ the fibre over $x$ consists of the pairs $(x, t)$
+	with $t \in \F_q$ arbitrary. If $v \neq 0$, applying $L^{\mathrm{Ln}}_v$
+	to the defining equation and using that this map is idempotent and
+	unchanged by translation along $v$ gives
+	$L^{\mathrm{Ln}}_v(u) = L^{\mathrm{Ln}}_v(x)$, whence
+	$t v = x - L^{\mathrm{Ln}}_v(x)$ determines $t$; conversely $u$ ranges
+	exactly over the coset $L^{\mathrm{Ln}}_v(x) + \F_q v$, which has $q$
+	elements because $c \mapsto c v$ is injective. Each block embedding is
+	the composition of the coordinate relabelling of
+	Definition~\ref{def:combine-map} with the injection of a summand, hence
+	injective, and the block computations follow from the fact that $e_k$ has
+	coordinate $1$ at $k$ and $0$ at every other coordinate.
+\end{proof}
+
 \begin{remark}[Property~3 of the sub-line distribution]
 	\label{rem:qld-sublines-property-three}
 	The source proof of Lemma~\ref{lem:qld-4-13} in \cite{Ji2020MIPStar}
