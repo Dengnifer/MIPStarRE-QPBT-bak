@@ -305,6 +305,61 @@ theorem projZ_mem_linePoints {K : Type*} [Field K] {m : ℕ}
   rw [projZ_add, projZ_smul, ← hc]
   module
 
+/-! ## Incidence of the blocks of an extended line -/
+
+/-- The identification of the extended scalar field with the source scalar
+field carries an elementary coordinate direction to the elementary coordinate
+direction at the same coordinate.  Blueprint
+`ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem directPointToPauli_coordinateDirection (P : AdmissibleParams)
+    (k : Fin P.extendedDirectLd.m) :
+    directPointToPauli P (coordinateDirection k) = coordinateDirection k := by
+  funext j
+  simp [directPointToPauli, coordinateDirection, Pi.single_apply]
+
+/-- Incidence of the `X` blocks: if a source line has as base the canonical
+representative, in its own direction, of the `X` block of the base of an
+extended line, and if the `X` block of the direction of the extended line
+lies in the span of the source direction, then the `X` block of every point
+of the extended line is a point of the source line.  Blueprint
+`ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem projX_mem_pointSet (P : AdmissibleParams)
+    (base dir : Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd)
+    (lineX : LineDesc P.toLdParams)
+    (hbase : lineX.base =
+      lineRepMap lineX.direction (projX (directPointToPauli P base)))
+    (hdir : projX (directPointToPauli P dir) ∈
+      Submodule.span (PauliScalar P)
+        ({lineX.direction} : Set (Fin P.m → PauliScalar P)))
+    {u : Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd}
+    (hu : u ∈ linePoints base dir) :
+    projX (directPointToPauli P u) ∈ lineX.pointSet := by
+  rw [LineDesc.pointSet, hbase]
+  exact projX_mem_linePoints _ _ _ hdir (directPointToPauli_mem_linePoints P hu)
+
+/-- Incidence of the `Z` blocks: if a source line has as base the canonical
+representative, in its own direction, of the `Z` block of the base of an
+extended line, and if the `Z` block of the direction of the extended line
+lies in the span of the source direction, then the `Z` block of every point
+of the extended line is a point of the source line.  Blueprint
+`ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem projZ_mem_pointSet (P : AdmissibleParams)
+    (base dir : Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd)
+    (lineZ : LineDesc P.toLdParams)
+    (hbase : lineZ.base =
+      lineRepMap lineZ.direction (projZ (directPointToPauli P base)))
+    (hdir : projZ (directPointToPauli P dir) ∈
+      Submodule.span (PauliScalar P)
+        ({lineZ.direction} : Set (Fin P.m → PauliScalar P)))
+    {u : Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd}
+    (hu : u ∈ linePoints base dir) :
+    projZ (directPointToPauli P u) ∈ lineZ.pointSet := by
+  rw [LineDesc.pointSet, hbase]
+  exact projZ_mem_linePoints _ _ _ hdir (directPointToPauli_mem_linePoints P hu)
+
 end
 
 end MIPStarRE.QPBT

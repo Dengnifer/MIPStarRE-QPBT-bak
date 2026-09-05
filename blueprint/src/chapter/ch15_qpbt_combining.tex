@@ -1912,6 +1912,9 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	\lean{MIPStarRE.QPBT.directPointToPauli_mem_linePoints}
 	\lean{MIPStarRE.QPBT.projX_mem_linePoints}
 	\lean{MIPStarRE.QPBT.projZ_mem_linePoints}
+	\lean{MIPStarRE.QPBT.directPointToPauli_coordinateDirection}
+	\lean{MIPStarRE.QPBT.projX_mem_pointSet}
+	\lean{MIPStarRE.QPBT.projZ_mem_pointSet}
 	\leanok
 	\uses{def:line-representative, def:line, def:combine-map,
 		def:line-point-dist}
@@ -1938,6 +1941,12 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	$w_X \in \F_q^m$, then the $X$ block of every point of that line lies
 	on the line of $\F_q^m$ through $L^{\mathrm{Ln}}_{w_X}$ of the $X$
 	block of the base, in direction $w_X$; symmetrically for the $Z$ block.
+	That identification carries the elementary direction $e_k$ to the
+	elementary direction $e_k$, so a source line whose base is the canonical
+	representative, in its own direction, of the corresponding block of the
+	base of an extended line, and whose direction spans that block of the
+	direction of the extended line, contains the corresponding block of
+	every point of the extended line.
 \end{lemma}
 \begin{proof}
 	\leanok
@@ -1968,7 +1977,11 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	block of $u$ lies on the line through its canonical representative in
 	direction $w_X$ by Lemma~\ref{lem:line-rep-incidence}, so that line is
 	unchanged when its base point is moved along $w_X$
-	(Proposition~\ref{prop:line-equiv}).
+	(Proposition~\ref{prop:line-equiv}). The last assertion is that
+	statement applied to the source line at hand, whose base is by
+	hypothesis the canonical representative in question; the elementary
+	directions correspond because the identification of the two scalar
+	fields preserves $0$ and $1$.
 \end{proof}
 
 \begin{remark}[Property~3 of the sub-line distribution]
