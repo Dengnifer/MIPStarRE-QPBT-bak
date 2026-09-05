@@ -1821,6 +1821,75 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	laws of $D_{\mathrm{ALine},i}$ and $D_{\mathrm{DLine},i}$.
 \end{proof}
 
+
+\begin{lemma}[Formalization support for the coordinate blocks of an extended
+	point]
+	\label{lem:qld-sublines-extended-blocks}
+	\lean{MIPStarRE.QPBT.projX_add}
+	\lean{MIPStarRE.QPBT.projZ_add}
+	\lean{MIPStarRE.QPBT.projX_smul}
+	\lean{MIPStarRE.QPBT.projZ_smul}
+	\lean{MIPStarRE.QPBT.extendedPointBlockEquiv}
+	\lean{MIPStarRE.QPBT.extendedPointBlockEquiv_projX}
+	\lean{MIPStarRE.QPBT.extendedPointBlockEquiv_projZ}
+	\lean{MIPStarRE.QPBT.extendedPointBlockEquiv_alpha}
+	\lean{MIPStarRE.QPBT.extendedPointBlockEquiv_beta}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_extendedPointBlockEquiv}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_projX_projZ}
+	\lean{MIPStarRE.QPBT.projX_directPointToPauli}
+	\lean{MIPStarRE.QPBT.projZ_directPointToPauli}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_directLdSpaceIndexEquiv}
+	\lean{MIPStarRE.QPBT.isCombineLineCompatible_of_blocks}
+	\lean{MIPStarRE.QPBT.isCombineLineCompatible_inherited}
+	\leanok
+	\uses{def:combine-map, def:line, def:ld-question-distribution,
+		def:line-point-dist}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	coordinate bookkeeping of the extended dimension that the proof of
+	Lemma~\ref{lem:qld-sublines} performs whenever it writes a point of
+	$\F_q^{2m+2}$ as $u = (u_X, u_Z, \alpha, \beta)$. The two block
+	projections onto $\F_q^m$ are additive and commute with scalar
+	multiplication. The assignment $u \mapsto (u_X, u_Z, \alpha, \beta)$ is
+	a bijection from $\F_q^{2m+2}$ onto
+	$\F_q^m \times \F_q^m \times \F_q^2$ whose components are the two block
+	projections and the two coordinates $\alpha$ and $\beta$ of
+	Definition~\ref{def:combine-map}; consequently it carries the uniform
+	law to the uniform law, and the pair $(u_X, u_Z)$ of a uniformly random
+	$u$ is a pair of independent uniformly random elements of $\F_q^m$. The
+	block projections commute with the identification of the extended scalar
+	field with the source scalar field. The stored coordinate index, point
+	block and direction block of a uniformly random ambient vector of the
+	directly indexed sampler are independent and uniform. Finally, if the
+	base and direction of an extended line have blocks
+	$u_X = v_X + a_X w_X$, $v_X' = b_X w_X$, $u_Z = v_Z + a_Z w_Z$ and
+	$v_Z' = b_Z w_Z$ relative to two source lines $(v_X, w_X)$ and
+	$(v_Z, w_Z)$, then the extended line is compatible with those two source
+	lines with affine parameters $a_X, b_X, a_Z, b_Z$ and with the $\alpha$
+	and $\beta$ coordinates of its own base and direction; in particular an
+	extended line is always compatible with the two source lines obtained by
+	projecting its base and direction, with both affine
+	reparameterizations the identity.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, def:line}
+	Each block projection is a restriction of a point to a subset of its
+	coordinates, so additivity and homogeneity hold coordinatewise. The
+	displayed assignment is the composition of the relabelling of
+	$\{1, \dots, 2m+2\}$ by the two blocks and the two scalar coordinates
+	with the splitting of a function on a disjoint union into its
+	restrictions, hence a bijection; a bijection carries the uniform law to
+	the uniform law, the first marginal of a uniform law on a product is
+	uniform, and a uniform law on a product is the product of the uniform
+	laws. The transport statement holds coordinatewise, since the
+	identification acts on each coordinate separately. For the compatibility
+	statement, the block of $u + t v$ is the block of $u$ plus $t$ times the
+	block of $v$ by additivity and homogeneity, which after substituting the
+	four displayed identities is
+	$v_X + (a_X + b_X t) w_X$, and symmetrically in the $Z$ block; the four
+	scalar conditions hold by definition.
+\end{proof}
+
 \begin{remark}[Property~3 of the sub-line distribution]
 	\label{rem:qld-sublines-property-three}
 	The source proof of Lemma~\ref{lem:qld-4-13} in \cite{Ji2020MIPStar}
