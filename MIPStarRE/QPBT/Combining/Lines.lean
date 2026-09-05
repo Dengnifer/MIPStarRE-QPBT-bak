@@ -63,7 +63,16 @@ directed opposite-placement comparisons.  This is the formalization-only form
 with an already constructed point witness; the source-facing theorem below
 supplies that witness existentially.  The proof is tracked by issue #18.
 Discharge: formalize the sandwich measurement and the pasting argument in the
-cited proof. -/
+cited proof.
+
+**Error contract:** the polynomial bound printed in the source is carried
+by `IsPolyErr₂`, which states the corrected sum form
+`f x y ≤ C * (x ^ r + y ^ s)` with `1 ≤ C` and positive exponents on the
+closed nonnegative quadrant, in place of the product form `C * (x * y) ^ C`
+of the source shorthand at `04_preliminaries.tex:22-29`.  The correction and
+the two-dimensional strategy that refutes the product form are recorded in
+`docs/paper-gaps/qpbt_pasting-product-error.tex` and tracked by issue #196.
+Here `poly(ε, md/q)` is read in that sense. -/
 theorem exists_combinedLinesWitness_ofPointsWitness :
     ∃ deltaP : ℝ -> ℝ -> ℝ, IsPolyErr₂ deltaP ∧
       ∀ (P : AdmissibleParams) (ε δQ : ℝ) (S : ProjectiveSetting P ε)
@@ -84,13 +93,14 @@ does not assume a `CombinedPointsWitness` as an external bridge input.  It
 quantifies the point error function and witness construction together with the
 line construction, as the preceding source lemma supplies those points.
 
-The proof is exactly that passage from the conditional to the source-facing
-form: the point witness of `lem:qld-4-10` is supplied by
-`exists_combinedPointsWitness` and fed to
-`exists_combinedLinesWitness_ofPointsWitness`.  Both of those source lemmas
-are still unproved, so the axiom closure of this declaration contains
-`sorryAx` until they are discharged; the remaining proof debt is tracked by
-issue #18. -/
+**Error contract:** the polynomial bound printed in the source is carried
+by `IsPolyErr₂`, which states the corrected sum form
+`f x y ≤ C * (x ^ r + y ^ s)` with `1 ≤ C` and positive exponents on the
+closed nonnegative quadrant, in place of the product form `C * (x * y) ^ C`
+of the source shorthand at `04_preliminaries.tex:22-29`.  The correction and
+the two-dimensional strategy that refutes the product form are recorded in
+`docs/paper-gaps/qpbt_pasting-product-error.tex` and tracked by issue #196.
+Here `poly(ε, md/q)` is read in that sense. -/
 theorem exists_combinedLinesWitness :
     ∃ deltaQ : ℝ -> ℝ, IsPolyErr deltaQ ∧
       ∃ deltaP : ℝ -> ℝ -> ℝ, IsPolyErr₂ deltaP ∧
