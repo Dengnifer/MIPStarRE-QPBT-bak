@@ -1168,6 +1168,100 @@ and makes the sandwich projective by the orthonormalization lemma.
 
 \section{Combined line measurements}
 
+\begin{lemma}[Projection estimates for a marginal]
+\label{lem:combined-point-marginal-projection-estimates}
+\lean{MIPStarRE.QPBT.norm_sub_projective_mul_sq_le}
+\lean{MIPStarRE.QPBT.norm_marginal_sub_sq_le}
+\leanok
+These are formalization auxiliaries for the point-marginal calculation in the
+proof of the combined-line theorem, not additional hypotheses of that theorem.
+Let $B$ be a projective measurement on a finite-dimensional Hilbert space,
+let $A,D$ be operators, and let $\psi$ be a vector. Then
+\[
+ \|(A-B_bA)\psi\|^2\leq\|(A-B_bD)\psi\|^2.
+\]
+More generally, let $(Q_b)_b$ be mutually orthogonal projections, not necessarily
+summing to the identity, such that $Q_bB_b=B_bQ_b$. Then
+\[
+ \big\|\big(\sum_b Q_b-D\big)\psi\big\|^2
+ \leq 4\sum_b\|(Q_b-B_bD)\psi\|^2.
+\]
+\end{lemma}
+\begin{proof}
+\leanok
+For the first inequality apply the contraction $I-B_b$ to $A-B_bD$.
+For the second, write $\sum_bQ_b-D=U+V$, where
+\[
+ U=\sum_b Q_b(Q_b-B_bQ_b),\qquad
+ V=\sum_b B_b(Q_b-B_bD).
+\]
+Orthogonality bounds the squared norm of each sum by the sum of the squared
+norms of its right factors. Apply the first inequality to the factors of $U$,
+and then use $\|(U+V)\psi\|^2\leq2\|U\psi\|^2+2\|V\psi\|^2$.
+\end{proof}
+
+\begin{lemma}[Marginals with the supplied point error]
+\label{lem:combined-point-marginals-supplied-error}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.absorb_X_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.absorb_Z_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.marginal_X_distance_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.marginal_Z_distance_le}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.self_consistency_defect_le}
+\leanok
+\uses{lem:combined-point-marginal-projection-estimates, lem:qld-4-10,
+ def:symmetric-equivalents, fact:agreement}
+This is an auxiliary statement for an arbitrary joint point witness whose
+three squared-distance bounds are at most $t$. Fix directed opposite
+placements, and denote the placed effects by $Q_{a,b}^{x,z}$ on the first
+placement and $X_a^x,Z_b^z$ on the second. With uniform independent $x,z$,
+\[
+ \E_{x,z}\sum_{a,b}\|(Q_{a,b}^{x,z}-X_a^xQ_{a,b}^{x,z})\psi\|^2\leq t,
+ \qquad
+ \E_{x,z}\sum_{a,b}\|(Q_{a,b}^{x,z}-Z_b^zQ_{a,b}^{x,z})\psi\|^2\leq t.
+\]
+The squared distances of $\sum_bQ_{a,b}^{x,z}$ from $X_a^x$, and of
+$\sum_aQ_{a,b}^{x,z}$ from $Z_b^z$, are each at most $4t$ after averaging.
+The joint self-consistency defect is at most $t$ under the same uniform law.
+These assertions retain $t$; they do not yet assert the marginal comparisons
+with evaluated line measurements under the line-point law.
+\end{lemma}
+\begin{proof}
+\leanok
+Use the ordered $XZ$ comparison for absorption of $X$ and the ordered $ZX$
+comparison for absorption of $Z$. For the X marginal use the preceding
+lemma with the Z projectors and $D=X_a^x$; for the Z marginal interchange
+the two bases. Opposite placements commute, and projectivity of the joint
+measurement gives orthogonality within each marginal fiber. Average the
+resulting inequalities and use the corresponding supplied error bounds.
+Joint projectivity and the agreement identity convert its supplied
+squared-distance self-consistency bound into a consistency-defect bound.
+\end{proof}
+
+\begin{lemma}[The constructed paired-line POVM]
+\label{lem:combined-line-sandwich-construction}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_effect}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_X}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_Z}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_sum_Z}
+\leanok
+\uses{def:expanded-line-measurement, lem:pasting-measurement}
+This auxiliary records the construction in the proof of the following lemma,
+without asserting its consistency conclusion. On either expanded player space,
+write $X_{f_X}$ and $Z_{f_Z}$ for the expanded line effects at fixed
+$\ell_X,\ell_Z$. Then $T_{f_X,f_Z}=X_{f_X}Z_{f_Z}X_{f_X}$ is a POVM.
+An effect vanishes if either axis-line answer has degree greater than $d$.
+Moreover $\sum_{f_Z}T_{f_X,f_Z}=X_{f_X}$. This last identity concerns this
+construction, not an arbitrary witness of the following existence theorem.
+\end{lemma}
+\begin{proof}
+\leanok
+Positivity and completeness follow by sandwiching a measurement with a
+projective measurement. The axis-degree assertions follow from the vanishing
+of the corresponding expanded line effect. Summing out $Z$ gives
+$X_{f_X}IX_{f_X}=X_{f_X}$ by projectivity.
+\end{proof}
+
 \begin{lemma}[Combined line measurements]
 	\label{lem:qld-xz-lines}
 	\lean{MIPStarRE.QPBT.CombinedLinesWitness}
@@ -1202,6 +1296,7 @@ and makes the sandwich projective by the orthonormalization lemma.
 \end{lemma}
 \begin{proof}
 	\uses{def:expanded-line-measurement, lem:qld-4-10, fact:add-a-proj,
+		lem:combined-point-marginals-supplied-error, lem:combined-line-sandwich-construction,
 		lem:cool-closeness-fact, lem:qld-comm-line-cons, fact:agreement,
 		fact:data-processing, lem:pasting, lem:schwartz-zippel-total-degree,
 		def:symmetric-equivalents}

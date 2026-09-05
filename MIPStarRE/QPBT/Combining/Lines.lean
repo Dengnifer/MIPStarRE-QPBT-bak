@@ -16,6 +16,7 @@ import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
 import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
 import MIPStarRE.QPBT.Combining.Points
 import MIPStarRE.QPBT.Combining.Witnesses
+import MIPStarRE.QPBT.Games.Sandwich
 
 /-!
 # Combined lines and restricted line distributions
@@ -48,10 +49,302 @@ and `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1038-1069`.
 namespace MIPStarRE.QPBT
 
 open MIPStarRE.LDT MIPStarRE.Quantum
+open scoped Matrix MatrixOrder
 
 noncomputable section
 
 /-! ## Combined line measurements -/
+
+/-- Removing the component outside a projective effect is a contraction.
+This is the projection step preceding `eq:qqm`, paper
+`14_analysis_of_the_pauli_basis_test.tex:902-915`. No commutation of the
+two operators being compared is required. -/
+theorem norm_sub_projective_mul_sq_le {α ι : Type*} [Fintype α]
+    [Fintype ι] [DecidableEq ι] (M : Quantum.Measurement α ι)
+    (hM : Measurement.IsProjective M) (a : α) (A D : Op ι)
+    (ψ : EuclideanSpace ℂ ι) :
+    ‖applyOperatorToState (A - M.effect a * A) ψ‖ ^ 2 ≤
+      ‖applyOperatorToState (A - M.effect a * D) ψ‖ ^ 2 := by
+  have hidem := (hM a).isIdempotentElem.eq
+  have hgram : (1 - M.effect a)ᴴ * (1 - M.effect a) ≤ 1 := by
+    rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_one,
+      (hM a).isSelfAdjoint.isHermitian.eq]
+    calc
+      (1 - M.effect a) * (1 - M.effect a) = 1 - M.effect a := by
+        simp only [sub_mul, mul_sub, one_mul, mul_one, hidem]
+        abel
+      _ ≤ 1 := sub_le_self _ (M.pos a)
+  have heq : A - M.effect a * A =
+      (1 - M.effect a) * (A - M.effect a * D) := by
+    simp only [sub_mul, mul_sub, one_mul, ← mul_assoc, hidem]
+    abel
+  rw [heq, DistanceCalculus.applyOperatorToState_mul]
+  exact pow_le_pow_left₀ (norm_nonneg _)
+    (MagicSquareRigidity.norm_applyOperatorToState_le hgram _) 2
+
+/-- Summing a projective refinement close to `B_b D` recovers `D` with
+four times the squared-distance error. This is the calculation from
+`eq:qqm` to `eq:qld-qxz-close-to-point`, paper lines 912--932. Completeness
+is required of `B`, not of the fixed marginal fiber `Q`. -/
+theorem norm_marginal_sub_sq_le {β ι : Type*} [Fintype β]
+    [Fintype ι] [DecidableEq ι] (Q : β → Op ι)
+    (hQ : ∀ b, IsProj (Q b))
+    (horth : ∀ {b c}, b ≠ c → Q b * Q c = 0)
+    (B : Quantum.Measurement β ι) (hB : Measurement.IsProjective B)
+    (hcomm : ∀ b, Q b * B.effect b = B.effect b * Q b)
+    (D : Op ι) (ψ : EuclideanSpace ℂ ι) :
+    ‖applyOperatorToState ((∑ b, Q b) - D) ψ‖ ^ 2 ≤
+      4 * ∑ b, ‖applyOperatorToState (Q b - B.effect b * D) ψ‖ ^ 2 := by
+  classical
+  let U : Op ι := ∑ b, Q b * (Q b - B.effect b * Q b)
+  let V : Op ι := ∑ b, B.effect b * (Q b - B.effect b * D)
+  have hU : ‖applyOperatorToState U ψ‖ ^ 2 ≤
+      ∑ b, ‖applyOperatorToState (Q b - B.effect b * D) ψ‖ ^ 2 := by
+    refine le_trans (DistanceCalculus.norm_finset_sum_projector_mul_sq_le
+      Q (fun b => Q b - B.effect b * Q b) hQ horth Finset.univ ψ) ?_
+    exact Finset.sum_le_sum fun b _ => norm_sub_projective_mul_sq_le B hB b (Q b) D ψ
+  have hV : ‖applyOperatorToState V ψ‖ ^ 2 ≤
+      ∑ b, ‖applyOperatorToState (Q b - B.effect b * D) ψ‖ ^ 2 :=
+    DistanceCalculus.norm_finset_sum_projector_mul_sq_le B.effect
+      (fun b => Q b - B.effect b * D) hB
+      (fun hbc => DistanceCalculus.projective_effect_mul_effect_eq_zero B hB hbc)
+      Finset.univ ψ
+  have hsum : (∑ b, Q b) - D = U + V := by
+    have hfirst : U = ∑ b, (Q b - B.effect b * Q b) := by
+      apply Finset.sum_congr rfl
+      intro b _
+      rw [mul_sub, ← mul_assoc, hcomm b, mul_assoc,
+        (hQ b).isIdempotentElem.eq]
+    have hsecond : V = (∑ b, B.effect b * Q b) - D := by
+      dsimp [V]
+      simp only [mul_sub, ← mul_assoc, (hB _).isIdempotentElem.eq,
+        Finset.sum_sub_distrib, ← Finset.sum_mul, B.sum_eq_one, one_mul]
+    rw [hfirst, hsecond, Finset.sum_sub_distrib]
+    abel
+  rw [hsum]
+  have htriangle : ‖applyOperatorToState (U + V) ψ‖ ≤
+      ‖applyOperatorToState U ψ‖ + ‖applyOperatorToState V ψ‖ := by
+    simpa only [applyOperatorToState, map_add, LinearMap.add_apply] using
+      norm_add_le (applyOperatorToState U ψ) (applyOperatorToState V ψ)
+  have hsquare := pow_le_pow_left₀ (norm_nonneg _) htriangle 2
+  nlinarith [sq_nonneg (‖applyOperatorToState U ψ‖ - ‖applyOperatorToState V ψ‖)]
+
+/-- The joint point witness absorbs the opposite X point projector with
+error at most its actual parameter. This is the X counterpart of the first
+projection step of `lem:qld-xz-lines`, paper lines 902--915, obtained from
+`consistent_XZ` rather than from an assumed marginal identity. -/
+theorem CombinedPointsWitness.absorb_X_le {P : AdmissibleParams} {ε δQ : ℝ}
+    {S : ProjectiveSetting P ε} (points : CombinedPointsWitness S δQ)
+    (p1 p2 : Placement) (hopp : p1.IsOpposite p2) :
+    opFamilyDistSq
+      (uniformDistribution
+        ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P)))
+      (fun xz ab => S.place p1 ((points.Q p1.side xz.1 xz.2).effect ab))
+      (fun xz ab => S.place p2 ((S.pointMeasExp p2.side .X xz.1).effect ab.1) *
+        S.place p1 ((points.Q p1.side xz.1 xz.2).effect ab)) S.psiHat ≤ δQ := by
+  refine le_trans ?_ (points.consistent_XZ p1 p2 hopp)
+  unfold opFamilyDistSq
+  apply avgOver_mono
+  intro xz
+  apply Finset.sum_le_sum
+  intro ab _
+  simpa only [ProjectiveSetting.placedMeasurement_effect, ProjectiveSetting.place_mul]
+    using norm_sub_projective_mul_sq_le
+      (S.placedMeasurement p2 (S.pointMeasExp p2.side .X xz.1))
+      (S.placedMeasurement_isProjective p2 _ (S.pointMeasExp_isProjective _ _ _))
+      ab.1 (S.place p1 ((points.Q p1.side xz.1 xz.2).effect ab))
+      (S.place p2 ((S.pointMeasExp p2.side .Z xz.2).effect ab.2)) S.psiHat
+
+/-- The joint point witness absorbs the opposite Z point projector with
+error at most its actual parameter. This is the first projection step in
+`lem:qld-xz-lines`, paper lines 902--915, derived from `consistent_ZX`. -/
+theorem CombinedPointsWitness.absorb_Z_le {P : AdmissibleParams} {ε δQ : ℝ}
+    {S : ProjectiveSetting P ε} (points : CombinedPointsWitness S δQ)
+    (p1 p2 : Placement) (hopp : p1.IsOpposite p2) :
+    opFamilyDistSq
+      (uniformDistribution
+        ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P)))
+      (fun xz ab => S.place p1 ((points.Q p1.side xz.1 xz.2).effect ab))
+      (fun xz ab => S.place p2 ((S.pointMeasExp p2.side .Z xz.2).effect ab.2) *
+        S.place p1 ((points.Q p1.side xz.1 xz.2).effect ab)) S.psiHat ≤ δQ := by
+  refine le_trans ?_ (points.consistent_ZX p1 p2 hopp)
+  unfold opFamilyDistSq
+  apply avgOver_mono
+  intro xz
+  apply Finset.sum_le_sum
+  intro ab _
+  simpa only [ProjectiveSetting.placedMeasurement_effect, ProjectiveSetting.place_mul]
+    using norm_sub_projective_mul_sq_le
+      (S.placedMeasurement p2 (S.pointMeasExp p2.side .Z xz.2))
+      (S.placedMeasurement_isProjective p2 _ (S.pointMeasExp_isProjective _ _ _))
+      ab.2 (S.place p1 ((points.Q p1.side xz.1 xz.2).effect ab))
+      (S.place p2 ((S.pointMeasExp p2.side .X xz.1).effect ab.1)) S.psiHat
+
+set_option maxHeartbeats 800000 in
+/-- The X marginal of any joint point witness is within squared distance
+`4 * δQ` of the opposite X point measurement. This is
+`eq:qld-qxz-close-to-point`, paper lines 917--932, with the supplied witness
+error retained; the source later specializes to its constructed points. -/
+theorem CombinedPointsWitness.marginal_X_distance_le
+    {P : AdmissibleParams} {ε δQ : ℝ} {S : ProjectiveSetting P ε}
+    (points : CombinedPointsWitness S δQ)
+    (p1 p2 : Placement) (hopp : p1.IsOpposite p2) :
+    opFamilyDistSq
+      (uniformDistribution
+        ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P)))
+      (fun xz a => ∑ b, S.place p1 ((points.Q p1.side xz.1 xz.2).effect (a, b)))
+      (fun xz a => S.place p2 ((S.pointMeasExp p2.side .X xz.1).effect a))
+      S.psiHat ≤ 4 * δQ := by
+  classical
+  refine le_trans ?_ (mul_le_mul_of_nonneg_left (points.consistent_ZX p1 p2 hopp)
+    (by norm_num : (0 : ℝ) ≤ 4))
+  unfold opFamilyDistSq
+  rw [← avgOver_const_mul]
+  apply avgOver_mono
+  intro xz
+  rw [Fintype.sum_prod_type, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro a _
+  simpa only [ProjectiveSetting.placedMeasurement_effect, ProjectiveSetting.place_mul] using
+    norm_marginal_sub_sq_le
+    (fun b => S.place p1 ((points.Q p1.side xz.1 xz.2).effect (a, b)))
+    (fun b => S.placedMeasurement_isProjective p1 _ (points.projective _ _ _) (a, b))
+    (fun hbc => DistanceCalculus.projective_effect_mul_effect_eq_zero
+      (S.placedMeasurement p1 (points.Q p1.side xz.1 xz.2))
+      (S.placedMeasurement_isProjective p1 _ (points.projective _ _ _))
+      (fun hpair => hbc (congrArg Prod.snd hpair)))
+    (S.placedMeasurement p2 (S.pointMeasExp p2.side .Z xz.2))
+    (S.placedMeasurement_isProjective p2 _ (S.pointMeasExp_isProjective _ _ _))
+    (fun b => S.place_comm p1 p2 hopp _ _)
+    (S.place p2 ((S.pointMeasExp p2.side .X xz.1).effect a)) S.psiHat
+
+set_option maxHeartbeats 800000 in
+/-- The Z marginal of any joint point witness is within squared distance
+`4 * δQ` of the opposite Z point measurement. This is the symmetric
+calculation `eq:qld-qxz-close-to-point-2`, paper lines 933--935. -/
+theorem CombinedPointsWitness.marginal_Z_distance_le
+    {P : AdmissibleParams} {ε δQ : ℝ} {S : ProjectiveSetting P ε}
+    (points : CombinedPointsWitness S δQ)
+    (p1 p2 : Placement) (hopp : p1.IsOpposite p2) :
+    opFamilyDistSq
+      (uniformDistribution
+        ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P)))
+      (fun xz b => ∑ a, S.place p1 ((points.Q p1.side xz.1 xz.2).effect (a, b)))
+      (fun xz b => S.place p2 ((S.pointMeasExp p2.side .Z xz.2).effect b))
+      S.psiHat ≤ 4 * δQ := by
+  classical
+  refine le_trans ?_ (mul_le_mul_of_nonneg_left (points.consistent_XZ p1 p2 hopp)
+    (by norm_num : (0 : ℝ) ≤ 4))
+  unfold opFamilyDistSq
+  rw [← avgOver_const_mul]
+  apply avgOver_mono
+  intro xz
+  rw [Fintype.sum_prod_type, Finset.sum_comm, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro b _
+  simpa only [ProjectiveSetting.placedMeasurement_effect, ProjectiveSetting.place_mul] using
+    norm_marginal_sub_sq_le
+    (fun a => S.place p1 ((points.Q p1.side xz.1 xz.2).effect (a, b)))
+    (fun a => S.placedMeasurement_isProjective p1 _ (points.projective _ _ _) (a, b))
+    (fun hac => DistanceCalculus.projective_effect_mul_effect_eq_zero
+      (S.placedMeasurement p1 (points.Q p1.side xz.1 xz.2))
+      (S.placedMeasurement_isProjective p1 _ (points.projective _ _ _))
+      (fun hpair => hac (congrArg Prod.fst hpair)))
+    (S.placedMeasurement p2 (S.pointMeasExp p2.side .X xz.1))
+    (S.placedMeasurement_isProjective p2 _ (S.pointMeasExp_isProjective _ _ _))
+    (fun a => S.place_comm p1 p2 hopp _ _)
+    (S.place p2 ((S.pointMeasExp p2.side .Z xz.2).effect b)) S.psiHat
+
+/-- Joint self-consistency in the consistency-defect convention required by
+`lem:pasting`, retaining the point witness error. This establishes the
+uniform-point estimate; transporting it to line-point samples is separate.
+Source: `eq:qld-q-self-cons` and paper lines 955--960. -/
+theorem CombinedPointsWitness.self_consistency_defect_le
+    {P : AdmissibleParams} {ε δQ : ℝ} {S : ProjectiveSetting P ε}
+    (points : CombinedPointsWitness S δQ)
+    (p1 p2 : Placement) (hopp : p1.IsOpposite p2) :
+    consistencyDefect
+      (uniformDistribution
+        ((Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P)))
+      (fun xz ab => S.place p1 ((points.Q p1.side xz.1 xz.2).effect ab))
+      (fun xz ab => S.place p2 ((points.Q p2.side xz.1 xz.2).effect ab))
+      S.psiHat ≤ δQ := by
+  exact le_trans (consistencyDefect_le_opFamilyDistSq_of_projective _
+    (fun xz : (Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P) =>
+      S.placedMeasurement p1 (points.Q p1.side xz.1 xz.2))
+    (fun xz : (Fin P.m → PauliScalar P) × (Fin P.m → PauliScalar P) =>
+      S.placedMeasurement p2 (points.Q p2.side xz.1 xz.2)) S.psiHat
+    (fun xz => S.placedMeasurement_isProjective p1 _ (points.projective _ xz.1 xz.2))
+    (fun xz => S.placedMeasurement_isProjective p2 _ (points.projective _ xz.1 xz.2)))
+    (points.self_consistent p1 p2 hopp)
+
+/-- The paired-line POVM in the proof of `lem:qld-xz-lines`, paper
+`14_analysis_of_the_pauli_basis_test.tex:942-949`. The X effect is the outer
+projector. This construction does not assert consistency with a point witness. -/
+def ProjectiveSetting.combinedLineMeasurement {P : AdmissibleParams} {ε : ℝ}
+    (S : ProjectiveSetting P ε) (side : PlayerSide)
+    (lineX lineZ : LineDesc P.toLdParams) :
+    Quantum.Measurement (DegPoly P.toLdParams (P.m * P.d) ×
+      DegPoly P.toLdParams (P.m * P.d)) (S.ExpandedLocalSpace side) :=
+  Measurement.ofSumEqOne
+    (fun fs => (S.lineMeasExp side .X lineX).effect fs.1 *
+      (S.lineMeasExp side .Z lineZ).effect fs.2 *
+      (S.lineMeasExp side .X lineX).effect fs.1)
+    (fun fs => (pastedMeasurement_isMeasurement
+      (S.lineMeasExp side .Z lineZ) (S.lineMeasExp side .X lineX)
+      (S.lineMeasExp_isProjective side .X lineX)).1 (fs.2, fs.1))
+    (by
+      classical
+      have hsum := (pastedMeasurement_isMeasurement
+        (S.lineMeasExp side .Z lineZ) (S.lineMeasExp side .X lineX)
+        (S.lineMeasExp_isProjective side .X lineX)).2
+      simp only [pastedMeasurement, Fintype.sum_prod_type] at hsum ⊢
+      rw [Finset.sum_comm]
+      exact hsum)
+
+/-- The effects of the paired-line POVM are the source's X-Z-X sandwiches. -/
+@[simp] theorem ProjectiveSetting.combinedLineMeasurement_effect
+    {P : AdmissibleParams} {ε : ℝ} (S : ProjectiveSetting P ε) (side : PlayerSide)
+    (lineX lineZ : LineDesc P.toLdParams)
+    (fX fZ : DegPoly P.toLdParams (P.m * P.d)) :
+    (S.combinedLineMeasurement side lineX lineZ).effect (fX, fZ) =
+      (S.lineMeasExp side .X lineX).effect fX *
+        (S.lineMeasExp side .Z lineZ).effect fZ *
+        (S.lineMeasExp side .X lineX).effect fX := rfl
+
+/-- The X-axis degree bound for the constructed POVM, from the support
+argument at paper `14_analysis_of_the_pauli_basis_test.tex:949`. -/
+theorem ProjectiveSetting.combinedLineMeasurement_axis_degree_X
+    {P : AdmissibleParams} {ε : ℝ} (S : ProjectiveSetting P ε) (side : PlayerSide)
+    (lineX lineZ : LineDesc P.toLdParams)
+    (fX fZ : DegPoly P.toLdParams (P.m * P.d))
+    (haxis : lineX.kind = .axis) (hf : ¬ fX.FitsDegree P.d) :
+    (S.combinedLineMeasurement side lineX lineZ).effect (fX, fZ) = 0 := by
+  simp only [S.combinedLineMeasurement_effect, S.lineMeasExp_effect,
+    S.expLineOp_zero_of_not_deg_d side .X lineX haxis fX hf, zero_mul]
+
+/-- The Z-axis degree bound for the constructed POVM, from the support
+argument at paper `14_analysis_of_the_pauli_basis_test.tex:949`. -/
+theorem ProjectiveSetting.combinedLineMeasurement_axis_degree_Z
+    {P : AdmissibleParams} {ε : ℝ} (S : ProjectiveSetting P ε) (side : PlayerSide)
+    (lineX lineZ : LineDesc P.toLdParams)
+    (fX fZ : DegPoly P.toLdParams (P.m * P.d))
+    (haxis : lineZ.kind = .axis) (hf : ¬ fZ.FitsDegree P.d) :
+    (S.combinedLineMeasurement side lineX lineZ).effect (fX, fZ) = 0 := by
+  simp only [S.combinedLineMeasurement_effect, S.lineMeasExp_effect,
+    S.expLineOp_zero_of_not_deg_d side .Z lineZ haxis fZ hf, mul_zero, zero_mul]
+
+/-- Summing out Z recovers the X line effect exactly for the constructed
+sandwich. This identity is not assumed of an arbitrary `CombinedLinesWitness`. -/
+theorem ProjectiveSetting.combinedLineMeasurement_sum_Z
+    {P : AdmissibleParams} {ε : ℝ} (S : ProjectiveSetting P ε) (side : PlayerSide)
+    (lineX lineZ : LineDesc P.toLdParams)
+    (fX : DegPoly P.toLdParams (P.m * P.d)) :
+    ∑ fZ, (S.combinedLineMeasurement side lineX lineZ).effect (fX, fZ) =
+      (S.lineMeasExp side .X lineX).effect fX := by
+  simp only [S.combinedLineMeasurement_effect, ← Finset.sum_mul, ← Finset.mul_sum,
+    (S.lineMeasExp side .Z lineZ).sum_eq_one, mul_one]
+  exact (S.lineMeasExp_isProjective side .X lineX fX).1
 
 /-- Conditional joint X/Z line measurements for `lem:qld-xz-lines`.
 
@@ -64,6 +357,15 @@ with an already constructed point witness; the source-facing theorem below
 supplies that witness existentially.  The proof is tracked by issue #18.
 Discharge: formalize the sandwich measurement and the pasting argument in the
 cited proof.
+
+**Quantitative gap (issue #118):** This unproved internal interface still
+omits dependence on the unrestricted supplied point error `δQ`. The proved
+`marginal_X_distance_le` and `marginal_Z_distance_le` retain the bound `4 * δQ`;
+`self_consistency_defect_le` retains `δQ`. The sandwich and its degree bounds
+are constructed above, but the line-point marginal comparisons, pasting, and
+specialization to the constructed point error remain to be proved. See
+`audits/2026-09-06-issue118-point-error-dependency.md`, attempt 2. No corrected
+quantitative interface is adopted by these partial results.
 
 **Error contract:** the polynomial bound printed in the source is carried
 by `IsPolyErr₂`, which states the corrected sum form

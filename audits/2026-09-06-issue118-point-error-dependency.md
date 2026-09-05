@@ -1,5 +1,192 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 2: proved point marginals and the paired-line construction
+
+Session `mathfix-118-20260906-02`, starting September 6, 2026,
+04:27:21 +0800, on integration baseline `b49beae`. The original gap start
+remains September 5, 2026, 19:24 UTC. This is attempt **2 of 10**; neither
+the count nor the approximately one-and-a-half-working-day limit is reset.
+
+**Verdict: useful partial proofs, not a converged correction.** The integration
+baseline removes the dependency reconciliation obstruction described in attempt
+1 below. This attempt proves the previously missing uniform-point marginal
+estimates, joint self-consistency in the defect convention, and the sandwich
+POVM with both axis-degree bounds. It does not adopt a corrected quantitative
+signature for the arbitrary-point line helper. Its existing hole and all three
+holes in `Apply.lean` remain explicit. No witness field, source theorem
+statement, game, or source definition is changed.
+
+### Mathematical statements proved
+
+Fix directed opposite placements and a joint point witness with supplied
+error `t`. Write `Q_ab` for its effects on the first placement and `X_a,Z_b`
+for the expanded point effects on the second; all averages below are over
+independent uniform points `x,z`. The actual witness fields give
+
+\[
+ \mathbb E\sum_{a,b}\|(Q_{ab}-X_aZ_b)\psi\|^2\le t,
+ \qquad
+ \mathbb E\sum_{a,b}\|(Q_{ab}-Z_bX_a)\psi\|^2\le t.
+\]
+
+The new declarations in `Combining/Lines.lean` prove:
+
+1. `CombinedPointsWitness.absorb_X_le` and `absorb_Z_le`: the same average
+   of `||Q_ab-X_a Q_ab||²` and `||Q_ab-Z_b Q_ab||²`, respectively, is at
+   most `t`.
+2. `CombinedPointsWitness.marginal_X_distance_le` and
+   `marginal_Z_distance_le`: the squared operator distances of the marginal
+   sums `sum_b Q_ab` from `X_a` and `sum_a Q_ab` from `Z_b`, respectively,
+   are at most **`4 * t`**. These are uniform-point estimates, not yet the
+   evaluated-line comparisons under the line-point distribution.
+3. `CombinedPointsWitness.self_consistency_defect_le`: joint consistency
+   defect under the uniform point-pair law is at most **`t`**, from the
+   existing projectivity and squared-distance self-consistency fields.
+4. `ProjectiveSetting.combinedLineMeasurement`: for every side and line
+   pair, the effects `X_fX Z_fZ X_fX` form a POVM on the existing local
+   space. The two `combinedLineMeasurement_axis_degree_*` lemmas prove
+   vanishing outside the degree-`d` answers on the respective axis line.
+   `combinedLineMeasurement_sum_Z` proves the exact X marginal identity
+   **for this construction only**, not for arbitrary line witnesses.
+
+The two generic estimates `norm_sub_projective_mul_sq_le` and
+`norm_marginal_sub_sq_le` isolate the linear algebra. The first follows by
+applying the contraction `I-B_b` to `A-B_b D`. For the second, fix a marginal
+fiber of orthogonal projections `Q_b` commuting with the corresponding
+projective effects `B_b`. Set
+
+\[
+ U=\sum_b Q_b(Q_b-B_bQ_b),\qquad
+ V=\sum_b B_b(Q_b-B_bD).
+\]
+
+Projectivity, commutation, and completeness of `B` imply
+`U+V = sum_b Q_b-D`. Orthogonal left multiplication bounds `||U psi||²`
+by `sum_b ||(Q_b-B_bQ_b) psi||²`, and the contraction estimate bounds
+this by `sum_b ||(Q_b-B_bD) psi||²`. Orthogonality of `B` gives the same
+bound for `||V psi||²`. The squared triangle inequality supplies the factor
+four. For the X marginal take `B_b=Z_b,D=X_a`, and use `consistent_ZX`;
+for the Z marginal interchange the indices and use `consistent_XZ`.
+Orthogonality comes from `points.projective`; commutation comes from opposite
+placements, not a new assumption on the source theorem. This is the source
+calculation at `14_analysis_of_the_pauli_basis_test.tex:902-935`, made
+quantitative. The generic proof does not require completeness of the fixed
+fiber `Q_b`, nor commutation of `B_b` with `D`.
+
+Joint self-consistency uses the agreement identity for projective measurements,
+as required at paper lines 955--960. The line POVM proof specializes
+`pastedMeasurement_isMeasurement` with the Z measurement inside the X
+measurement, and relabels the answer pair. Its support proof uses the existing
+expanded line degree bounds. These are precisely the construction and support
+argument at paper lines 942--949. No marginal identity is postulated.
+
+### Counterexample checks and statement integrity
+
+The original obstruction is still an unsupported quantification, not a
+constructed counterexample to the printed theorem. The estimates proved here
+retain `t`, so they do not infer zero error when `epsilon=0` but the supplied
+witness has positive error. At `t=0` the two marginal distances and absorption
+distances vanish. There is no restriction `t<=1`, no division by `t`, and no
+alphabet-size loss. In the generic marginal estimate the zero fiber `Q_b=0`
+is allowed; completeness is used only for `B`. Noncommutation of the two
+line measurements does not affect sandwich positivity or its axis support.
+Only the X marginal of the X-Z-X sandwich is asserted to be exact. These are
+algebraic edge-case checks, backed by universal Lean proofs; no finite
+strategy counterexample search is claimed.
+
+**Statement audit:** the source point calculation assumes the constructed
+projective points, their ordered product comparisons, and opposite placements,
+and concludes closeness of their two marginals to expanded point measurements.
+The auxiliary Lean statements assume an arbitrary witness with those actual
+fields at error `t` and conclude squared-distance bounds `4*t` for both
+marginals. Verdict: explicit quantitative auxiliary with faithful boundary
+types, not a replacement of the source theorem. The generic commutation and
+orthogonality assumptions are discharged from projectivity and placements in
+both witness applications. The source sandwich assumes projective expanded
+line measurements and their axis support, and concludes a POVM with the same
+support; Lean derives exactly these properties from `ProjectiveSetting`.
+The source-facing `exists_combinedLinesWitness`, Claims 17-2 and 17-3, and
+all `Apply.lean` statements and proofs are unchanged.
+
+### Remaining construction and use analysis
+
+The complete source/blueprint use inventory in attempt 1 below remains the
+consumer inventory. In particular the paper uses are restricted averages
+(1058--1061), construction and degree of extended lines (1118--1132), their
+consistency calculation (1241--1246), global pairs (1278--1282), and the
+extraction calculations listed below. The blueprint descendants and three
+prose references listed there remain unmodified. The new auxiliary nodes are
+`lem:combined-point-marginal-projection-estimates`,
+`lem:combined-point-marginals-supplied-error`, and
+`lem:combined-line-sandwich-construction`; only these completed statements and
+proofs receive new completion markers. The combined-line source entry stays
+`notready`.
+
+The next construction steps are now more specific:
+
+1. Express the proved marginal sums as the postprocessed point measurements,
+   transport their `4*t` bounds and joint self-consistency to the product
+   line-point law, and handle the completed `Option` answers faithfully.
+2. Combine them with the expanded line comparisons, retaining dependence on
+   both `epsilon` and `t`. These must prove both actual marginal hypotheses
+   of the one-sided `exists_pasting_error`; they must not be new inputs to
+   the source theorem.
+3. Establish the conditional line-evaluation collision bound, carry out
+   pasting for every directed opposite placement, and prove consistency of
+   the already constructed `combinedLineMeasurement`.
+4. Correct the internal quantitative interface with its proved dependence
+   on `t`, specialize to the constructed `K * epsilon^(1/8)` error, and
+   discharge the additive polynomial error composition. Adapt both
+   arbitrary-point extended-line helpers without changing source statements.
+
+Sufficiency for the complete consumer set and minimality of a final repair
+are **not established**. In particular this attempt does not claim that a
+compiled source wrapper proves the source theorem. The factor four is a
+proved sufficient constant for the intermediate marginal estimate, not an
+optimality claim. Dropping `t`, replacing the supplied points, or assuming
+line marginals remains unjustified. The stronger extended-line error and
+direct-to-source game transport remain the separate obligations documented
+in the baseline; PR 205's paper-gap corrections are not edited here.
+
+### Validation and operator handoff
+
+All checks reuse `/tmp/issue118-lean-validation/lib`. The changed Lean file
+passes targeted type checking. Fresh private artifacts then type-check the
+complete affected import chain `Lines`, `EvalDeficit`, `SubLineDeficit`,
+`Claims`, `QPBT`, and the project root, together with `Apply` as an additional
+task-requested consumer check. Only the existing one line-helper warning and
+three `Apply` warnings remain. There is no new `sorry`, axiom, or bypass.
+All twelve new declarations have axiom dependencies exactly `propext`,
+`Classical.choice`, and `Quot.sound`, with no `sorryAx`.
+
+The declaration checker resolves **1,798** listed declarations, including the
+twelve new links in the locally generated, ignored `blueprint/lean_decls`.
+Blueprint web generation exits successfully, but retains the two unresolved
+labels `lem:qld-sublines-restricted-blocks` and `lem:qld-sublines-seed-blocks`
+and bibliography warnings already present in the integration baseline log;
+it is not a diagnostic-free build. The LaTeX convention check passes. The
+paper-gap style check finds no changed notes. The full blueprint
+synchronization check continues to report the **231 pre-existing stale
+declaration-list entries**; those unrelated entries are not removed. New
+links are present in both the chapter and `blueprint/lean_decls`.
+Logs are `/tmp/issue118-attempt2-*.log`. No full build, shared-cache write,
+subagent, sibling modification, push, post, or merge is performed.
+
+Draft operator announcement for #27: **Attempt 2 proves both uniform-point
+marginals at `4*deltaQ`, joint self-consistency at `deltaQ`, and the line
+sandwich with axis support; pasting and quantitative specialization remain
+open, so no correction is adopted.** No adopted-correction event or design
+decision is appropriate yet. Cumulative working time remains operator-owned;
+the supplied original start and attempt count above are unchanged. At local
+04:47 on September 6, this session has used approximately twenty minutes;
+the elapsed wall time from the original gap start is approximately eighty-three
+minutes, not a measurement of cumulative working time. No new mathematical
+definition or game change requiring an owner decision has been identified.
+
+---
+
+## Attempt 1 record (preserved)
+
 Session `mathfix-118-20260906-01`; attempt **1** for this gap, independently
 of issue 201. Dispatch start: September 6, 2026, 03:24:48 +0800.
 Inspected worktree head: `691b67159f9ead45b9de144df3bd46e015430e70`.
