@@ -403,63 +403,6 @@ noncomputable def ldtPolynomialRightPlaced
   intro G g
   exact heteroKron 1 (G.outcome g)
 
-/-! ## Deprecated names
-
-The names below were used before the constructions above were named after the
-low individual degree test they belong to.  They are retained only because the
-stacked branch `issue-134-simultaneous-polynomial-measurements` refers to them.
--/
-
-/-- Former name of `ldtCoordinatePointMeasurementA`, kept for the stacked
-branch of issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias matureCoordinatePointMeasurementA := ldtCoordinatePointMeasurementA
-
-/-- Former name of `ldtCoordinatePointMeasurementB`, kept for the stacked
-branch of issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias matureCoordinatePointMeasurementB := ldtCoordinatePointMeasurementB
-
-/-- Former name of `ldtPolynomialEvaluationMeasurement`, kept for the stacked
-branch of issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias maturePolynomialEvaluationMeasurement := ldtPolynomialEvaluationMeasurement
-
-/-- Former name of `ldtPointAPlaced`, kept for the stacked branch of
-issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias maturePointAPlaced := ldtPointAPlaced
-
-/-- Former name of `ldtPointBPlaced`, kept for the stacked branch of
-issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias maturePointBPlaced := ldtPointBPlaced
-
-/-- Former name of `ldtPolynomialEvaluationLeft`, kept for the stacked branch
-of issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias maturePolynomialEvaluationLeft := ldtPolynomialEvaluationLeft
-
-/-- Former name of `ldtPolynomialEvaluationRight`, kept for the stacked branch
-of issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias maturePolynomialEvaluationRight := ldtPolynomialEvaluationRight
-
-/-- Former name of `ldtPolynomialLeftPlaced`, kept for the stacked branch of
-issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias maturePolynomialLeftPlaced := ldtPolynomialLeftPlaced
-
-/-- Former name of `ldtPolynomialRightPlaced`, kept for the stacked branch of
-issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias maturePolynomialRightPlaced := ldtPolynomialRightPlaced
-
-/-- Former name of `directLdtPointNonempty`, kept for the stacked branch of
-issue #134. -/
-@[deprecated (since := "2026-09-05")]
-alias directMaturePointNonempty := directLdtPointNonempty
-
 end
 
 end MIPStarRE.QPBT
