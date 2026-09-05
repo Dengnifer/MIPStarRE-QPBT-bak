@@ -3126,3 +3126,35 @@ This file is the raw feed for `local/protocols/EVOLUTION.md`.
   GitHub reads and staging initially hit sandbox restrictions and were retried
   through approved escalation. Evidence and remaining validation limits:
   `results/telemetry/prover-201-20260906-01-validation.md`.
+
+## 2026-09-06 — Issue 118 history-preserving integration (UTC+08:00)
+
+- Session `orc-118-20260906-02` pinned remote issue 201 at
+  `7d0af711c5c6769151e41cf091288855fdb409b0` and issue 117 at
+  `6b4b75d408be5399a1867166bffcc3aa56de6e4b` through `gh_common.py`.
+  Commit `ba43c81` preserves the inherited dirty audit, brief, and telemetry.
+  A direct side-branch merge would budget 2,398 inherited workflow lines;
+  it was restarted with the prerequisite's actual main-history ancestor,
+  not a gate override. Commits `9ca8667` and `425bf13` integrate that ancestor
+  and the pinned pasting head under normal gates. The point head was already
+  an ancestor of the initial branch. Worktree-only hook configuration now
+  selects the complete branch-local guarded layout and passes preflight.
+- Fresh dependency checking exposed removed tensor-lemma namespace references
+  and duplicate declarations that Git's textual merge did not detect.
+  Commit `57332c3` updates two references and removes three duplicate helpers,
+  retaining the shared declarations with the same mathematical statements.
+  All incoming-only paths, both proved claims, and source-facing signatures
+  are preserved; neither sibling branches nor PR 205's implementation are
+  edited. The empty temporary-module-prefix check initially failed and was
+  corrected by copying unchanged dependency artifacts before recompilation.
+- Validation finishes with 225 successful distinct module checks in a private
+  temporary library, successful root import checks, and 1,786 resolved
+  blueprint declarations. The pasting theorem, point construction, and
+  claims 17-2/17-3 have no `sorryAx` dependency. Existing point-to-line and
+  Apply holes remain. Blueprint generation exits zero with pre-existing
+  unresolved-label and bibliography warnings. No full build, shared-cache
+  write, subagent, independent review, push, or merge of a PR ran. Evidence,
+  precise remaining obligations, and temporary-artifact reuse instructions:
+  `local/briefs/118-integration-baseline.md`. Lesson: preserve prerequisite
+  history and refresh the consumer closure; stale-artifact checks alone did
+  not expose these cross-branch name collisions.
