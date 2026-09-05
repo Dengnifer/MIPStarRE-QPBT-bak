@@ -3200,6 +3200,53 @@ constitute a strategy for the classical low individual degree game in $2m+2$
 variables. Applying the quantum soundness of that game yields a single
 projective measurement whose outcomes are pairs of global polynomials.
 
+\begin{lemma}[Restriction and completion of combined polynomial outcomes]
+	\label{lem:qld-combined-pair-completion}
+	\lean{MIPStarRE.QPBT.recoverCombinedPair}
+	\lean{MIPStarRE.QPBT.recoverCombinedPair_combinePoly}
+	\lean{MIPStarRE.QPBT.combinePoly_injective}
+	\lean{MIPStarRE.QPBT.combinedPolyEmbedding}
+	\lean{MIPStarRE.QPBT.combinedPairSubmeasurement}
+	\lean{MIPStarRE.QPBT.combinedPairSubmeasurement_projective}
+	\lean{MIPStarRE.QPBT.combinedPairSubmeasurement_missing}
+	\lean{MIPStarRE.QPBT.completedPairLabel}
+	\lean{MIPStarRE.QPBT.completedPairLabel_combinedPolyEmbedding}
+	\lean{MIPStarRE.QPBT.completedPairLabel_of_not_mem_range}
+	\lean{MIPStarRE.QPBT.completedPairMeasurement}
+	\lean{MIPStarRE.QPBT.completedPairMeasurement_effect}
+	\lean{MIPStarRE.QPBT.completedPairMeasurement_projective}
+	\leanok
+	\uses{def:combine-map, def:polyfunc, def:povm-conventions}
+	This is formalization support for the restriction and completion in the
+	proof of Lemma~\ref{lem:qld-4-7}, not its quantitative conclusion.
+	For admissible $(q,m,d)$, the map
+	$(g_X,g_Z)\mapsto\mathrm{combine}_{g_X,g_Z}$ is injective on bounded
+	individual-degree polynomials. Given a projective measurement
+	$\{T_g\}$ on polynomials in $2m+2$ variables, define
+	$R_{g_X,g_Z}=T_{\mathrm{combine}_{g_X,g_Z}}$, and let $\mathcal G$
+	be the image of the combining map. Then $R$ is a projective
+	sub-measurement, with the exact operator identity
+	\[
+		\Id-\sum_{g_X,g_Z}R_{g_X,g_Z}=\sum_{g\notin\mathcal G}T_g.
+	\]
+	For any specified pair $p_0$, adding this missing operator to $R_{p_0}$
+	and leaving all other effects unchanged gives a projective measurement.
+	No bound on the state mass of the missing operator, or on consistency
+	with point measurements, is asserted here.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, lem:sandwich-postprocess-projective}
+	Substitute $(\alpha,\beta)=(1,0)$ and set the $Z$ variables to zero
+	to recover $g_X$ as a formal polynomial; the opposite substitution
+	recovers $g_Z$. Thus distinct pairs label distinct effects, proving
+	the sub-measurement assertion. Partitioning the outcomes into
+	$\mathcal G$ and its complement gives the operator identity.
+	Relabel each outcome in $\mathcal G$ by its unique pair, and all
+	remaining outcomes by $p_0$. This is precisely the stated completion,
+	and projectivity follows from projective postprocessing.
+\end{proof}
+
 \begin{lemma}[The global polynomial-pair measurement]
 	\label{lem:qld-4-7}
 	\lean{MIPStarRE.QPBT.Poly, MIPStarRE.QPBT.PolyPair, MIPStarRE.QPBT.evalAt}
