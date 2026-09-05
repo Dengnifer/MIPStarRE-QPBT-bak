@@ -1430,6 +1430,71 @@ so it is at most one. Splitting its original average over the retained
 and discarded events proves the restoration estimate.
 \end{proof}
 
+\begin{lemma}[Unequal-dimensional transport for paired-line pasting]
+\label{lem:combined-line-bipartite-transport}
+\lean{MIPStarRE.QPBT.bipartiteSectorState}
+\lean{MIPStarRE.QPBT.bipartiteSectorState_norm}
+\lean{MIPStarRE.QPBT.stateQForm_bipartiteSectorState}
+\lean{MIPStarRE.QPBT.blockMeasurement_postprocess}
+\lean{MIPStarRE.QPBT.consistencyDefect_bipartiteSectorState}
+\lean{MIPStarRE.QPBT.pointMassMeasurement}
+\lean{MIPStarRE.QPBT.pointMassMeasurement_isProjective}
+\lean{MIPStarRE.QPBT.evaluated_pastedMeasurement_block}
+\lean{MIPStarRE.QPBT.exists_pasting_error_heterogeneous}
+\lean{MIPStarRE.QPBT.bbAbBipartition}
+\lean{MIPStarRE.QPBT.bbAbBipartition_apply}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.exists_opposite_bipartition}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.consistencyDefect_bipartition}
+\lean{MIPStarRE.QPBT.evaluated_pastedMeasurement_heteroKron_one}
+\lean{MIPStarRE.QPBT.postprocess_pair_swap_effect}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.self_consistency_conditioned_swapped_defect_le}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_evaluated_eq_pasted}
+\leanok
+\uses{lem:pasting, lem:combined-line-conditioned-product,
+  lem:combined-line-sandwich-construction}
+This is a formalization auxiliary, not the following existence theorem.
+Let $H_L,H_R$ be finite-dimensional Hilbert spaces, possibly of unequal
+dimensions. The isometric inclusion
+$U:H_L\otimes H_R\longrightarrow (H_L\oplus H_R)\otimes(H_L\oplus H_R)$
+into the left-right summand satisfies
+\[
+ \langle U\psi,(A\oplus B)\otimes(C\oplus D)U\psi\rangle
+   =\langle\psi,A\otimes D\,\psi\rangle.
+\]
+For a probability question law, a normalized bipartite state, and nonnegative
+errors $\eta,\delta$, the one-sided pasting estimate holds with the same error
+function for projective joint families $A_L,A_R$ on $H_L,H_R$, respectively: assume its
+two forward marginal comparisons and the comparison of $A_L$ with $A_R$, all
+with error $\delta$, and its conditional collision hypothesis with parameter
+$\eta$. Only the right second line family is required to be projective.
+Then $A_L$ is consistent with the right ordered sandwich with error
+$\delta_{\rm pasting}(\eta,\delta)$.
+
+Every directed opposite expanded placement has such a bipartition, retaining
+the unused EPR pair on the right. Reindexing preserves all its consistency
+defects, and adjoining the unused identity commutes with pasting and
+evaluation. Reversing the completed joint answers preserves their conditional
+self-consistency bound $t/r$. Evaluating the actual $XZX$ line POVM with
+answer order $(Z,X)$ gives exactly the evaluated pasting sandwich with
+$G_1=Z,G_2=X$. These assertions do not yet bound the actual conditional
+line defect or specialize the point error to the constructed witness.
+\end{lemma}
+\begin{proof}
+\leanok
+Place the state in only the left-right direct-sum sector, without adding its
+register exchange. Form the block sum of the two supplied joint families.
+Complete the two line families on the unused left block by deterministic
+projective measurements. A normalized state and a probability question law
+ensure their outcome types are nonempty. Direct sums preserve projectivity,
+postprocessing, and ordered products; the displayed correlation identity
+transports every hypothesis and the conclusion of pasting exactly.
+For the four expanded placement pairs, regroup the six coordinates as
+$AA'\mid BA''(B'B'')$, $BA''\mid AA'(B'B'')$,
+$BB'\mid AB''(A'A'')$, and $AB''\mid BB'(A'A'')$.
+The remaining assertions follow from tensor multiplication and bijective
+relabeling of the two answers. No state or family symmetry is assumed.
+\end{proof}
+
 \begin{lemma}[The constructed paired-line POVM]
 \label{lem:combined-line-sandwich-construction}
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}

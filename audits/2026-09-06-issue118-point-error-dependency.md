@@ -1,5 +1,170 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 6: heterogeneous pasting and all directed register placements
+
+Session `mathfix-118-20260906-06`, baseline
+`391c86e05b7d96f8879f76169ffa2510bf035365`, attempt **6/10**. The original
+budget anchor remains September 5, 2026, 19:24 UTC; this session started at
+22:56:19 UTC. The cumulative working-time total remains operator-owned and
+was not supplied. A read-only inspection of the executing binary's arguments
+confirmed `-m gpt-6-astra -c model_reasoning_effort="xhigh"`, with multi-agent
+features disabled. The legacy dispatch spelling did not result in medium
+effort. No other session was launched or contacted.
+
+### Source boundary and proved mathematical increment
+
+The printed `lem:qld-xz-lines`, paper lines 882--894, asserts the existence
+of paired-line POVMs for the constructed joint points, on either expanded
+player space, with polynomial error in `epsilon, md/q`, independent source
+line-point samples, all directed opposite placements, and degree at most
+`d` on axis lines. Its proof calls pasting at lines 950--963. It remains
+**not disproved**. The missing arbitrary supplied-point error and the
+zero-X-direction collision of `T` with `T+1` remain the two separate
+obstructions recorded in earlier attempts. No public signature is changed
+and no final source correction is adopted.
+
+Seventeen new declarations (fourteen theorems and three proof-only
+definitions) in `Combining/Lines.lean` establish the following:
+
+1. For any finite carriers `left, right`, include a vector on their tensor
+   product into just the `(inl,inr)` sector of two copies of their direct
+   sum. This preserves its norm and gives the exact correlation identity
+   `<U psi, (A ⊕ B) ⊗ (C ⊕ D) U psi> = <psi, A ⊗ D psi>`.
+   Both unused blocks are arbitrary; no exchanged state is added.
+2. Direct sums commute with postprocessing and evaluated ordered pasting.
+   All consistency defects therefore transport exactly.
+3. `exists_pasting_error_heterogeneous` proves the existing one-sided
+   pasting estimate for distinct finite player spaces and the two supplied
+   projective joint families, with **the same error function**. The two
+   forward marginal comparisons and the joint comparison retain their
+   actual errors. The only line projectivity assumption is on the right
+   second family. Deterministic projective measurements are constructed
+   internally only on unused complementary blocks; their outcomes exist
+   by normalization, probability, and completeness. They never replace
+   the supplied measurements. No equal-space, equal-family, reverse
+   marginal, or symmetric-strategy assumption is used.
+4. `ProjectiveSetting.exists_opposite_bipartition` constructs all four
+   directed regroupings, `AA' | BA''(B'B'')`, `BA'' | AA'(B'B'')`,
+   `BB' | AB''(A'A'')`, and `AB'' | BB'(A'A'')`. The accompanying general
+   consistency identity applies to every family on these registers.
+   The unused EPR pair is retained on the right, not traced out.
+5. Adjoining its identity commutes with evaluated pasting. Swapping the
+   completed joint answers preserves their conditional self-consistency
+   bound `deltaQ/r`. Evaluating the **actual** combined-line POVM in order
+   `(Z,X)` is exactly the pasting output with `G1=Z, G2=X`. These identities
+   hold for all descriptors and evaluation points, even off the support.
+
+These are independently proved representation and pasting results, not
+conditional replacements for the unfinished source theorem. The
+heterogeneous theorem uses the existing one-sided API without editing the
+PR 205 publication-repair lane. It does not call the conditional
+register-exchange pasting theorem.
+
+### Correctness and boundary checks
+
+The isometric proof expands finite coordinate sums. Only the left-right
+sector survives, so no dimension-dependent factor, averaging factor, or
+normalization loss occurs. It remains valid on unequal carriers (in
+particular dimensions two and three). Empty carriers give only the zero
+state, so the norm identity still holds; the normalized pasting theorem
+correctly excludes them without a new nonemptiness hypothesis. A probability
+law supplies a sample, and completeness on the nonzero right space supplies
+both deterministic complementary outcomes.
+
+The unused EPR pair may remain entangled with other registers: the transport
+identities use the whole state, not a product-state assumption. The two
+supplied point families can differ. Answer exchange is bijective but the
+evaluation functions need not be; thus the new identities are valid for
+degree zero, large degree, `q=2`, zero Z directions, and even zero X
+directions. The collision theorem itself continues to use the proved
+nonzero-X restriction. These are symbolic edge-case checks within universal
+proofs, not claims of exhaustive finite-strategy enumeration. They do not
+remove the original unrestricted collision counterexample.
+
+### Remaining obligations, sufficiency, and minimality
+
+Attempt 5's unequal-carrier obstruction and all four register identities
+are discharged. The answer-swapped joint input and evaluated sandwich are
+also identified. What remains is the actual quantitative application:
+
+1. Instantiate the heterogeneous pasting theorem with the conditioned
+   families and the constructed bipartition, using the identity on the
+   unused right factor. The two marginal bounds are already in `(Z,X)`
+   order and the new swapped joint bound has error `deltaQ/r`. Derive the
+   common nonnegative bound from the supplied witness and setting.
+2. Transfer the resulting conditional line defect back to `(X,Z)` order
+   and reconcile the duplicated descriptors on the support of
+   `nondegenerateLinePastingDist`. The unrestricted identities for the
+   actual sandwich are proved, but this whole conditional inequality is
+   **not yet a Lean theorem**.
+3. Use the existing mass-restoration inequality, preserving its factor
+   `r` and additive `1/(2q)`. Specialize `deltaQ=K*epsilon^(1/8)`, prove
+   additive polynomial composition and the large-parameter bound, and
+   only then repair the arbitrary-point helpers and adapt `Apply`.
+
+The full source/blueprint/Lean consumer inventory in attempt 1 is unchanged:
+source uses at 1058--1061, 1118--1132, 1241--1246, 1278--1282, 1423,
+1465--1492, 1584, 1627, and 1671; all listed Chapter 15, 16, and 13
+descendants and the three prose references remain to be justified by a
+converged final construction. The new blueprint auxiliary
+`lem:combined-line-bipartite-transport` explicitly states its representation
+scope. The source node remains unfinished. Claims 17-2 and 17-3, games,
+witness fields, and public source declarations are unchanged.
+
+**Sufficiency:** the representation obstruction is removed, but the actual
+conditional line bound and the full mathematical consumer chain are still
+open. **Minimality:** no final correction is claimed. Exact isometries add
+no mathematical restriction or error; equal dimensions, equal point
+families, symmetrizing the state, discarding Z mass, or replacing the point
+witness are unnecessary for this increment. Neither dropping `deltaQ` nor
+using unrestricted completed collisions becomes valid.
+
+### Lean evidence and operator handoff
+
+The edited-file check uses freshly emitted private artifacts, not shared
+cache writes. The structural import closure is `Lines`, `EvalDeficit`,
+`SubLineDeficit`, `Claims`, QPBT, and the project root; `Apply` is checked
+separately as a semantic consumer of the unchanged witness contract.
+All seven files pass, with fresh private artifacts at
+`/tmp/issue118-lean-validation/lib`, prefixed inside the `lake env` child
+shell. Validation logs have prefix `/tmp/issue118-attempt6-`. Direct proof
+debt remains one hole in `Lines` and three in `Apply`. Each of the seventeen
+new declarations has axiom set exactly `{propext, Classical.choice,
+Quot.sound}`; none depends on a source-theorem hole, `sorryAx`, or native
+decision procedures. The source-header audit reports no changed public
+source-labelled signatures. The worktree hook-installation check passes.
+
+Paper-gap style and blueprint LaTeX checks pass. The paper-gap note also
+compiles to a twelve-page PDF in `/tmp/issue118-attempt6-gap-pdf`.
+Blueprint web generation succeeds with exactly the same warning/error
+lines as attempt 5 (including the two inherited unresolved subline labels
+and missing bibliography entries). All **1,865** generated declaration
+references resolve against the fresh private root artifact. Static sync
+still reports **231 baseline stale entries** and **15 baseline statements
+with header-only proof-status tags**; it is not a clean global sync report.
+All seventeen new declarations have explicit auxiliary blueprint links.
+No full build, baseline rebuild, shared-cache write, paper-mirror edit,
+PR 205 lane edit, independent-review action, publication, merge, or runtime
+state edit is performed.
+
+Statement integrity: the paper and public Lean assumptions and conclusions
+are unchanged. The new heterogeneous assertion explicitly quantifies a
+normalized state, probability law, two projective supplied joint families,
+right line POVMs with the second projective, nonnegative errors, the
+conditional collision bound, two forward marginal bounds, and joint
+consistency. Its conclusion is the same one-sided pasting estimate, with
+unchanged error function. The coordinate and answer identities have no
+error assumptions. Verdict: proved formalization auxiliaries; not an
+adopted correction of the source existence theorem. No definition/game
+change requiring an owner decision has been identified.
+
+Unposted operator draft: "#118 attempt 6 proves unequal-dimensional
+one-sided pasting, all directed expanded bipartitions, and swapped joint
+and evaluated-sandwich identities; the actual conditional application and
+quantitative specialization remain open. No correction adopted."
+The operator owns any announcement and telemetry entries; none is posted
+or edited by this session.
+
 ## Attempt 5: the product collision predicate and conditioned operator families
 
 Session `mathfix-118-20260906-05`, baseline

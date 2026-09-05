@@ -434,12 +434,65 @@ $XZX$ line POVM and the supplied completed points; it does not assert a
 bound on their conditional defect. These results are linked by the separate
 auxiliary blueprint node \texttt{lem:combined-line-conditioned-product}.
 
-\paragraph{Remaining operator construction and quantitative dependence.}
+\paragraph{Unequal local spaces and the unused EPR pair.}
+The local spaces need not have equal dimensions. Let $H_L,H_R$ denote the
+two sides of a bipartition and include $H_L\otimes H_R$ isometrically in
+$(H_L\oplus H_R)\otimes(H_L\oplus H_R)$, using only its left-right
+summand. Write $U$ for this inclusion. For arbitrary operators on the
+indicated spaces,
+\[
+ \langle U\psi,(A\oplus B)\otimes(C\oplus D)U\psi\rangle
+   =\langle\psi,A\otimes D\,\psi\rangle.
+\]
+This is not symmetrization: there is no exchanged copy of the state and no
+factor of $1/2$. Its proof expands the finite coordinate sums; every term
+outside the left-right sector is zero. In particular, the inclusion
+preserves norms and consistency defects exactly.
+
+Take the block sum of the supplied projective joint families on $H_L$ and
+$H_R$. On the unused left block, complete each right line measurement by a
+deterministic measurement. These outcomes exist because a normalized state
+has nonzero right space, the question law has nonempty support, and a
+complete measurement on a nonzero space has an outcome. These deterministic
+blocks never replace the supplied measurements: the displayed identity
+shows that they contribute nothing to any comparison. Direct sums commute
+with outcome postprocessing and ordered products and preserve projectivity.
+Applying the existing one-sided pasting theorem on the common carrier
+therefore proves its heterogeneous version, with the same error function,
+the same two forward marginal errors, and the self-consistency comparison
+between the two supplied joint families. No reverse marginal comparison or
+equality of those families is required. Both supplied joint families are
+projective, as the point witness already guarantees.
+
+For the expanded state, all four directed bipartitions have now been
+constructed: $AA'\mid BA''(B'B'')$, $BA''\mid AA'(B'B'')$,
+$BB'\mid AB''(A'A'')$, and $AB''\mid BB'(A'A'')$.
+The unused EPR pair remains in the right space; it is not traced out or
+replaced by an independence assumption. Coordinate reindexing preserves the
+placed consistency defects. Adjoining the identity of this unused factor
+commutes with evaluated pasting. Exchanging the two completed answers
+preserves the supplied joint self-consistency bound $t/r$, and evaluating
+the actual line POVM in the order $(Z,X)$ gives exactly the pasting output
+with $G_1=Z,G_2=X$. These are proved representation identities, valid even
+for zero directions; the collision estimate still uses only the previously
+specified nonzero-X restriction. They are recorded in the separate
+blueprint auxiliary \texttt{lem:combined-line-bipartite-transport}.
+
+The coordinate identities hold also for empty finite carriers, when every
+state is zero; normalization excludes this case in the pasting application.
+Unequal dimensions introduce no normalization loss. The answer-exchange and
+unused-factor identities require neither injective evaluation nor a product
+state. Thus they introduce no exception at degree zero, at $q=2$, or on a
+zero Z direction. These are symbolic boundary checks covered by the proofs,
+not a claim to have enumerated all finite strategies.
+
+\paragraph{Remaining operator application and quantitative dependence.}
 The supplied joint-point marginals already have proved bounds
 $u=8t+C(\eps+\sqrt\eps)$ for a universal $C\ge1$; joint self-consistency
 has bound $t$. Conditioning on nondegenerate $X$ lines therefore retains
-both errors, with the marginal bound $u/r$. After the product-question and
-register reindexings have been verified, one-sided pasting would give
+both errors, with the marginal bound $u/r$. The heterogeneous pasting theorem
+and register identities are now proved. Applying them to these actual
+families and reconciling the duplicated descriptors on the support would give
 $D_0(\rho^{1/4}+(u/r)^{1/8})$ on the conditional law. Restoring its mass
 would give
 \[
@@ -452,16 +505,14 @@ $u\le(8K+2C)\eps^{1/8}$, while $1/(2q)\le\rho/2$ since $md\ge1$.
 Thus this calculation has the additive polynomial form
 $O(\rho^{1/4}+\eps^{1/64})$. Larger parameters can use the unit bound for
 normalized POVM consistency. This is an analysis of the proposed operator
-construction, not an adopted Lean signature: the bipartite register
-transport, the one-sided operator application, the final conditional
+construction, not an adopted Lean signature: the one-sided operator
+application to the actual families, the final conditional
 consistency bound, and its specialization in \path{Combining/Apply.lean}
-remain to be completed. In particular, the current pasting API uses a state
-on two copies of one finite carrier, whereas the opposite expanded player
-spaces can have different dimensions and the bipartition carries an unused
-EPR pair. An isometric enlargement and its effect and state identities, or
-a proved heterogeneous-carrier version, is still needed. Equality of the
-player dimensions or equality of the two supplied point families must not
-be introduced as a source hypothesis.
+remain to be completed. The equal-carrier interface is no longer a
+representation obstruction: the proved isometric inclusion eliminates it
+without assuming equal player dimensions or equal supplied point families.
+The source existence theorem is still not disproved, and neither final
+mathematical sufficiency nor minimality of a source correction is established.
 
 The affected source uses are the restricted averages at lines 1058--1061,
 extended-line construction and degree at 1118--1132, and consistency at

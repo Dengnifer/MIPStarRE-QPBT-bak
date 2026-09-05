@@ -1615,6 +1615,429 @@ theorem ProjectiveSetting.combinedLineMeasurement_consistency_le_conditioned
       (fun polys => (evalOpt sample.1.1 sample.1.2 polys.1,
         evalOpt sample.2.1 sample.2.2 polys.2)))
 
+/-! ## Unequal-dimensional bipartite transport -/
+
+open DistanceCalculus in
+/-- Isometric inclusion of a bipartite vector in the left-right sector of a
+common direct-sum carrier. Unlike symmetrization, this does not average the
+state with its register exchange. This formalization auxiliary supports the
+pasting step at paper `14_analysis_of_the_pauli_basis_test.tex:950-963`; see
+`docs/paper-gaps/qpbt_combined-lines-error-term.tex`. -/
+def bipartiteSectorState {left right : Type*} [Fintype left] [Fintype right]
+    (state : EuclideanSpace ℂ (left × right)) :
+    EuclideanSpace ℂ ((left ⊕ right) × (left ⊕ right)) :=
+  (EuclideanSpace.equiv _ ℂ).symm fun indices =>
+    match indices with
+    | (Sum.inl first, Sum.inr second) => state.ofLp (first, second)
+    | _ => 0
+
+/-- The one-sector inclusion preserves the norm, including for unequal or
+empty finite carriers. This is a formalization-only transport identity. -/
+theorem bipartiteSectorState_norm {left right : Type*} [Fintype left] [Fintype right]
+    (state : EuclideanSpace ℂ (left × right)) :
+    ‖bipartiteSectorState state‖ = ‖state‖ := by
+  apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
+  simp [EuclideanSpace.norm_sq_eq, bipartiteSectorState,
+    Fintype.sum_prod_type, Fintype.sum_sum_type]
+
+open DistanceCalculus in
+/-- Direct-sum operators on the one-sector state have exactly the original
+heterogeneous bipartite correlations. The two unused blocks are arbitrary;
+there is no assumption equating the local spaces or their measurements. -/
+theorem stateQForm_bipartiteSectorState {left right : Type*}
+    [Fintype left] [DecidableEq left] [Fintype right] [DecidableEq right]
+    (state : EuclideanSpace ℂ (left × right))
+    (first unusedLeft : Op left) (unusedRight second : Op right) :
+    stateQForm (bipartiteSectorState state)
+      (heteroKron (ProjStrat.localDirectSumBlock first unusedRight)
+        (ProjStrat.localDirectSumBlock unusedLeft second)) =
+      stateQForm state (heteroKron first second) := by
+  unfold stateQForm
+  rw [EuclideanSpace.inner_eq_star_dotProduct, EuclideanSpace.inner_eq_star_dotProduct]
+  change Complex.re (∑ row : (left ⊕ right) × (left ⊕ right),
+      (∑ column : (left ⊕ right) × (left ⊕ right),
+        heteroKron (ProjStrat.localDirectSumBlock first unusedRight)
+          (ProjStrat.localDirectSumBlock unusedLeft second) row column *
+          (bipartiteSectorState state).ofLp column) *
+            star (bipartiteSectorState state).ofLp row) =
+    Complex.re (∑ row : left × right,
+      (∑ column : left × right, heteroKron first second row column * state.ofLp column) *
+        star (state.ofLp row))
+  simp [Fintype.sum_prod_type, Fintype.sum_sum_type, bipartiteSectorState,
+    heteroKron, Matrix.kronecker, ProjStrat.localDirectSumBlock]
+
+/-- Direct sums commute with classical postprocessing of outcomes. This
+formalization auxiliary permits the same common-carrier inclusion for both
+point marginals and the completed joint measurement. -/
+theorem blockMeasurement_postprocess {answer result left right : Type*}
+    [Fintype answer] [DecidableEq answer] [Fintype result] [DecidableEq result]
+    [Fintype left] [DecidableEq left] [Fintype right] [DecidableEq right]
+    (first : Quantum.Measurement answer left) (second : Quantum.Measurement answer right)
+    (evaluate : answer → result) :
+    (blockMeasurement first second).postprocess evaluate =
+      blockMeasurement (first.postprocess evaluate) (second.postprocess evaluate) := by
+  apply MIPStarRE.Quantum.Measurement.ext
+  intro output
+  exact (ProjStrat.localDirectSumBlock_finset_sum
+    (Finset.univ.filter fun input => evaluate input = output) first.effect second.effect)
+
+open DistanceCalculus in
+/-- Every consistency defect is preserved by the one-sector inclusion. This
+identity applies to arbitrary operator families, so it also transports the
+pasted, postprocessed sandwich without requiring a new measurement witness. -/
+theorem consistencyDefect_bipartiteSectorState {question answer left right : Type*}
+    [Fintype question] [DecidableEq question] [Fintype answer] [DecidableEq answer]
+    [Fintype left] [DecidableEq left] [Fintype right] [DecidableEq right]
+    (law : Distribution question) (state : EuclideanSpace ℂ (left × right))
+    (first unusedLeft : question → answer → Op left)
+    (unusedRight second : question → answer → Op right) :
+    consistencyDefect law
+      (fun query output => heteroKron
+        (ProjStrat.localDirectSumBlock (first query output) (unusedRight query output)) 1)
+      (fun query output => heteroKron 1
+        (ProjStrat.localDirectSumBlock (unusedLeft query output) (second query output)))
+      (bipartiteSectorState state) =
+    consistencyDefect law (fun query output => heteroKron (first query output) 1)
+      (fun query output => heteroKron 1 (second query output)) state := by
+  unfold consistencyDefect
+  congr 1
+  funext query
+  apply Finset.sum_congr rfl
+  intro output _
+  apply Finset.sum_congr rfl
+  intro other _
+  split_ifs
+  · rfl
+  · simp only [consistency_term_eq_stateQForm, heteroKron_mul,
+      Matrix.mul_one, Matrix.one_mul]
+    exact stateQForm_bipartiteSectorState state _ _ _ _
+
+/-- A projective measurement concentrated at one outcome. It is used only on
+the unused direct-sum block of the isometric inclusion, never in place of a
+supplied point or line measurement. -/
+def pointMassMeasurement {answer carrier : Type*} [Fintype answer] [DecidableEq answer]
+    [Fintype carrier] [DecidableEq carrier] (chosen : answer) :
+    Quantum.Measurement answer carrier :=
+  Quantum.Measurement.ofSumEqOne (fun output => if output = chosen then 1 else 0)
+    (fun output => by split_ifs; exact zero_le_one; exact le_rfl) (by simp)
+
+/-- The unused-block point mass is projective. -/
+theorem pointMassMeasurement_isProjective {answer carrier : Type*}
+    [Fintype answer] [DecidableEq answer] [Fintype carrier] [DecidableEq carrier]
+    (chosen : answer) :
+    MIPStarRE.QPBT.Measurement.IsProjective
+      (pointMassMeasurement (carrier := carrier) chosen) := by
+  intro output
+  change IsProj (if output = chosen then (1 : Op carrier) else 0)
+  split_ifs
+  · exact IsStarProjection.one _
+  · exact IsStarProjection.zero _
+
+/-- Pasting and evaluation commute with a direct sum of the local
+measurements. This algebraic identity preserves the order of the sandwich. -/
+theorem evaluated_pastedMeasurement_block {firstAnswer secondAnswer result left right : Type*}
+    [Fintype firstAnswer] [Fintype secondAnswer] [DecidableEq result]
+    [Fintype left] [DecidableEq left] [Fintype right] [DecidableEq right]
+    (firstLeft : firstAnswer → Op left) (secondLeft : secondAnswer → Op left)
+    (firstRight : firstAnswer → Op right) (secondRight : secondAnswer → Op right)
+    (evaluate : firstAnswer → secondAnswer → result) (output : result) :
+    (∑ first, ∑ second, if evaluate first second = output then
+      pastedMeasurement (fun answer => ProjStrat.localDirectSumBlock
+        (firstLeft answer) (firstRight answer))
+        (fun answer => ProjStrat.localDirectSumBlock
+          (secondLeft answer) (secondRight answer)) first second else 0) =
+    ProjStrat.localDirectSumBlock
+      (∑ first, ∑ second, if evaluate first second = output then
+        pastedMeasurement firstLeft secondLeft first second else 0)
+      (∑ first, ∑ second, if evaluate first second = output then
+        pastedMeasurement firstRight secondRight first second else 0) := by
+  simp only [pastedMeasurement, ProjStrat.localDirectSumBlock_mul]
+  ext row column
+  cases row <;> cases column <;>
+    simp [Matrix.sum_apply, Matrix.ite_apply, ProjStrat.localDirectSumBlock]
+
+/-- The one-sided pasting estimate on possibly different finite local spaces,
+with the two supplied projective joint families retained. This is an exact
+isometric consequence of `exists_pasting_error`, not a new source assumption
+or a symmetric-strategy argument. The common-carrier state occupies only the
+left-right sector, so the deterministic complementary blocks do not contribute
+to any correlation. The error function is unchanged. Source application:
+`lem:qld-xz-lines`, paper `14_analysis_of_the_pauli_basis_test.tex:950-963`;
+see `docs/paper-gaps/qpbt_combined-lines-error-term.tex`. -/
+theorem exists_pasting_error_heterogeneous :
+    ∃ pastingError : ℝ → ℝ → ℝ, IsPolyErr₂ pastingError ∧
+      ∀ {common firstQuestion secondQuestion firstResult secondResult
+          firstAnswer secondAnswer left right : Type*}
+        [Fintype common] [DecidableEq common]
+        [Fintype firstQuestion] [DecidableEq firstQuestion]
+        [Fintype secondQuestion] [DecidableEq secondQuestion]
+        [Fintype firstResult] [DecidableEq firstResult]
+        [Fintype secondResult] [DecidableEq secondResult]
+        [Fintype firstAnswer] [DecidableEq firstAnswer]
+        [Fintype secondAnswer] [DecidableEq secondAnswer]
+        [Fintype left] [DecidableEq left] [Fintype right] [DecidableEq right]
+        (law : Distribution ((common × firstQuestion) × secondQuestion))
+        (evaluateFirst : firstAnswer → firstQuestion → firstResult)
+        (evaluateSecond : secondAnswer → secondQuestion → secondResult)
+        (first : common → Quantum.Measurement firstAnswer right)
+        (second : common → Quantum.Measurement secondAnswer right)
+        (jointLeft : ((common × firstQuestion) × secondQuestion) →
+          Quantum.Measurement (firstResult × secondResult) left)
+        (jointRight : ((common × firstQuestion) × secondQuestion) →
+          Quantum.Measurement (firstResult × secondResult) right)
+        (state : EuclideanSpace ℂ (left × right)) (collision error : ℝ),
+        law.IsProbability → ‖state‖ = 1 → 0 ≤ collision → 0 ≤ error →
+        (∀ query, MIPStarRE.QPBT.Measurement.IsProjective (second query)) →
+        (∀ query, MIPStarRE.QPBT.Measurement.IsProjective (jointLeft query)) →
+        (∀ query, MIPStarRE.QPBT.Measurement.IsProjective (jointRight query)) →
+        HasConditionalCollisionBound law evaluateSecond collision →
+        consistencyDefect law
+          (fun query output => heteroKron
+            (((jointLeft query).postprocess Prod.fst).effect output) 1)
+          (fun query output => heteroKron 1 (((first query.1.1).postprocess
+            (fun answer => evaluateFirst answer query.1.2)).effect output)) state ≤ error →
+        consistencyDefect law
+          (fun query output => heteroKron
+            (((jointLeft query).postprocess Prod.snd).effect output) 1)
+          (fun query output => heteroKron 1 (((second query.1.1).postprocess
+            (fun answer => evaluateSecond answer query.2)).effect output)) state ≤ error →
+        consistencyDefect law (fun query output => heteroKron
+          ((jointLeft query).effect output) 1)
+          (fun query output => heteroKron 1 ((jointRight query).effect output)) state ≤ error →
+        consistencyDefect law
+          (fun query output => heteroKron ((jointLeft query).effect output) 1)
+          (fun query output => heteroKron 1 (∑ firstAnswer, ∑ secondAnswer,
+            if (evaluateFirst firstAnswer query.1.2, evaluateSecond secondAnswer query.2) =
+              output then pastedMeasurement (first query.1.1).effect
+                (second query.1.1).effect firstAnswer secondAnswer else 0)) state ≤
+          pastingError collision error := by
+  classical
+  obtain ⟨pastingError, hpoly, hpasting⟩ := exists_pasting_error
+  refine ⟨pastingError, hpoly, ?_⟩
+  intro common firstQuestion secondQuestion firstResult secondResult firstAnswer secondAnswer
+    left right _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ law evaluateFirst evaluateSecond
+    first second jointLeft jointRight state collision error hlaw hstate hcollision herror
+    hsecond hjointLeft hjointRight hcoll hfirst hsecondMarginal hjoint
+  haveI : Nonempty (left × right) := nonempty_of_unit_vector state hstate
+  haveI : Nonempty right := ⟨(Classical.arbitrary (left × right)).2⟩
+  let query := Classical.choice (nonempty_of_probability law hlaw)
+  let firstDefault := pointMassMeasurement (carrier := left)
+    (Classical.choice (measurement_outcome_nonempty (first query.1.1)))
+  let secondDefault := pointMassMeasurement (carrier := left)
+    (Classical.choice (measurement_outcome_nonempty (second query.1.1)))
+  have hbound := hpasting law evaluateFirst evaluateSecond
+    (fun query => blockMeasurement firstDefault (first query))
+    (fun query => blockMeasurement secondDefault (second query))
+    (fun query => blockMeasurement (jointLeft query) (jointRight query))
+    (bipartiteSectorState state) collision error hlaw
+    ((bipartiteSectorState_norm state).trans hstate) hcollision herror
+    (fun query => blockMeasurement_isProjective _ _
+      (pointMassMeasurement_isProjective _) (hsecond query))
+    (fun query => blockMeasurement_isProjective _ _ (hjointLeft query) (hjointRight query))
+    hcoll
+  simp only [blockMeasurement_postprocess] at hbound
+  simp only [blockMeasurement, Quantum.Measurement.ofSumEqOne] at hbound
+  simp_rw [consistencyDefect_bipartiteSectorState] at hbound
+  have hresult := hbound hfirst hsecondMarginal hjoint
+  simp_rw [evaluated_pastedMeasurement_block, consistencyDefect_bipartiteSectorState] at hresult
+  exact hresult
+
+/-- The fourth directed bipartition, with `BB'` first, `AB''` second, and
+the unused `A'A''` pair retained on the second side. This is a coordinate
+equivalence, not an identification of the two strategy-player spaces. -/
+def bbAbBipartition (params : AdmissibleParams) (left right : Type*) :
+    SixReg params left right ≃
+      (right × PauliRegister params) ×
+        ((left × PauliRegister params) × (PauliRegister params × PauliRegister params)) where
+  toFun indices := ((indices.2.1, indices.2.2.1),
+    ((indices.1.1, indices.2.2.2), (indices.1.2.1, indices.1.2.2)))
+  invFun indices := ((indices.2.1.1, (indices.2.2.1, indices.2.2.2)),
+    (indices.1.1, (indices.1.2, indices.2.1.2)))
+  left_inv indices := by cases indices; rfl
+  right_inv indices := by cases indices; rfl
+
+/-- Coordinates of the `BB' | AB''(A'A'')` bipartition. -/
+@[simp] theorem bbAbBipartition_apply (params : AdmissibleParams) (left right : Type*)
+    (indices : SixReg params left right) :
+    bbAbBipartition params left right indices =
+      ((indices.2.1, indices.2.2.1),
+        ((indices.1.1, indices.2.2.2), (indices.1.2.1, indices.1.2.2))) := rfl
+
+set_option synthInstance.maxSize 400 in
+/-- Every directed opposite placement has an actual heterogeneous
+bipartition. The unused EPR pair is included on the right. This discharges the
+register identities needed for the application of pasting in all symmetric
+equivalents of `lem:qld-xz-lines`, paper
+`14_analysis_of_the_pauli_basis_test.tex:959-963`. -/
+theorem ProjectiveSetting.exists_opposite_bipartition {params : AdmissibleParams}
+    {error : ℝ} (setting : ProjectiveSetting params error)
+    (first second : Placement) (hopposite : first.IsOpposite second) :
+    ∃ equivalence : SixReg params setting.toStrategy.ιA setting.toStrategy.ιB ≃
+        setting.ExpandedLocalSpace first.side ×
+          (setting.ExpandedLocalSpace second.side ×
+            (PauliRegister params × PauliRegister params)),
+      (∀ operator : Op (setting.ExpandedLocalSpace first.side),
+        reindexOp equivalence (heteroKron operator 1) = setting.place first operator) ∧
+      (∀ operator : Op (setting.ExpandedLocalSpace second.side),
+        reindexOp equivalence (heteroKron 1 (heteroKron operator
+          (1 : Op (PauliRegister params × PauliRegister params)))) =
+          setting.place second operator) := by
+  classical
+  cases first <;> cases second <;> try exact False.elim hopposite
+  · exact ⟨aaBaBipartition params _ _, setting.reindexOp_aaBaBipartition_left,
+      setting.reindexOp_aaBaBipartition_right⟩
+  · exact ⟨baAaBipartition params _ _, setting.reindexOp_baAaBipartition_left,
+      setting.reindexOp_baAaBipartition_right⟩
+  · refine ⟨bbAbBipartition params _ _, ?_, ?_⟩
+    · intro operator
+      ext row column
+      change operator (row.2.1, row.2.2.1) (column.2.1, column.2.2.1) *
+        (1 : Op ((setting.toStrategy.ιA × PauliRegister params) ×
+          (PauliRegister params × PauliRegister params)))
+          ((row.1.1, row.2.2.2), row.1.2) ((column.1.1, column.2.2.2), column.1.2) = _
+      simp only [ProjectiveSetting.place, Matrix.one_apply, Prod.ext_iff]
+      split_ifs <;> simp_all
+    · intro operator
+      ext row column
+      change (1 : Op (setting.toStrategy.ιB × PauliRegister params))
+        (row.2.1, row.2.2.1) (column.2.1, column.2.2.1) *
+          (operator (row.1.1, row.2.2.2) (column.1.1, column.2.2.2) *
+            (1 : Op (PauliRegister params × PauliRegister params)) row.1.2 column.1.2) = _
+      simp only [ProjectiveSetting.place, Matrix.one_apply, Prod.ext_iff]
+      split_ifs <;> simp_all
+  · exact ⟨abBbBipartition params _ _, setting.reindexOp_abBbBipartition_left,
+      setting.reindexOp_abBbBipartition_right⟩
+
+set_option synthInstance.maxSize 400 in
+open DistanceCalculus in
+/-- Coordinate transport of arbitrary placed operator families through a
+specified opposite bipartition. The two identities are representation data,
+constructed for every opposite pair by `exists_opposite_bipartition`; no
+mathematical approximation or extra assumption on the strategy is introduced. -/
+theorem ProjectiveSetting.consistencyDefect_bipartition {params : AdmissibleParams}
+    {error : ℝ} (setting : ProjectiveSetting params error) (first second : Placement)
+    (equivalence : SixReg params setting.toStrategy.ιA setting.toStrategy.ιB ≃
+      setting.ExpandedLocalSpace first.side ×
+        (setting.ExpandedLocalSpace second.side × (PauliRegister params × PauliRegister params)))
+    (hfirst : ∀ operator : Op (setting.ExpandedLocalSpace first.side),
+      reindexOp equivalence (heteroKron operator 1) = setting.place first operator)
+    (hsecond : ∀ operator : Op (setting.ExpandedLocalSpace second.side),
+      reindexOp equivalence (heteroKron 1 (heteroKron operator
+        (1 : Op (PauliRegister params × PauliRegister params)))) =
+        setting.place second operator)
+    {question answer : Type*} [Fintype question] [DecidableEq question]
+    [Fintype answer] [DecidableEq answer] (law : Distribution question)
+    (firstFamily : question → answer → Op (setting.ExpandedLocalSpace first.side))
+    (secondFamily : question → answer → Op (setting.ExpandedLocalSpace second.side)) :
+    consistencyDefect law (fun query output => heteroKron (firstFamily query output) 1)
+      (fun query output => heteroKron 1 (heteroKron (secondFamily query output)
+        (1 : Op (PauliRegister params × PauliRegister params))))
+      (reindexState equivalence setting.psiHat) =
+    consistencyDefect law (fun query output => setting.place first (firstFamily query output))
+      (fun query output => setting.place second (secondFamily query output)) setting.psiHat := by
+  unfold consistencyDefect
+  congr 1
+  funext query
+  apply Finset.sum_congr rfl
+  intro output _
+  apply Finset.sum_congr rfl
+  intro other _
+  split_ifs
+  · rfl
+  · rw [consistency_term_eq_stateQForm, consistency_term_eq_stateQForm,
+      WinImplications.stateQForm_reindexState, WinImplications.reindexOp_mul,
+      hfirst, hsecond]
+
+/-- An unused tensor factor commutes with both the ordered sandwich and its
+evaluation. This identity keeps the unused EPR pair when applying the
+heterogeneous pasting theorem to the expanded state. -/
+theorem evaluated_pastedMeasurement_heteroKron_one
+    {firstAnswer secondAnswer result carrier unused : Type*}
+    [Fintype firstAnswer] [Fintype secondAnswer] [DecidableEq result]
+    [Fintype carrier] [DecidableEq carrier] [Fintype unused] [DecidableEq unused]
+    (first : firstAnswer → Op carrier) (second : secondAnswer → Op carrier)
+    (evaluate : firstAnswer → secondAnswer → result) (output : result) :
+    (∑ firstAnswer, ∑ secondAnswer, if evaluate firstAnswer secondAnswer = output then
+      pastedMeasurement (fun answer => heteroKron (first answer) (1 : Op unused))
+        (fun answer => heteroKron (second answer) (1 : Op unused)) firstAnswer secondAnswer
+      else 0) =
+    heteroKron (∑ firstAnswer, ∑ secondAnswer,
+      if evaluate firstAnswer secondAnswer = output then
+        pastedMeasurement first second firstAnswer secondAnswer else 0) (1 : Op unused) := by
+  simp only [pastedMeasurement, heteroKron_mul, mul_one]
+  ext row column
+  simp [heteroKron, Matrix.kronecker, Matrix.sum_apply, Matrix.ite_apply,
+    Finset.sum_mul, ite_mul]
+
+/-- Reversing a paired postprocessing reverses the effect's answer index.
+This formalization identity is valid without an injectivity assumption on the
+evaluation functions, including completed evaluation at a degenerate line. -/
+theorem postprocess_pair_swap_effect {answer first second carrier : Type*}
+    [Fintype answer] [DecidableEq answer] [Fintype first] [DecidableEq first]
+    [Fintype second] [DecidableEq second] [Fintype carrier] [DecidableEq carrier]
+    (measurement : Quantum.Measurement answer carrier) (evaluate : answer → first × second)
+    (output : second × first) :
+    (measurement.postprocess (fun answer => (evaluate answer).swap)).effect output =
+      (measurement.postprocess evaluate).effect output.swap := by
+  simp only [Quantum.Measurement.postprocess_effect]
+  congr 1
+  ext answer
+  simp [Prod.ext_iff, and_comm]
+
+/-- Joint self-consistency on the conditioned law in the Z-then-X order
+required by the X-outer sandwich. This retains exactly the supplied two point
+families and their error, and discharges the answer permutation in the third
+pasting input at paper `14_analysis_of_the_pauli_basis_test.tex:961-963`. -/
+theorem CombinedPointsWitness.self_consistency_conditioned_swapped_defect_le
+    {params : AdmissibleParams} {error pointError : ℝ}
+    {setting : ProjectiveSetting params error} (points : CombinedPointsWitness setting pointError)
+    (first second : Placement) (hopposite : first.IsOpposite second) :
+    consistencyDefect (nondegenerateLinePastingDist params.toLdParams)
+      (fun query output => setting.place first
+        (((points.Q first.side query.2.2 query.1.2.2).postprocess
+          (fun pair => (some pair.2, some pair.1))).effect output))
+      (fun query output => setting.place second
+        (((points.Q second.side query.2.2 query.1.2.2).postprocess
+          (fun pair => (some pair.2, some pair.1))).effect output)) setting.psiHat ≤
+      pointError / nondegenerateLinePastingMass params.toLdParams := by
+  classical
+  simp_rw [show (fun pair : PauliScalar params × PauliScalar params =>
+      (some pair.2, some pair.1)) =
+        (fun pair => (some pair.1, some pair.2).swap) from rfl,
+    postprocess_pair_swap_effect]
+  have hswap := consistencyDefect_outcome_equiv
+    (nondegenerateLinePastingDist params.toLdParams)
+    (Equiv.prodComm (Option (PauliScalar params)) (Option (PauliScalar params)))
+    (fun query output => setting.place first
+      (((points.Q first.side query.2.2 query.1.2.2).postprocess
+        (fun pair => (some pair.1, some pair.2))).effect output))
+    (fun query output => setting.place second
+      (((points.Q second.side query.2.2 query.1.2.2).postprocess
+        (fun pair => (some pair.1, some pair.2))).effect output)) setting.psiHat
+  exact hswap.trans_le
+    (points.self_consistency_conditioned_completed_defect_le first second hopposite)
+
+/-- Evaluating the actual X-outer paired-line POVM in Z-then-X answer order
+gives precisely the evaluated sandwich in the one-sided pasting conclusion.
+This is an identity for all descriptors and points, not only on the support
+of the conditioned law. Source: `eq:qld-4-13-1`, paper
+`14_analysis_of_the_pauli_basis_test.tex:950-963`. -/
+theorem ProjectiveSetting.combinedLineMeasurement_evaluated_eq_pasted
+    {params : AdmissibleParams} {error : ℝ} (setting : ProjectiveSetting params error)
+    (side : PlayerSide) (lineX lineZ : LineDesc params.toLdParams)
+    (pointX pointZ : Fin params.m → PauliScalar params)
+    (output : Option (PauliScalar params) × Option (PauliScalar params)) :
+    ((setting.combinedLineMeasurement side lineX lineZ).postprocess
+      (fun polys => (evalOpt lineZ pointZ polys.2, evalOpt lineX pointX polys.1))).effect output =
+    ∑ polyZ, ∑ polyX,
+      if (evalOpt lineZ pointZ polyZ, evalOpt lineX pointX polyX) = output then
+        pastedMeasurement (setting.lineMeasExp side .Z lineZ).effect
+          (setting.lineMeasExp side .X lineX).effect polyZ polyX else 0 := by
+  classical
+  rw [Quantum.Measurement.postprocess_effect, Finset.sum_filter, Fintype.sum_prod_type]
+  simp_rw [setting.combinedLineMeasurement_effect_eq_pastedMeasurement]
+  exact Finset.sum_comm
+
 /-! ## Restricted line distributions -/
 
 /-- The axis and diagonal line-point laws are uniform mixtures of their
