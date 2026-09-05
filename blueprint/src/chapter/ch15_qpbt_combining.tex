@@ -2284,6 +2284,96 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	summing over the second coordinate and then over the first.
 \end{proof}
 
+\begin{lemma}[Formalization support for reshuffling products of finitely
+	supported laws]
+	\label{lem:qld-sublines-shuffle-rules}
+	\lean{MIPStarRE.QPBT.Distribution.prod_support}
+	\lean{MIPStarRE.QPBT.Distribution.prod_weight}
+	\lean{MIPStarRE.QPBT.Distribution.map_bijective_eq}
+	\lean{MIPStarRE.QPBT.Distribution.prod_map_right}
+	\leanok
+	\uses{def:line-point-dist}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	rewriting rules that pass between two groupings of the same independent
+	blocks. Let $\mu$ and $\nu$ be finitely supported laws on sets $A$ and
+	$B$. The support of the product of $\mu$ and $\nu$ is the product of
+	their supports and its weight at a pair is the product of the weights.
+	If $f \colon A \to B$ has a two-sided inverse, matches the two supports
+	and carries each weight of $\mu$ to the corresponding weight of $\nu$,
+	the push-forward of $\mu$ by $f$ is $\nu$. Finally, the product of $\mu$
+	with the push-forward of $\nu$ by a map $g$ is the push-forward of the
+	product of $\mu$ and $\nu$ by the map acting by $g$ on the second
+	coordinate.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:line-point-dist}
+	The first two assertions are the definition of the product. For the
+	third, the fiber of $f$ over a point is the singleton of its inverse
+	image when that inverse image lies in the support and is empty
+	otherwise, and in the second case both weights vanish. For the last,
+	the fiber of the map acting on the second coordinate alone is the
+	product of a full support with a fiber, and the sum over that product
+	factors.
+\end{proof}
+
+\begin{lemma}[Formalization support for the projected marginals of the
+	sub-line law]
+	\label{lem:qld-sublines-projected-marginals}
+	\lean{MIPStarRE.QPBT.lineDesc_axis_congr}
+	\lean{MIPStarRE.QPBT.lineDesc_diagonal_congr}
+	\lean{MIPStarRE.QPBT.subLineSourceLine_congr}
+	\lean{MIPStarRE.QPBT.lineRepMap_projX_subLineExtLine_point}
+	\lean{MIPStarRE.QPBT.lineRepMap_projZ_subLineExtLine_point}
+	\lean{MIPStarRE.QPBT.restrictedLinePointDist_eq_map_prod}
+	\lean{MIPStarRE.QPBT.subLineXComponentDist_eq_map_prod}
+	\lean{MIPStarRE.QPBT.subLineZComponentDist_eq_map_prod}
+	\lean{MIPStarRE.QPBT.subLineBranchRaw_map_joint}
+	\leanok
+	\uses{def:combine-map, def:ith-restricted-line, def:line-point-dist,
+		def:line-representative, lem:qld-sublines-branch-directions,
+		lem:qld-sublines-product-rules, lem:qld-sublines-restricted-blocks,
+		lem:qld-sublines-sampling, lem:qld-sublines-seed-blocks,
+		lem:qld-sublines-shuffle-rules}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	last step of the proof of Lemma~\ref{lem:qld-sublines}. Two line
+	descriptions of the same kind with the same seed, the same direction
+	data and the same base agree, since the stored invariants are
+	propositions; hence a source line of a branch depends on its point block
+	only through the canonical representative of that block in its own
+	direction. That representative is unchanged when the drawn extended
+	point is replaced by any point of the extended line, because the
+	corresponding block of the direction of the extended line lies in the
+	line spanned by the source direction. The restricted line-point law of a
+	kind at an index is the law of the source line of that kind decoded from
+	a uniform point block, a scalar seed in the coordinate-index fiber of
+	the index and a uniform direction block, together with that point block;
+	the component laws of a pair of indices are the corresponding products.
+	Consequently, at a fixed kind and a fixed extended coordinate, the joint
+	law of the two source lines of a sampled triple together with the two
+	source blocks of a uniform point of its extended line is the law of the
+	two source lines decoded from two independent restricted blocks together
+	with their two point blocks.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, def:ith-restricted-line, def:line-point-dist,
+		def:line-representative, lem:qld-sublines-branch-directions,
+		lem:qld-sublines-product-rules, lem:qld-sublines-restricted-blocks,
+		lem:qld-sublines-sampling, lem:qld-sublines-seed-blocks,
+		lem:qld-sublines-shuffle-rules}
+	Since a uniform point of the line through the canonical representative
+	of a uniform point is a uniform point, the drawn point may be replaced
+	throughout by the point that is finally retained; the two source lines
+	are unchanged by that replacement. The remaining law is a product of six
+	independent blocks: the two source point blocks of the retained point,
+	the two scalar seeds, and the two source direction blocks of the drawn
+	direction, the two blocks of a uniform extended vector being independent
+	and uniform. Regrouping those six blocks into the two restricted
+	products carried by the two indices of the branch is a bijection
+	matching supports and weights.
+\end{proof}
+
 \begin{lemma}[Formalization support for the sampling procedure of the sub-line
 	distribution]
 	\label{lem:qld-sublines-sampling}

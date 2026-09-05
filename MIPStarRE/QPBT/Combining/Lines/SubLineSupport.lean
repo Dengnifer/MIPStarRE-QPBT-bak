@@ -127,8 +127,11 @@ theorem ldSeedEvent_positive (L : LdParams) (i : Fin L.m) :
 
 /-! ## Canonical representatives are unchanged by the conditioning maps -/
 
-/-- Two axis-line descriptions with the same seed and base agree. -/
-private theorem lineDesc_axis_congr {L : LdParams}
+/-- Two axis-line descriptions with the same seed and the same base agree:
+the stored proof of `def:line-representative` invariance is a proposition and
+carries no further data.  Blueprint `ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem lineDesc_axis_congr {L : LdParams}
     {b b' : Fin L.m → ScalarQ L} {s : ScalarQ L} (h : b = b')
     (hb : lineRepMap (coordinateDirection (chiIndex L s)) b = b)
     (hb' : lineRepMap (coordinateDirection (chiIndex L s)) b' = b') :
@@ -136,9 +139,12 @@ private theorem lineDesc_axis_congr {L : LdParams}
   subst h
   rfl
 
-/-- Two diagonal-line descriptions with the same seed, base and direction
-agree. -/
-private theorem lineDesc_diagonal_congr {L : LdParams}
+/-- Two diagonal-line descriptions with the same seed, the same base and the
+same direction agree: the stored proofs of `def:line-representative`
+invariance and of the prefix-zero condition are propositions and carry no
+further data.  Blueprint `ch15_qpbt_combining.tex:1499-1697`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`. -/
+theorem lineDesc_diagonal_congr {L : LdParams}
     {b b' d d' : Fin L.m → ScalarQ L} {s : ScalarQ L}
     (hb : b = b') (hd : d = d')
     (h1 : lineRepMap d b = b)

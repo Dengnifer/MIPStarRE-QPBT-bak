@@ -8,6 +8,8 @@ import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
 import MIPStarRE.QPBT.Combining.Lines.SubLineProduct
 import MIPStarRE.QPBT.Combining.Lines.SubLineSeed
+import MIPStarRE.QPBT.Combining.Lines.SubLineShuffle
+import MIPStarRE.QPBT.Combining.Lines.SubLineSource
 import MIPStarRE.QPBT.Combining.Lines.SubLineSupport
 import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
 import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
