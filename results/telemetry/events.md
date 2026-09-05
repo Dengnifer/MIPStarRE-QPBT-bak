@@ -2927,3 +2927,11 @@ This file is the raw feed for `local/protocols/EVOLUTION.md`.
   daemon queue. All original safety findings were resolved by independent review.
 - Re-ran the owner's model-comparison report at this operational boundary.
   Secondary capacity is available for useful work, not a slot-filling quota.
+
+## 2026-09-06T01:30+08:00 — Codex session rows omit the selected model
+
+- The model-comparison report had to recover Codex models from rollout files or
+  time-based inference because `sessions.jsonl` did not record the model passed
+  by `dispatch.sh`; the inference cannot reliably preserve per-dispatch
+  `MIPSTARRE_CODEX_MODEL` overrides. Issue #231 requests recording the exact
+  explicit selection on new rows while leaving historical rows unchanged.
