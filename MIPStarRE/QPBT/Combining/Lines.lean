@@ -5,6 +5,7 @@ import MIPStarRE.QPBT.Combining.Lines.SubLineBlocks
 import MIPStarRE.QPBT.Combining.Lines.SubLineBranch
 import MIPStarRE.QPBT.Combining.Lines.SubLineConstruct
 import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
+import MIPStarRE.QPBT.Combining.Lines.SubLineMixture
 import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
 import MIPStarRE.QPBT.Combining.Lines.SubLineProduct
 import MIPStarRE.QPBT.Combining.Lines.SubLineSeed
@@ -254,11 +255,41 @@ its proof at lines 1071--1116.  The witness uses the directly indexed extended
 line law described in `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`, so
 the statement has no divisibility hypothesis.  Its `source_mixture` field
 asserts only the separate X and Z marginal mixtures, not a stronger joint
-conditional law.  The proof is tracked by issue #18.  Discharge: formalize the
-two sampling cases of the cited construction for `DirectLineDesc`. -/
+conditional law.
+
+The witness is the sub-line law `subLineDist` of the sampling procedure: a
+line kind and an extended coordinate are drawn uniformly, an extended point
+and an extended direction are drawn uniformly and independently, and two
+scalar seeds are drawn independently in the coordinate-index fibers of the two
+source indices of that coordinate; the triple is the canonical line of the
+drawn kind through the extended point together with the two source lines of
+the same kind decoded from the two coordinate blocks and from the two seeds.
+Its pointwise fields are `subLineTripleOf_incidence`,
+`subLineTripleOf_compatibility` and `subLineTripleOf_axis_closure`, applied to
+the auxiliary randomness supplied by `exists_raw_of_mem_subLineDist_support`;
+its extended-line marginal is `subLineDist_map_fst`; and its two projected
+point marginals are the mixtures of `subLineDist_source_mixture`. -/
 theorem exists_subLineWitness (P : AdmissibleParams) :
     Nonempty (SubLineWitness P) := by
-  sorry
+  refine ⟨{ D := subLineDist P
+            isProbability := subLineDist_isProbability P
+            extended_marginal := subLineDist_map_fst P
+            incidence := ?_
+            compatibility := ?_
+            source_mixture := subLineDist_source_mixture P
+            axis_closure := ?_ }⟩
+  · intro sample hsample u hu
+    obtain ⟨kind, k, w, hx, hz, rfl⟩ :=
+      exists_raw_of_mem_subLineDist_support P hsample
+    exact subLineTripleOf_incidence P kind k w hx hz hu
+  · intro sample hsample
+    obtain ⟨kind, k, w, hx, hz, rfl⟩ :=
+      exists_raw_of_mem_subLineDist_support P hsample
+    exact subLineTripleOf_compatibility P kind k w hx hz
+  · intro sample hsample haxis
+    obtain ⟨kind, k, w, hx, hz, rfl⟩ :=
+      exists_raw_of_mem_subLineDist_support P hsample
+    exact subLineTripleOf_axis_closure P kind k w haxis
 
 end
 

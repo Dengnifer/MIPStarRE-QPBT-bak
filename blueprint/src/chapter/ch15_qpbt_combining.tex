@@ -1499,7 +1499,7 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 \begin{lemma}[The sub-line distribution]
 	\label{lem:qld-sublines}
 	\lean{MIPStarRE.QPBT.SubLineWitness, MIPStarRE.QPBT.exists_subLineWitness}
-	\notready
+	\leanok
 	\uses{def:line, def:line-point-dist, def:ith-restricted-line}
 	% Statement as in the source (references/qpbt-paper/
 	% 14_analysis_of_the_pauli_basis_test.tex, lem:qld-sublines). The
@@ -1555,9 +1555,12 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	Remark~\ref{rem:qld-sublines-property-three}.)
 \end{lemma}
 \begin{proof}
+	\leanok
 	\uses{def:line-representative, def:ld-question-distribution,
 		def:line-point-dist, def:ith-restricted-line, def:line,
-		prop:line-equiv}
+		prop:line-equiv, lem:qld-sublines-branch-directions,
+		lem:qld-sublines-sampling, lem:qld-sublines-projected-marginals,
+		lem:qld-sublines-projected-mixtures}
 	The distribution $D$ is described by a sampling procedure. First sample
 	$(\ell, u)$ from the line-point distribution over $\F_q^{2m+2}$ and write
 	$u = (u_X, u_Z, \alpha, \beta)$, so that Property~1 holds by
@@ -1691,6 +1694,29 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	on its line, because under each restricted distribution the point is
 	uniform on the line conditionally on the line. The equivalent product
 	formulations follow from the same conditional uniformity.
+
+	The formalization carries out this procedure with the extended
+	line-point distribution in its directly indexed form, which removes the
+	divisibility obligation recorded above, and with the two auxiliary index
+	choices made deterministically rather than uniformly: the source $X$
+	index is the stored extended coordinate when that coordinate lies in the
+	$X$ block and is the first coordinate otherwise, and the source $Z$ index
+	is the stored extended coordinate when that coordinate lies in the $Z$
+	block and is the first coordinate otherwise
+	(Lemma~\ref{lem:qld-sublines-branch-directions}); the two scalar seeds
+	are then drawn independently and uniformly in the classes of those two
+	indices, and the two source directions are read off the corresponding
+	blocks of the direction of $\ell$ as above. The sampling procedure and
+	Properties~1 and~3, together with the containments of Property~2, are
+	Lemma~\ref{lem:qld-sublines-sampling}; the identification of the
+	projected law at a fixed kind and a fixed extended coordinate is
+	Lemma~\ref{lem:qld-sublines-projected-marginals}; and the assembly of
+	the two mixtures is
+	Lemma~\ref{lem:qld-sublines-projected-mixtures}. Since Property~2
+	asserts only that the joint law of $(\ell_X, \ell_Z, u)$ is some
+	mixture of the products
+	$D_{\mathrm{v},i} \times D_{\mathrm{v},j}$, the deterministic index
+	assignment establishes it exactly as the uniform one does.
 \end{proof}
 
 \begin{lemma}[Formalization support for the sub-line sampling procedure]
@@ -2472,6 +2498,61 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	extended coordinate of the uniform law of the extended point and direction
 	is the uniform law of an extended direct sample under the index-first
 	decomposition.
+\end{proof}
+
+\begin{lemma}[Formalization support for the projected mixtures of the
+	sub-line law]
+	\label{lem:qld-sublines-projected-mixtures}
+	\lean{MIPStarRE.QPBT.subLinePointDist_bind}
+	\lean{MIPStarRE.QPBT.subLineBranchDist_eq_bind}
+	\lean{MIPStarRE.QPBT.subLineBranchDist_map_subLineXProjection_at}
+	\lean{MIPStarRE.QPBT.subLineBranchDist_map_subLineZProjection_at}
+	\lean{MIPStarRE.QPBT.subLineComponentBranch}
+	\lean{MIPStarRE.QPBT.subLineComponentDist}
+	\lean{MIPStarRE.QPBT.subLineComponentDist_isProbability}
+	\lean{MIPStarRE.QPBT.subLineBranchDist_map_subLineXProjection}
+	\lean{MIPStarRE.QPBT.subLineBranchDist_map_subLineZProjection}
+	\lean{MIPStarRE.QPBT.subLineDist_map_subLineXProjection}
+	\lean{MIPStarRE.QPBT.subLineDist_map_subLineZProjection}
+	\lean{MIPStarRE.QPBT.subLineDist_source_mixture}
+	\leanok
+	\uses{def:ith-restricted-line, def:line-point-dist,
+		lem:qld-sublines-mixture-rules, lem:qld-sublines-product-rules,
+		lem:qld-sublines-projected-marginals, lem:qld-sublines-sampling}
+	This is not a named statement of \cite{Ji2020MIPStar}; it assembles the
+	two projected point marginals of the sub-line law of
+	Lemma~\ref{lem:qld-sublines}. Drawing a uniform point of the extended
+	line of a mixture of line-triple laws is the corresponding mixture of the
+	uniform-point laws, and one branch of the sampling procedure, read at a
+	fixed extended coordinate, is the law of the triple decoded from the
+	auxiliary randomness of that coordinate; the projected law of that branch
+	at that coordinate is the component law of the pair of source indices
+	assigned to the coordinate. Let the mixing law be the equal mixture over
+	the two kinds of the law of the pair of source indices assigned to a
+	uniform extended coordinate; it is a probability law. Then each of the
+	two one-point projected marginals of the sub-line law is the mixture,
+	along that law, of the corresponding component laws of the restricted
+	products.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:ith-restricted-line, def:line-point-dist,
+		lem:qld-sublines-mixture-rules, lem:qld-sublines-product-rules,
+		lem:qld-sublines-projected-marginals, lem:qld-sublines-sampling}
+	A product with a fixed independent factor distributes over a mixture and
+	a push-forward commutes with a mixture
+	(Lemma~\ref{lem:qld-sublines-mixture-rules}); the first assertion and
+	the branch decomposition follow. At a fixed kind and a fixed extended
+	coordinate, pushing the first factor of the product with the uniform
+	affine parameter forward and composing the two push-forwards
+	(Lemma~\ref{lem:qld-sublines-product-rules}) presents the projected law
+	of that branch as the law identified in
+	Lemma~\ref{lem:qld-sublines-projected-marginals}. Mixing over the
+	extended coordinate and then over the two kinds, and reindexing each
+	mixture along the push-forward that assigns to a coordinate its pair of
+	source indices (Lemma~\ref{lem:qld-sublines-mixture-rules}), yields the
+	two displayed mixtures. Total mass is preserved by mixtures and
+	push-forwards.
 \end{proof}
 
 \begin{remark}[Property~3 of the sub-line distribution]
