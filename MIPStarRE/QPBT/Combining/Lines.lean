@@ -173,7 +173,7 @@ measurements placed on opposite registers inflates by at most `4 m ^ 2` when
 both line-point coordinates are restricted.  Blueprint
 `blueprint/src/chapter/ch15_qpbt_combining.tex:595-646`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1058-1061`. -/
-private theorem consistencyDefect_restricted_prod_le {P : AdmissibleParams}
+theorem consistencyDefect_restricted_prod_le {P : AdmissibleParams}
     {ε δ : ℝ} {α : Type*} [Fintype α] [DecidableEq α]
     (S : ProjectiveSetting P ε) (p₁ p₂ : Placement) (hopp : p₁.IsOpposite p₂)
     (M₁ : ((LineDesc P.toLdParams × (Fin P.m -> PauliScalar P)) ×

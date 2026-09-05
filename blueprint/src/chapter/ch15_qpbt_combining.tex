@@ -2577,11 +2577,12 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	\label{lem:qld-4-10-same-placement}
 	\lean{MIPStarRE.QPBT.Placement.exists_isOpposite}
 	\lean{MIPStarRE.QPBT.CombinedPointsWitness.orderedZX_dist_le}
+	\lean{MIPStarRE.QPBT.CombinedPointsWitness.orderedXZ_dist_le}
 	\leanok
 	\uses{lem:qld-4-10, def:povm-distance, def:expanded-point-measurement,
 		def:symmetric-equivalents}
 	This formalization-only auxiliary is not a named statement of the paper;
-	it restates the ordered $Z$-then-$X$ display of
+	it restates the two ordered displays of
 	Lemma~\ref{lem:qld-4-10} with both families on one and the same
 	placement, which is the form the three claims below use. Each of the four
 	placements has an opposite placement, and the relation is symmetric on
@@ -2594,15 +2595,18 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 		\hat{M}^{(\mathrm{Point},X),x}_{a} \Big)_{\mathsf{P}}
 		\ket{\hat\psi} \Big\rVert^2 \le 4 \, \delta_Q ,
 	\]
-	the average being over independent uniform $x, z \in \F_q^m$.
+	the average being over independent uniform $x, z \in \F_q^m$, and
+	likewise with the ordered $X$-then-$Z$ product
+	$\hat{M}^{(\mathrm{Point},X),x}_{a} \hat{M}^{(\mathrm{Point},Z),z}_{b}$
+	in place of the $Z$-then-$X$ product.
 \end{lemma}
 \begin{proof}
 	\leanok
 	\uses{lem:qld-4-10, fact:triangle}
 	Insert the joint point measurement placed on the opposite placement. The
 	self-consistency display of Lemma~\ref{lem:qld-4-10} bounds the first
-	step by $\delta_Q$ and the ordered display bounds the second step by
-	$\delta_Q$, so the squared-distance triangle inequality
+	step by $\delta_Q$ and the corresponding ordered display bounds the
+	second step by $\delta_Q$, so the squared-distance triangle inequality
 	(Fact~\ref{fact:triangle}) gives the bound $2\delta_Q + 2\delta_Q$.
 \end{proof}
 
@@ -2647,6 +2651,71 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	square root of the average.
 \end{proof}
 
+\begin{lemma}[Formalization support for Lemma~\ref{lem:qld-4-13}: the deficit form of the Cauchy--Schwarz step]
+	\label{lem:overlap-gap-deficit}
+	\lean{MIPStarRE.QPBT.norm_inner_applyOperatorToState_le_sqrt_mul_sqrt}
+	\lean{MIPStarRE.QPBT.abs_avgOver_sum_re_inner_le_sqrt_mul_sqrt}
+	\lean{MIPStarRE.QPBT.abs_avgOver_sum_stateQForm_mul_mul_le_sqrt_mul_sqrt}
+	\lean{MIPStarRE.QPBT.avgOver_sum_stateQForm_mul_le_one}
+	\lean{MIPStarRE.QPBT.abs_overlap_gap_le_sqrt_one_sub_of_isProj}
+	\lean{MIPStarRE.QPBT.abs_overlap_gap_le_sqrt_one_sub_of_isProj'}
+	\lean{MIPStarRE.QPBT.abs_avgOver_sum_stateQForm_mul_le_sqrt_of_isProj}
+	\lean{MIPStarRE.QPBT.abs_avgOver_sum_stateQForm_mul_le_sqrt_of_isProj'}
+	\leanok
+	\uses{def:povm-distance, def:consistency, def:expanded-state}
+	This formalization-only auxiliary is not a named statement of the paper;
+	it is the Cauchy--Schwarz step of the proofs of
+	Lemmas~\ref{lem:claim-17-2} and~\ref{lem:claim-17-3}, in which both
+	factors carry the square root of the line effect. Let $\mu$ be a
+	probability distribution on a question set, let $\{A^x_a\}_a$ be a
+	measurement for each question $x$, let $\{P^x_a\}_a$ and $\{R^x_a\}_a$ be
+	two families of projections, each commuting with every $A^x_a$, and let
+	$\ket{\psi}$ be a unit vector. Then
+	\[
+		\Big\lvert \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a P^x_a R^x_a
+		\ket{\psi} \Big\rvert \le
+		\Big( \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a P^x_a \ket{\psi}
+		\Big)^{1/2}
+		\Big( \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a R^x_a \ket{\psi}
+		\Big)^{1/2},
+	\]
+	and each of the two averages on the right is at most $1$. In
+	particular, for two such families $\{B^x_a\}_a$ and $\{C^x_a\}_a$,
+	\[
+		\Big\lvert \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a C^x_a B^x_a
+		\ket{\psi} - \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a C^x_a
+		\ket{\psi} \Big\rvert \le
+		\Big( 1 - \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a B^x_a
+		\ket{\psi} \Big)^{1/2},
+	\]
+	and for an arbitrary family $\{W^x_a\}_a$ of operators,
+	$\lvert \E_{x \sim \mu} \sum_a \Re \bra{\psi} A^x_a R^x_a W^x_a
+	\ket{\psi} \rvert \le
+	\big(\E_{x \sim \mu} \sum_a \lVert W^x_a \ket{\psi} \rVert^2\big)^{1/2}$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:povm-distance}
+	Since $A^x_a$ is positive, the form $(u, v) \mapsto \bra{u} A^x_a
+	\ket{v}$ satisfies the Cauchy--Schwarz inequality
+	$\lvert \bra{u} A^x_a \ket{v} \rvert^2 \le \bra{u} A^x_a \ket{u}
+	\bra{v} A^x_a \ket{v}$, as is seen by writing $A^x_a$ as the square of
+	its positive square root. Since $P^x_a$ is a projection commuting with
+	$A^x_a$, one has $\bra{\psi} A^x_a P^x_a R^x_a \ket{\psi} =
+	\bra{P^x_a \psi} A^x_a \ket{R^x_a \psi}$ and
+	$\bra{P^x_a \psi} A^x_a \ket{P^x_a \psi} = \bra{\psi} A^x_a P^x_a
+	\ket{\psi}$. Applying the Cauchy--Schwarz inequality to the sum over
+	$a$ and then to the average over $x$ gives the first display. Each
+	average is at most $1$ because
+	$\bra{\psi} A^x_a (\Id - P^x_a) \ket{\psi} = \bra{(\Id - P^x_a) \psi}
+	A^x_a \ket{(\Id - P^x_a) \psi} \ge 0$ and the effects sum to the
+	identity. The second display is the first applied to $P = C$ and
+	$R = \Id - B$, since $\sum_a \bra{\psi} A^x_a (\Id - B^x_a) \ket{\psi}
+	= 1 - \sum_a \bra{\psi} A^x_a B^x_a \ket{\psi}$, and the third follows
+	from $\bra{W^x_a \psi} A^x_a \ket{W^x_a \psi} \le \lVert W^x_a \psi
+	\rVert^2$, as $A^x_a \le \Id$.
+\end{proof}
+
 \begin{lemma}[Formalization support for Lemma~\ref{lem:qld-sublines}: a uniform point of the extended space]
 	\label{lem:qld-sublines-uniform-point}
 	\lean{MIPStarRE.QPBT.uniformDistribution_map_uncurry}
@@ -2685,6 +2754,103 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	and the coordinatewise identification of the two scalar fields is a
 	bijection, so the two blocks of the transported point are independent and
 	uniform.
+\end{proof}
+
+\begin{lemma}[Formalization support for Lemma~\ref{lem:qld-4-13}: the one-point deficits of the paired-line measurement]
+	\label{lem:qld-sublines-one-point-deficit}
+	\lean{MIPStarRE.QPBT.one_sub_overlap_le_of_consistencyDefect}
+	\lean{MIPStarRE.QPBT.CombinedLinesWitness.one_sub_Z_overlap_le}
+	\lean{MIPStarRE.QPBT.CombinedLinesWitness.one_sub_X_overlap_le}
+	\lean{MIPStarRE.QPBT.CombinedLinesWitness.one_sub_Z_overlap_restricted_le}
+	\lean{MIPStarRE.QPBT.CombinedLinesWitness.one_sub_X_overlap_restricted_le}
+	\lean{MIPStarRE.QPBT.SubLineWitness.exists_avgOver_Z_eq_mixture}
+	\lean{MIPStarRE.QPBT.SubLineWitness.exists_avgOver_X_eq_mixture}
+	\lean{MIPStarRE.QPBT.zPointOverlap, MIPStarRE.QPBT.xPointOverlap}
+	\lean{MIPStarRE.QPBT.SubLineWitness.one_sub_avgOver_zPointOverlap_le}
+	\lean{MIPStarRE.QPBT.SubLineWitness.one_sub_avgOver_xPointOverlap_le}
+	\leanok
+	\uses{lem:qld-xz-lines, lem:qld-4-10, lem:qld-4-10-same-placement,
+		lem:restricted-line-mixture-bounds, lem:qld-sublines,
+		lem:overlap-gap-deficit, def:expanded-point-measurement,
+		def:expanded-state, def:ith-restricted-line}
+	This formalization-only auxiliary is not a named statement of the paper;
+	it bounds the two deficits arising in the proofs of
+	Lemmas~\ref{lem:claim-17-2} and~\ref{lem:claim-17-3}. With the notation
+	of those lemmas, write
+	$T^{\ell_X,\ell_Z,x}_{a} = \sum_{f_X, f_Z \,:\, f_X(x) = a}
+	T^{\ell_X,\ell_Z}_{f_X,f_Z}$ and
+	$T^{\ell_X,\ell_Z,z}_{b} = \sum_{f_X, f_Z \,:\, f_Z(z) = b}
+	T^{\ell_X,\ell_Z}_{f_X,f_Z}$, the sums including the class of answers
+	without an evaluation at the point. Then
+	\[
+		1 - \E_{(\ell,\ell_X,\ell_Z) \sim D}\ \E_{(x,z,\alpha,\beta) \in \ell}
+		\sum_{b} \bra{\hat\psi}
+		\big(T^{\ell_X,\ell_Z,z}_{b}\big)_{\mathsf{A}\mathsf{A}'} \ot
+		\big(\hat{M}^{(\mathrm{Point},Z),z}_{b}\big)_{\mathsf{B}\mathsf{A}''}
+		\ket{\hat\psi}
+		\le 2\,(4 m^2 \delta_P)^{1/2} + 2\,(4\delta_Q)^{1/2}
+		= 4m\,\delta_P^{1/2} + 4\,\delta_Q^{1/2},
+	\]
+	and the same bound holds for the $X$-point deficit
+	$1 - \E \sum_a \bra{\hat\psi}
+	(T^{\ell_X,\ell_Z,x}_{a})_{\mathsf{A}\mathsf{A}'} \ot
+	(\hat{M}^{(\mathrm{Point},X),x}_{a})_{\mathsf{B}\mathsf{A}''}
+	\ket{\hat\psi}$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:qld-xz-lines, lem:qld-4-10-same-placement,
+		lem:restricted-line-mixture-bounds, lem:qld-sublines,
+		lem:overlap-gap-deficit, lem:overlap-gap-distance}
+	We treat the $Z$-point deficit; the $X$-point deficit is symmetric, with
+	the ordered $X$-then-$Z$ product in the role of the $Z$-then-$X$ product.
+	The quantity averaged depends on the sample only through
+	$(\ell_X, \ell_Z, z)$, so by Property~2 of Lemma~\ref{lem:qld-sublines}
+	the average is a mixture, over types $\mathrm{v}$ and indices $i, j$, of
+	averages over $((\ell_X, x'), (\ell_Z, z)) \sim D_{\mathrm{v},i} \times
+	D_{\mathrm{v},j}$, in which the fresh point $x'$ is not used; it
+	suffices to bound the deficit for each such product law. Since
+	$T^{\ell_X,\ell_Z,z}_{b} = \sum_a
+	T^{\ell_X,\ell_Z}_{[\mathrm{eval}_{x'}(\cdot)=a,\ \mathrm{eval}_z(\cdot)=b]}$
+	for every $x'$, the deficit is
+	$1 - \E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat{M}^Z_b \ket{\hat\psi}$
+	with $T_{a,b}$ the evaluation classes of $T^{\ell_X,\ell_Z}$ at
+	$(x', z)$ and $\hat{M}^Z_b = \hat{M}^{(\mathrm{Point},Z),z}_b$. Let
+	$\hat{Q}_{a,b}$ be the completed joint point measurement
+	$\hat{Q}^{x',z}_{a,b}$ of Lemma~\ref{lem:qld-4-10} placed on
+	$\mathsf{B}\mathsf{A}''$ and let
+	$\hat{M}^X_a = \hat{M}^{(\mathrm{Point},X),x'}_a$. By
+	Lemma~\ref{lem:qld-xz-lines} and item~2 of
+	Lemma~\ref{lem:restricted-line-mixture-bounds}, the consistency defect
+	$\eta = 1 - \E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat{Q}_{a,b}
+	\ket{\hat\psi}$ is at most $4 m^2 \delta_P$, and as it is also at most
+	$1$ it is at most $\eta^{1/2}$. By Lemma~\ref{lem:qld-4-10-same-placement}
+	the family $\hat{Q}_{a,b}$ is within squared distance $\zeta = 4\delta_Q$
+	of each of the two ordered products of $\hat{M}^X_a$ and $\hat{M}^Z_b$
+	on $\mathsf{B}\mathsf{A}''$. Three estimates with the weight $T_{a,b}$
+	give
+	\begin{align*}
+		\E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat{M}^Z_b \ket{\hat\psi}
+		&\ge \E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat{Q}_{a,b}
+		\hat{M}^Z_b \ket{\hat\psi} - \eta^{1/2} \\
+		&\ge \E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat{M}^X_a \hat{M}^Z_b
+		\ket{\hat\psi} - \eta^{1/2} - \zeta^{1/2} \\
+		&\ge \E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat{Q}_{a,b}
+		\ket{\hat\psi} - \eta^{1/2} - 2\zeta^{1/2}
+		\ \ge\ 1 - 2\eta^{1/2} - 2\zeta^{1/2}\,.
+	\end{align*}
+	The first step inserts $\hat{Q}_{a,b}$ before the projection
+	$\hat{M}^Z_b$ (Lemma~\ref{lem:overlap-gap-deficit}, whose first display
+	bounds the difference by $\eta^{1/2}$); the second replaces
+	$\hat{Q}_{a,b}$ by $\hat{M}^X_a \hat{M}^Z_b$, which absorbs the trailing
+	factor $\hat{M}^Z_b$, at the cost of the square root of the squared
+	distance of the adjoint families $\hat{Q}_{a,b}$ and
+	$\hat{M}^Z_b \hat{M}^X_a$ (the third display of
+	Lemma~\ref{lem:overlap-gap-deficit}); the third compares the overlaps of
+	$T_{a,b}$ with $\hat{M}^X_a \hat{M}^Z_b$ and with $\hat{Q}_{a,b}$
+	(Lemma~\ref{lem:overlap-gap-distance}, the real parts of the overlaps
+	with the two ordered products coinciding). Substituting
+	$\eta \le 4m^2\delta_P$ and $\zeta = 4\delta_Q$ gives the bound.
 \end{proof}
 
 \begin{lemma}[Replacing the combined point measurement by the ordered product]
@@ -2743,12 +2909,16 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 \begin{lemma}[Removing the $X$-point factor]
 	\label{lem:claim-17-2}
 	\lean{MIPStarRE.QPBT.subline_remove_X_factor}
-	\notready
+	\leanok
 	% claim:17-2 in the paper; the original label is recorded here as a
 	% comment for cross-reference fidelity. The source right-hand side
 	% carries a typographical superscript "Z" in place of the point "z";
-	% the corrected form is stated here.
-	\uses{lem:qld-sublines, lem:qld-xz-lines,
+	% the corrected form is stated here. The source error is
+	% m delta_Line^{1/2}; its derivation uses the sandwich form of T, which
+	% the conclusion of lem:qld-xz-lines does not record, so the error
+	% established from that conclusion is stated instead; see
+	% rem:claim-17-2-line-marginal and gap:qpbt_subline-claims-line-marginal.
+	\uses{lem:qld-sublines, lem:qld-xz-lines, lem:qld-4-10,
 		def:expanded-point-measurement, lem:qld-comm-line-cons,
 		def:expanded-state}
 	\begin{align*}
@@ -2760,7 +2930,7 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 		\hat{M}^{(\mathrm{Point},X),x}_{f_X(x)}
 		\big)_{\mathsf{B}\mathsf{A}''}
 		\ket{\hat\psi} \\
-		\approx_{m\,\delta_{\mathrm{Line}}^{1/2}}\
+		\approx_{\sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})}\
 		\E_{(\ell,\ell_X,\ell_Z) \sim D}\
 		\E_{(x,z,\alpha,\beta) \in \ell}
 		&\sum_{f_X,f_Z} \bra{\hat\psi}
@@ -2769,15 +2939,23 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 		\big)_{\mathsf{B}\mathsf{A}''}
 		\ket{\hat\psi}\,,
 	\end{align*}
-	where $\delta_{\mathrm{Line}}$ is the error function of
-	Lemma~\ref{lem:qld-comm-line-cons}.
+	where $\delta_P$ is the error function of Lemma~\ref{lem:qld-xz-lines}
+	and $\delta_Q$ that of Lemma~\ref{lem:qld-4-10}. The source states this
+	estimate with the error $m\,\delta_{\mathrm{Line}}^{1/2}$, where
+	$\delta_{\mathrm{Line}}$ is the error function of
+	Lemma~\ref{lem:qld-comm-line-cons}; see
+	Remark~\ref{rem:claim-17-2-line-marginal}.
 \end{lemma}
 \begin{proof}
-	\uses{lem:qld-comm-line-cons, lem:qld-sublines, lem:qld-xz-lines,
-		lem:restricted-line-mixture-bounds, def:ith-restricted-line,
-		def:expanded-line-measurement}
-	By Cauchy--Schwarz, the difference of the two sides is bounded by the
-	square root of the deficit
+	\leanok
+	\uses{lem:overlap-gap-deficit, lem:qld-sublines-one-point-deficit,
+		lem:qld-sublines, lem:qld-xz-lines}
+	By the deficit form of the Cauchy--Schwarz inequality
+	(Lemma~\ref{lem:overlap-gap-deficit}), applied with the weight
+	$T^{\ell_X,\ell_Z}_{f_X,f_Z}$ and the commuting projections
+	$\hat{M}^{(\mathrm{Point},Z),z}_{f_Z(z)}$ and
+	$\hat{M}^{(\mathrm{Point},X),x}_{f_X(x)}$ on the other registers, the
+	difference of the two sides is bounded by the square root of the deficit
 	\[
 		1 - \E_{(\ell,\ell_X,\ell_Z) \sim D}\
 		\E_{(x,z,\alpha,\beta) \in \ell} \sum_{a}
@@ -2790,29 +2968,48 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 		= \sum_{f_X,f_Z \,:\, f_X(x)=a}
 		T^{\ell_X,\ell_Z}_{f_X,f_Z}\,.
 	\]
-	By the sandwich definition of $T$ and the projectivity of the lines
-	measurement $\{\hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}\}$, the
-	subtracted expectation equals
-	$\E \sum_a \bra{\hat\psi}
-	\hat{M}^{(\mathrm{Line},X),\ell_X}_{[\mathrm{eval}_x(\cdot)=a]} \ot
-	\hat{M}^{(\mathrm{Point},X),x}_{a} \ket{\hat\psi}$,
-	which by Property~2 of Lemma~\ref{lem:qld-sublines} is a mixture of the
-	corresponding averages over the restricted distributions
-	$D_{\mathrm{v},i}$. By the error inflation of
-	Lemma~\ref{lem:restricted-line-mixture-bounds} applied to the
-	line--point consistency in item~3 of Lemma~\ref{lem:qld-comm-line-cons},
-	each restricted term has deficit $O(m\,\delta_{\mathrm{Line}})$, so the
-	total deficit is $O(m^2\,\delta_{\mathrm{Line}})$ (the final line of the
-	source proof asserts this bound for the consistency term itself rather
-	than for its deficit; see Remark~\ref{rem:qld-4-13-source-defects}).
-	Taking the square root gives the claimed error
-	$m\,\delta_{\mathrm{Line}}^{1/2}$.
+	By Lemma~\ref{lem:qld-sublines-one-point-deficit} this deficit is at
+	most $2(4m^2\delta_P)^{1/2} + 2(4\delta_Q)^{1/2}$, and the square root
+	of that bound is at most $2\sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})$
+	since $m \ge 1$.
 \end{proof}
+
+\begin{remark}[The error of Lemma~\ref{lem:claim-17-2}]
+	\label{rem:claim-17-2-line-marginal}
+	The source proves the estimate of Lemma~\ref{lem:claim-17-2} with the
+	error $m\,\delta_{\mathrm{Line}}^{1/2}$ by identifying the $X$-marginal
+	$T^{\ell_X,\ell_Z,x}_{a}$ of the paired-line measurement with the
+	evaluation class
+	$\hat{M}^{(\mathrm{Line},X),\ell_X}_{[\mathrm{eval}_x(\cdot)=a]}$ of the
+	$X$-line measurement, through the sandwich form
+	$T^{\ell_X,\ell_Z}_{f_X,f_Z} = \hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}
+	\hat{M}^{(\mathrm{Line},Z),\ell_Z}_{f_Z}
+	\hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}$ and the projectivity of the
+	line measurements, and then invoking item~3 of
+	Lemma~\ref{lem:qld-comm-line-cons} on each restricted distribution. The
+	sandwich form is the construction in the proof of
+	Lemma~\ref{lem:qld-xz-lines}; the conclusion of that lemma records only
+	the consistency of the evaluated pairs with the joint point measurement,
+	and a measurement satisfying that conclusion need not have the $X$-line
+	measurement as its $X$-marginal. The estimate with the error
+	$m\,\delta_{\mathrm{Line}}^{1/2}$ therefore does not follow from the
+	objects the lemmas provide, and for the paired-line measurement taken as
+	an arbitrary witness of Lemma~\ref{lem:qld-xz-lines}, as in the
+	formalization, it fails. The statement above is the estimate that does
+	follow, with the error $\sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})$ of
+	Lemma~\ref{lem:qld-sublines-one-point-deficit}; the chained bound in
+	the proof of Lemma~\ref{lem:qld-4-13} is unaffected, the corrected error
+	being dominated by the printed one. The alternative repair, adding the
+	marginal identity $\sum_{f_Z} T^{\ell_X,\ell_Z}_{f_X,f_Z} =
+	\hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}$ to the conclusion of
+	Lemma~\ref{lem:qld-xz-lines}, would restore the source error; both are
+	analyzed in \cite{gap:qpbt_subline-claims-line-marginal}.
+\end{remark}
 
 \begin{lemma}[The remaining $Z$-point term is close to one]
 	\label{lem:claim-17-3}
 	\lean{MIPStarRE.QPBT.subline_Z_term_near_one}
-	\notready
+	\leanok
 	% claim:17-3 in the paper; the original label is recorded here as a
 	% comment for cross-reference fidelity.
 	\uses{lem:qld-sublines, lem:qld-xz-lines, lem:qld-4-10,
@@ -2830,43 +3027,24 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	\]
 \end{lemma}
 \begin{proof}
-	\uses{lem:restricted-line-mixture-bounds, lem:qld-sublines,
-		lem:qld-xz-lines, lem:qld-4-10, lem:qld-comm-cons,
-		def:ith-restricted-line}
-	By Cauchy--Schwarz it suffices to bound the deficit
+	\leanok
+	\uses{lem:qld-sublines-one-point-deficit, lem:qld-sublines,
+		lem:qld-xz-lines, lem:qld-4-10}
+	The left-hand side lies between $0$ and $1$, being an average of
+	overlaps of a complete measurement with positive operators on commuting
+	registers, so its distance to $1$ is the deficit
 	$1 - \E \sum_b \bra{\hat\psi} T^{\ell_X,\ell_Z,z}_{b} \ot
-	\hat{M}^{(\mathrm{Point},Z),z}_{b} \ket{\hat\psi}$,
-	where
-	$T^{\ell_X,\ell_Z,z}_{b}
-	= \sum_{f_X} T^{\ell_X,\ell_Z}_{f_X,[\mathrm{eval}_z(\cdot)=b]}$.
-	By Property~2 of Lemma~\ref{lem:qld-sublines}, the expectation can be
-	rewritten over the mixture of product distributions
-	$D_{\mathrm{v},i} \times D_{\mathrm{v},j}$ with $z$ uniformly random on
-	$\ell_Z$, and, since
-	$T^{\ell_X,\ell_Z,z}_{b}
-	= \E_{x \in \ell_X} \sum_a
-	T^{\ell_X,\ell_Z}
-	_{[\mathrm{eval}_x(\cdot)=a,\ \mathrm{eval}_z(\cdot)=b]}$,
-	one may additionally average over $x$ uniformly random on $\ell_X$. Up
-	to error $m(\sqrt{\delta_P} + \sqrt{\delta_Q})$ --- obtained by
-	applying the error inflation of
-	Lemma~\ref{lem:restricted-line-mixture-bounds} to the conclusion of
-	Lemma~\ref{lem:qld-xz-lines} (transported to the sub-line distribution
-	via Lemma~\ref{lem:qld-sublines}) and to the consistency relations of
-	Lemma~\ref{lem:qld-4-10} --- the resulting quantity is close to
-	$\E \sum_{a,b} \bra{\hat\psi}
-	\hat{M}^{(\mathrm{Point},X),x}_{a}
-	\hat{M}^{(\mathrm{Point},Z),z}_{b} \ot
-	\hat{M}^{(\mathrm{Point},Z),z}_{b} \ket{\hat\psi}$,
-	which, since $\{\hat{M}^{(\mathrm{Point},X),x}_{a}\}$ is a measurement,
-	equals
-	$\sum_b \bra{\hat\psi} \hat{M}^{(\mathrm{Point},Z),z}_{b} \ot
-	\hat{M}^{(\mathrm{Point},Z),z}_{b} \ket{\hat\psi}
-	\ge 1 - \sqrt{\eps}$
-	by the self-consistency of the points measurements
-	(Lemma~\ref{lem:qld-comm-cons}). The deficit is therefore
-	$O(m(\sqrt{\delta_P} + \sqrt{\delta_Q}) + \sqrt{\eps})$, and taking the
-	square root gives the claim.
+	\hat{M}^{(\mathrm{Point},Z),z}_{b} \ket{\hat\psi}$, where
+	$T^{\ell_X,\ell_Z,z}_{b} = \sum_{f_X}
+	T^{\ell_X,\ell_Z}_{f_X,[\mathrm{eval}_z(\cdot)=b]}$; the
+	Cauchy--Schwarz step of the source proof bounds this deficit by its own
+	square root and is not needed. By
+	Lemma~\ref{lem:qld-sublines-one-point-deficit} the deficit is at most
+	$2(4m^2\delta_P)^{1/2} + 2(4\delta_Q)^{1/2}$, and as it is also at most
+	$1$ it is at most the square root of this bound, which is at most
+	$2\sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})$ since $m \ge 1$. This is
+	the claim; the term $\eps^{1/4}$ of the source, which enters its proof
+	through the self-consistency of the points measurements, is not needed.
 \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:qld-4-13}]
@@ -2910,6 +3088,10 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 		= O\big(m\,(\eps^{1/4} + \delta_P^{1/4} + \delta_Q^{1/4}
 		+ \delta_{\mathrm{Line}}^{1/2})\big)\,;
 	\end{equation}
+	the chain in fact gives the bound
+	$O(\sqrt{m}\,(\eps^{1/4} + \delta_P^{1/4} + \delta_Q^{1/4}))$, which
+	the display dominates, the term $\delta_{\mathrm{Line}}^{1/2}$ of the
+	source no longer entering (Remark~\ref{rem:claim-17-2-line-marginal});
 	since
 	$\delta_P = \poly(\eps, md/q)$, $\delta_Q = \poly(\eps)$, and
 	$\delta_{\mathrm{Line}} = \poly(\eps)$, the right-hand side is a

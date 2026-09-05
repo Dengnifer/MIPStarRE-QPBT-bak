@@ -1,0 +1,276 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\setlength{\emergencystretch}{2em}
+
+\input{command}
+
+% Local notation for this note.
+\DeclareMathOperator{\poly}{poly}
+\newcommand{\Id}{\mathrm{Id}}
+\renewcommand{\ghissue}[1]{%
+  \href{https://github.com/Dengnifer/MIPStarRE-A/issues/#1}{GitHub issue \##1}}
+
+\title{The Line Marginal in the Second Sub-Line Claim}
+\author{}
+\date{2026-09-05}
+
+\begin{document}
+\maketitle
+
+\section{At a glance}
+
+\begin{itemize}
+  \item \textbf{Difficulty: easy.}  The second of the three scalar claims
+  in the proof of the combined-lines lemma of the Pauli basis analysis
+  removes the trailing $X$-point factor at the cost
+  $m\,\delta_{\mathrm{Line}}^{1/2}$.  Its printed proof identifies the
+  $X$-marginal of the paired-line measurement with the evaluation class of
+  the $X$-line measurement through the sandwich form of the paired-line
+  measurement.  That form is the construction inside the proof of the
+  two-basis line lemma; the conclusion of that lemma records only the
+  consistency of the evaluated pairs with the joint point measurement, and
+  a measurement satisfying the conclusion need not have the $X$-line
+  measurement as its marginal.  The claim as printed therefore does not
+  follow from the objects the lemmas provide, and for an arbitrary witness
+  of the conclusion it is false.  The correction proves the claim with the
+  error $\sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})$ from the consistency
+  conclusion alone; the sequel is unaffected.
+  \item \textbf{Key Mathlib inputs:} the continuous functional calculus
+  square root of a positive matrix, for the Cauchy--Schwarz inequality of a
+  positive operator weight, together with finite averages and the
+  state-dependent distance calculus of the project (blueprint
+  Chapter~12).
+  \item \textbf{Estimated weight:} a \textbf{statement-level error-form
+  correction} of one claim, plus about \textbf{four lemma interfaces}: the
+  weighted Cauchy--Schwarz estimate in deficit form, the one-point
+  deficits of the evaluated paired-line measurement over a product of
+  restricted line-point laws, their transport to the sub-line law, and
+  the numerical comparison of the two error forms; about \textbf{one
+  thousand lines} of formal proof in total, now complete.
+  \item \textbf{Mathlib/project split:} essentially \textbf{100\%
+  project-local}, the only Mathlib surface being the square root of a
+  positive matrix and elementary real inequalities.
+  \item \textbf{Key inputs:} the combined point and paired-line
+  measurements and the sub-line distribution of the Pauli basis analysis
+  in \cite{Ji2020MIPStar}.  The formalization is tracked in
+  \ghissue{118}; the error term of the enclosing lemma is the subject of
+  \path{docs/paper-gaps/qpbt_combined-lines-error-term.tex}.
+\end{itemize}
+
+\section{Key theorem forms}
+
+Throughout, $(q,m,d)$ is an admissible parameter tuple of the Pauli basis
+test, $\ket{\hat\psi}$ is the expanded state of the projective strategy
+under analysis, succeeding with probability at least $1-\eps$, and all
+approximations are with respect to $\ket{\hat\psi}$.  For lines
+$\ell_X, \ell_Z$ in $\F_q^m$, $\{T^{\ell_X,\ell_Z}_{f_X,f_Z}\}$ is the
+paired-line measurement of the two-basis line lemma, with outcomes pairs
+of polynomials of degree at most $md$ on the two lines, and
+$\{\hat Q^{x,z}_{a,b}\}$ is the combined point measurement; their
+consistency errors are $\delta_P = \poly(\eps, md/q)$ and
+$\delta_Q = \poly(\eps)$, and $\delta_{\mathrm{Line}} = \poly(\eps)$ is the
+line--point consistency error of the expanded line measurements
+$\{\hat M^{(\mathrm{Line},W),\ell}_f\}$.  The sub-line distribution $D$ samples
+a line $\ell$ of $\F_q^{2m+2}$ together with two lines $\ell_X, \ell_Z$ of
+$\F_q^m$, and $(x,z,\alpha,\beta)$ is a uniformly random point of
+$\ell$.%
+\footnote{In the mirror of the source consulted here,
+\path{references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex}: the
+two-basis line lemma is at lines~882--894 (label \path{lem:qld-xz-lines}),
+with the sandwich definition of $T$ inside its proof; the sub-line lemma at
+lines~1063--1069 (label \path{lem:qld-sublines}); the second claim at
+lines~1168--1201 (label \path{claim:17-2}), whose final lines use the
+sandwich form and the projectivity of the line measurements; and the third
+claim at lines~1204--1239 (label \path{claim:17-3}).}
+The claim under discussion asserts
+\begin{align*}
+  \E_{(\ell,\ell_X,\ell_Z) \sim D}\ \E_{(x,z,\alpha,\beta) \in \ell}
+  &\sum_{f_X,f_Z} \bra{\hat\psi}
+  \big(T^{\ell_X,\ell_Z}_{f_X,f_Z}\big)_{\mathsf{A}\mathsf{A}'} \ot
+  \big(\hat{M}^{(\mathrm{Point},Z),z}_{f_Z(z)}
+  \hat{M}^{(\mathrm{Point},X),x}_{f_X(x)}\big)_{\mathsf{B}\mathsf{A}''}
+  \ket{\hat\psi} \\
+  \approx_{\delta}\
+  \E_{(\ell,\ell_X,\ell_Z) \sim D}\ \E_{(x,z,\alpha,\beta) \in \ell}
+  &\sum_{f_X,f_Z} \bra{\hat\psi}
+  \big(T^{\ell_X,\ell_Z}_{f_X,f_Z}\big)_{\mathsf{A}\mathsf{A}'} \ot
+  \big(\hat{M}^{(\mathrm{Point},Z),z}_{f_Z(z)}\big)_{\mathsf{B}\mathsf{A}''}
+  \ket{\hat\psi}
+\end{align*}
+with the following error forms.
+\begin{enumerate}
+  \item \textbf{Source form.}  $\delta = m\,\delta_{\mathrm{Line}}^{1/2}$.
+  Its derivation uses the identity
+  $\sum_{f_Z} T^{\ell_X,\ell_Z}_{f_X,f_Z} =
+  \hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}$, which holds for the sandwich
+  $T^{\ell_X,\ell_Z}_{f_X,f_Z} = \hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}
+  \hat{M}^{(\mathrm{Line},Z),\ell_Z}_{f_Z}
+  \hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}$ but is not part of the
+  conclusion of the two-basis line lemma.
+  \item \textbf{Corrected form (adopted).}
+  $\delta = \sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})$, with the explicit
+  constant $2$.  It follows from the consistency conclusion of the
+  two-basis line lemma, the two ordered displays of the combined point
+  lemma, and Property~2 of the sub-line lemma.
+  \item \textbf{Consumer requirement.}  The claim is chained with the
+  first and third claims to bound the consistency defect of the
+  combined-lines lemma by
+  $O(m(\eps^{1/4} + \delta_P^{1/4} + \delta_Q^{1/4} +
+  \delta_{\mathrm{Line}}^{1/2}))$; the corrected form is dominated by that
+  bound, so the chain and its consumer are unchanged.
+\end{enumerate}
+
+\section{The source assertion and why the objects do not support it}
+
+The printed proof of the second claim applies the Cauchy--Schwarz
+inequality with both factors weighted by
+$\sqrt{T^{\ell_X,\ell_Z}_{f_X,f_Z}}$ and reduces the claim to bounding the
+deficit
+\begin{equation*}
+  1 - \E_{(\ell,\ell_X,\ell_Z) \sim D}\ \E_{(x,z,\alpha,\beta) \in \ell}
+  \sum_a \bra{\hat\psi}
+  \big(T^{\ell_X,\ell_Z,x}_{a}\big)_{\mathsf{A}\mathsf{A}'} \ot
+  \big(\hat{M}^{(\mathrm{Point},X),x}_{a}\big)_{\mathsf{B}\mathsf{A}''}
+  \ket{\hat\psi}\,,
+  \qquad
+  T^{\ell_X,\ell_Z,x}_{a} = \sum_{f_X,f_Z \,:\, f_X(x)=a}
+  T^{\ell_X,\ell_Z}_{f_X,f_Z}\,.
+\end{equation*}
+It then asserts, ``using the definition'' of $T$ as a sandwich ``and the
+fact that'' the $X$-line measurement ``is projective'', that
+$T^{\ell_X,\ell_Z,x}_{a} =
+\hat{M}^{(\mathrm{Line},X),\ell_X}_{[\mathrm{eval}_x(\cdot)=a]}$, after
+which Property~2 of the sub-line lemma and item~3 of the line consistency
+lemma bound the deficit by $O(m^2\delta_{\mathrm{Line}})$.
+
+The identity is correct for the sandwich, since
+$\sum_{f_Z} \hat{M}^{X}_{f_X} \hat{M}^{Z}_{f_Z} \hat{M}^{X}_{f_X}
+= \hat{M}^{X}_{f_X} \hat{M}^{X}_{f_X} = \hat{M}^{X}_{f_X}$.  But the
+two-basis line lemma is stated existentially: it provides, for each pair
+of lines, a measurement $\{T^{\ell_X,\ell_Z}_{f_X,f_Z}\}$ whose evaluated
+pairs are consistent with the joint point measurement, on average over two
+independent line-point pairs, together with the degree condition on
+axis-parallel lines.  The sandwich form is the witness exhibited in its
+proof, not a property carried by its conclusion, and the sub-line lemma and
+the three claims are stated for the measurement of the two-basis line
+lemma, that is, for a measurement satisfying that conclusion.  For such a
+measurement the marginal identity can fail: with a strategy of small
+$\eps$, the family
+$T^{\ell_X,\ell_Z}_{f_X,f_Z} = [f_X = 0]\,
+\hat{M}^{(\mathrm{Line},Z),\ell_Z}_{f_Z}$ is a measurement whose
+consistency defect is trivially at most $\delta_P = 1$, while the
+difference of the two sides of the claim is, up to an error of order
+$\delta_Q^{1/2}$, the mass $1 - \E_x \bra{\hat\psi}
+\hat{M}^{(\mathrm{Point},X),x}_{0} \ket{\hat\psi}$ of the nonzero
+$X$-point answers, which does not tend to $0$ with $\eps$.  The claim with
+the source error is therefore false for some witnesses of the two-basis
+line lemma, although true for the sandwich witness.
+
+\section{Correction and alternative repairs}
+
+\paragraph{Corrected error form (adopted in the blueprint and the
+formalization).}
+The deficit is bounded from the consistency conclusion alone.  The
+quantity averaged depends on the sample only through $(\ell_X, \ell_Z,
+x)$, so by Property~2 of the sub-line lemma the average is a mixture of
+averages over products $D_{\mathrm{v},i} \times D_{\mathrm{v},j}$ of two
+restricted line-point laws, in which the point $z'$ of the second factor is
+fresh and unused; and $T^{\ell_X,\ell_Z,x}_a = \sum_b
+T^{\ell_X,\ell_Z}_{[\mathrm{eval}_x(\cdot)=a,\ \mathrm{eval}_{z'}(\cdot)=b]}$
+for every $z'$.  Over one product law, with $T_{a,b}$ the evaluation
+classes at $(x, z')$, $\hat Q_{a,b}$ the completed joint point measurement
+at $(x,z')$ placed on $\mathsf{B}\mathsf{A}''$, and $\hat M^X_a$, $\hat
+M^Z_b$ the two point measurements there, three Cauchy--Schwarz estimates
+weighted by $T_{a,b}$ give
+\begin{equation*}
+  \E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat M^X_a \ket{\hat\psi}
+  \ \ge\ \E \sum_{a,b} \bra{\hat\psi} T_{a,b} \ot \hat Q_{a,b}
+  \ket{\hat\psi} - \eta^{1/2} - 2\zeta^{1/2}
+  \ \ge\ 1 - 2\eta^{1/2} - 2\zeta^{1/2}\,,
+\end{equation*}
+where $\eta \le 4m^2\delta_P$ is the consistency defect of the evaluated
+pairs with $\hat Q$ over the product law (item~2 of the restricted-mixture
+lemma) and $\zeta = 4\delta_Q$ bounds the squared distance of $\hat
+Q_{a,b}$ from each ordered product of $\hat M^X_a$ and $\hat M^Z_b$ on one
+placement: the first estimate inserts $\hat Q_{a,b}$ before the projection
+$\hat M^X_a$, the second replaces $\hat Q_{a,b}$ by
+$\hat M^Z_b \hat M^X_a$, which absorbs the trailing factor, and the third
+compares the overlaps of $T_{a,b}$ with the ordered product and with $\hat
+Q_{a,b}$.  The deficit is thus at most $4m\,\delta_P^{1/2} +
+4\,\delta_Q^{1/2}$, and its square root at most
+$2\sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})$.  The same argument, with the
+roles of the two points and of the two ordered products exchanged, bounds
+the deficit appearing in the third claim, and shows in passing that the
+Cauchy--Schwarz step of the third claim is vacuous: its right-hand side is
+the square root of its left-hand side, so the third claim is the deficit
+bound itself, without the $\eps^{1/4}$ term the source obtains from the
+self-consistency of the points measurements.
+
+\paragraph{Restoring the source error form.}
+Strengthen the conclusion of the two-basis line lemma by the marginal
+identity $\sum_{f_Z} T^{\ell_X,\ell_Z}_{f_X,f_Z} =
+\hat{M}^{(\mathrm{Line},X),\ell_X}_{f_X}$ for all $\ell_X, \ell_Z, f_X$.
+The sandwich witness satisfies it, so the lemma remains true, and the
+printed proof of the second claim then goes through with the error
+$(2m\,\delta_{\mathrm{Line}})^{1/2}$, item~3 of the line consistency lemma
+being inflated by $2m$ on one restricted law.  This is a change to a source
+statement and to the carrier of its conclusion in the formalization; it is
+recorded here as the alternative and is not adopted.  Note that the
+$Z$-marginal of the sandwich is not the $Z$-line measurement, so the
+analogous identity is not available for the third claim, whose source proof
+does not use it.
+
+\section{Comparison with the blueprint}
+
+The blueprint \cite{MIPStarREBlueprint} states the second claim with the
+corrected error form, keeps the source form in a comment and in a remark
+that cites this note, and proves it along the route above; the third claim
+keeps its source statement, with the source's $\eps^{1/4}$ term retained
+for fidelity, and its proof is replaced by the deficit bound.  The
+Cauchy--Schwarz estimate in deficit form and the one-point deficits are
+formalization-support nodes.  The chained bound in the proof of the
+combined-lines lemma is unchanged, the corrected error being dominated by
+the printed one.%
+\footnote{The blueprint statements are \path{lem:claim-17-2},
+\path{lem:claim-17-3}, \path{lem:overlap-gap-deficit},
+\path{lem:qld-sublines-one-point-deficit}, and the remark
+\path{rem:claim-17-2-line-marginal}, all in
+\path{blueprint/src/chapter/ch15_qpbt_combining.tex}.}
+
+The three claims are the declarations
+\leanid{MIPStarRE.QPBT.subline\_replace\_by\_ordered\_product},
+\leanid{MIPStarRE.QPBT.subline\_remove\_X\_factor}, and
+\leanid{MIPStarRE.QPBT.subline\_Z\_term\_near\_one}; all three are proved,
+the second with the corrected error form and the explicit constant $2$.
+The paired-line measurement is the field of the record
+\leanid{MIPStarRE.QPBT.CombinedLinesWitness}, which carries the
+consistency conclusion and the degree condition only; the source error
+form would require the marginal identity as an additional field of that
+record and a corresponding strengthening of \path{lem:qld-xz-lines}.  The
+Cauchy--Schwarz estimates in deficit form are in
+\path{MIPStarRE/QPBT/Combining/OverlapGap.lean}, the one-point deficits in
+\path{MIPStarRE/QPBT/Combining/EvalDeficit.lean}, and their transport to
+the sub-line law in \path{MIPStarRE/QPBT/Combining/SubLineDeficit.lean}.
+
+\section{Conclusion}
+
+There is a proof-level gap in the second claim: its printed argument uses
+the sandwich form of the paired-line measurement, which is the witness
+constructed in the proof of the two-basis line lemma and not a property of
+that lemma's conclusion, and the claim with the source error
+$m\,\delta_{\mathrm{Line}}^{1/2}$ fails for other witnesses.  The claim
+holds with the error $\sqrt{m}\,(\delta_P^{1/4} + \delta_Q^{1/4})$ from the
+consistency conclusion alone, by the same Cauchy--Schwarz reduction
+followed by a three-step comparison with the joint point measurement; the
+third claim admits the same treatment, without its $\eps^{1/4}$ term.  The
+sequel is unaffected.  The alternative repair, adding the marginal identity
+to the conclusion of the two-basis line lemma, would restore the source
+error and is a source-statement change left to the owner.
+
+\bibliographystyle{alpha}
+\bibliography{references}
+
+\end{document}
