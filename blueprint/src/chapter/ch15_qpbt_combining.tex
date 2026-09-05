@@ -2079,6 +2079,50 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	weight $1/2$.
 \end{proof}
 
+\begin{lemma}[Formalization support for the blocks of a fresh diagonal
+	direction pair]
+	\label{lem:qld-sublines-fresh-pair-blocks}
+	\lean{MIPStarRE.QPBT.Distribution.restrict_prod_fst}
+	\lean{MIPStarRE.QPBT.uniformDistribution_fst_event_mass}
+	\lean{MIPStarRE.QPBT.restrict_uniform_prod_fst}
+	\lean{MIPStarRE.QPBT.ldSeedIndexEvent}
+	\lean{MIPStarRE.QPBT.ldSeedIndexEvent_decidablePred}
+	\lean{MIPStarRE.QPBT.ldSeedIndexEvent_positive}
+	\lean{MIPStarRE.QPBT.freshDiagonalPairDist_eq_prod}
+	\lean{MIPStarRE.QPBT.freshDiagonalPairDist_map_snd}
+	\leanok
+	\uses{def:ith-restricted-line, def:ld-question-distribution,
+		lem:qld-sublines-block-independence}
+	This is not a named statement of \cite{Ji2020MIPStar}; it records the
+	independence of the two blocks of the fresh diagonal direction pair of
+	Lemma~\ref{lem:qld-sublines-block-independence}. Conditioning a product of
+	two laws on an event of its first factor alone leaves the second factor
+	unchanged and independent of the conditioned first factor, and the mass of
+	such an event under a uniform product law is its mass under the uniform
+	law of the first factor. Consequently, for $i \in \{1, \dots, m\}$ the
+	fresh diagonal direction pair at $i$ is a scalar seed drawn uniformly from
+	the fiber $\chi^{-1}(i)$, which is nonempty, together with an independent
+	uniformly random direction block of $\F_q^m$; in particular that direction
+	block is uniformly random.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:ith-restricted-line, def:ld-question-distribution}
+	The support of the conditioned product is the product of the conditioned
+	support of the first factor with the support of the second, because the
+	event does not constrain the second coordinate. Its normalizing mass is
+	the mass of the event under the first factor, since the weights of the
+	second factor sum to one. Dividing the product weight by that mass
+	therefore divides only the first coordinate, which is the asserted product
+	form. The mass identity for a uniform product law follows because the
+	first marginal of a uniform law on a product is uniform, and an event mass
+	is the average of its indicator. The fiber $\chi^{-1}(i)$ contains the
+	seed reconstructed from $i$ and the first residue, so it has positive
+	mass. The last statement is the second marginal of the displayed product.
+\end{proof}
+
+
+
 
 
 \begin{remark}[Property~3 of the sub-line distribution]

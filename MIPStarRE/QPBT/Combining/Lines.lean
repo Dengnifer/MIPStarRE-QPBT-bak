@@ -4,6 +4,7 @@ import MIPStarRE.QPBT.Combining.Lines.SubLineBind
 import MIPStarRE.QPBT.Combining.Lines.SubLineBlocks
 import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
+import MIPStarRE.QPBT.Combining.Lines.SubLineSeed
 import MIPStarRE.QPBT.Combining.Lines.SubLineSupport
 import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
 import MIPStarRE.QPBT.Combining.Points
