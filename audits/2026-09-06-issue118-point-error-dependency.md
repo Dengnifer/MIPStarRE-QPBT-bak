@@ -1,5 +1,156 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 5: the product collision predicate and conditioned operator families
+
+Session `mathfix-118-20260906-05`, baseline
+`3f359f9dbfc86ed78f44aa2b45670d2a7783ac09`, attempt **5/10**. The original
+budget anchor is September 5, 2026, 19:24 UTC; this session started at
+21:55:22 UTC. The cumulative working-time total remains operator-owned
+and has not been supplied. This entry continues attempt 4, rather than
+resetting the investigation. No corrected public theorem is adopted.
+
+### Mathematical results proved in this attempt
+
+The printed assertion is still `lem:qld-xz-lines`, paper
+`14_analysis_of_the_pauli_basis_test.tex:882-894`: for the constructed
+points there are paired-line POVMs, on either player's expanded space,
+consistent on independent source line-point samples in every directed
+opposite placement, with additive polynomial error in `epsilon, md/q`
+and degree at most `d` on axis lines. The two recorded obstructions remain
+the internal arbitrary-point helper's missing dependence on `deltaQ`, and
+the collision of `T` with `T+1` at completed value `none` on zero-direction
+fibers. Neither is a counterexample to this printed existence assertion.
+
+Let `D` be the unchanged source line-point distribution, write
+`sX=(lineX,x)` and `sZ=(lineZ,z)`, and let `E` be the event that the X
+direction is nonzero. The proof-only probability law now defined in Lean is
+
+```
+nondegenerateLinePastingDist = map (D ⊗ D | E)
+  ((sX,sZ) ↦ (((lineX,lineZ),sZ),sX)).
+```
+
+The common question is the line pair; the first and second evaluation
+questions are the Z and X line-point samples. The latter retain line
+descriptors so completed evaluation is a function of its own question.
+On the support they agree with the common question. No game or evaluation
+definition is changed, and no Z direction is discarded.
+
+The following are kernel-checked results, not hypotheses supplied to a
+source theorem:
+
+1. The law is normalized, with retained mass `r>0`.
+2. It satisfies **`HasConditionalCollisionBound`**, with `G2=X` and
+   parameter `b/q` for degree bound `b`. The proof fixes the common question
+   and the whole Z sample, uses their indicator as a nonnegative function
+   of the X line, applies the previously proved weighted root bound, and
+   averages over Z. Multiplying by `r` removes normalization. A finite-sum
+   adapter identifies these fiber averages with the predicate's weights.
+3. The actual supplied completed point marginals, reordered as `(Z,X)`,
+   have conditioned defects at most
+   `(8 * deltaQ + C * (epsilon + sqrt epsilon)) / r`. The two line
+   families depend only on the common question. Both errors are retained;
+   no marginal identity is assumed.
+4. Supplied completed joint self-consistency is at most `deltaQ/r`, in
+   the common `(X,Z)` order. The witness is not replaced.
+5. Complete POVMs on opposite placements have pointwise defect at most
+   one, since the diagonal overlap is nonnegative. Their original and
+   conditioned defects therefore satisfy `d <= r*dE + 1/(2q)`.
+   This is specialized to the **actual** `combinedLineMeasurement` and
+   the supplied completed points. It is not a bound on `dE` itself.
+
+The code adds eleven proved theorems and two proof-only definitions in
+`MIPStarRE/QPBT/Combining/Lines.lean`, starting with
+`collision_bound_of_fiber_averages`. Each of the thirteen declarations
+has axiom set contained in `{propext, Classical.choice, Quot.sound}`.
+None uses `sorryAx`, a native decision procedure, an assumed collision
+identity, or the unfinished combined-line existence helper.
+
+### Counterexample and boundary audit
+
+The zero-X-direction counterexample cannot enter the conditioned law.
+Zero Z directions remain allowed and are already covered by the supplied
+marginal errors and the restoration estimate. Inconsistent duplicated line
+descriptors have zero mass; the fiber-average proof actually establishes
+the collision inequality without needing positivity of that fiber.
+For degree zero the root estimate gives zero collisions of distinct
+constant polynomials. For `b>=q`, the possibly trivial bound remains valid.
+For `q=2` and dimension one, positivity still follows from `r>=3/4`.
+These are symbolic consequences of the proofs, not claims of an exhaustive
+computational search. The distribution of Z need not be nondegenerate.
+
+### Exact remaining construction obligations
+
+The product/question part of attempt 4's first obligation is discharged.
+The genuine conditioned marginal and joint estimates and the actual POVM
+restoration inequality are also discharged. The remaining work is:
+
+1. Transport the expanded operator families and state to the bipartite
+   presentation for every directed opposite placement. Existing
+   `Points/Placement.lean` and `Points/Orthonormalization.lean` identify
+   the heterogeneous bipartitions, including the unused EPR pair.
+   The current one-sided `exists_pasting_error` is typed on `ι × ι`.
+   A proved isometric enlargement or a heterogeneous-carrier version is
+   required before calling it on arbitrary player dimensions. Do not add
+   equal-dimension, equal-family, or symmetric-strategy hypotheses.
+2. Apply pasting with `G1=Z`, `G2=X` to the actual completed point family.
+   Transfer the answer permutation, including the self-consistency input
+   if using the existing public API, and identify the postprocessed
+   sandwich. The source's X-outer orientation is already proved.
+   The new conditional marginal theorems alone do not prove this step.
+3. Bound the actual conditional defect, then use
+   `combinedLineMeasurement_consistency_le_conditioned` without losing
+   its factor `r` or its additive `1/(2q)`.
+4. Specialize `deltaQ=K*epsilon^(1/8)`, prove additive polynomial
+   composition and the large-parameter case, and only then repair the
+   internal arbitrary-point helper and adapt the two helpers in `Apply`.
+   Their source-facing wrappers and supplied witnesses must remain faithful.
+
+No mathematical definition/game change has been found necessary. These are
+unproved construction steps, not a reason to request a new source hypothesis.
+Minimality of a final correction and full downstream mathematical sufficiency
+are **not** established. The weaker unrestricted collision candidate is
+false; discarding Z mass would be unnecessarily stronger for this argument.
+
+### Consumers, integrity, and validation
+
+The source uses and complete blueprint descendant list in attempt 1 below
+are unchanged. In particular source uses are 1058--1061, 1118--1132,
+1241--1246, 1278--1282, 1423, 1465--1492, 1584, 1627, and 1671. The new
+auxiliary node `lem:combined-line-conditioned-product` explicitly states
+its restriction and its still-unbounded conditional defect. The source node
+`lem:qld-xz-lines` remains unfinished. The separate Chapter 15, 16, and 13
+descendants and three prose references are not certified by import checks.
+
+Fresh private-artifact checks pass for `Lines`, `EvalDeficit`,
+`SubLineDeficit`, `Claims`, `Apply`, `MIPStarRE/QPBT`, and the project root.
+The first edited-file check and all consumer checks use the private library
+`/tmp/issue118-lean-validation/lib` before the dependency paths obtained by
+`lake env printenv LEAN_PATH`. No full build, baseline rebuild, or shared
+cache write is performed. Direct proof debt remains one hole in `Lines`
+and three in `Apply`; Claims 17-2/17-3 and their proofs are unchanged.
+All thirteen new declarations pass the axiom audit. The public source-header
+audit reports no changed headers; paper-gap style and blueprint LaTeX checks
+pass, and every new declaration has a blueprint reference. Blueprint web
+generation succeeds; its warning/error messages are unchanged from attempt 4
+(including the baseline unresolved subline labels and bibliography entries).
+All **1,848** generated blueprint declaration references resolve with the
+fresh private artifacts. The static sync report retains its **231** baseline
+stale entries; this is not claimed as a clean whole-repository sync report.
+The worktree hook-installation check also passes.
+
+Statement integrity: printed assumptions and conclusion are unchanged in
+the public source theorem. The added auxiliary hypotheses are the actual
+finite field parameters, distinct degree-bounded polynomials where relevant,
+supplied point witness, and opposite placements. The conditioning is internal,
+with positive mass proved and discarded mass restored. Verdict: proved
+formalization auxiliaries; the unfinished source theorem remains unfinished.
+
+Unposted operator draft: “#118 attempt 5 proves the conditioned product
+collision predicate, actual marginals with both errors, and mass restoration
+for the XZX POVM; bipartite pasting and quantitative specialization remain
+open. No correction adopted.” Main owns the telemetry and any announcement.
+
 ## Attempt 4: nondegenerate collisions and restoration of probability mass
 
 Session `mathfix-118-20260906-04`, baseline

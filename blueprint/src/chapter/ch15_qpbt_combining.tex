@@ -1378,6 +1378,58 @@ parts and use $h\le1$ on the latter. These facts do not yet constitute the
 operator consistency proof of the following source lemma.
 \end{proof}
 
+\begin{lemma}[Conditioned product questions and line marginals]
+\label{lem:combined-line-conditioned-product}
+\lean{MIPStarRE.QPBT.collision_bound_of_fiber_averages}
+\lean{MIPStarRE.QPBT.prod_linePointDist_nondegenerate_weighted_collision_le}
+\lean{MIPStarRE.QPBT.prod_linePointDist_nondegenerate_mass_pos}
+\lean{MIPStarRE.QPBT.nondegenerateLinePastingDist}
+\lean{MIPStarRE.QPBT.nondegenerateLinePastingMass}
+\lean{MIPStarRE.QPBT.nondegenerateLinePastingDist_collision_bound}
+\lean{MIPStarRE.QPBT.nondegenerateLinePastingDist_isProbability}
+\lean{MIPStarRE.QPBT.consistencyDefect_nondegenerateLinePastingDist_le}
+\lean{MIPStarRE.QPBT.exists_combinedPoints_conditioned_line_marginal_defect_le}
+\lean{MIPStarRE.QPBT.consistencyDefect_integrand_le_one}
+\lean{MIPStarRE.QPBT.consistencyDefect_le_nondegenerateLinePastingDist_add_mass}
+\lean{MIPStarRE.QPBT.CombinedPointsWitness.self_consistency_conditioned_completed_defect_le}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_consistency_le_conditioned}
+\leanok
+\uses{lem:combined-line-nondegenerate-collisions,
+  lem:combined-line-marginals-both-errors, lem:combined-line-sandwich-construction}
+This formalization auxiliary changes no game distribution. Write
+$s_X=(\ell_X,x)$ and $s_Z=(\ell_Z,z)$ for independent samples from $D$.
+Condition $D\otimes D$ on $\operatorname{dir}(\ell_X)\ne0$, with retained
+mass $r>0$, and relabel its questions as
+$(((\ell_X,\ell_Z),s_Z),s_X)$. This normalized law satisfies the
+conditional collision predicate for the second family with parameter $b/q$,
+for coefficient polynomials of degree at most $b$.
+
+For the supplied point witness of error $t$, complete and order its answers
+as $(Z,X)$. Its two line marginal defects on this law are at most
+$[8t+C(\eps+\sqrt\eps)]/r$, for a universal $C\ge1$.
+The completed joint self-consistency defect, in the common $(X,Z)$ order,
+is at most $t/r$. For any two complete measurement families on opposite
+placements, if $d$ is their original defect and $d_E$ is their relabeled
+conditional defect, then
+\[
+ d\le r d_E+\frac1{2q}.
+\]
+In particular this applies to the supplied completed points and the actual
+$XZX$ line POVM. It does not yet bound that POVM's conditional defect.
+\end{lemma}
+\begin{proof}
+\leanok
+Fix the common line-pair question and the entire Z sample. Apply the weighted
+nondegenerate collision bound to the X sample and average over the independent
+Z sample. Multiplication by $r>0$ removes the common normalization factor;
+indicator averages then give the conditional collision predicate.
+Postprocessing composition exchanges the two completed marginals, and
+nonnegativity on opposite registers gives the inverse-$r$ bounds.
+The pointwise defect equals one minus the nonnegative diagonal overlap,
+so it is at most one. Splitting its original average over the retained
+and discarded events proves the restoration estimate.
+\end{proof}
+
 \begin{lemma}[The constructed paired-line POVM]
 \label{lem:combined-line-sandwich-construction}
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
