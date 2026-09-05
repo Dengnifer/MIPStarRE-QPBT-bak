@@ -1320,6 +1320,64 @@ evaluated-line measurements are postprocessings of projective measurements,
 so the agreement identity bounds their consistency defect by this distance.
 \end{proof}
 
+\begin{lemma}[Nondegenerate line collisions and discarded mass]
+\label{lem:combined-line-nondegenerate-collisions}
+\lean{MIPStarRE.QPBT.evalOpt_affine_parameter_of_direction_ne_zero}
+\lean{MIPStarRE.QPBT.polynomial_ofFn_eval_eq_evalCoefficient}
+\lean{MIPStarRE.QPBT.evalCoefficient_collision_card_le}
+\lean{MIPStarRE.QPBT.evalOpt_uniform_parameter_collision_le}
+\lean{MIPStarRE.QPBT.avgOver_restrict_mul_mass}
+\lean{MIPStarRE.QPBT.avgOver_le_restrict_add_discarded_mass}
+\lean{MIPStarRE.QPBT.dLinePointDist_zero_direction_mass_le}
+\lean{MIPStarRE.QPBT.aLinePointDist_zero_direction_mass}
+\lean{MIPStarRE.QPBT.linePointDist_zero_direction_mass_le}
+\lean{MIPStarRE.QPBT.avgOver_lineRepMap_resample_parameter}
+\lean{MIPStarRE.QPBT.avgOver_aLinePointDist_resample_parameter}
+\lean{MIPStarRE.QPBT.avgOver_dLinePointDist_resample_parameter}
+\lean{MIPStarRE.QPBT.avgOver_linePointDist_resample_parameter}
+\lean{MIPStarRE.QPBT.linePointDist_nondegenerate_weighted_collision_le}
+\lean{MIPStarRE.QPBT.linePointDist_nondegenerate_fiber_collision_le}
+\lean{MIPStarRE.QPBT.linePointDist_nondegenerate_mass_ge}
+\lean{MIPStarRE.QPBT.prod_linePointDist_zero_X_direction_mass_le}
+\lean{MIPStarRE.QPBT.avgOver_restrict_le_div_mass}
+\leanok
+\uses{def:line-point-dist, def:ideg-deg-polynomials}
+This formalization auxiliary concerns coefficient polynomials and completed
+evaluation, not a modification of the line-point game. Write $D$ for the
+line-point law and $E=\{\ell:\operatorname{dir}(\ell)\ne0\}$.
+Resampling a uniform affine parameter on the sampled line preserves $D$
+exactly, including on zero directions. If $f\ne g$ have degree at most $b$,
+then, for every nonnegative line weight $w$,
+\[
+ \mathbb E_D[\mathbf1_E w(\ell)
+   \mathbf1_{\mathrm{eval}_{x}(f)=\mathrm{eval}_{x}(g)}]
+ \le \frac bq\,\mathbb E_D[\mathbf1_E w(\ell)].
+\]
+In particular the conditional collision bound holds on every positive-mass
+nondegenerate line fiber. Furthermore $D(E^c)\le1/(2q)$ and $D(E)\ge3/4$.
+For two independent samples, excluding only a zero $X$ direction has the
+same mass bound. For any finite distribution $\mu$, event $F$ of mass $r>0$,
+and function $h\le1$,
+\[
+ \mathbb E_\mu h\le r\mathbb E_{\mu\mid F}h+\mu(F^c).
+\]
+If $h\ge0$, also $\mathbb E_{\mu\mid F}h\le\mathbb E_\mu h/r$.
+\end{lemma}
+\begin{proof}
+\leanok
+On a nonzero direction the affine parameter is unique. Distinct coefficient
+polynomials agree at at most $b$ parameters, by applying the polynomial root
+bound to their difference. The uniform resampling identity follows from
+the uniform point law and invariance of the canonical representative under
+translation along its direction. Axis directions never vanish. A vanishing
+prefix-projected diagonal direction forces the last raw direction coordinate
+to be zero; that coordinate is uniform, giving probability at most $1/q$.
+The equal mixture gives $1/(2q)$. Since $q\ge2$, the retained mass is at least
+$3/4$. Finally, split each weighted sum into its retained and discarded
+parts and use $h\le1$ on the latter. These facts do not yet constitute the
+operator consistency proof of the following source lemma.
+\end{proof}
+
 \begin{lemma}[The constructed paired-line POVM]
 \label{lem:combined-line-sandwich-construction}
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
@@ -1327,6 +1385,7 @@ so the agreement identity bounds their consistency defect by this distance.
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_X}
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_Z}
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_sum_Z}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_effect_eq_pastedMeasurement}
 \leanok
 \uses{def:expanded-line-measurement, lem:pasting-measurement}
 This auxiliary records the construction in the proof of the following lemma,
@@ -1336,6 +1395,8 @@ $\ell_X,\ell_Z$. Then $T_{f_X,f_Z}=X_{f_X}Z_{f_Z}X_{f_X}$ is a POVM.
 An effect vanishes if either axis-line answer has degree greater than $d$.
 Moreover $\sum_{f_Z}T_{f_X,f_Z}=X_{f_X}$. This last identity concerns this
 construction, not an arbitrary witness of the following existence theorem.
+For the one-sided pasting convention, this is $G_2G_1G_2$ with $G_1=Z$
+and $G_2=X$, and polynomial answers ordered as $(f_Z,f_X)$.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -1380,6 +1441,7 @@ $X_{f_X}IX_{f_X}=X_{f_X}$ by projectivity.
 \begin{proof}
 	\uses{def:expanded-line-measurement, lem:qld-4-10, fact:add-a-proj,
 		lem:combined-line-marginals-both-errors, lem:combined-line-sandwich-construction,
+		lem:combined-line-nondegenerate-collisions,
 		lem:cool-closeness-fact, lem:qld-comm-line-cons, fact:agreement,
 		fact:data-processing, lem:pasting, lem:schwartz-zippel-total-degree,
 		def:symmetric-equivalents}

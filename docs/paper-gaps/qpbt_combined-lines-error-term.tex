@@ -316,6 +316,126 @@ summation over $a\in\F_q$.  Neither blueprint node therefore carries a
 statement-level formalization mark, and relating the two formulations is the
 transport obligation of that note.
 
+\section{The paired-line precursor: conditional collisions (issue 118)}
+
+This section concerns the earlier assertion \texttt{lem:qld-xz-lines}, not a
+new correction to the extended-line estimate discussed above. Its source is
+\path{references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex},
+lines 882--894, with the pasting argument at lines 943--963. It constructs
+paired-line POVMs consistent with the already constructed joint points, with
+error polynomial in $\eps$ and $\rho=md/q$, and with degree at most $d$ on
+axis lines. Issue 118 records that the unproved internal Lean helper allows
+an arbitrary supplied joint-point error $t$, while promising an output error
+independent of $t$. This stronger quantification does not follow from the
+printed argument. No counterexample to the printed existence theorem is
+known here.
+
+There is also a concrete obstruction to applying the conditional collision
+hypothesis literally to every coefficient-polynomial fiber in Lean. For a
+zero direction, every affine parameter denotes the base point. The completed
+evaluation is defined only when all these parameters give the same value.
+Consequently the distinct polynomials $T$ and $T+1$ both have completed value
+$\bot$. If $1\le md<q$, they collide with probability one, exceeding $md/q$.
+This is a counterexample to the unrestricted conditional-collision assertion,
+not to the source game or to paired-line consistency. The source sampler in
+\texttt{def:line-point-dist},
+\path{references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex},
+lines 274--287, and the evaluation convention are left unchanged.
+
+\paragraph{Proved distributional estimates.}
+Let $D$ denote that unchanged line-point law and let $E$ be the event that
+the sampled direction is nonzero. On every line fiber in $E$, a uniform
+affine parameter gives the correct conditional point law. More precisely,
+for every real function $H$ on line-point pairs,
+\[
+ \mathbb E_{(\ell,x)\sim D}H(\ell,x)
+ =\mathbb E_{(\ell,x)\sim D}\mathbb E_{s\in\mathbb F_q}
+     H(\ell,\ell_0+s\operatorname{dir}(\ell)).
+\]
+The identity itself holds also for zero directions. Its proof preserves the
+canonical representative jointly with the point: the representative of
+$\ell_0+s\operatorname{dir}(\ell)$ is $\ell_0$, and resampling a uniform
+point followed by a uniform parameter preserves the uniform point law.
+The block decomposition of the conditionally linear sampler gives this
+identity separately for axis and diagonal lines and then for their mixture.
+
+For distinct coefficient polynomials $f,g$ of degree at most $b$, their
+difference is a nonzero polynomial of degree at most $b$. It has at most
+$b$ roots. In Lean, the coefficient tuple is mapped injectively to Mathlib's
+polynomial type by \path{Polynomial.ofFn}; equality on more than $b$ field
+elements would imply polynomial equality by
+\path{Polynomial.eq_of_natDegree_lt_card_of_eval_eq}, and hence equality of
+the original tuples. This explains the library replacement for the
+Schwartz--Zippel invocation at source line 955. Together with resampling it
+proves, for every nonnegative function $w$ of the line alone,
+\[
+ \mathbb E_D[\mathbf1_E w(\ell)
+  \mathbf1_{\mathrm{eval}_x(f)=\mathrm{eval}_x(g)}]
+ \le \frac bq\mathbb E_D[\mathbf1_E w(\ell)].
+\]
+Taking $w$ to be a line-fiber indicator proves the required collision ratio
+on each nondegenerate positive-mass line fiber. The claim remains true when
+$b\ge q$; in that case the bound need not be smaller than one.
+
+Axis directions never vanish. A zero prefix-projected diagonal direction
+forces the last raw direction coordinate to vanish, and this coordinate is
+uniform, independently of the seed. Thus
+\[
+ D(E^c)\le\frac1{2q},\qquad D(E)\ge\frac34.
+\]
+The latter bound uses only $q\ge2$. On the product of two line-point laws,
+discarding only zero $X$ directions has the same bound. This suffices for the
+one-sided pasting orientation: the constructed POVM is $XZX$, so $G_1=Z$
+and $G_2=X$, with the two answer coordinates exchanged. There is no need to
+exclude degenerate $Z$ directions for the collision hypothesis.
+
+Finally, if an event $F$ has mass $r>0$, the exact restricted-average identity
+and the bound $h\le1$ give
+\[
+ \mathbb E_\mu h\le r\mathbb E_{\mu\mid F}h+\mu(F^c).
+\]
+For $h\ge0$, conditioning also gives
+$\mathbb E_{\mu\mid F}h\le\mathbb E_\mu h/r$.
+These identities retain the discarded mass rather than changing the game.
+All the distributional assertions in this paragraph are proved in
+\path{MIPStarRE/QPBT/Combining/Lines.lean} and linked from the separate
+blueprint node \texttt{lem:combined-line-nondegenerate-collisions}.
+
+\paragraph{Remaining operator construction and quantitative dependence.}
+The supplied joint-point marginals already have proved bounds
+$u=8t+C(\eps+\sqrt\eps)$ for a universal $C\ge1$; joint self-consistency
+has bound $t$. Conditioning on nondegenerate $X$ lines therefore retains
+both errors, with the marginal bound $u/r$. After the product-question and
+register reindexings have been verified, one-sided pasting would give
+$D_0(\rho^{1/4}+(u/r)^{1/8})$ on the conditional law. Restoring its mass
+would give
+\[
+ rD_0\bigl(\rho^{1/4}+(u/r)^{1/8}\bigr)+(1-r)
+ \le D_0\bigl(\rho^{1/4}+u^{1/8}\bigr)+\frac1{2q}.
+\]
+Here $0<r\le1$ accounts for both powers of $r$; no error term is omitted.
+For the constructed points, $t=K\eps^{1/8}$. On $0\le\eps,\rho\le1$,
+$u\le(8K+2C)\eps^{1/8}$, while $1/(2q)\le\rho/2$ since $md\ge1$.
+Thus this calculation has the additive polynomial form
+$O(\rho^{1/4}+\eps^{1/64})$. Larger parameters can use the unit bound for
+normalized POVM consistency. This is an analysis of the proposed operator
+construction, not an adopted Lean signature: the product conditional
+collision predicate, the bipartite reindexings, the final consistency proof,
+and its specialization in \path{Combining/Apply.lean} remain to be completed.
+
+The affected source uses are the restricted averages at lines 1058--1061,
+extended-line construction and degree at 1118--1132, and consistency at
+1241--1246; global pairs at 1278--1282 and extraction at 1423, 1465--1492,
+1584, 1627, and 1671 depend on these. The complete blueprint-descendant
+inventory is preserved in
+\path{audits/2026-09-06-issue118-point-error-dependency.md}.
+Neither the new auxiliary node nor the algebraic orientation identity marks
+any of those source results as proved. Claims 17-2 and 17-3, the public
+existence statements, and all witness fields remain unchanged.
+The verdict is proved collision and probability estimates, with operator
+integration still incomplete. No final correction or minimality claim is
+adopted, and no change to a mathematical definition or game is requested.
+
 \section{Conclusion}
 
 There is a proof-level gap in the cited lemma, together with an

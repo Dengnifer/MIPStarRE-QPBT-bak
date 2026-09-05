@@ -1,5 +1,216 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 4: nondegenerate collisions and restoration of probability mass
+
+Session `mathfix-118-20260906-04`, baseline
+`46322dda15c6618ba52e6c9409ad692fe70ae320`. This is attempt **4 of 10**.
+The original budget anchor remains September 5, 2026, 19:24 UTC; the session
+started at 21:22:32 UTC. Cumulative working time remains operator-owned and
+was not supplied separately. This attempt proves distributional components
+of the source line construction; it does **not** adopt a corrected public
+signature or claim that the combined-line consistency proof is complete.
+
+### Source statement and the precise collision obstruction
+
+The source remains `lem:qld-xz-lines`,
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:882-894`,
+using `lem:pasting` at 950--963. Its constructed points admit paired-line
+POVMs, consistent on independent line-point samples in every directed
+opposite placement, with additive polynomial error in `epsilon,md/q` and
+axis-degree support. The paper does not quantify over an arbitrary supplied
+point witness while dropping its error `t = deltaQ`; the old internal helper
+still does, and remains unproved.
+
+On a zero-direction coefficient presentation, the distinct polynomials
+`T` and `T + 1` both have completed evaluation `none`. For `1 <= md < q`
+their conditional collision probability one exceeds `md/q`. This is the
+same obstruction as attempt 3, not a new counterexample to the source
+existence theorem. The source line sampler, coefficient answers, evaluation
+convention, strategy, and supplied point witness are all unchanged.
+
+### Nineteen proved declarations
+
+The new declarations are in `MIPStarRE/QPBT/Combining/Lines.lean`.
+
+1. `evalOpt_affine_parameter_of_direction_ne_zero` identifies completed
+   evaluation with ordinary polynomial evaluation on a nonzero direction.
+2. `polynomial_ofFn_eval_eq_evalCoefficient` connects coefficient tuples
+   to the evaluation of Mathlib's `Polynomial.ofFn`.
+3. `evalCoefficient_collision_card_le` proves the root-count bound for
+   distinct coefficient tuples, with no assumption that the degree is less
+   than the field size.
+4. `evalOpt_uniform_parameter_collision_le` proves the collision ratio
+   `bound / card(field)` on a uniform parameter of a nondegenerate line.
+5. `avgOver_restrict_mul_mass` identifies a conditional average times its
+   mass with the original unnormalized restricted sum.
+6. `avgOver_le_restrict_add_discarded_mass` restores the original average
+   with the discarded mass explicitly added, for a function bounded by one.
+7. `dLinePointDist_zero_direction_mass_le` bounds diagonal degeneracy by
+   `1/q`: the last raw direction coordinate must be zero and is uniform.
+8. `aLinePointDist_zero_direction_mass` proves zero axis degeneracy.
+9. `linePointDist_zero_direction_mass_le` gives the source mixture's
+   degeneracy bound `1/(2q)`.
+10. `avgOver_lineRepMap_resample_parameter` preserves jointly the canonical
+    representative and point when resampling a uniform affine parameter.
+11. `avgOver_aLinePointDist_resample_parameter` proves the exact axis-law
+    resampling identity.
+12. `avgOver_dLinePointDist_resample_parameter` proves the exact diagonal
+    identity, including zero directions.
+13. `avgOver_linePointDist_resample_parameter` proves the mixture identity.
+14. `linePointDist_nondegenerate_weighted_collision_le` proves the collision
+    bound with any nonnegative line-dependent weight, restricted to nonzero
+    directions. It derives, rather than assumes, the conditional point law.
+15. `linePointDist_nondegenerate_fiber_collision_le` specializes the weight
+    to any nondegenerate line fiber. Dividing by its positive mass gives
+    its conditional collision probability bound.
+16. `linePointDist_nondegenerate_mass_ge` proves retained mass at least
+    `3/4`, using only that a field has at least two elements.
+17. `prod_linePointDist_zero_X_direction_mass_le` bounds the discarded
+    mass by `1/(2q)` when only zero X directions are excluded in the
+    independent product law.
+18. `avgOver_restrict_le_div_mass` bounds inflation of a nonnegative
+    average by the inverse retained mass.
+19. `ProjectiveSetting.combinedLineMeasurement_effect_eq_pastedMeasurement`
+    identifies the **existing** X-outer sandwich with one-sided pasting at
+    `G1 = Z`, `G2 = X`, exchanging the polynomial answer coordinates.
+
+The resampling argument uses the already proved uniformity of
+`lineRepMap direction point + parameter * direction`, but preserves the
+representative as well as the point. In particular it does not infer a
+conditional law merely from a uniform point marginal. Independent raw
+point and seed-direction blocks yield the source axis and diagonal laws.
+On a nonzero direction the parameter is unique, and the difference of two
+distinct degree-bounded polynomials has at most that many roots. The
+coefficient-to-polynomial map is injective, so equality of evaluations on
+too many parameters cannot hide distinct coefficient answers.
+
+The discarded-mass calculation uses the **last** direction coordinate,
+which survives every prefix projection, regardless of the seed. Thus no
+false independence of a seed-selected coordinate is assumed. The argument
+also avoids discarding degenerate Z directions: only X supplies the
+collision-bounded second family for the actual X-Z-X sandwich.
+
+### Edge cases, correctness, and the quantitative calculation
+
+The zero-direction counterexample is outside the nondegenerate collision
+claim, but is still inside the original game; its probability is retained
+explicitly. Degree zero gives a zero collision bound for distinct constants.
+When the degree is at least `q`, the root-count bound is valid but may be
+trivial. At `m = 1`, the last coordinate exists, and at `q = 2` the retained
+mass lower bound is still `3/4`. Indeed `m = 1, q = 2` attains the worst
+mixture mass `1/4`. No division by a strategy or point error occurs.
+These are mathematical boundary checks, not numerical evidence in place
+of proof; the Lean lemmas quantify over all their stated parameters.
+
+The already proved marginal estimate is
+`u = 8t + C(epsilon + sqrt(epsilon))`. If `r` is the mass of nondegenerate
+X lines, conditioning yields `u/r` and joint self-consistency `t/r`.
+The latter is bounded by `u/r` for nonnegative `t`. Once the question and
+register transports are completed, one-sided pasting and restoration give
+the proposed estimate
+
+\[
+ rD_0\bigl((md/q)^{1/4}+(u/r)^{1/8}\bigr)+(1-r)
+ \le D_0\bigl((md/q)^{1/4}+u^{1/8}\bigr)+1/(2q).
+\]
+
+The factors of `r` cannot be silently omitted before this calculation:
+the second term is `r^(7/8) * u^(1/8)`, at most `u^(1/8)` since `r <= 1`.
+For constructed points `t = K * epsilon^(1/8)`, on the unit square the
+bound becomes a constant times `(md/q)^(1/4) + epsilon^(1/64)`, since
+`u <= (8K + 2C) * epsilon^(1/8)` and `1/(2q) <= (md/q)/2`.
+Outside the unit square normalized POVM consistency is bounded by one.
+This explains a source-valid route to additive polynomial composition; it
+is **not** a Lean proof of the missing operator application or an adopted
+error function.
+
+### Exact remaining obligations and consumer boundary
+
+1. Form the normalized restriction of the **product** source law to nonzero
+   X directions, and reindex questions into the one-sided pasting
+   presentation. Derive `HasConditionalCollisionBound` from the proved
+   single-line fiber estimate and independence of the Z sample. The
+   single-line theorem is not yet a term of that product-law predicate.
+2. Reindex both completed marginal defects, completed joint measurement,
+   and expanded state into the bipartite presentation, for every directed
+   opposite placement. Use the exact restricted-average identity to retain
+   `u/r` and `t/r`. No new marginal or state hypothesis may be introduced.
+3. Apply the existing `exists_pasting_error` with `G2 = X`. Exchange the
+   answer coordinates and identify the postprocessed output with
+   `combinedLineMeasurement`; the new effect identity proves only its
+   algebraic orientation, not its consistency. Restore the discarded mass
+   using the actual unit bound for these POVMs.
+4. Only then replace the internal helper's unsupported error independence
+   by its proved quantitative dependence on `t`; specialize to the
+   constructed point error and formalize additive polynomial composition.
+   Preserve the public source existence statement and supplied witnesses.
+5. Adapt the two arbitrary-point helpers and their source-facing consumers
+   in `Apply.lean`, retaining the established extended-line error and all
+   separate source-game transport obligations. Claims 17-2/17-3 stay intact.
+
+The complete source and blueprint consumer inventory in attempt 1 below
+still applies, including all Chapter 15, 16, and 13 descendants and the
+three prose-only references. The direct paper uses remain 1058--1061,
+1118--1132, and 1241--1246; subsequent global-pair and extraction uses are
+1278--1282, 1423, 1465--1492, 1584, 1627, and 1671. Their mathematical
+sufficiency is not certified by this partial construction. The new
+blueprint node `lem:combined-line-nondegenerate-collisions` displays the
+nondegeneracy restriction and mass restoration explicitly. The source node
+`lem:qld-xz-lines` remains `notready`.
+
+Minimality of a final correction is not established. The false uniform
+collision claim is rejected. Restricting only the proof distribution,
+rather than the source theorem or game, avoids an unnecessary public
+hypothesis. Excluding both directions would discard more than the
+one-sided collision argument needs. Dropping `t`, replacing the point
+witness, or assuming the product collision predicate is still impermissible.
+
+Statement audit: the printed theorem assumes the source-constructed points
+and concludes paired-line consistency and axis-degree support. The source
+Lean statement, witness fields, strategy, and game are unchanged. The new
+auxiliary lemmas instead assume finite field parameters, distinct bounded
+coefficient tuples, and explicitly nondegenerate lines where needed;
+the restriction lemmas state their positivity and unit-bound hypotheses.
+Their conclusions are the precise collision, resampling, and probability
+estimates above. Verdict: faithful auxiliary facts with explicit proof-only
+restrictions; the source construction and its sufficiency remain incomplete.
+
+### Validation and operator record
+
+All **19** new declarations depend only on `propext`, `Classical.choice`,
+and `Quot.sound`, not `sorryAx`. The changed `Lines` file compiles with a
+fresh private artifact, followed by `EvalDeficit`, `SubLineDeficit`,
+`Claims`, `Apply`, QPBT, and the project root. The first downstream command
+used incorrect `Combining/Lines/` paths; it did not validate anything and
+was replaced by the successful run using the actual `Combining/` paths.
+Only the existing one `Lines` hole and three `Apply` holes remain.
+
+All **1,835** blueprint declarations resolve. Blueprint web generation
+succeeds with the inherited unresolved-label and bibliography warnings.
+The synchronization report retains the **231 baseline stale entries**;
+no unrelated list entries are removed. The LaTeX convention, changed
+paper-gap style, and statement-origin checks pass, as does hook
+installation verification. Logs and the axiom-check source are
+`/tmp/issue118-attempt4-*`; all Lean checks prefix the private artifact
+directory inside the `lake env` child shell. No full build, whole-baseline
+rebuild, shared-cache write, other-worktree edit, subagent, push, post,
+review, or merge occurs.
+
+At September 5, 2026, 21:49 UTC, approximately 27 minutes of this session
+and 145 minutes wall time from the original anchor have elapsed; these are
+not measurements of cumulative working time. The attempt limit is not
+reached. No source/game change is shown necessary, so no owner decision is
+requested. Main retains responsibility for telemetry and adoption records.
+
+Unposted #27 draft: **Attempt 4 proves nondegenerate conditional line
+collisions, exact parameter resampling, and restoration of discarded mass;
+product/register pasting and quantitative specialization remain open.
+No correction adopted.** No adopted-correction event or design decision
+is appropriate yet. Commit evidence is recorded in the session's final
+report, not by modifying runtime state.
+
+---
+
 ## Attempt 3: completed marginals on the product line-point law
 
 Session `mathfix-118-20260906-03`, on baseline
