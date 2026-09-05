@@ -2647,12 +2647,54 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	square root of the average.
 \end{proof}
 
+\begin{lemma}[Formalization support for Lemma~\ref{lem:qld-sublines}: a uniform point of the extended space]
+	\label{lem:qld-sublines-uniform-point}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_uncurry}
+	\lean{MIPStarRE.QPBT.uniformDistribution_map_directLine_add_smul}
+	\lean{MIPStarRE.QPBT.avgOver_uniform_directLdSpace_line_add_smul}
+	\lean{MIPStarRE.QPBT.avgOver_directLinePointDist_line_add_smul}
+	\lean{MIPStarRE.QPBT.SubLineWitness.avgOver_projX_projZ}
+	\leanok
+	\uses{lem:qld-sublines, def:line-point-dist, def:line-representative,
+		def:combine-map}
+	This formalization-only auxiliary is not a named statement of the paper; it
+	is the sampling step used in the three claims below. If every slice of a
+	map of a pair carries the uniform law of the second variable to one law,
+	then the map carries the uniform law of the pair to that law. Applied to
+	the two branches of the directly indexed line-point law of
+	Definition~\ref{def:line-point-dist}, whose sampled direction depends only
+	on the stored coordinate index and the stored direction and whose base
+	point is the canonical representative of the stored point in that
+	direction, it gives: the point at a uniformly random affine parameter on a
+	line drawn from that law is a uniformly random point of $\F_q^{2m+2}$.
+	Composed with the extended-line marginal of Lemma~\ref{lem:qld-sublines}
+	and with the block decomposition of Definition~\ref{def:combine-map}, the
+	two source blocks $x$ and $z$ of the sampled point are two independent
+	uniformly random points of $\F_q^m$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:qld-sublines, def:line-representative}
+	A mixture of one and the same law is that law, so it suffices to treat one
+	slice at a time. On a fixed direction the parameterization sending a
+	representative and an affine parameter to the point at that parameter has
+	constant fibers of size $q$, hence carries the uniform law to the uniform
+	law; this is the elementary geometric input already recorded for
+	Lemma~\ref{lem:qld-sublines}. Averaging over the stored index and
+	direction and mixing the axis and diagonal branches keeps the uniform law,
+	and the coordinatewise identification of the two scalar fields is a
+	bijection, so the two blocks of the transported point are independent and
+	uniform.
+\end{proof}
+
 \begin{lemma}[Replacing the combined point measurement by the ordered product]
 	\label{lem:claim-17-1}
 	\lean{MIPStarRE.QPBT.subline_replace_by_ordered_product}
-	\notready
+	\leanok
 	% claim:17-1 in the paper; the original label is recorded here as a
-	% comment for cross-reference fidelity.
+	% comment for cross-reference fidelity. The formalized constant is
+	% $2$, from the inflation factor four of
+	% Lemma~\ref{lem:qld-4-10-same-placement}.
 	\uses{lem:qld-sublines, lem:qld-xz-lines, lem:qld-4-10,
 		def:expanded-point-measurement, def:expanded-state}
 	\begin{align*}
@@ -2674,8 +2716,10 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	\end{align*}
 \end{lemma}
 \begin{proof}
-	\uses{lem:qld-4-10, lem:qld-sublines, lem:qld-xz-lines,
-		def:line-point-dist}
+	\leanok
+	\uses{lem:qld-4-10, lem:qld-4-10-same-placement, lem:qld-sublines,
+		lem:qld-xz-lines, lem:overlap-gap-distance,
+		lem:qld-sublines-uniform-point, def:line-point-dist}
 	Write
 	$W^{x,z}_{a,b} = \hat{Q}^{x,z}_{a,b}
 	- \hat{M}^{(\mathrm{Point},Z),z}_{b}
