@@ -1,3 +1,4 @@
+import MIPStarRE.QPBT.Combining.OrderedPoints
 import MIPStarRE.QPBT.Combining.OverlapGap
 import MIPStarRE.QPBT.Combining.Witnesses
 

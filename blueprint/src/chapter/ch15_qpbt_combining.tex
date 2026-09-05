@@ -2573,6 +2573,39 @@ on registers $\mathsf{A}\mathsf{A}'$, the second tensor factor is placed on
 registers $\mathsf{B}\mathsf{A}''$, and the sums range over
 $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 
+\begin{lemma}[Formalization support for Lemma~\ref{lem:qld-4-10}: the ordered product on one placement]
+	\label{lem:qld-4-10-same-placement}
+	\lean{MIPStarRE.QPBT.Placement.exists_isOpposite}
+	\lean{MIPStarRE.QPBT.CombinedPointsWitness.orderedZX_dist_le}
+	\leanok
+	\uses{lem:qld-4-10, def:povm-distance, def:expanded-point-measurement,
+		def:symmetric-equivalents}
+	This formalization-only auxiliary is not a named statement of the paper;
+	it restates the ordered $Z$-then-$X$ display of
+	Lemma~\ref{lem:qld-4-10} with both families on one and the same
+	placement, which is the form the three claims below use. Each of the four
+	placements has an opposite placement, and the relation is symmetric on
+	each pair. For every placement $\mathsf{P}$ and every joint point
+	measurement satisfying the conclusions of Lemma~\ref{lem:qld-4-10} with
+	error $\delta_Q$,
+	\[
+		\E_{x,z} \sum_{a,b} \Big\lVert \Big(
+		\hat{Q}^{x,z}_{a,b} - \hat{M}^{(\mathrm{Point},Z),z}_{b}
+		\hat{M}^{(\mathrm{Point},X),x}_{a} \Big)_{\mathsf{P}}
+		\ket{\hat\psi} \Big\rVert^2 \le 4 \, \delta_Q ,
+	\]
+	the average being over independent uniform $x, z \in \F_q^m$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:qld-4-10, fact:triangle}
+	Insert the joint point measurement placed on the opposite placement. The
+	self-consistency display of Lemma~\ref{lem:qld-4-10} bounds the first
+	step by $\delta_Q$ and the ordered display bounds the second step by
+	$\delta_Q$, so the squared-distance triangle inequality
+	(Fact~\ref{fact:triangle}) gives the bound $2\delta_Q + 2\delta_Q$.
+\end{proof}
+
 \begin{lemma}[Formalization support for Lemma~\ref{lem:qld-4-13}: replacing one factor of an overlap]
 	\label{lem:overlap-gap-distance}
 	\lean{MIPStarRE.QPBT.abs_overlap_gap_le_sqrt_of_opFamilyDistSq}
