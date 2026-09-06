@@ -1,5 +1,202 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 8: polynomial specialization and paired-line witness assembly
+
+Session `mathfix-118-20260906-08`, baseline
+`cd1815e1cedc60060929f12cd6eaa1dcb184225d`, attempt **8/10**. Carry
+**12452 completed working seconds** from attempts 1--7; do not substitute
+attempt 7's earlier in-progress estimate. The original anchor remains
+September 5, 2026, 19:24 UTC. This session starts September 6, 2026,
+01:21:14 UTC, with a 2700-second cap. The launch context reports the
+verified Astra/max shim; no routing, credentials, runtime state, or sessions
+are changed here. Earlier attempt sections are historical records.
+
+### Mathematical result and counterexample audit
+
+The printed `lem:qld-xz-lines`, paper
+`14_analysis_of_the_pauli_basis_test.tex:882-894`, asserts universal
+polynomial error, paired-line POVMs for the already constructed points,
+all symmetric placements, and degree `d` on axis lines. Its proof constructs
+the actual XZX sandwich at 943--947 and invokes pasting at 950--963.
+The existence theorem is not disproved. The demonstrated obstructions are
+the former internal quantification over an unrestricted supplied point error
+without output dependence, and the literal completed collision condition on
+zero X directions: distinct polynomials `T` and `T+1` both evaluate to `none`.
+
+The corrected, now proved internal paired-line interface fixes any function
+`t` satisfying `0 <= t(epsilon) <= K*epsilon^alpha`, with `K >= 1` and
+`alpha > 0`, before choosing the output polynomial function. It constructs
+the actual XZX line witness for every supplied point witness at that error.
+The source-facing `exists_combinedLinesWitness` has **unchanged public
+assumptions and conclusion** and now has a proof without `sorryAx`: it
+supplies the point function and points internally. The point construction
+has the special form `K*epsilon^(1/8)`, but the new internal theorem does
+not unnecessarily restrict itself to this exponent.
+
+For the inherited bound `r*f(rho,u/r)+1/(2q)`, write
+`f(x,y) <= A*(x^a+y^b)`, `u=8*t(epsilon)+C*(epsilon+sqrt epsilon)`,
+`gamma=min(alpha,1/2)`, `beta=min(a,1)`, `D=8*K+2*C`, and
+`B=A*(1+(2*D)^b)+1`. The proved mass bounds include `1/2 <= r <= 1`.
+On the unit square, `u <= D*epsilon^gamma`, `u/r <= 2*D*epsilon^gamma`,
+and `1/(2q) <= rho` since `md >= 1`. Thus the restored defect is at most
+`B*(epsilon^(gamma*b)+rho^beta)`. Outside the unit square this expression
+is at least one, so the independent unit consistency bound applies. This
+uses the explicit power majorant, not monotonicity of the unspecified `f`.
+The minimum with one occurs only in a numerical estimate, not in a
+measurement construction. With the explicit pasting exponents it gives
+`O(epsilon^(1/64)+rho^(1/4))` for the constructed point error.
+
+The actual point and line families are unchanged. Opposite-register
+operators commute; exchanging the summations proves consistency symmetry
+and supplies the orientation required by `CombinedLinesWitness.consistent`.
+There is no equality-of-dimensions, equality-of-families, or state-symmetry
+assumption. The axis-degree fields use the existing actual-sandwich proofs.
+
+Symbolic boundary checks cover zero epsilon, zero ratio in the scalar
+lemma, `q=2`, all positive exponents (including those greater than one),
+large parameters, zero Z directions, and unequal local dimensions and
+point families. Zero X directions are excluded only from the proof law,
+with their original-law contribution restored. An arbitrary positive
+supplied error at epsilon zero no longer satisfies the specialized point
+contract. These checks and the general proof, not failure to find a
+counterexample, justify the paired-line result.
+
+### Apply increment and precise remaining obligations
+
+`subline_joint_overlap_near_one` chains the **unchanged** Claims 17-1,
+17-2, and 17-3 using the triangle inequality. On the actual subline law,
+the completed joint overlap `J` obeys, for a universal positive constant,
+
+```
+|J-1| <= C*(t^(1/2) + sqrt(m)*(p^(1/4)+t^(1/4)+epsilon^(1/4))).
+```
+
+This assertion is for the `AA'`--`BA''` comparison present in those claims;
+it is not silently promoted to a second-player assertion.
+`exists_combining_polynomial_bound` proves that the minimum of one and this
+error expression is bounded by `m*h(epsilon,rho)`, for an additive polynomial
+`h`, on the entire nonnegative quadrant and for `m >= 1`. If
+`t <= K*epsilon^alpha` and `p <= A*(epsilon^a+rho^b)`, fourth-root
+subadditivity permits epsilon exponent `min(alpha/4,a/4,1/4)` and ratio
+exponent `b/4`. The epsilon-greater-than-one case uses the scalar unit bound.
+
+Both extended-line `_ofPointsWitness` helpers now fix a polynomial point
+function before choosing their output functions; the existential wrappers
+produce it from `exists_combinedPointsWitness`. Their wrapper statements
+are unchanged. These are **quantitative realignments of existing open
+obligations**, not newly proved or adopted extended-line theorems.
+The three remaining `Apply` holes have the following discharge targets:
+
+1. `exists_extendedLinesWitness_established_ofPointsWitness`: conditional
+   averaging of the actual paired-line POVM using the subline witness;
+   proof of axis-degree support, completed-evaluation comparison, and the
+   second-player counterpart of the first-route overlap. The numerical
+   composition is now available independently.
+2. `exists_extendedLinesWitness_ofPointsWitness`: in addition to the
+   construction, the stronger printed `poly(m^2*epsilon,md/q)` estimate.
+   The established first route does not discharge it, and the second route's
+   joint-law claim is still unsupported. No speculative proof is asserted.
+3. `exists_globalPairWitness`: the existing direct low-degree soundness,
+   game/answer transport, projectivization, and parameter absorption
+   obligations. No downstream-tail implementation is attempted here.
+
+### Sufficiency inventory and statement integrity
+
+The complete source, blueprint-descendant, and actual-reference inventory
+under **Consumer inventory and limits of sufficiency** below remains in
+force. Direct paper uses at 1058--1061 obtain the same restricted consistency
+with the same inflation factor; 1118--1132 receive the same actual paired
+POVM and axis-degree support. At 1241--1246, the first-route overlap and
+scalar absorption are now proved separately, but not yet connected to the
+extended-line conditional average. The unsupported second-route product law
+is not used. Global pairs at 1278--1282 and extraction at 1423, 1465--1492,
+1584, 1627, and 1671 remain dependent on that unresolved extended-line step.
+No compilation-only certification of these mathematical uses is claimed.
+
+All existing blueprint descendants in Chapters 15, 16, and 13, and the
+three prose references listed below, are retained. Two new auxiliary nodes
+are `lem:combined-line-polynomial-specialization` and
+`lem:subline-first-route-quantitative`. The source-labelled paired-line
+node retains `notready`: the new green auxiliary explicitly states the
+completed-answer comparison instead of marking the field-answer source
+entry as an additional formalized statement. No extended-line or
+global-pair source node is newly marked complete.
+
+Statement-integrity audit:
+
+- `exists_combinedLinesWitness`: paper assumptions are an admissible
+  projective setting and the points constructed by the preceding lemma;
+  Lean supplies the latter existentially. Paper conclusion is polynomial
+  paired-line consistency, symmetric placements, and axis degree. Lean
+  concludes the existing completed-answer witness with those fields.
+  Verdict: public header unchanged; completed-answer encoding remains
+  explicit in the separate blueprint auxiliary, not silently identified
+  with the source field-answer convention.
+- The paired-line internal helper changes from an unbounded numerical
+  supplied error to an arbitrary polynomially bounded function chosen
+  before the line error. Verdict: proved quantitative internal correction;
+  no extra hypothesis reaches the source-facing wrapper.
+- Both extended-line internal helpers have the same explicit point-function
+  dependency; their wrappers preserve the printed and first-route error
+  expressions respectively. Verdict: existing conditional construction
+  obligations remain open; no claim of a proved source correction.
+- Claims 17-1, 17-2, and 17-3 and the global-pair public theorem are
+  unchanged in assumptions and conclusions. No game, definition, witness
+  field, paper mirror, or downstream-tail file changes.
+
+Minimality is limited to this proof increment. Retaining the arbitrary
+numerical point error in the restored bound is weaker than imposing a
+small-error assumption on that bound. For source specialization, the
+proved arbitrary polynomial contract is weaker than insisting on exactly
+`K*epsilon^(1/8)`. Dropping the point error, replacing the supplied points,
+or assuming a desired consistency conclusion is not justified. A final
+minimality or sufficiency verdict for the extended-line correction is not
+yet available.
+
+### Validation and operator record
+
+Focused Lean checks and the import-closure checks use the branch-private
+artifacts in `/tmp/issue118-lean-validation/lib`, with logs prefixed
+`/tmp/issue118-attempt8-`. The exact import closure, computed from actual
+Lean imports, is `Lines`, `EvalDeficit`, `SubLineDeficit`, `Claims`, `Apply`,
+`MIPStarRE/QPBT.lean`, and `MIPStarRE.lean`. No full build, shared-cache
+write, `lake update`, publication, merge, subagent dispatch, or runtime-state
+edit is performed. All seven files pass against fresh private artifacts.
+The seven new or newly proved declarations checked with `#print axioms`
+depend only on `propext`, `Classical.choice`, and `Quot.sound`, including
+both complete paired-line existence theorems. The debt is now **zero holes
+in Lines and three existing holes in Apply**, a reduction of one with no
+new debt. The actual checked toolchain is Lean **4.32.0**, as pinned in
+this worktree's `lean-toolchain`, rather than the older quick-start text.
+
+An independent floating-point sweep of the extremal power majorants checks
+**21600** conditioned-scalar cases and **32400** combining-scalar cases,
+including zero, unit, small, and large parameters and exponents above one.
+These computational checks supplement, and do not replace, the proofs.
+
+All **1873** web-generated blueprint declaration references resolve against
+the fresh private root artifact. Blueprint web generation passes with the
+inherited missing-bibliography warnings. The final static synchronization
+report retains **231 baseline stale entries** and **15 baseline header-only
+proof-status entries**, rather than being claimed fully clean. The paper-gap
+note compiles with its bibliography to a fifteen-page PDF. Paper-gap style,
+blueprint LaTeX conventions, source-header integrity, added-line lengths,
+whitespace, and hook-installation checks pass.
+
+At the validation cutoff, September 6, 2026, **01:58:59 UTC**, the session
+has used **2265 working seconds (37 minutes 45 seconds)**. Adding the
+operator's 12452 completed seconds gives **14717 seconds (4 hours
+5 minutes 17 seconds)**. Commit preparation and the final report follow
+this cutoff; final dispatcher accounting is authoritative. The attempt
+number and original anchor are unchanged. Two attempts remain under the
+count limit, and neither the count nor the working-time cap requires
+immediate owner escalation.
+
+Unposted progress-log draft: "Attempt 8 completes the actual paired-line
+witness and polynomial specialization, and proves the first-route overlap
+and scalar absorption; three Apply construction obligations remain. No
+final extended-line source correction adopted."
+
 ## Attempt 7: actual conditional pasting and restored source-law defect
 
 Session `mathfix-118-20260906-07`, baseline

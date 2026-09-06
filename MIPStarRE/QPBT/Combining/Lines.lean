@@ -1197,79 +1197,6 @@ theorem ProjectiveSetting.combinedLineMeasurement_sum_Z
     (S.lineMeasExp side .Z lineZ).sum_eq_one, mul_one]
   exact (S.lineMeasExp_isProjective side .X lineX fX).1
 
-/-- Conditional joint X/Z line measurements for `lem:qld-xz-lines`.
-
-**Source statement:** `lem:qld-xz-lines` in
-`blueprint/src/chapter/ch15_qpbt_combining.tex:345-443`, from
-`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:882-894`.
-The error depends polynomially on `ε` and `md/q`, and the witness retains all
-directed opposite-placement comparisons.  This is the formalization-only form
-with an already constructed point witness; the source-facing theorem below
-supplies that witness existentially.  The proof is tracked by issue #18.
-Discharge: formalize the sandwich measurement and the pasting argument in the
-cited proof.
-
-**Quantitative gap (issue #118):** This unproved internal interface still
-omits dependence on the unrestricted supplied point error `δQ`. The proved
-`marginal_X_distance_le` and `marginal_Z_distance_le` retain the bound `4 * δQ`;
-`self_consistency_defect_le` retains `δQ`. The completed line-point marginal
-defects are bounded by `8 * δQ + C * (ε + Real.sqrt ε)` above. The sandwich,
-its degree bounds, nondegenerate single-line collision bounds, and discarded-mass
-estimates are proved. The product-question and register reindexings, pasting,
-and specialization to the constructed point error remain to be proved. See
-`audits/2026-09-06-issue118-point-error-dependency.md`, attempt 4, and
-`docs/paper-gaps/qpbt_combined-lines-error-term.tex`. No corrected quantitative
-interface is adopted by these partial results.
-
-**Error contract:** the polynomial bound printed in the source is carried
-by `IsPolyErr₂`, which states the corrected sum form
-`f x y ≤ C * (x ^ r + y ^ s)` with `1 ≤ C` and positive exponents on the
-closed nonnegative quadrant, in place of the product form `C * (x * y) ^ C`
-of the source shorthand at `04_preliminaries.tex:22-29`.  The correction and
-the two-dimensional strategy that refutes the product form are recorded in
-`docs/paper-gaps/qpbt_pasting-product-error.tex` and tracked by issue #196.
-Here `poly(ε, md/q)` is read in that sense. -/
-theorem exists_combinedLinesWitness_ofPointsWitness :
-    ∃ deltaP : ℝ -> ℝ -> ℝ, IsPolyErr₂ deltaP ∧
-      ∀ (P : AdmissibleParams) (ε δQ : ℝ) (S : ProjectiveSetting P ε)
-        (points : CombinedPointsWitness S δQ),
-        Nonempty (CombinedLinesWitness S points
-          (deltaP ε (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))) := by
-  sorry
-
-/-! The source-facing declaration below supplies the point witness produced by
-`lem:qld-4-10` existentially.  The `_ofPointsWitness` companion above is the
-conditional form used by downstream calculations. -/
-
-/-- The source-facing joint X/Z line measurement construction of
-`lem:qld-xz-lines`, paper lines 882--894.
-
-Unlike the formalization-only `_ofPointsWitness` companion, this declaration
-does not assume a `CombinedPointsWitness` as an external bridge input.  It
-quantifies the point error function and witness construction together with the
-line construction, as the preceding source lemma supplies those points.
-
-**Error contract:** the polynomial bound printed in the source is carried
-by `IsPolyErr₂`, which states the corrected sum form
-`f x y ≤ C * (x ^ r + y ^ s)` with `1 ≤ C` and positive exponents on the
-closed nonnegative quadrant, in place of the product form `C * (x * y) ^ C`
-of the source shorthand at `04_preliminaries.tex:22-29`.  The correction and
-the two-dimensional strategy that refutes the product form are recorded in
-`docs/paper-gaps/qpbt_pasting-product-error.tex` and tracked by issue #196.
-Here `poly(ε, md/q)` is read in that sense. -/
-theorem exists_combinedLinesWitness :
-    ∃ deltaQ : ℝ -> ℝ, IsPolyErr deltaQ ∧
-      ∃ deltaP : ℝ -> ℝ -> ℝ, IsPolyErr₂ deltaP ∧
-        ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
-          ∃ points : CombinedPointsWitness S (deltaQ ε),
-            Nonempty (CombinedLinesWitness S points
-              (deltaP ε (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))) := by
-  obtain ⟨deltaQ, hdeltaQ, hpoints⟩ := exists_combinedPointsWitness
-  obtain ⟨deltaP, hdeltaP, hlines⟩ := exists_combinedLinesWitness_ofPointsWitness
-  refine ⟨deltaQ, hdeltaQ, deltaP, hdeltaP, fun P ε S => ?_⟩
-  obtain ⟨points⟩ := hpoints P ε S
-  exact ⟨points, hlines P ε (deltaQ ε) S points⟩
-
 /-! ## Conditioned product questions for one-sided pasting -/
 
 
@@ -2218,6 +2145,272 @@ theorem exists_combinedLine_restored_defect_le :
   have hmass : 0 ≤ nondegenerateLinePastingMass params.toLdParams :=
     (prod_linePointDist_nondegenerate_mass_pos params.toLdParams).le
   exact add_le_add (mul_le_mul_of_nonneg_left hnatural hmass) le_rfl
+
+/-- Additive polynomial errors remain polynomial after conditioning and insertion
+of a polynomially small point error. The minimum uses the independent unit bound
+for normalized POVM consistency, not a replacement measurement. This scalar lemma
+supports `lem:qld-xz-lines`, paper lines 950--963; see issue #118 and
+`docs/paper-gaps/qpbt_combined-lines-error-term.tex`. -/
+theorem exists_conditioned_polynomial_bound (pointError : ℝ → ℝ)
+    (hpoint : IsPolyErr pointError) (constant : ℝ) (hconstant : 1 ≤ constant)
+    (pastingError : ℝ → ℝ → ℝ) (hpasting : IsPolyErr₂ pastingError) :
+    ∃ lineError : ℝ → ℝ → ℝ, IsPolyErr₂ lineError ∧
+      ∀ error ratio mass : ℝ, 0 ≤ error → 0 ≤ ratio →
+        1 / 2 ≤ mass → mass ≤ 1 →
+        min 1 (mass * pastingError ratio
+          ((8 * pointError error + constant * (error + Real.sqrt error)) / mass) + ratio) ≤
+          lineError error ratio := by
+  obtain ⟨pointConstant, pointPower, hpointConstant, hpointPower, hpointBound⟩ := hpoint
+  obtain ⟨pastingConstant, ratioPower, marginalPower, hpastingConstant,
+    hratioPower, hmarginalPower, hpastingBound⟩ := hpasting
+  let smallPower := min pointPower (1 / 2 : ℝ)
+  let finalRatioPower := min ratioPower 1
+  let marginalConstant := 8 * pointConstant + 2 * constant
+  let powerConstant := (2 * marginalConstant) ^ marginalPower
+  let finalConstant := pastingConstant * (1 + powerConstant) + 1
+  have hsmall : 0 < smallPower := lt_min hpointPower (by norm_num)
+  have hfinalRatio : 0 < finalRatioPower := lt_min hratioPower zero_lt_one
+  have hmarginalConstant : 0 ≤ marginalConstant := by dsimp [marginalConstant]; linarith
+  have hpowerConstant : 0 ≤ powerConstant := Real.rpow_nonneg (by positivity) _
+  have hfinalConstant : 1 ≤ finalConstant := by
+    dsimp [finalConstant]
+    nlinarith
+  refine ⟨fun error ratio => finalConstant *
+    (error ^ (smallPower * marginalPower) + ratio ^ finalRatioPower),
+    ⟨finalConstant, smallPower * marginalPower, finalRatioPower, hfinalConstant,
+      mul_pos hsmall hmarginalPower, hfinalRatio, ?_⟩, ?_⟩
+  · intro error ratio herror hratio
+    exact ⟨mul_nonneg (by linarith) (add_nonneg (Real.rpow_nonneg herror _)
+      (Real.rpow_nonneg hratio _)), le_rfl⟩
+  intro error ratio mass herror hratio hmass hmassOne
+  have hmassPos : 0 < mass := by linarith
+  have herrorPower : 0 ≤ error ^ (smallPower * marginalPower) :=
+    Real.rpow_nonneg herror _
+  have hratioPowerNonneg : 0 ≤ ratio ^ finalRatioPower := Real.rpow_nonneg hratio _
+  have hlarge (hlarge : 1 ≤ error ^ (smallPower * marginalPower) +
+      ratio ^ finalRatioPower) :
+      min 1 (mass * pastingError ratio
+        ((8 * pointError error + constant * (error + Real.sqrt error)) / mass) + ratio) ≤
+        finalConstant * (error ^ (smallPower * marginalPower) +
+          ratio ^ finalRatioPower) := by
+    refine (min_le_left _ _).trans ?_
+    nlinarith [mul_nonneg (show 0 ≤ finalConstant - 1 by linarith)
+      (add_nonneg herrorPower hratioPowerNonneg)]
+  by_cases herrorOne : error ≤ 1
+  · by_cases hratioOne : ratio ≤ 1
+    · have hpointValue := hpointBound error herror
+      have hpointSmall : pointError error ≤ pointConstant * error ^ smallPower :=
+        hpointValue.2.trans (mul_le_mul_of_nonneg_left
+          (Real.rpow_le_rpow_of_exponent_ge' herror herrorOne hsmall.le
+            (min_le_left _ _)) (by linarith))
+      have herrorSmall : error ≤ error ^ smallPower := by
+        simpa using Real.rpow_le_rpow_of_exponent_ge' herror herrorOne hsmall.le
+          (show smallPower ≤ 1 by exact (min_le_right _ _).trans (by norm_num))
+      have hsqrtSmall : Real.sqrt error ≤ error ^ smallPower := by
+        rw [Real.sqrt_eq_rpow]
+        exact Real.rpow_le_rpow_of_exponent_ge' herror herrorOne hsmall.le
+          (min_le_right _ _)
+      have hmarginalNonneg : 0 ≤ 8 * pointError error +
+          constant * (error + Real.sqrt error) :=
+        add_nonneg (mul_nonneg (by norm_num) hpointValue.1)
+          (mul_nonneg (by linarith) (add_nonneg herror (Real.sqrt_nonneg _)))
+      have hmarginalSmall : 8 * pointError error +
+          constant * (error + Real.sqrt error) ≤ marginalConstant * error ^ smallPower := by
+        dsimp [marginalConstant]
+        nlinarith [mul_le_mul_of_nonneg_left (add_le_add herrorSmall hsqrtSmall)
+          (show 0 ≤ constant by linarith)]
+      have hdivSmall : (8 * pointError error + constant * (error + Real.sqrt error)) /
+          mass ≤ (2 * marginalConstant) * error ^ smallPower := by
+        apply (div_le_iff₀ hmassPos).mpr
+        exact hmarginalSmall.trans (by
+          nlinarith [mul_nonneg hmarginalConstant (Real.rpow_nonneg herror smallPower),
+            mul_nonneg (show 0 ≤ mass - 1 / 2 by linarith)
+              (mul_nonneg hmarginalConstant (Real.rpow_nonneg herror smallPower))])
+      have hdivPower : ((8 * pointError error + constant *
+          (error + Real.sqrt error)) / mass) ^ marginalPower ≤
+          powerConstant * error ^ (smallPower * marginalPower) := by
+        calc
+          _ ≤ ((2 * marginalConstant) * error ^ smallPower) ^ marginalPower :=
+            Real.rpow_le_rpow (div_nonneg hmarginalNonneg hmassPos.le)
+              hdivSmall hmarginalPower.le
+          _ = _ := by rw [Real.mul_rpow (by positivity) (Real.rpow_nonneg herror _),
+            ← Real.rpow_mul herror]
+      have hratioSmall : ratio ^ ratioPower ≤ ratio ^ finalRatioPower :=
+        Real.rpow_le_rpow_of_exponent_ge' hratio hratioOne hfinalRatio.le
+          (min_le_left _ _)
+      have hratioLinear : ratio ≤ ratio ^ finalRatioPower := by
+        simpa using Real.rpow_le_rpow_of_exponent_ge' hratio hratioOne hfinalRatio.le
+          (min_le_right _ _)
+      have hpastingValue := hpastingBound ratio _ hratio
+        (div_nonneg hmarginalNonneg hmassPos.le)
+      refine (min_le_right _ _).trans ?_
+      calc
+        _ ≤ pastingError ratio
+            ((8 * pointError error + constant * (error + Real.sqrt error)) / mass) +
+            ratio := add_le_add (mul_le_of_le_one_left hpastingValue.1 hmassOne) le_rfl
+        _ ≤ pastingConstant * (ratio ^ finalRatioPower +
+            powerConstant * error ^ (smallPower * marginalPower)) +
+            ratio ^ finalRatioPower :=
+          add_le_add (hpastingValue.2.trans (mul_le_mul_of_nonneg_left
+            (add_le_add hratioSmall hdivPower) (by linarith))) hratioLinear
+        _ ≤ _ := by
+          dsimp [finalConstant]
+          nlinarith [mul_nonneg
+            (mul_nonneg (show 0 ≤ pastingConstant by linarith) hpowerConstant)
+            hratioPowerNonneg,
+            mul_nonneg (show 0 ≤ pastingConstant by linarith) herrorPower]
+    · apply hlarge
+      linarith [Real.one_le_rpow (le_of_not_ge hratioOne) hfinalRatio.le]
+  · apply hlarge
+    linarith [Real.one_le_rpow (le_of_not_ge herrorOne)
+      (mul_pos hsmall hmarginalPower).le]
+
+/-- The retained product-law mass lies between one half and one. The sharper
+single-line lower bound is three quarters. This proof-only estimate is used in
+the quantitative specialization of `lem:qld-xz-lines`, paper lines 950--963. -/
+theorem nondegenerateLinePastingMass_bounds (params : LdParams) :
+    1 / 2 ≤ nondegenerateLinePastingMass params ∧
+      nondegenerateLinePastingMass params ≤ 1 := by
+  classical
+  have hmass : nondegenerateLinePastingMass params =
+      ∑ sample ∈ (linePointDist params).support.filter
+        (fun sample => sample.1.direction ≠ 0), (linePointDist params).weight sample := by
+    unfold nondegenerateLinePastingMass
+    rw [Distribution.sum_filter_weight_eq_avgOver, avgOver_prod]
+    change avgOver (linePointDist params) (fun sample => avgOver (linePointDist params)
+      (fun _ => if sample.1.direction ≠ 0 then 1 else 0)) = _
+    simp_rw [avgOver_const_of_isProbability _ (linePointDist_isProbability params)]
+    rw [Distribution.sum_filter_weight_eq_avgOver]
+  rw [hmass]
+  refine ⟨(by norm_num : (1 / 2 : ℝ) ≤ 3 / 4).trans
+    (linePointDist_nondegenerate_mass_ge params), ?_⟩
+  rw [Distribution.sum_filter_weight_eq_avgOver]
+  calc
+    _ ≤ avgOver (linePointDist params) (fun _ => 1) :=
+      avgOver_mono _ _ _ fun _ => by split_ifs <;> norm_num
+    _ = 1 := avgOver_const_of_isProbability _ (linePointDist_isProbability params) 1
+
+/-- Consistency is symmetric for measurements on opposite registers. The
+operator commutation, rather than symmetry of the state or equality of local
+dimensions, justifies exchanging the placements in `lem:qld-xz-lines`. -/
+theorem consistencyDefect_opposite_symm {params : AdmissibleParams} {error : ℝ}
+    {Question Outcome : Type*} [Fintype Question] [DecidableEq Question]
+    [Fintype Outcome] [DecidableEq Outcome]
+    (setting : ProjectiveSetting params error) (first second : Placement)
+    (hopposite : first.IsOpposite second) (distribution : Distribution Question)
+    (left : Question → Quantum.Measurement Outcome (setting.ExpandedLocalSpace first.side))
+    (right : Question → Quantum.Measurement Outcome (setting.ExpandedLocalSpace second.side)) :
+    consistencyDefect distribution
+      (fun question answer => setting.place first ((left question).effect answer))
+      (fun question answer => setting.place second ((right question).effect answer))
+      setting.psiHat =
+    consistencyDefect distribution
+      (fun question answer => setting.place second ((right question).effect answer))
+      (fun question answer => setting.place first ((left question).effect answer))
+      setting.psiHat := by
+  unfold consistencyDefect
+  congr 1
+  funext question
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro answer _
+  apply Finset.sum_congr rfl
+  intro other _
+  rw [setting.place_comm first second hopposite]
+  simp only [eq_comm]
+
+/-- Joint X/Z lines for any supplied polynomially controlled point family.
+
+**Local fix (issue #118):** The line error is chosen after the point-error
+function and its polynomial bound, rather than being uniform in an unrestricted
+supplied point error. The proof uses the actual XZX sandwich, conditioned pasting,
+and restoration of the original law. This is the quantitative internal form of
+`lem:qld-xz-lines`, paper `14_analysis_of_the_pauli_basis_test.tex:882-963`;
+the source-facing theorem below supplies the point family internally. See
+`docs/paper-gaps/qpbt_combined-lines-error-term.tex`. Polynomial errors use the
+additive convention documented in `docs/paper-gaps/qpbt_pasting-product-error.tex`.
+-/
+theorem exists_combinedLinesWitness_ofPointsWitness (deltaQ : ℝ → ℝ)
+    (hdeltaQ : IsPolyErr deltaQ) :
+    ∃ deltaP : ℝ → ℝ → ℝ, IsPolyErr₂ deltaP ∧
+      ∀ (params : AdmissibleParams) (error : ℝ) (setting : ProjectiveSetting params error)
+        (points : CombinedPointsWitness setting (deltaQ error)),
+        Nonempty (CombinedLinesWitness setting points
+          (deltaP error ((params.m * params.d : ℕ) / (params.q : ℝ)))) := by
+  classical
+  obtain ⟨constant, hconstant, pastingError, hpasting, hrestored⟩ :=
+    exists_combinedLine_restored_defect_le
+  obtain ⟨lineError, hlineError, hscalar⟩ :=
+    exists_conditioned_polynomial_bound deltaQ hdeltaQ constant hconstant pastingError hpasting
+  refine ⟨lineError, hlineError, ?_⟩
+  intro params error setting points
+  refine ⟨{ T := setting.combinedLineMeasurement
+            axis_degree_X := setting.combinedLineMeasurement_axis_degree_X
+            axis_degree_Z := setting.combinedLineMeasurement_axis_degree_Z
+            consistent := ?_ }⟩
+  intro first second hopposite
+  have hreverse : second.IsOpposite first := by
+    cases first <;> cases second <;> trivial
+  rw [consistencyDefect_opposite_symm setting first second hopposite]
+  have hbound := hrestored params error (deltaQ error) setting points second first hreverse
+  have hcard : Fintype.card (ScalarQ params.toLdParams) = params.q :=
+    @FieldModel.card params.q params.model.toFieldModel
+  rw [hcard] at hbound
+  have hq : (0 : ℝ) < params.q := by
+    rw [← hcard]
+    exact_mod_cast Fintype.card_pos (α := ScalarQ params.toLdParams)
+  have hmd : (1 : ℝ) ≤ (params.m * params.d : ℕ) := by
+    exact_mod_cast (show 1 ≤ params.m * params.d by
+      simpa using Nat.mul_le_mul params.one_le_m params.hd)
+  have hdiscard : 1 / (2 * (params.q : ℝ)) ≤
+      (params.m * params.d : ℕ) / (params.q : ℝ) := by
+    calc
+      _ ≤ 1 / (params.q : ℝ) := one_div_le_one_div_of_le hq (by linarith)
+      _ ≤ _ := div_le_div_of_nonneg_right hmd hq.le
+  have hunit : consistencyDefect
+      (Distribution.prod (linePointDist params.toLdParams) (linePointDist params.toLdParams))
+      (fun sample answer => setting.place second
+        (((points.Q second.side sample.1.2 sample.2.2).postprocess
+          (fun pair => (some pair.1, some pair.2))).effect answer))
+      (fun sample answer => setting.place first
+        (((setting.combinedLineMeasurement first.side sample.1.1 sample.2.1).postprocess
+          (fun polys => (evalOpt sample.1.1 sample.1.2 polys.1,
+            evalOpt sample.2.1 sample.2.2 polys.2))).effect answer)) setting.psiHat ≤ 1 := by
+    unfold consistencyDefect
+    calc
+      _ ≤ avgOver (Distribution.prod (linePointDist params.toLdParams)
+          (linePointDist params.toLdParams)) (fun _ => 1) :=
+        avgOver_mono _ _ _ fun sample =>
+          consistencyDefect_integrand_le_one setting second first hreverse _ _
+      _ = 1 := avgOver_const_of_isProbability _
+        (Distribution.prod_isProbability _ _ (linePointDist_isProbability params.toLdParams)
+          (linePointDist_isProbability params.toLdParams)) 1
+  exact (le_min hunit (hbound.trans (add_le_add le_rfl hdiscard))).trans
+    (hscalar error _ _ setting.eps_nonneg (by positivity)
+      (nondegenerateLinePastingMass_bounds params.toLdParams).1
+      (nondegenerateLinePastingMass_bounds params.toLdParams).2)
+
+/-- The source-facing joint X/Z line construction of `lem:qld-xz-lines`, paper
+`14_analysis_of_the_pauli_basis_test.tex:882-894`. The point witness is supplied
+by `lem:qld-4-10`, with error `K ε^(1/8)`, and the actual XZX line POVM satisfies
+all directed opposite-placement comparisons and axis-degree support. No extra
+point-error hypothesis is imposed on the setting. The proof-only conditioning and
+polynomial-error convention are documented in
+`docs/paper-gaps/qpbt_combined-lines-error-term.tex` and
+`docs/paper-gaps/qpbt_pasting-product-error.tex`. -/
+theorem exists_combinedLinesWitness :
+    ∃ deltaQ : ℝ -> ℝ, IsPolyErr deltaQ ∧
+      ∃ deltaP : ℝ -> ℝ -> ℝ, IsPolyErr₂ deltaP ∧
+        ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+          ∃ points : CombinedPointsWitness S (deltaQ ε),
+            Nonempty (CombinedLinesWitness S points
+              (deltaP ε (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))) := by
+  obtain ⟨deltaQ, hdeltaQ, hpoints⟩ := exists_combinedPointsWitness
+  obtain ⟨deltaP, hdeltaP, hlines⟩ :=
+    exists_combinedLinesWitness_ofPointsWitness deltaQ hdeltaQ
+  refine ⟨deltaQ, hdeltaQ, deltaP, hdeltaP, fun P ε S => ?_⟩
+  obtain ⟨points⟩ := hpoints P ε S
+  exact ⟨points, hlines P ε S points⟩
 
 /-! ## Restricted line distributions -/
 

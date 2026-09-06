@@ -26,9 +26,12 @@
   \item \textbf{Current paired-line construction status:} for
   \texttt{lem:qld-xz-lines}, actual conditional pasting and restoration to
   the original question law are now proved, retaining the supplied point
-  error. Scalar specialization, final witness assembly, and the extended-line
-  consumers remain open. The printed existence theorem is not disproved;
-  no final correction is adopted by these auxiliary results.
+  error. Polynomial specialization and the actual paired-line witness,
+  including every opposite placement and axis-degree support, are now proved.
+  The three-claim overlap estimate and its scalar polynomial absorption are
+  also proved. The extended-line POVM construction and its consumers remain
+  open. The printed existence theorem is not disproved; no final correction
+  of the extended-line theorem is adopted by these results.
   \item \textbf{Difficulty: easy.}  No step of the retained proof route is
   in doubt.  The obstruction is that the error function claimed in the
   statement of the combined-lines lemma of the Pauli basis analysis,
@@ -330,11 +333,13 @@ new correction to the extended-line estimate discussed above. Its source is
 lines 882--894, with the pasting argument at lines 943--963. It constructs
 paired-line POVMs consistent with the already constructed joint points, with
 error polynomial in $\eps$ and $\rho=md/q$, and with degree at most $d$ on
-axis lines. Issue 118 records that the unproved internal Lean helper allows
-an arbitrary supplied joint-point error $t$, while promising an output error
-independent of $t$. This stronger quantification does not follow from the
-printed argument. No counterexample to the printed existence theorem is
-known here.
+axis lines. Issue 118 records that the former unproved internal Lean helper
+allowed an arbitrary supplied joint-point error $t$, while promising an
+output error independent of $t$. This stronger quantification does not
+follow from the printed argument. The internal interface now fixes a
+polynomially controlled point-error function before choosing the line-error
+function, as proved below. No counterexample to the printed existence
+theorem is known here.
 
 There is also a concrete obstruction to applying the conditional collision
 hypothesis literally to every coefficient-polynomial fiber in Lean. For a
@@ -550,10 +555,10 @@ gives
 On the unit square this gives an additive bound with exponents
 $b/8$ in $\eps$ and $\min\{a,1\}$ in $\rho$. This explains why the
 existential pasting interface suffices mathematically without assuming
-monotonicity of its unspecified function. Formal scalar composition,
-assembly into the existing line witness (including exchange of the two
-opposite placements), and specialization in \path{Combining/Apply.lean}
-remain to be completed. No speculative public signature is adopted.
+monotonicity of its unspecified function. Formal scalar composition and
+assembly into the existing line witness, including exchange of the opposite
+placements, are now proved as described in the following subsection. The
+extended-line construction in \path{Combining/Apply.lean} remains separate.
 The equal-carrier interface is no longer a
 representation obstruction: the proved isometric inclusion eliminates it
 without assuming equal player dimensions or equal supplied point families.
@@ -569,11 +574,108 @@ inventory is preserved in
 Neither the new auxiliary node nor the algebraic orientation identity marks
 any of those source results as proved. Claims 17-2 and 17-3, the public
 existence statements, and all witness fields remain unchanged.
-The verdict is proved product collisions, conditioned supplied marginals,
-actual heterogeneous operator application, and restored consistency for
-the actual POVMs. Quantitative specialization and the affected consumer
-construction remain incomplete. No final correction or minimality claim is
-adopted, and no change to a mathematical definition or game is requested.
+The product collisions, conditioned supplied marginals, heterogeneous
+operator application, and restored consistency concern the actual POVMs.
+The following specialization completes the paired-line witness, but not
+the affected extended-line construction. No final correction or minimality
+claim for the extended-line theorem is adopted, and no change to a
+mathematical definition or game is requested.
+
+\subsection{Polynomial specialization and the first-route overlap}
+
+Fix a function $t$ with $0\le t(\eps)\le K\eps^\alpha$ for all
+$\eps\ge0$, where $K\ge1$ and $\alpha>0$. The corrected internal
+quantifier order is
+\[
+  \forall t\text{ with this bound},\quad
+  \exists g=\poly(\eps,\rho),\quad
+  \forall P,\eps,S,Q\text{ with point error }t(\eps),\quad
+  d(T,Q)\le g(\eps,\rho).
+\]
+Here $T$ is still the actual $XZX$ measurement, and the conclusion includes
+axis-degree support and all four directed comparisons. The earlier
+restored bound remains available for arbitrary numerical $t$; this
+specialized interface does not discard its dependence on $t$.
+
+Write $f(x,y)\le A(x^a+y^b)$ with $A\ge1$ and $a,b>0$. Set
+\[
+ \gamma=\min\{\alpha,1/2\},\quad \beta=\min\{a,1\},\quad
+ D=8K+2C,\quad B=A(1+(2D)^b)+1.
+\]
+For $0\le\eps,\rho\le1$, the elementary ordering of powers gives
+$u=8t(\eps)+C(\eps+\sqrt\eps)\le D\eps^\gamma$.
+The retained mass satisfies $1/2\le r\le1$, so $u/r\le2D\eps^\gamma$.
+One applies monotonicity to the explicit power bound for $f$, not to $f$
+itself. Since $md\ge1$, the restored error obeys
+\[
+ \min\left\{1,r f(\rho,u/r)+\frac1{2q}\right\}
+ \le B\bigl(\eps^{\gamma b}+\rho^\beta\bigr).
+\]
+If either parameter exceeds one, the right-hand side is at least one,
+and the independent unit bound for normalized POVM consistency applies.
+The minimum is used only in this scalar estimate; it does not choose a
+different measurement or modify the question distribution. Taking
+$t(\eps)=K\eps^{1/8}$, as supplied by the point construction, specializes
+$\gamma$ to $1/8$. With the explicit pasting powers $a=1/4$, $b=1/8$,
+this gives $O(\eps^{1/64}+\rho^{1/4})$.
+
+This argument proves
+\leanid{MIPStarRE.QPBT.exists\_conditioned\_polynomial\_bound}.
+Opposite-placement operators commute, and exchanging the two outcome
+summations therefore preserves their consistency defect. This observation,
+formalized by
+\leanid{MIPStarRE.QPBT.consistencyDefect\_opposite\_symm}, supplies the
+orientation required by the existing line witness without any assumption
+on equality of dimensions, equality of point families, or symmetry of the
+state. Consequently
+\leanid{MIPStarRE.QPBT.exists\_combinedLinesWitness\_ofPointsWitness}
+and \leanid{MIPStarRE.QPBT.exists\_combinedLinesWitness} now have proofs.
+The latter's public statement is unchanged: it supplies the polynomial
+point function and point witness internally.
+
+For the first extended-line route, let $J$ denote the completed joint
+overlap on the subline law. The triangle inequality applied to the existing
+Claims 17-1, 17-2, and 17-3 gives a universal $C_*>0$ such that
+\[
+ |J-1|\le C_*\bigl(t^{1/2}+\sqrt m\,(p^{1/4}+t^{1/4}+\eps^{1/4})\bigr),
+\]
+where $p$ is the supplied paired-line error. This is proved by
+\leanid{MIPStarRE.QPBT.subline\_joint\_overlap\_near\_one}, without
+altering any of the three claims. If $p\le A(\eps^a+\rho^b)$ and
+$t\le K\eps^\alpha$, fourth-root subadditivity and $\sqrt m\le m$
+bound the expression, for $\eps\le1$, by a constant times
+$m(\eps^\theta+\rho^{b/4})$, where
+$\theta=\min\{\alpha/4,a/4,1/4\}>0$. For $\eps>1$ that polynomial
+can be chosen at least one. This proves the scalar assertion
+\leanid{MIPStarRE.QPBT.exists\_combining\_polynomial\_bound}, whose left
+side is the minimum of one and the displayed error expression. It does
+not assert that the extended-line measurement has already been constructed.
+
+The two internal extended-line helpers now also fix the polynomial
+point-error function before their output error functions are chosen.
+Their existential wrappers still produce that function internally and
+have unchanged statements. Three existing obligations remain in
+\path{Combining/Apply.lean}: the printed-error construction, the
+first-route extended-line construction, and the global-pair construction.
+For the first-route obligation, one must still form the source's
+conditional average of the actual line POVMs, prove axis-degree support
+and its completed-evaluation comparison, and establish the second player
+placement. The source-question and field-answer transport obligations in
+the earlier section are unchanged. In particular neither the new scalar
+estimate nor the overlap estimate establishes the printed stronger error
+$\poly(m^2\eps,md/q)$.
+
+The counterexample audit covers $\eps=0$, the scalar boundary $\rho=0$,
+$q=2$, arbitrary positive polynomial exponents, large errors, zero $Z$
+directions, unequal player dimensions, and unequal supplied point families.
+The zero-$X$ collision counterexample is excluded only from the proof law,
+and its original-law contribution is restored. An arbitrary positive
+supplied error at $\eps=0$ no longer satisfies the specialized polynomial
+contract. These are symbolic arguments, not a numerical search over all
+quantum strategies. Restricting the internal function to exactly
+$K\eps^{1/8}$ would be stronger than the proved sufficient polynomial
+contract. No minimality claim for the unresolved extended-line theorem is
+made.
 
 \section{Conclusion}
 

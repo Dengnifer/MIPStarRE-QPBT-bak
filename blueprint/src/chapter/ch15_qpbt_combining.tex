@@ -1537,6 +1537,59 @@ second bound. No reverse marginal comparison or equality of the supplied
 families is used.
 \end{proof}
 
+\begin{lemma}[Polynomial specialization of the completed paired-line comparison]
+\label{lem:combined-line-polynomial-specialization}
+\lean{MIPStarRE.QPBT.exists_conditioned_polynomial_bound}
+\lean{MIPStarRE.QPBT.nondegenerateLinePastingMass_bounds}
+\lean{MIPStarRE.QPBT.consistencyDefect_opposite_symm}
+\leanok
+\uses{lem:combined-line-actual-pasting-bound, lem:combined-line-sandwich-construction,
+  lem:qld-4-10}
+Fix a nonnegative point-error function $t(\eps)\le K\eps^\alpha$ on
+$\eps\ge0$, where $K\ge1$ and $\alpha>0$, an additive polynomial function
+$f$, and $C\ge1$. There is an additive polynomial error function $g$ such
+that for all $\eps,\rho\ge0$ and $1/2\le r\le1$,
+\[
+ \min\{1,r f(\rho,(8t(\eps)+C(\eps+\sqrt\eps))/r)+\rho\}
+ \le g(\eps,\rho).
+\]
+The retained line-law mass lies in this interval. Moreover consistency of
+measurements on opposite placements is invariant under exchanging them.
+These scalar and symmetry facts support the completed paired-line construction.
+\end{lemma}
+\begin{proof}
+\leanok
+Write $f(x,y)\le A(x^a+y^b)$ for the pasting bound and put
+$\gamma=\min\{\alpha,1/2\}$ and $\beta=\min\{a,1\}$.
+For $0\le\eps,\rho\le1$, set $D=8K+2C$. The retained mass satisfies
+$1/2\le r\le1$, and
+\[
+ u\le D\eps^\gamma,\qquad
+ r f(\rho,u/r)+\frac1{2q}
+ \le A\bigl(\rho^a+(2D)^b\eps^{\gamma b}\bigr)+\rho
+ \le B\bigl(\eps^{\gamma b}+\rho^\beta\bigr),
+\]
+where $B=A(1+(2D)^b)+1$. Here $md\ge1$ bounds the discarded mass by
+$\rho=md/q$. Outside the unit square, the last expression is at least one;
+the independent unit bound on complete POVM consistency applies. No
+monotonicity of the unspecified function $f$ is assumed. Operators on
+opposite registers commute, so exchanging the two measurements exchanges
+the consistency defect without changing it. This supplies the orientation
+required by the line witness, without a state-symmetry assumption.
+\end{proof}
+
+\begin{remark}[Completed paired-line witness construction]
+The internal construction
+\texttt{exists\_combinedLinesWitness\_ofPointsWitness} fixes a polynomial point-error
+function before choosing the line-error function. For every supplied point witness
+at that error it proves consistency of the actual $XZX$ POVM, on the completed
+alphabet $(\F_q\cup\{\bot\})^2$, with every directed opposite placement and
+axis-degree support unchanged. Its existential companion supplies the point
+function and witness internally, in particular with error $K\eps^{1/8}$.
+This description distinguishes the conditional internal interface from
+the source-labelled field-answer statement; neither changes the source convention.
+\end{remark}
+
 \begin{lemma}[The constructed paired-line POVM]
 \label{lem:combined-line-sandwich-construction}
 \lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
@@ -1599,6 +1652,7 @@ $X_{f_X}IX_{f_X}=X_{f_X}$ by projectivity.
 \end{lemma}
 \begin{proof}
 	\uses{def:expanded-line-measurement, lem:qld-4-10, fact:add-a-proj,
+		lem:combined-line-polynomial-specialization,
 		lem:combined-line-marginals-both-errors, lem:combined-line-sandwich-construction,
 		lem:combined-line-nondegenerate-collisions,
 		lem:cool-closeness-fact, lem:qld-comm-line-cons, fact:agreement,
@@ -1641,24 +1695,19 @@ $X_{f_X}IX_{f_X}=X_{f_X}$ by projectivity.
 	$(\hat{Q}^{x,z}_{a,\bullet})_{\mathsf{A}\mathsf{A}'} \simeq_{\delta_Q}
 	(\hat{M}^{(\mathrm{Line},X),\ell_X}
 	_{[\mathrm{eval}_x(\cdot)=a]})_{\mathsf{B}\mathsf{A}''}$
-	together with the analogous relation for $Z$. The conclusion now follows
-	from the pasting lemma (Lemma~\ref{lem:pasting}) applied with
-	$\hat{Q}^{x,z}_{a,b}$ in the role of the combined measurement,
-	$\hat{M}^{(\mathrm{Line},X),\ell_X}$ and
-	$\hat{M}^{(\mathrm{Line},Z),\ell_Z}$ in the roles of the two factor
-	measurements, $T^{\ell_X,\ell_Z}$ in the role of the pasted measurement,
-	$\delta := \delta_Q$, and $\eta := md/q$, the last justified by the
-	Schwartz--Zippel bound (Lemma~\ref{lem:schwartz-zippel-total-degree})
-	applied to the polynomials $f_X, f_Z$ of total degree at most $md$; the
-	two hypotheses of the pasting lemma are supplied by the preceding display
-	and by \eqref{eq:qld-q-self-cons}, and the distribution over
-	$(\ell_X, \ell_Z)$ is that of two independent uniformly random lines. The
-	register-exchanged comparison \eqref{eq:pasting-1-sym} is supplied by the
-	symmetric equivalents of that preceding display, which
-	Lemma~\ref{lem:qld-4-10} establishes for all of its approximations.
-	This gives the stated relation with $\delta_P$ equal to the pasting
-	error, a $\poly(\eps, md/q)$ function, and the identical argument with
-	the registers modified gives all symmetric equivalents.
+	together with the analogous relation for $Z$. For coefficient-polynomial
+	answers with completed evaluation, the collision argument must first
+	condition on a nonzero $X$ direction; distinct nonconstant polynomials
+	can both evaluate to $\bot$ on a zero direction. Apply one-sided pasting
+	with $G_1=Z$, $G_2=X$, and the actual $XZX$ sandwich, as in
+	Lemma~\ref{lem:combined-line-actual-pasting-bound}. The retained defect
+	is bounded with both supplied errors present. Restoring the discarded
+	mass and specializing to the constructed point function gives the
+	polynomial bound of Lemma~\ref{lem:combined-line-polynomial-specialization}.
+	That lemma proves the completed-answer formalization, including all
+	placement orientations; the source-labelled entry here retains its
+	field-evaluation notation and is not marked as an additional completed
+	formalization. See \cite{gap:qpbt_combined-lines-error-term}.
 \end{proof}
 
 \section{Applying the classical low-degree test}
@@ -3458,10 +3507,45 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	through the self-consistency of the points measurements, is not needed.
 \end{proof}
 
+\begin{lemma}[First-route overlap and polynomial absorption]
+\label{lem:subline-first-route-quantitative}
+\lean{MIPStarRE.QPBT.subline_joint_overlap_near_one}
+\lean{MIPStarRE.QPBT.exists_combining_polynomial_bound}
+\leanok
+\uses{lem:claim-17-1, lem:claim-17-2, lem:claim-17-3,
+  lem:combined-line-polynomial-specialization}
+Let $J$ be the completed joint overlap on the subline law in
+\eqref{eq:qld-combined-lines-consistency}. For every supplied point and line
+witness with errors $t$ and $p$, respectively, a universal constant $C>0$
+satisfies
+\[
+ |J-1|\le C\bigl(t^{1/2}+\sqrt m\,(p^{1/4}+t^{1/4}+\eps^{1/4})\bigr).
+\]
+If $t=t(\eps)$ and $p=p(\eps,\rho)$ have additive polynomial bounds, then
+for each fixed $C\ge0$ there is an additive polynomial function $h$ such that
+for all $\eps,\rho\ge0$ and $m\ge1$,
+\[
+ \min\{1,C(t^{1/2}+\sqrt m\,(p^{1/4}+t^{1/4}+\eps^{1/4}))\}
+ \le m h(\eps,\rho).
+\]
+These are an overlap estimate and a scalar inequality, not a construction of
+an extended-line POVM. No joint conditional product law is assumed.
+\end{lemma}
+\begin{proof}
+\leanok
+Apply the triangle inequality to the three claims. If
+$t\le K\eps^\alpha$ and $p\le A(\eps^a+\rho^b)$, take
+$\theta=\min\{\alpha/4,a/4,1/4\}$ and use subadditivity of the fourth
+root. For $\eps\le1$ the expression is bounded by a constant times
+$m(\eps^\theta+\rho^{b/4})$, since $\sqrt m\le m$.
+For $\eps>1$, this polynomial bound can be chosen at least one.
+\end{proof}
+
 \begin{proof}[Proof of Lemma~\ref{lem:qld-4-13}]
 	\proves{lem:qld-4-13}
 	\uses{lem:qld-xz-lines, lem:qld-sublines, def:combine-map,
-		lem:qld-4-12, lem:claim-17-1, lem:claim-17-2, lem:claim-17-3}
+		lem:qld-4-12, lem:claim-17-1, lem:claim-17-2, lem:claim-17-3,
+		lem:subline-first-route-quantitative}
 	Let $D$ be the distribution of Lemma~\ref{lem:qld-sublines} and let
 	$D_{|\ell}$ denote $D$ conditioned on the first element being $\ell$.
 	For every line $\ell$ in $\F_q^{2m+2}$ and $f \in \deg_{md+1}(\ell)$
