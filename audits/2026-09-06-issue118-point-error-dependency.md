@@ -1,5 +1,250 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 12: global-pair scalar sufficiency and final authorized handoff
+
+Session `mathfix-118-20260906-12` starts at **2026-09-06T05:57:44Z**
+from `6e8d67ef8ba22de69a0c166adcdf23ba6e7a33aa`. Main explicitly assessed
+and authorized this cumulative attempt, carrying **22266 completed working
+seconds**: 19931 through attempt 10 plus the dispatcher's final 2335 for
+attempt 11. The earlier worker estimate is not substituted for that duration.
+The original anchor remains **2026-09-05T19:24:00Z** and the thread remains
+`01a0744e-2a5c-73f3-9d9f-3aa21f9a2667`. Reporting target: 2400 seconds;
+hard limit: 2700 seconds; maximum cumulative duration after this attempt:
+24966 seconds, within the authorized 25331-second ceiling. There is **no
+automatic further extension**. All prior attempts and failed candidates
+remain below. Selected Astra/MAX through the unchanged legacy shim is
+dispatch context, not a server-verified fact. Shared-thread token counters
+are not an independently attributable per-attempt token measurement.
+
+**Verdict:** the established two-player witness is preserved, and its
+scalar error is now proved sufficient for the error expression at the end
+of the global-pair argument. **No final source correction is adopted.**
+The stronger extended-line error and the global measurement construction
+remain open. No source assumption, game, definition, witness field, or
+existing public theorem signature changes.
+
+### Source assertions and demonstrated obstructions
+
+Canonical source:
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex`.
+For every admissible `(q,m,d)` and projective strategy passing with error
+`epsilon`, `lem:qld-xz-lines` (882--894, construction 943--963) asserts
+actual XZX paired-line POVMs of degree `md`, axis degree `d`, all opposite
+placements, and universal polynomial error in `epsilon,md/q`.
+`lem:qld-4-13` (1020--1034) asserts extended-line POVMs of degree `md+1`,
+axis degree `d`, on both expanded player spaces, with both field-answer
+line-point consistencies `poly(m^2*epsilon,md/q)`. The conditional POVM
+construction is at 1118--1132. Its first-route estimates at 1134--1241
+give only `C*m*g(epsilon,md/q)`; the second route at 1241--1246 requires
+an unsupported joint restricted-product law. Neither supplies the printed
+stronger error.
+
+The internal unrestricted completed-collision bound is false: on a
+zero-direction line, distinct coefficient polynomials `T,T+1` both have
+completed evaluation `none`. Collision probability one exceeds `md/q`
+when `1 <= md < q`. The prior conditioned-pasting proof removes precisely
+this invalid use and restores the actual source-law mass. No counterexample
+to either printed existence theorem is known.
+
+`lem:qld-4-7` (1267--1274) asserts universal `A>1`, `0<beta<1` such that,
+for every admissible tuple, positive error, and projective passing strategy,
+both expanded spaces admit projective measurements on pairs of global
+individual-degree-`d` polynomials. For each `W=X,Z`, their uniform point
+evaluations are consistent with the opposite player's `W` point measurement
+with error `A*(md)^A*(epsilon^beta+q^(-beta)+2^(-beta*md))`.
+Its soundness substitution is at 1278--1288 and its final operator error
+is `O(deltaLd+sqrt(deltaQ)+md/q)` at 1402.
+
+The printed low-degree game instantiation at dimension `2m+2` is separately
+undefined on many admitted tuples: `(q,m,d)=(8,2,1)` is admissible but
+`6` does not divide `8`. The existing direct carrier and proved `k=1`
+soundness are the available formal infrastructure, not a newly adopted
+change to the printed game. The note
+`docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` records that boundary.
+
+### Precise numerical theorem and proof
+
+Let `0 <= deltaQ(x) <= CQ*x^u` and
+`0 <= g(x,y) <= CG*(x^r+y^s)` for nonnegative arguments, with
+`CQ,CG >= 1` and `u,r,s > 0`. These are the existing `IsPolyErr` and
+`IsPolyErr₂` contracts, satisfied by the genuinely supplied point error
+and the established combined-line error. For any fixed `kappa,K >= 0`,
+`a >= 1`, and `0 < b <= 1`, there exist `A>1`, `0<beta<1`, before
+quantifying the admissible tuple and `epsilon >= 0`, such that, writing
+`n=md`, `N=(2m+2)d`, and `rho=n/q`,
+
+```text
+min 1 [K * (a*N^a*((kappa*m*g(epsilon,rho)+epsilon)^b
+                     + q^(-b) + 2^(-b*N))
+             + sqrt(deltaQ(epsilon)) + rho)]
+  <= A*n^A*(epsilon^beta + q^(-beta) + 2^(-beta*n)).
+```
+
+This is `exists_globalPair_error_bound`. It is numerical sufficiency,
+not a conditional substitute for `exists_globalPairWitness`. The added
+`epsilon` is an upper-bound slack that gives a positive soundness input
+for the source's `epsilon>0`. No positivity of the polynomial function
+away from zero is assumed. The cap uses the independent unit bound for
+the same eventual consistency defect; it is not an artificial witness.
+
+Choose `beta=min(1/2,b,rb,sb,u/2)`, `h=b+sb`, `R=a+h+1`,
+`L=a*4^a*((kappa*CG)^b+2)`, `D=K*(L+sqrt(CQ)+1)`, `A=D+R+2`.
+Admissibility implies `m,d,q >= 1` and `m <= n <= N <= 4n`.
+For `0 <= epsilon <= 1`, put
+`E=epsilon^beta+q^(-beta)+2^(-beta*n)`. Real-power subadditivity for
+`0<b<=1` gives
+
+```text
+(kappa*m*g(epsilon,rho)+epsilon)^b
+  <= ((kappa*CG)^b+1)*n^h*E.
+q^(-b)+2^(-b*N) <= E.
+deltaLd <= L*n^(a+h)*E.
+sqrt(deltaQ(epsilon)) <= sqrt(CQ)*E;   rho <= n*E.
+```
+
+The first inequality uses `epsilon^(rb) <= epsilon^beta` and
+`rho^(sb)=n^(sb)*q^(-sb) <= n^(sb)*q^(-beta)`. The positive exponent
+of the supplied point error is used exactly in `beta <= u/2`.
+The sum is at most `D*n^R*E <= A*n^A*E`. For `epsilon>1`, the final
+right side is at least one. Mathlib supplies monotonicity, multiplication,
+and subadditivity of nonnegative real powers and monotonicity of square
+roots. This derives the conclusion from every explicit input; compilation
+and absence of a counterexample are not used as the mathematical argument.
+
+Counterexample audit: an uncapped global-domain assertion would be false
+for, for example, a polynomial `g(x,y)=x^r+y` with `rb>1`, holding
+an admissible tuple fixed and sending `epsilon` to infinity. Shrinking
+the source domain to small errors is unnecessary because the defect has
+a unit bound. Omitting positive slack would fail to justify the strictly
+positive input required by soundness when `g` is identically zero.
+Symbolic inequalities cover zero errors, `kappa=0`, `K=0`, large `md/q`,
+arbitrarily large degrees, and small fields. The zero-direction collision
+counterexample is irrelevant to these scalar inequalities. No exhaustive
+search over quantum strategies is claimed.
+
+### Complete sufficiency inventory
+
+Paper uses at 1058--1061 (restricted consistency), 1118--1132 (actual
+POVM and degree), and 1134--1241 (both first-route orientations) retain
+their proved internal versions. The stronger route at 1241--1246 remains
+unsupported. The numerical substitutions at 1278--1288 and 1402 are now
+proved for the established error with the actual polynomial point-error
+function. This does not establish the intervening operator argument.
+Extraction uses at 1423, 1465--1492, 1584, 1627, and 1671 still depend
+on construction of the global-pair witness, not merely the scalar bound.
+
+The complete blueprint descendant and actual-reference inventory is:
+
+- Chapter 15: `lem:restricted-line-mixture-bounds`,
+  `lem:qld-sublines-one-point-deficit`, `lem:claim-17-1`, `lem:claim-17-2`,
+  `lem:claim-17-3`, `lem:qld-4-13`, `lem:qld-4-13-established`, `lem:qld-4-7`.
+- Chapter 16: `def:s-w-marginals`, `lem:s-w-marginals-projective`,
+  `def:tilde-m-measurement`, `lem:tilde-m-projective`, `def:tilde-w-observables`,
+  `lem:tildew-product-form`, `lem:qld-nonencoding-mass-bound`,
+  `lem:qld-constructing-the-paulis-helper`, `lem:qld-construct-the-paulis`,
+  `def:v-swap-unitary`, `lem:v-swap-conjugation`, `lem:qld-unitary`,
+  `lem:qld-unitary-given-global-pair`, `lem:qld-extraction-error-form`, `thm:pauli`.
+- Chapter 13: `cor:pauli-binary`, `def:introparams`, `lem:delta-bound`.
+- Prose: `rem:claim-17-2-line-marginal`, `rem:qld-4-13-source-defects`,
+  `rem:qld-4-7-divisibility`.
+- Auxiliary nodes: `lem:combined-line-polynomial-specialization`,
+  `lem:subline-first-route-quantitative`, `lem:conditional-extended-line-construction`,
+  `lem:extended-line-overlap-integration`, `lem:extended-first-route-partial`,
+  `lem:extended-first-route-opposite`, `lem:extended-first-route-witness`,
+  and the new `lem:global-pair-error-absorption`.
+
+The new scalar node is explicitly auxiliary and proved; the global-pair
+proof references it while remaining `notready`. No stronger printed-error
+node is newly certified. The changed Lean module is only
+`MIPStarRE/QPBT/Combining/Apply.lean`; its import consumers are
+`MIPStarRE/QPBT.lean` and `MIPStarRE.lean`. Search confirms that no other
+Lean file imports Apply. `Extraction/Unitary.lean` has a prose reference
+to `exists_globalPairWitness`; extraction obtains the global witness as
+an input, not from a newly proved Apply construction.
+
+### Remaining owner decisions and construction obligations
+
+1. The stronger source error `poly(m^2*epsilon,md/q)` remains unproved in
+   `exists_extendedLinesWitness_ofPointsWitness`; its source-shaped wrapper
+   still depends on that hole. Prove it without the unsupported joint law,
+   or independently establish complete consumer sufficiency before adopting
+   a corrected source statement. No such adoption is made here.
+2. For `exists_globalPairWitness`, construct a projective passing direct
+   low-degree strategy from the actual point and extended-line witnesses,
+   with its exact field-answer and question-law error. Issue 244's separate
+   given-witness construction is not duplicated or assumed complete.
+   Account for dilation and transport back to the fixed expanded spaces.
+3. Apply the already proved `exists_direct_ld_soundness_of_k_eq_one` at
+   dimension `2m+2`. Arbitrary-`k` soundness is not a missing prerequisite
+   for this use. Scalar absorption is discharged here; game correspondence
+   and application to the actual measurements are not.
+4. Prove the source's indicator-weighted correlations and polynomial-image
+   mass estimate at 1289--1363, restrict to `alpha*gX(x)+beta*gZ(z)`,
+   complete the projective submeasurement, and prove both bases' point
+   consistencies in both player orientations at 1364--1402. This is not
+   the distinct post-global nonencoding-mass assertion in extraction.
+5. Certify every listed extraction and final-test use after this construction.
+   Issue 241's separate extraction absorption is neither duplicated nor
+   regarded as a substitute for the global witness. Any necessary definition
+   or game change still requires owner disposition, not implementation here.
+
+Dropping the supplied point error, replacing the supplied measurements,
+excluding zero directions, assuming a joint law, and using only a unit
+bound fail the earlier necessary-correction tests recorded below. This
+attempt adds no source restriction; it removes a numerical obstruction to
+using the established first route. No strictly weaker sufficient full-source
+repair has been established, and full-source minimality remains unsettled.
+
+Statement-integrity audit: printed assumptions and conclusions are as above;
+the existing paper-labelled Lean declarations retain exactly their public
+headers, quantifier order, constants, and domain. The global construction's
+docstring now distinguishes proved `k=1` soundness and scalar absorption
+from the remaining operator constructions. The only new theorem is a scalar
+auxiliary with all constants and polynomial-error hypotheses displayed.
+Verdict: no drift in existing statements; a proved internal estimate, not
+adoption of a weaker source conclusion.
+
+Validation at **2026-09-06T06:26:58Z**: focused checking of the final
+`Apply.lean` passes, followed by the hole scan. The two existing holes
+remain at the stronger extended-line helper and the global-pair construction;
+`Lines.lean` retains zero holes. The affected import consumers
+`MIPStarRE/QPBT.lean` and `MIPStarRE.lean` pass with private artifacts.
+Both the new scalar theorem and the preserved established witness depend
+only on `propext`, `Classical.choice`, and `Quot.sound`. A separate Lean
+stdin experiment instantiates the new theorem with exactly the polynomial
+functions and positive constant returned by
+`exists_extendedLinesWitness_established`, keeping the same supplied
+points and extended-line witness and the required universal quantifier
+order. It passes without a new repository declaration or proof input.
+
+The final blueprint web build passes and **1891 declaration references
+resolve**. The paper-gap PDF builds to **22 pages** after bibliography
+processing. Gap-note style, blueprint LaTeX, source-statement integrity,
+100-column Lean formatting, and whitespace checks pass. Static synchronization
+retains **231 baseline stale entries and 15 baseline header-only warnings**;
+this is not a clean whole-tree synchronization verdict. Web generation also
+retains existing missing-bibliography warnings. The initial new node lacked
+its proof `leanok`; adding the tag after Lean validation restores the
+baseline warning count. Initial scalar elaboration failures concerned
+implicit real-power arguments and inequality proof terms; the final proof
+has no new debt. The new signature was not committed while unvalidated.
+
+At that snapshot this attempt uses **1754 seconds**, cumulative **24020
+seconds (6h 40m 20s)**. The captured final report records the later snapshot,
+exact commit, and normal hook outcome; terminal dispatcher accounting remains
+authoritative. Further work requires operator disposition beyond this last
+authorized attempt, not an automatic continuation. Proposed announcement,
+**not posted**: "#118 attempt 12 proves global-pair scalar absorption of the
+actual established two-player error; stronger printed error and the global
+measurement construction remain open, with no final source correction adopted."
+
+Private artifacts: `/tmp/issue118-lean-validation/lib`; logs:
+`/tmp/issue118-attempt12-*.log`. No full build, shared-cache write, runtime
+change, external post, collaboration, reviewer launch, or workflow publication
+is requested or performed. Main owns the event/design-decision records,
+independent review, and any later disposition. The continuation ends with
+this handoff, not a relabelled gap or an automatically launched attempt.
+
 ## Attempt 11: authorized continuation and established two-player witness
 
 Session `mathfix-118-20260906-11` starts at **2026-09-06T05:17:08Z**

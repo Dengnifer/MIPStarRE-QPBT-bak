@@ -3853,6 +3853,46 @@ unit defect bound for large parameters.
 	\cite{gap:qpbt_combined-lines-error-term}.
 \end{proof}
 
+\begin{lemma}[Scalar absorption of the established extended-line error]
+\label{lem:global-pair-error-absorption}
+\lean{MIPStarRE.QPBT.exists_globalPair_error_bound}
+\leanok
+\uses{lem:extended-first-route-witness, lem:ld-soundness}
+Let $\delta_Q$ be a nonnegative polynomial error function and let $g$ be a
+nonnegative additive two-variable polynomial error function. Fix constants
+$\kappa,K\geq0$, $a\geq1$, and $0<b\leq1$. There exist universal
+$A>1$ and $0<\beta<1$, depending only on these functions and constants,
+such that for every admissible $(q,m,d)$ and every $\eps\geq0$, with
+$n=md$ and $\rho=n/q$,
+\[
+ \min\!\left\{1,K\left(
+ a((2m+2)d)^a
+ \left((\kappa m g(\eps,\rho)+\eps)^b+q^{-b}
+       +2^{-b(2m+2)d}\right)
+ +\sqrt{\delta_Q(\eps)}+\rho\right)\right\}
+ \leq A n^A(\eps^\beta+q^{-\beta}+2^{-\beta n}).
+\]
+This is a numerical lemma, not a construction of the global measurement.
+The positive slack $\eps$ permits a strictly positive soundness parameter
+when $\eps>0$. The minimum uses the independent unit bound on a consistency
+defect; it makes no choice of a replacement measurement.
+\end{lemma}
+\begin{proof}
+\leanok
+Write $\delta_Q(\eps)\leq C_Q\eps^u$ and
+$g(\eps,\rho)\leq C_G(\eps^r+\rho^s)$, with positive exponents.
+Choose $\beta=\min\{1/2,b,rb,sb,u/2\}$. For $0\leq\eps\leq1$,
+subadditivity of the $b$-th power and $m\leq md$ bound the soundness
+input by a constant times
+$n^{b+sb}(\eps^\beta+q^{-\beta}+2^{-\beta n})$.
+Since $n\leq(2m+2)d\leq4n$, all prefactors are absorbed by enlarging
+$A$, while the exponential term only decreases. The point-error square
+root and $n/q$ are bounded by the same expression after enlarging $A$.
+For $\eps>1$, the right side is at least one. The full calculation and
+the remaining operator obligations are recorded in
+\cite{gap:qpbt_combined-lines-error-term}.
+\end{proof}
+
 The measurements of Lemma~\ref{lem:qld-4-12} and Lemma~\ref{lem:qld-4-13}
 constitute a strategy for the classical low individual degree game in $2m+2$
 variables. Applying the quantum soundness of that game yields a single
@@ -3901,7 +3941,8 @@ projective measurement whose outcomes are pairs of global polynomials.
 	if $W = Z$.
 \end{lemma}
 \begin{proof}
-	\uses{lem:qld-4-13-established, lem:qld-4-12, thm:naimark,
+\uses{lem:qld-4-13-established, lem:qld-4-12, thm:naimark,
+		lem:global-pair-error-absorption,
 		lem:ld-soundness, def:ld-game, fact:agreement, fact:add-a-proj2,
 		fact:data-processing, lem:schwartz-zippel-total-degree,
 		def:combine-map}
@@ -3925,8 +3966,10 @@ projective measurement whose outcomes are pairs of global polynomials.
 	numerical estimate available for $\delta_{\mathrm{combine}}$ is
 	$C \cdot m \cdot \poly(\eps,md/q)$, not the unproved form
 	$\poly(m^2\eps,md/q)$ printed in Lemma~\ref{lem:qld-4-13}
-	(Remark~\ref{rem:qld-4-13-source-defects}). The error function $\delta_S$
-	absorbs the prefactor $m$ into $(md)^a$.
+	(Remark~\ref{rem:qld-4-13-source-defects}).
+	Lemma~\ref{lem:global-pair-error-absorption} proves that the error function
+	$\delta_S$ absorbs this prefactor and the supplied polynomial point error.
+	One may add $\eps$ to the soundness parameter to make it strictly positive.
 	(For $(q, 2m+2, d, 1)$ to be a parameter tuple of
 	Definition~\ref{def:ld-game} the dimension $2m+2$ must divide $q$;
 	admissibility of $(q,m,d)$ supplies only that $m$ divides $q$, and for
@@ -3987,11 +4030,11 @@ projective measurement whose outcomes are pairs of global polynomials.
 	$\Id - \sum_{g_X,g_Z} \hat{S}_{g_X,g_Z}$ to an arbitrary element costs a
 	further $\delta_{\mathcal{G}}$, and the resulting error
 	$\delta_S = O(\delta_{\mathrm{ld}} + \delta_Q^{1/2} + md/q)$ has the
-	stated form for suitable universal constants (here
-	$\delta_{\mathrm{combine}}$ may be taken to be the bound
-	$m \cdot \poly(\eps, md/q)$ established in the proof of
-	Lemma~\ref{lem:qld-4-13}, whose prefactor $m$ is absorbed
-	into $(md)^a$ after enlarging $a$ and shrinking $b$); an application of
+	stated form for suitable universal constants by
+	Lemma~\ref{lem:global-pair-error-absorption}, using the independent unit
+	bound on the resulting consistency defect for large errors. This scalar
+	calculation does not discharge the preceding measurement construction,
+	transport, or polynomial-image mass estimates. An application of
 	Lemma~\ref{fact:data-processing} then gives
 	\eqref{eq:qld-s-point-con-alice} for $W = X$. For $W = Z$ the same
 	steps are performed with $X$ and $Z$ interchanged, starting from the

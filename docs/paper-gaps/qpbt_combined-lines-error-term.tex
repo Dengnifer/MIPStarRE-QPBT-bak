@@ -33,7 +33,9 @@
   placed-overlap comparison are proved, as is the first-player quantitative
   estimate. The second-player X-removal and Z-deficit estimates are now
   proved, and the established two-player witness is assembled and checked
-  in Lean. Aggregate consumer sufficiency remains open.
+  in Lean. Absorption of the established error through low-degree soundness
+  into the stated global-pair error is also proved, including large errors.
+  Aggregate consumer sufficiency remains open.
   The printed existence theorem is not disproved; no final correction
   of the extended-line theorem is adopted by these results.
   \item \textbf{Difficulty: substantial proof and transport obligations.}
@@ -59,8 +61,9 @@
   low individual degree development.
   \item \textbf{Estimated weight:} source and consumer transport; the
   aggregate remaining weight is not established. The remaining mathematical
-  work comprises the stronger printed-error obligation, explicit global-pair parameter
-  absorption, and the source-question and field-answer transport obligations.
+  work comprises the stronger printed-error obligation, the global-pair
+  measurement construction, and the source-question and field-answer transport
+  obligations. Global-pair scalar parameter absorption is now proved.
   Compiling an immediate wrapper does not establish these uses.
   \item \textbf{Mathlib/project split:} essentially \textbf{100\%
   project-local}.  The estimates use only the project's state-dependent
@@ -870,6 +873,105 @@ original September 5, 2026, 19:24 UTC anchor unchanged. The authorization
 does not reset the history or imply mathematical convergence. The audit
 records the exact proof checkpoint, validation, remaining consumer set,
 and final elapsed-time snapshot; dispatcher accounting remains authoritative.
+
+\section{Global-pair parameter absorption}
+
+The established two-player witness has error
+$\kappa m g(\eps,md/q)$ for a universal $\kappa>0$ and an additive
+polynomial error function $g$. The supplied point witness has a genuinely
+polynomial error $\delta_Q(\eps)$; it is not an arbitrary independently
+chosen error. The global-pair argument at
+\path{lem:qld-4-7}, lines 1278--1288 and 1402 of the canonical source,
+applies low-degree soundness in $2m+2$ variables and concludes with an
+error of order $\delta_{\mathrm{ld}}+\sqrt{\delta_Q}+md/q$.
+The following calculation proves the numerical sufficiency of the
+established first route for that expression. It neither constructs the
+global measurements nor assumes the unsupported joint restricted-product law.
+
+Write $n=md$, $N=(2m+2)d$, and $\rho=n/q$. Suppose
+\[
+ 0\leq\delta_Q(x)\leq C_Qx^u,\qquad
+ 0\leq g(x,y)\leq C_G(x^r+y^s)\quad(x,y\geq0),
+\]
+where $C_Q,C_G\geq1$ and $u,r,s>0$. Fix $\kappa,K\geq0$, a
+soundness coefficient $a\geq1$, and a soundness exponent $0<b\leq1$.
+Then there exist $A>1$ and $0<\beta<1$, independent of the admissible
+parameters and of $\eps\geq0$, such that
+\begin{align*}
+ &\min\!\left\{1,K\left[
+ aN^a\left((\kappa m g(\eps,\rho)+\eps)^b+q^{-b}+2^{-bN}\right)
+ +\sqrt{\delta_Q(\eps)}+\rho\right]\right\}\\
+ &\hspace{35mm}\leq A n^A\bigl(\eps^\beta+q^{-\beta}+2^{-\beta n}\bigr).
+\end{align*}
+The added $\eps$ is a slack in the upper bound, not a source assumption:
+it makes the soundness input positive whenever the source's $\eps>0$.
+The minimum is the independent unit bound on a consistency defect of the
+same measurements. Without a cap or an upper restriction on $\eps$, an
+arbitrary polynomial error can grow faster than every admissible final
+power $\eps^\beta$ with $\beta<1$. Thus an uncapped assertion on the
+whole nonnegative domain would be false. No such restriction or new
+measurement is used here.
+
+Here are explicit choices proving the assertion. Set
+\[
+ \beta=\min\{1/2,b,rb,sb,u/2\},\qquad
+ h=b+sb,\qquad R=a+h+1,
+\]
+\[
+ L=a4^a\bigl((\kappa C_G)^b+2\bigr),\qquad
+ D=K(L+\sqrt{C_Q}+1),\qquad A=D+R+2.
+\]
+All exponents are positive; $A>1$, $A\geq D$, and $A\geq R$.
+For $0\leq\eps\leq1$, let
+$E=\eps^\beta+q^{-\beta}+2^{-\beta n}$. Admissibility gives
+$m,d,q\geq1$, whence $m\leq n\leq N\leq4n$.
+Subadditivity $(x+y)^b\leq x^b+y^b$ for nonnegative $x,y$ and
+$b\leq1$ gives
+\[
+ (\kappa m g(\eps,\rho)+\eps)^b
+ \leq\bigl((\kappa C_G)^b+1\bigr)n^hE.
+\]
+Indeed $\eps^{rb}\leq\eps^\beta$ and
+$\rho^{sb}=n^{sb}q^{-sb}\leq n^{sb}q^{-\beta}$.
+Also $q^{-b}+2^{-bN}\leq E$, so the soundness expression is at most
+$Ln^{a+h}E$. The remaining terms satisfy
+$\sqrt{\delta_Q(\eps)}\leq\sqrt{C_Q}E$ and $\rho\leq nE$.
+They sum, after multiplication by $K$, to at most $Dn^RE\leq An^AE$.
+For $\eps>1$, the right side is at least one, proving the capped
+inequality. This covers zero errors, arbitrarily large degrees or $md/q$,
+and all finite fields in the admitted domain; it does not rely on an
+asymptotic small-error assumption.
+
+The kernel-checked declaration is
+\leanid{MIPStarRE.QPBT.exists\_globalPair\_error\_bound}.
+Its arguments accept the very same polynomial functions and constant
+produced by the established witness theorem. The positive exponent for
+the supplied point error is used exactly in the choice $\beta\leq u/2$.
+The existing direct low-degree soundness theorem for $k=1$ provides the
+required $a,b$; arbitrary-$k$ soundness is not a prerequisite here.
+Mathlib supplies monotonicity, multiplication, and subadditivity of real
+powers, and monotonicity of square roots. These are scalar inequalities,
+not replacements for any quantum or geometric step in the source.
+
+The remaining global-pair obligations are to apply that soundness theorem
+to a projective passing strategy obtained from the actual extended-line
+and point measurements, to retain or transport its conclusions on the
+required expanded spaces, to bound the mass outside the image
+$\alpha g_X(x)+\beta g_Z(z)$ by the source's polynomial comparisons at
+lines 1289--1363, and to complete the projective submeasurement and prove
+both bases' two-player point consistencies at 1364--1402. The direct-game
+construction from a given witness in issue 244 and the later extraction
+absorption in issue 241 are independent tasks; neither is duplicated or
+assumed complete here. All previously listed extraction and final-test
+consumers remain conditional on these operator constructions. The stronger
+printed extended-line error remains open. No source theorem is adopted as
+corrected solely on the strength of this scalar calculation.
+
+This is cumulative attempt 12, carrying 22266 completed working seconds,
+with the original September 5, 2026, 19:24 UTC anchor unchanged. The
+authorized continuation has no automatic further extension. Its final
+validation, cumulative budget, and owner handoff are recorded in the
+matching audit and captured session report.
 
 \section{Conclusion}
 
