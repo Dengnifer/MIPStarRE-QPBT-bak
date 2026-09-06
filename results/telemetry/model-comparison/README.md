@@ -1,6 +1,11 @@
 # codex model comparison — `gpt-5.6-sol` vs `gpt-6-astra`
 
-Both models run at the same reasoning effort: the global default `model_reasoning_effort = "ultra"` in the codex configuration on ghz applies to every dispatched session, and the owner decided (2026-09-05) not to lower it for the easy sol tasks, so the tables compare sol and astra at ultra effort throughout.
+The models did not historically run at the same provider-reported effort.
+Debug probes on 2026-09-05 showed that the astra endpoint reported `medium` for
+an `ultra` request, while it honoured `xhigh`; sol honoured its legacy `ultra`
+request as `max`. Astra rows before the 22:25Z handoff boundary must therefore
+be read as provider-reported `medium`. New astra dispatches request `xhigh`, and
+sol retains `ultra`. The tables do not stratify these periods by effort.
 
 A side product of the model switch on 2026-09-05: `gpt-6-astra` became the
 default for codex sessions at 2026-09-05T15:46Z, and `gpt-5.6-sol` — used for
@@ -8,6 +13,15 @@ everything before that — is now kept by operator choice for "really easy"
 subagents. This directory answers one question for the owner: **which roles can
 sol keep?** It is a rough, re-runnable descriptive comparison, not an
 experiment.
+
+## September 6, 2026 policy supersession
+
+The introductory policy descriptions are historical. Issue #237 / PR #238
+supersedes them: every project role requests `gpt-6-astra` using primary relay only.
+The 03:26 UTC owner update keeps main at `max` and lets main select worker `max`
+or `xhigh` by role, difficulty, quality and latency. Sol is not an active option.
+Historical records remain unchanged; `requested_effort` describes the launch
+request, not a new measurement of backend compute.
 
 ## Re-run
 
@@ -23,26 +37,33 @@ nothing outside this directory except a pull-request cache under
 
 ## How the model is derived
 
-`sessions.jsonl` has **no model field**, so `compare.py` derives one per session
+New dispatcher rows in `sessions.jsonl` record the selected model and account.
+`compare.py` prefers that explicit identity, retaining fallback for older rows,
 and reports how many rows came from each source:
 
-1. **capture / rollout** — the codex event stream. The rollout named in the
+1. **registry** — the nonempty `model` field, explicitly pinned by the dispatcher.
+2. **capture / rollout** — the codex event stream. The rollout named in the
    `rollout` field carries the model in three places (`session_meta`'s
    `base_instructions.provenance.model`, `turn_context.model`,
    `world_state.state.model`). The per-session capture
    (`results/telemetry/sessions/<name>.jsonl`, `codex exec --json`) carries no
    model field today; it is scanned first anyway so a future capture format is
    picked up for free.
-2. **lane log** — `dispatch <role> for #N (model <name>, attempt k)` in
+3. **lane log** — `dispatch <role> for #N (model <name>, attempt k)` in
    `~/.cache/mipstarre-dev/watchdog/lanes/<issue>.lane.log`, used only when every
    such line for that issue names the same model. Lane logs are a runtime cache
    and cover only recent lanes.
-3. **time rule** — last resort: sessions starting before 2026-09-05T15:46Z are
+4. **time rule** — last resort: sessions starting before 2026-09-05T15:46Z are
    attributed to sol, later ones to astra. This is the weakest source; it cannot
    see a per-dispatch `MIPSTARRE_CODEX_MODEL` override.
 
 Models other than sol and astra appear as their own rows when they show up
 (smoke tests have used `gpt-5.6-luna` and `gpt-5`).
+
+New rows may also contain `requested_effort`, the effective override passed to
+the CLI after dispatcher normalization. It is request telemetry, not a measured
+provider response. Historical rows omit it, and the September 5 probes above
+remain the evidence for provider-reported effort in those sessions.
 
 ## Reading the tables
 
@@ -82,3 +103,6 @@ Appended by `compare.py`, one line per run.
 
 - 2026-09-05T16:05Z — 570 sessions: gpt-5.6-sol 560, gpt-5.6-luna 4, gpt-6-astra 4, gpt-5 2
 - 2026-09-05T17:22Z — 597 sessions: gpt-5.6-sol 560, gpt-6-astra 31, gpt-5.6-luna 4, gpt-5 2
+- 2026-09-05T17:35Z — 605 sessions: gpt-5.6-sol 564, gpt-6-astra 35, gpt-5.6-luna 4, gpt-5 2
+- 2026-09-05T17:41Z — 610 sessions: gpt-5.6-sol 565, gpt-6-astra 39, gpt-5.6-luna 4, gpt-5 2
+- 2026-09-05T18:20Z — 622 sessions: gpt-5.6-sol 566, gpt-6-astra 50, gpt-5.6-luna 4, gpt-5 2

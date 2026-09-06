@@ -634,3 +634,232 @@ that bypass controls validation only, not ref scope.
 
 **Expected effect:** `MIPSTARRE_SKIP_HOOKS=1` can recover from local tooling
 failures without publishing any ref outside the requested branch mapping.
+
+## 2026-09-05 — Blueprint citations use labels; reviewers derive spans
+
+**Trigger:** `results/telemetry/events.md` 2026-09-05 "Blueprint numeric
+locator churn", consolidating issue #174, PR #152's nine stale-span findings,
+four same-day merge conflicts, and the earlier PR #29 locator regression.
+
+**Change:** `AGENTS.md` makes blueprint labels the stored Lean-docstring
+citation form. `scripts/blueprint_citations.py` resolves active labels to
+current statement/proof spans and conservatively rewrites legacy locators.
+`review.sh` loads that helper from the committed trusted ref, attaches its
+derived map as untrusted review data, and the review prompts and protocol no
+longer treat numeric drift as a finding when the intended label resolves.
+
+**Expected effect:** blueprint insertions no longer force edits or review
+findings in unrelated Lean files, while reviewers retain exact current source
+locations and still detect missing, duplicate, or incorrect anchors.
+
+## 2026-09-05 — Blueprint citation evidence gets a reserved budget
+
+**Trigger:** `results/telemetry/events.md` 2026-09-05, "Citation evidence
+starved by the review diff", recording PR #202 round 1 findings F6 and F7.
+
+**Change:** `review.sh` sanitizes the branch-derived citation map into a
+separately capped artifact, attaches it before the diff, and uses only that
+artifact in the no-dispatch fallback. `review.md` section 4 makes the default
+30000-byte allowance and ordering part of the untrusted-data protocol.
+
+**Expected effect:** reviewers receive bounded label-resolution evidence even
+for large patches, and neither review path interpolates raw branch-derived map
+content.
+
+## 2026-09-05 — Citation failures survive evidence truncation
+
+**Trigger:** `results/telemetry/events.md` 2026-09-05, "Citation failures lost
+inside their own evidence budget", recording PR #202 round 2 findings F4 and
+F5.
+
+**Change:** the resolver compacts repeated citation origins and gives unresolved
+and duplicate rows priority over successful resolutions when producing a
+bounded map. It fails closed when those failure rows cannot fit. Both dispatcher
+and no-dispatch review prompts attach the sanitized map before the diff.
+
+**Expected effect:** a large citation map cannot hide the entries that block
+review, and attachment order no longer depends on which review path executes.
+
+## 2026-09-05 — Reject silent loss from branch-integration merges
+
+**Trigger:** `results/telemetry/events.md` 2026-09-05, "incident: silent file
+loss on stacked branches 109 and 110" (issue #222). Merge commits `35bdc2a`
+and `8ad1de8` had trees identical to their first parents even though their
+second parent added five modules and changed two existing modules.
+
+**Change:** `merge_loss_guard.py` compares a pending index, or an existing
+two-parent merge, with both parents and every best merge base. It blocks an
+incoming path deleted without a branch-side deletion and an unambiguous
+incoming-only change restored to the unchanged branch blob. Recorded conflict
+paths remain ordinary resolution decisions. `.githooks/reference-transaction`
+audits an automatic merge object before its branch ref moves, while
+`.githooks/pre-commit` checks a prepared merge's index; neither permits the
+blanket bypass to skip the guard. Focused tests cover the historical whole-tree
+failure, an intentional branch deletion, recorded conflict resolution,
+multiple merge bases, both hook paths, and committed-merge auditing.
+
+**Expected effect:** resetting a prepared merge index to `HEAD` cannot create a
+quietly lossy stack or fresh-base merge, while deliberate branch deletions and
+conflict resolutions remain possible.
+
+## 2026-09-06 — Record explicitly selected Codex models
+
+**Trigger:** `results/telemetry/events.md` 2026-09-06, "Codex session rows omit
+the selected model" (issue #231).
+
+**Change:** `dispatch.sh` forwards its nonempty `MIPSTARRE_CODEX_MODEL` override
+to `telemetry.py`, and the session schema admits that exact value as optional
+`model`. Rows created without an explicitly resolved model continue to omit the
+field; historical rows are not rewritten.
+
+**Expected effect:** new explicitly pinned sessions retain their model identity
+without changing Codex selection behavior or inventing values for CLI-default
+sessions.
+
+## 2026-09-06 — Reserve dispatcher capacity per account
+
+**Trigger:** `results/telemetry/events.md`, "2026-09-05 — Two accounts and router
+shim (recorded 2026-09-06)", and the September 6 model-identity incident (#231).
+The owner authorized issue #232 to subsume #231.
+
+**Change:** `sessions.md` §4.1 specifies locked per-account PID reservations,
+ratio-based auto selection, bounded waits, and resume affinity. `dispatch.sh`
+and its `account_router.py` helper implement that contract; `telemetry.py`,
+`meta.md`, and `DESIGN.md` record selected account/model identity. Review and
+autofix pass account environment variables through. Model comparison prefers
+explicit registry data while retaining historical fallback. This extends the
+earlier #231 amendment by resolving and pinning account-config model defaults.
+
+**Expected effect:** concurrent dispatchers do not race for the same capacity;
+resumes stay with their original account and telemetry retains their identity.
+Timeout remains an explicitly authorized overflow, not a hard-cap guarantee.
+Operator cutover after merge restores the v1 multi-agent-off-only shim and sets
+the aggregate `max-codex` to the sum of the two configured caps (19 by default).
+
+## 2026-09-06 — Make main turns snapshot-driven and delegation-first
+
+**Trigger:** `results/telemetry/events.md` 2026-09-06, "Main-turn work serialized
+detached recovery", and owner directive #234.
+
+**Change:** `local/personas/main.md` now starts each short turn with the status
+snapshot, delegates work exceeding about two minutes, and orders recovery,
+labelled autofix or adjudication, stack propagation, and critical ready-packet
+dispatch. It makes daemon-only merges and #27 live-worker reporting explicit,
+with #26 reserved for human decisions.
+
+**Expected effect:** the main session remains responsive while independent work
+advances in parallel, failed lanes receive prompt recovery, and merge authority
+and owner escalation stay unambiguous.
+
+## 2026-09-06 — Normalize astra effort requests to xhigh
+
+**Trigger:** `results/telemetry/events.md` 2026-09-05, "Incident: astra sessions
+ran at medium effort", measured before the 22:25Z handoff and confirmed on both
+Codex endpoints at 22:40Z; and the owner's 2026-09-05T22:45Z decision that astra
+must request `xhigh` while sol retains `ultra` (issue #237).
+
+**Change:** after account routing resolves the exact model, `dispatch.sh` maps
+omitted or legacy `ultra` effort to `xhigh` only for astra. Other explicit astra
+efforts and every sol effort remain unchanged. The `mathfix` guard validates the
+normalized astra `xhigh` request. `telemetry.py` and the session schema record
+the nonempty effective CLI request as optional `requested_effort`, explicitly
+distinct from provider-measured behavior. Session, math-fix, review, architecture,
+and model-comparison documentation now state the same model-specific policy.
+
+**Expected effect:** both astra accounts receive the highest effort they honour,
+sol keeps its established request, legacy callers remain valid, and future
+session rows preserve what the dispatcher asked for without overstating what the
+provider executed.
+
+## 2026-09-06 — Primary relay and literal Astra max
+
+**Trigger:** issue #237 / PR #238; the owner's primary-relay/max decision and
+the incident entry "PR238 primary relay/max amendment" in `events.md`.
+
+**Change:** `account_router.py` reads primary/both mode at every admission,
+reconciles host processes with reservations, accounts for main and other key
+use within twelve primary slots, and rejects disabled accounts and saturated
+timeouts. Secondary threads require a fresh primary checkpoint continuation
+with linked history and the original shared mathematical budget. `dispatch.sh`,
+review and autofix request only `gpt-6-astra` at `max`, with fan-out disabled;
+missing dispatchers cannot trigger direct fallback. Session, model, mathfix and
+main-persona policies are synchronized. The owner-authorized profile/shim
+mitigation is installed atomically; future launcher/supervisor versions are
+prepared but not started. No credentials or historical measurements change.
+
+**Expected effect:** no secondary spillover, timeout overbooking, Sol launch,
+or effort-request ambiguity. Both-account settings survive for an explicit
+later owner decision; unobservable host state blocks admission.
+
+## 2026-09-06 — Eleven-worker allocation and continuation review repairs
+
+**Trigger:** owner allocation, PR238 F1–F4, and "PR238 allocation and review repairs" in `events.md`.
+**Change:** exact interactive exclusions, rejection of fan-out overrides,
+cumulative completed-time charges, resume provenance and durable replay snapshots.
+**Expected effect:** eleven allocated workers plus main without touching exempt
+sessions, and no budget reset or provenance loss across resumes or append failures.
+
+## 2026-09-06 — Preserve selected worker effort and tolerate historical damage
+
+**Trigger:** 03:26 UTC owner update and PR238 F5; `events.md`, "PR238 F5 and per-worker effort selection".
+**Change:** dispatch/review/autofix/shim honor main's max/xhigh choice; main stays max;
+omitted/legacy ultra map to max, other values fail. Shared history parsing tolerates
+non-record damage but validates relevant continuation metadata; budget rules persist.
+**Expected effect:** ordinary resumes recover, explicit xhigh survives, verification stays honest.
+
+## 2026-09-06 — Main-selected useful-work queue with adoption holds
+
+**Trigger:** #257; `events.md`, "Explicit useful-work admissions need durable
+handoff reservations" (`orc-257-20260906-01`, continued as `-02`).
+**Change:** `useful-queue.md` and queue/router/dispatch/review guards add explicit
+one-shot packets, parent-merge bindings, ceiling ten, two-slot reviews, adoption
+holds and stop-without-kill. Runtime stays outside git; only main selects work.
+**Expected effect:** no overbooking, duplicate writers, stale/fifth-round reviews
+or blind retries. Process counts are not server admission. Normal CI/independent
+review precede deployment; this amendment does not install or start anything.
+
+## 2026-09-06 - PR269 F1-F3 repairs
+**Trigger:** `events.md`, "PR269 first-review repair". **Change:** canonical worktree
+identities, diagnostic-only refusals and preserved Lake-root export; consolidate
+duplicate protocol exposition under `useful-queue.md`. **Expected effect:** correct
+reservations and holds within the original episode cap; deployment remains gated.
+
+## 2026-09-07 — Space-cap5 merge-service checkpoint
+
+**Trigger:** `events.md`, "space-cap5 merge-service checkpoint"; legacy daemon
+v8 remains SIGSTOPped after its recorded SSH reset. **Change:** the bounded
+owner service records local/remote `main` SHAs, primary dirt, transport and
+lock state, the oldest exact-head CI/review-eligible PR age, and the concrete
+HOLD reason before delegating any merge. Space capacity 5 and external gate 0
+are required; successful daemon-owned merges re-read remote `main`. **Expected
+effect:** dirty-primary and stale-head stalls remain visible, and no worker or
+ manual path can merge around the exact-head gate. Git/GitHub reads are bounded,
+ per-tick failures become HOLD records, cadence is monotonic, and stale and
+ fresh candidates are reported separately without claiming an eligibility onset.
+
+## 2026-09-06 — Scoped native QPBT allocation switched to space/cap5
+
+**Trigger:** owner switch receipt `space-cap5-switch-20260906.json` and
+`events.md`, "space five-total native allocation". **Change:** the active QPBT
+queue now counts the main once plus at most four actual native descendants on
+the `space` account; external admission stays zero. Completion/failure/
+unblock/compaction events require prompt disjoint successor reassessment, with
+vacancy duration and concrete reasons recorded. Relay-1/cap8 observations
+remain historical and are not reclassified. **Expected effect:** no stale
+account labels or occupancy claims while preserving all proof, review, CI and
+merge gates.
+
+## 2026-09-06 — Literal Ultra and shared native accounting
+
+**Trigger:** PR287's owner-authorized native workflow repair, following the
+space/cap5 switch recorded above; historical relay-1 and cap8 observations remain
+unchanged. **Change:** external dispatch, review, autofix, shim and useful-queue
+effort checks require literal Ultra. A native root lease charges its verified
+shared descendant cap against the same owner allocation, while native telemetry
+retains unknown usage aggregation and explicit key labels. The nonce-bound native
+review transport re-derives exact-head evidence from the live root, and session
+policy records disjoint successor chains and activity-based vacancy reasons.
+**Expected effect:** native mathematics and independent review can proceed under
+the current space five-total allocation without stale account labels, double
+admission, or manufactured review receipts. CLI Ultra selection is not a claim
+about backend compute equivalence.

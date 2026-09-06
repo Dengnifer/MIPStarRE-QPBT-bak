@@ -23,9 +23,8 @@ consistency conclusions and the source's existential form.
 
 ## References
 
-The declarations formalize `def:expanded-line-measurement` and
-`lem:qld-comm-line-cons` in
-`blueprint/src/chapter/ch14_qpbt_observables.tex:1034-1210`. Their paper source
+The declarations formalize blueprint `def:expanded-line-measurement` and
+`lem:qld-comm-line-cons`. Their paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:506-679`.
 -/
 
@@ -44,14 +43,14 @@ local instance pauliEdgeNonemptyLineMeasurement : Nonempty PauliEdge :=
 /-- The square-root error exhibited by the expanded-line consistency proof.
 This is the final quantitative conclusion of `lem:qld-comm-line-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:657-679`, blueprint
-`ch14_qpbt_observables.tex:1082-1210`. -/
+`lem:qld-comm-line-cons`. -/
 noncomputable def deltaLine (ε : ℝ) : ℝ :=
   Real.sqrt ε
 
 /-- The concrete expanded-line error is polynomially small. This discharges
 the error-function component of `lem:qld-comm-line-cons`, using the value
 proved at paper `14_analysis_of_the_pauli_basis_test.tex:657-679`, blueprint
-`ch14_qpbt_observables.tex:1082-1210`. -/
+`lem:qld-comm-line-cons`. -/
 theorem deltaLine_isPolyErr : IsPolyErr deltaLine := by
   refine ⟨1, (2 : ℝ)⁻¹, le_rfl, by positivity, ?_⟩
   intro x hx
@@ -64,7 +63,7 @@ theorem deltaLine_isPolyErr : IsPolyErr deltaLine := by
 function. This proposition collects the full existential content of
 `lem:qld-comm-line-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:559-679`, blueprint
-`ch14_qpbt_observables.tex:1082-1210`. -/
+`lem:qld-comm-line-cons`. -/
 def ExpandedLineConclusions (δ : ℝ → ℝ) : Prop :=
   (∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
       (side : PlayerSide) (W : PauliKind) (line : LineDesc P.toLdParams),
@@ -104,7 +103,7 @@ def ExpandedLineConclusions (δ : ℝ → ℝ) : Prop :=
 directed opposite-placement pairs. The universal constant precedes all test
 parameters and strategies. This is item 1 of `lem:qld-comm-line-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:559-568`, blueprint
-`ch14_qpbt_observables.tex:1082-1102`. -/
+`lem:qld-comm-line-cons`. -/
 theorem expLine_self_cons :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -152,7 +151,7 @@ theorem expLine_self_cons :
 expanded point effect selected by its value at the sampled point, with the
 common square-root error. This is item 2 of `lem:qld-comm-line-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:569-620`, blueprint
-`ch14_qpbt_observables.tex:1103-1119`. -/
+`lem:qld-comm-line-cons`. -/
 theorem expLine_point_cons :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -215,7 +214,7 @@ theorem expLine_point_cons :
 completed expanded point family, including the `none` class. This is item 3 of
 `lem:qld-comm-line-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:621-679`, blueprint
-`ch14_qpbt_observables.tex:1120-1210`. -/
+`lem:qld-comm-line-cons`. -/
 theorem expLine_point_cons' :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -268,7 +267,7 @@ theorem expLine_point_cons' :
 expanded-line witnesses and square-root error. This is
 `lem:qld-comm-line-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:506-679`, blueprint
-`ch14_qpbt_observables.tex:1082-1210`. -/
+`lem:qld-comm-line-cons`. -/
 theorem exists_deltaLine :
     ∃ δ : ℝ → ℝ, IsPolyErr δ ∧ ExpandedLineConclusions δ := by
   refine ⟨deltaLine, deltaLine_isPolyErr, ?_⟩
