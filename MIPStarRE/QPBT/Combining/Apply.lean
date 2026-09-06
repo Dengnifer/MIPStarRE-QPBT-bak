@@ -30,6 +30,7 @@ open scoped BigOperators MatrixOrder
 namespace MIPStarRE.QPBT
 
 open MIPStarRE.LDT MIPStarRE.Quantum
+open DistanceCalculus
 
 noncomputable section
 
@@ -569,12 +570,403 @@ theorem SubLineWitness.completedPoint_effect_le {params : AdmissibleParams}
       exact Finset.single_le_sum (fun pair _ => measurement.pos pair)
         (Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩)
 
+/-- Uniform parameter resampling preserves the full direct line-point law,
+including its canonical line, rather than merely its point marginal. -/
+theorem avgOver_directLinePointDist_resample_parameter (params : DirectLdParams)
+    (quantity : DirectLineDesc params × (Fin params.m → DirectScalarQ params) → ℝ) :
+    avgOver (directLinePointDist params) quantity =
+      avgOver ((directLinePointDist params).map Prod.fst) (fun line =>
+        avgOver (uniformDistribution (DirectScalarQ params)) (fun parameter =>
+          quantity (line, line.base + parameter • line.direction))) := by
+  classical
+  rw [Distribution.avgOver_map, directLinePointDist, avgOver_mix, avgOver_mix]
+  congr 1
+  · congr 1
+    unfold directALinePointDist
+    simp only [Distribution.avgOver_map]
+    rw [← uniformDistribution_map_equiv (directLdSpaceIndexEquiv params).symm]
+    simp only [Distribution.avgOver_map, uniformDistribution_prod, avgOver_prod]
+    apply avgOver_congr
+    intro index
+    conv_lhs => rw [avgOver_comm]
+    conv_rhs => rw [avgOver_comm]
+    apply avgOver_congr
+    intro direction
+    simpa only [directLdSpaceIndexEquiv, Equiv.coe_fn_symm_mk, directALineDescOf,
+      DirectLineDesc.base, DirectLineDesc.direction, lineRepMap_apply_self] using
+      avgOver_lineRepMap_resample_parameter (coordinateDirection index)
+        (fun base point => quantity
+          (.axis (lineRepMap (coordinateDirection index) base) index
+            (lineRepMap_apply_self _ _), point))
+  · congr 1
+    unfold directDLinePointDist
+    simp only [Distribution.avgOver_map]
+    rw [← uniformDistribution_map_equiv (directLdSpaceIndexEquiv params).symm]
+    simp only [Distribution.avgOver_map, uniformDistribution_prod, avgOver_prod]
+    apply avgOver_congr
+    intro index
+    conv_lhs => rw [avgOver_comm]
+    conv_rhs => rw [avgOver_comm]
+    apply avgOver_congr
+    intro direction
+    simpa only [directLdSpaceIndexEquiv, Equiv.coe_fn_symm_mk, directDLineDescOf,
+      DirectLineDesc.base, DirectLineDesc.direction, lineRepMap_apply_self] using
+      avgOver_lineRepMap_resample_parameter (directPrefixProjection index direction)
+        (fun base point => quantity
+          (.diagonal (lineRepMap (directPrefixProjection index direction) base) index
+            (directPrefixProjection index direction) (lineRepMap_apply_self _ _)
+            (by intro coordinate hbefore; simp [directPrefixProjection, hbefore]), point))
+
+/-- Real scalar multiplication commutes with placement. -/
+private theorem place_real_smul {params : AdmissibleParams} {error : ℝ}
+    (setting : ProjectiveSetting params error) (placement : Placement) (scalar : ℝ)
+    (operator : Op (setting.ExpandedLocalSpace placement.side)) :
+    setting.place placement (scalar • operator) = scalar • setting.place placement operator := by
+  ext row column
+  cases placement <;> simp only [ProjectiveSetting.place, Matrix.smul_apply, Complex.real_smul] <;>
+    ring
+
+/-- A placed overlap is linear in an averaged left operator. -/
+private theorem placed_overlap_average {params : AdmissibleParams} {error : ℝ}
+    {Sample : Type*} (setting : ProjectiveSetting params error) (first second : Placement)
+    (law : Distribution Sample) (family : Sample → Op (setting.ExpandedLocalSpace first.side))
+    (right : Op (setting.ExpandedLocalSpace second.side)) :
+    stateQForm setting.psiHat
+      (setting.place first (averageOperatorOverDistribution law family) *
+        setting.place second right) =
+      avgOver law (fun sample => stateQForm setting.psiHat
+        (setting.place first (family sample) * setting.place second right)) := by
+  unfold averageOperatorOverDistribution avgOver
+  rw [setting.place_finsetSum, Finset.sum_mul, stateQForm_finset_sum]
+  apply Finset.sum_congr rfl
+  intro sample _
+  rw [place_real_smul, smul_mul_assoc]
+  have hscalar (operator : Op (SixReg params setting.toStrategy.ιA setting.toStrategy.ιB)) :
+      law.weight sample • operator = (law.weight sample : ℂ) • operator := by
+    ext row column
+    simp [Complex.real_smul]
+  rw [hscalar]
+  simp only [stateQForm, WinImplications.applyOperatorToState_smul_op, inner_smul_right,
+    Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
+
+/-- Postprocessing the left measurement groups, but does not alter, its overlap
+with a family indexed by the postprocessed answer. -/
+private theorem placed_overlap_postprocess {params : AdmissibleParams} {error : ℝ}
+    {Answer Output : Type*} [Fintype Answer] [DecidableEq Answer]
+    [Fintype Output] [DecidableEq Output]
+    (setting : ProjectiveSetting params error) (first second : Placement)
+    (measurement : Quantum.Measurement Answer (setting.ExpandedLocalSpace first.side))
+    (mapping : Answer → Output) (right : Output → Op (setting.ExpandedLocalSpace second.side)) :
+    (∑ output, stateQForm setting.psiHat
+      (setting.place first ((measurement.postprocess mapping).effect output) *
+        setting.place second (right output))) =
+      ∑ answer, stateQForm setting.psiHat
+        (setting.place first (measurement.effect answer) *
+          setting.place second (right (mapping answer))) := by
+  classical
+  simp only [Quantum.Measurement.postprocess_effect, setting.place_finsetSum,
+    Finset.sum_mul, stateQForm_finset_sum]
+  calc
+    (∑ output, ∑ answer ∈ Finset.univ.filter (fun answer => mapping answer = output),
+        stateQForm setting.psiHat (setting.place first (measurement.effect answer) *
+          setting.place second (right output))) =
+        ∑ output, ∑ answer ∈ Finset.univ.filter (fun answer => mapping answer = output),
+          stateQForm setting.psiHat (setting.place first (measurement.effect answer) *
+            setting.place second (right (mapping answer))) := by
+      apply Finset.sum_congr rfl
+      intro output _
+      apply Finset.sum_congr rfl
+      intro answer hanswer
+      rw [(Finset.mem_filter.mp hanswer).2]
+    _ = _ := Finset.sum_fiberwise _ _ _
+
+/-- On opposite registers a positive left effect preserves order in the right
+effect. This applies to both directed player placements without exchanging spaces. -/
+private theorem placed_overlap_mono {params : AdmissibleParams} {error : ℝ}
+    (setting : ProjectiveSetting params error) (first second : Placement)
+    (hopposite : first.IsOpposite second)
+    (left : Op (setting.ExpandedLocalSpace first.side))
+    (lower upper : Op (setting.ExpandedLocalSpace second.side))
+    (hleft : 0 ≤ left) (hright : lower ≤ upper) :
+    stateQForm setting.psiHat (setting.place first left * setting.place second lower) ≤
+      stateQForm setting.psiHat (setting.place first left * setting.place second upper) := by
+  have hpositive := setting.place_mul_place_nonneg first second hopposite hleft
+    (sub_nonneg.mpr hright)
+  rw [setting.place_sub, mul_sub] at hpositive
+  exact quadratic_form_mono (sub_nonneg.mp hpositive) setting.psiHat
+
+/-- Expand the actual conditional extended-line POVM in a placed overlap.
+This is exactly the averaging step at paper lines 1118--1134. -/
+theorem SubLineWitness.extendedMeasurement_overlap {params : AdmissibleParams}
+    {error pointError lineError : ℝ} {setting : ProjectiveSetting params error}
+    {points : CombinedPointsWitness setting pointError}
+    (sublines : SubLineWitness params) (lines : CombinedLinesWitness setting points lineError)
+    (first second : Placement) (line : DirectLineDesc params.extendedDirectLd)
+    (point : Fin params.extendedDirectLd.m → DirectScalarQ params.extendedDirectLd)
+    (right : Option (PauliScalar params) → Op (setting.ExpandedLocalSpace second.side)) :
+    (∑ answer, stateQForm setting.psiHat
+      (setting.place first (((sublines.extendedMeasurement lines first.side line).postprocess
+        (fun polynomial => (directEvalOpt line point polynomial).map
+          (extendedDirectScalarEquiv params))).effect answer) *
+            setting.place second (right answer))) =
+      avgOver (sublines.conditionalLaw line) (fun sample =>
+        ∑ pair, stateQForm setting.psiHat
+          (setting.place first ((lines.T first.side sample.val.2.1 sample.val.2.2).effect pair) *
+            setting.place second (right ((directEvalOpt line point
+              (sublines.combinedPolynomial sample.val
+                (Finset.mem_filter.mp sample.property).1 pair)).map
+                  (extendedDirectScalarEquiv params))))) := by
+  rw [placed_overlap_postprocess]
+  change (∑ polynomial, stateQForm setting.psiHat
+    (setting.place first (averageOperatorOverDistribution (sublines.conditionalLaw line)
+      (fun sample => ((lines.T first.side sample.val.2.1 sample.val.2.2).postprocess
+        (sublines.combinedPolynomial sample.val
+          (Finset.mem_filter.mp sample.property).1)).effect polynomial)) *
+      setting.place second (right ((directEvalOpt line point polynomial).map
+        (extendedDirectScalarEquiv params))))) = _
+  simp_rw [placed_overlap_average]
+  rw [← avgOver_sum]
+  apply avgOver_congr
+  intro sample
+  exact placed_overlap_postprocess setting first second _ _ _
+
+/-- The actual paired-line versus point-pair overlap on one subline triple,
+with its uniform affine parameter. This is the integrand of the first route. -/
+def pairedSublineOverlap {params : AdmissibleParams} {error pointError lineError : ℝ}
+    (setting : ProjectiveSetting params error) (points : CombinedPointsWitness setting pointError)
+    (lines : CombinedLinesWitness setting points lineError) (first second : Placement)
+    (sample : SubLineTriple params) : ℝ :=
+  avgOver (uniformDistribution (DirectScalarQ params.extendedDirectLd)) (fun parameter =>
+    let point := directPointToPauli params (sample.1.base + parameter • sample.1.direction)
+    ∑ pair, stateQForm setting.psiHat
+      (setting.place first ((lines.T first.side sample.2.1 sample.2.2).effect pair) *
+        setting.place second (((points.Q second.side (projX point) (projZ point)).postprocess
+          (fun values => (some values.1, some values.2))).effect
+            (evalOpt sample.2.1 (projX point) pair.1,
+              evalOpt sample.2.2 (projZ point) pair.2))))
+
+/-- The actual extended-line versus extended-point overlap. Both families use
+the supplied witnesses and the source polynomial combination. -/
+def extendedPointOverlap {params : AdmissibleParams} {error pointError lineError : ℝ}
+    (setting : ProjectiveSetting params error) (points : CombinedPointsWitness setting pointError)
+    (lines : CombinedLinesWitness setting points lineError) (sublines : SubLineWitness params)
+    (first second : Placement)
+    (sample : DirectLineDesc params.extendedDirectLd ×
+      (Fin params.extendedDirectLd.m → DirectScalarQ params.extendedDirectLd)) : ℝ :=
+  ∑ answer, stateQForm setting.psiHat
+    (setting.place first (((sublines.extendedMeasurement lines first.side sample.1).postprocess
+      (fun polynomial => (directEvalOpt sample.1 sample.2 polynomial).map
+        (extendedDirectScalarEquiv params))).effect answer) *
+      setting.place second (((points.Q second.side
+        (projX (directPointToPauli params sample.2))
+        (projZ (directPointToPauli params sample.2))).postprocess (fun values => some
+          ((directPointToPauli params sample.2) (alphaVar params.m) * values.1 +
+            (directPointToPauli params sample.2) (betaVar params.m) * values.2))).effect answer))
+
+/-- The completed point-effect comparison survives conditional averaging and
+placement on either directed opposite register pair. -/
+theorem SubLineWitness.extendedPointOverlap_ge {params : AdmissibleParams}
+    {error pointError lineError : ℝ} {setting : ProjectiveSetting params error}
+    {points : CombinedPointsWitness setting pointError}
+    (sublines : SubLineWitness params) (lines : CombinedLinesWitness setting points lineError)
+    (first second : Placement) (hopposite : first.IsOpposite second)
+    (line : DirectLineDesc params.extendedDirectLd)
+    (point : Fin params.extendedDirectLd.m → DirectScalarQ params.extendedDirectLd)
+    (hpoint : point ∈ line.pointSet) :
+    avgOver (sublines.conditionalLaw line) (fun sample =>
+      ∑ pair, stateQForm setting.psiHat
+        (setting.place first ((lines.T first.side sample.val.2.1 sample.val.2.2).effect pair) *
+          setting.place second (((points.Q second.side
+            (projX (directPointToPauli params point))
+            (projZ (directPointToPauli params point))).postprocess
+              (fun values => (some values.1, some values.2))).effect
+                (evalOpt sample.val.2.1 (projX (directPointToPauli params point)) pair.1,
+                  evalOpt sample.val.2.2 (projZ (directPointToPauli params point)) pair.2)))) ≤
+      extendedPointOverlap setting points lines sublines first second (line, point) := by
+  rw [extendedPointOverlap, sublines.extendedMeasurement_overlap]
+  apply avgOver_mono
+  intro sample
+  apply Finset.sum_le_sum
+  intro pair _
+  apply placed_overlap_mono setting first second hopposite _ _ _
+    ((lines.T first.side sample.val.2.1 sample.val.2.2).pos pair)
+  have hline := (Finset.mem_filter.mp sample.property).2
+  have hsample := (Finset.mem_filter.mp sample.property).1
+  have hpointSample : point ∈ sample.val.1.pointSet := by rw [hline]; exact hpoint
+  have hcomparison := sublines.completedPoint_effect_le sample.val hsample pair point hpointSample
+    (points.Q second.side (projX (directPointToPauli params point))
+      (projZ (directPointToPauli params point)))
+  rw [hline] at hcomparison
+  exact hcomparison
+
+/-- The actual extended-line average dominates the first-route paired overlap.
+This integrates the source conditional POVM without assuming any joint product
+law for projected points. It holds for all directed opposite placements. -/
+theorem SubLineWitness.avgOver_extendedPointOverlap_ge {params : AdmissibleParams}
+    {error pointError lineError : ℝ} {setting : ProjectiveSetting params error}
+    {points : CombinedPointsWitness setting pointError}
+    (sublines : SubLineWitness params) (lines : CombinedLinesWitness setting points lineError)
+    (first second : Placement) (hopposite : first.IsOpposite second) :
+    avgOver sublines.D (pairedSublineOverlap setting points lines first second) ≤
+      avgOver (directLinePointDist params.extendedDirectLd)
+        (extendedPointOverlap setting points lines sublines first second) := by
+  rw [avgOver_directLinePointDist_resample_parameter, ← sublines.extended_marginal,
+    ← sublines.avgOver_conditionalLaw]
+  apply avgOver_mono
+  intro line
+  unfold pairedSublineOverlap
+  rw [avgOver_comm]
+  apply avgOver_mono
+  intro parameter
+  have hpoint : line.base + parameter • line.direction ∈ line.pointSet := ⟨parameter, rfl⟩
+  refine le_trans ?_ (sublines.extendedPointOverlap_ge lines first second hopposite line _ hpoint)
+  apply le_of_eq
+  apply avgOver_congr
+  intro sample
+  rw [(Finset.mem_filter.mp sample.property).2]
+
+/-- The completed consistency defect of the actual extended-line POVM is
+bounded by the first-route deficit, for both player placements. -/
+theorem SubLineWitness.extended_consistencyDefect_le {params : AdmissibleParams}
+    {error pointError lineError : ℝ} {setting : ProjectiveSetting params error}
+    {points : CombinedPointsWitness setting pointError}
+    (sublines : SubLineWitness params) (lines : CombinedLinesWitness setting points lineError)
+    (first second : Placement) (hopposite : first.IsOpposite second) :
+    consistencyDefect (directLinePointDist params.extendedDirectLd)
+      (fun sample answer => setting.place first
+        (((sublines.extendedMeasurement lines first.side sample.1).postprocess
+          (fun polynomial => (directEvalOpt sample.1 sample.2 polynomial).map
+            (extendedDirectScalarEquiv params))).effect answer))
+      (fun sample answer => setting.place second
+        (((points.Q second.side (projX (directPointToPauli params sample.2))
+          (projZ (directPointToPauli params sample.2))).postprocess (fun values => some
+            ((directPointToPauli params sample.2) (alphaVar params.m) * values.1 +
+              (directPointToPauli params sample.2) (betaVar params.m) * values.2))).effect answer))
+      setting.psiHat ≤ 1 - avgOver sublines.D
+        (pairedSublineOverlap setting points lines first second) := by
+  erw [consistencyDefect_eq_one_sub_overlap (directLinePointDist params.extendedDirectLd)
+    (fun sample => setting.placedMeasurement first
+      ((sublines.extendedMeasurement lines first.side sample.1).postprocess
+        (fun polynomial => (directEvalOpt sample.1 sample.2 polynomial).map
+          (extendedDirectScalarEquiv params))))
+    (fun sample => setting.placedMeasurement second
+      ((points.Q second.side (projX (directPointToPauli params sample.2))
+        (projZ (directPointToPauli params sample.2))).postprocess (fun values => some
+          ((directPointToPauli params sample.2) (alphaVar params.m) * values.1 +
+            (directPointToPauli params sample.2) (betaVar params.m) * values.2))))
+    setting.psiHat (directLinePointDist_isProbability _) setting.psiHat_norm]
+  exact sub_le_sub_left (sublines.avgOver_extendedPointOverlap_ge lines first second hopposite) 1
+
+/-- The ordered Z-then-X point overlap on the actual subline law. -/
+def orderedSublineOverlap {params : AdmissibleParams} {error pointError lineError : ℝ}
+    (setting : ProjectiveSetting params error) (points : CombinedPointsWitness setting pointError)
+    (lines : CombinedLinesWitness setting points lineError) (first second : Placement)
+    (sample : SubLineTriple params) : ℝ :=
+  avgOver (uniformDistribution (DirectScalarQ params.extendedDirectLd)) (fun parameter =>
+    let point := directPointToPauli params (sample.1.base + parameter • sample.1.direction)
+    ∑ pair, stateQForm setting.psiHat
+      (setting.place first ((lines.T first.side sample.2.1 sample.2.2).effect pair) *
+        setting.place second
+          ((setting.pointMeasExpOption second.side .Z (projZ point)).effect
+              (evalOpt sample.2.2 (projZ point) pair.2) *
+            (setting.pointMeasExpOption second.side .X (projX point)).effect
+              (evalOpt sample.2.1 (projX point) pair.1))))
+
+/-- The first-route replacement by the ordered point product holds for any
+placement, in particular for the missing second-player orientation. Its only
+distributional input is the uniform joint point marginal, not a product law
+conditional on the projected lines. -/
+theorem SubLineWitness.paired_ordered_overlap_gap_le {params : AdmissibleParams}
+    {error pointError lineError : ℝ} {setting : ProjectiveSetting params error}
+    {points : CombinedPointsWitness setting pointError}
+    (sublines : SubLineWitness params) (lines : CombinedLinesWitness setting points lineError)
+    (first second : Placement) :
+    |avgOver sublines.D (pairedSublineOverlap setting points lines first second) -
+      avgOver sublines.D (orderedSublineOverlap setting points lines first second)| ≤
+        Real.sqrt (4 * pointError) := by
+  let law := Distribution.prod sublines.D
+    (uniformDistribution (DirectScalarQ params.extendedDirectLd))
+  let point (sample : SubLineTriple params × DirectScalarQ params.extendedDirectLd) :=
+    directPointToPauli params (sample.1.1.base + sample.2 • sample.1.1.direction)
+  let lineMeasurement (sample : SubLineTriple params × DirectScalarQ params.extendedDirectLd) :=
+    setting.placedMeasurement first
+      ((lines.T first.side sample.1.2.1 sample.1.2.2).postprocess (fun pair =>
+        (evalOpt sample.1.2.1 (projX (point sample)) pair.1,
+          evalOpt sample.1.2.2 (projZ (point sample)) pair.2)))
+  let joint (sample : SubLineTriple params × DirectScalarQ params.extendedDirectLd)
+      (answer : Option (PauliScalar params) × Option (PauliScalar params)) :=
+    setting.place second (((points.Q second.side (projX (point sample))
+      (projZ (point sample))).postprocess (fun values => (some values.1, some values.2))).effect
+        answer)
+  let ordered (sample : SubLineTriple params × DirectScalarQ params.extendedDirectLd)
+      (answer : Option (PauliScalar params) × Option (PauliScalar params)) :=
+    setting.place second
+      ((setting.pointMeasExpOption second.side .Z (projZ (point sample))).effect answer.2 *
+        (setting.pointMeasExpOption second.side .X (projX (point sample))).effect answer.1)
+  have hprob : law.IsProbability := Distribution.prod_isProbability _ _ sublines.isProbability
+    (uniformDistribution_isProbability _)
+  have hdist : opFamilyDistSq law joint ordered setting.psiHat ≤ 4 * pointError := by
+    unfold opFamilyDistSq
+    change avgOver law (fun sample => ∑ answer,
+      ‖applyOperatorToState (joint sample answer - ordered sample answer) setting.psiHat‖ ^ 2) ≤ _
+    have hcompleted := avgOver_congr law _ _ (fun sample =>
+      setting.completedPair_norm_sq_sum_ZX points second
+        (projX (point sample)) (projZ (point sample)))
+    dsimp only [joint, ordered] at *
+    rw [hcompleted]
+    change avgOver law (fun sample => ∑ answer : PauliScalar params × PauliScalar params,
+      ‖applyOperatorToState
+        (setting.place second ((points.Q second.side (projX (point sample))
+          (projZ (point sample))).effect answer) -
+          setting.place second
+            ((setting.pointMeasExp second.side .Z (projZ (point sample))).effect answer.2 *
+              (setting.pointMeasExp second.side .X (projX (point sample))).effect answer.1))
+        setting.psiHat‖ ^ 2) ≤ _
+    rw [show law = Distribution.prod sublines.D
+      (uniformDistribution (DirectScalarQ params.extendedDirectLd)) from rfl, avgOver_prod]
+    dsimp only [point]
+    rw [SubLineWitness.avgOver_projX_projZ params sublines
+      (fun coordinates => ∑ answer : PauliScalar params × PauliScalar params,
+        ‖applyOperatorToState
+          (setting.place second ((points.Q second.side coordinates.1 coordinates.2).effect answer) -
+            setting.place second
+              ((setting.pointMeasExp second.side .Z coordinates.2).effect answer.2 *
+                (setting.pointMeasExp second.side .X coordinates.1).effect answer.1))
+          setting.psiHat‖ ^ 2)]
+    exact points.orderedZX_dist_le second
+  have hgap := abs_overlap_gap_le_sqrt_of_opFamilyDistSq law lineMeasurement joint ordered
+    setting.psiHat hprob setting.psiHat_norm (4 * pointError) hdist
+  have hregroup (right : (SubLineTriple params × DirectScalarQ params.extendedDirectLd) →
+      Option (PauliScalar params) × Option (PauliScalar params) →
+        Op (setting.ExpandedLocalSpace second.side)) :
+      avgOver law (fun sample => ∑ answer, stateQForm setting.psiHat
+        ((lineMeasurement sample).effect answer * setting.place second (right sample answer))) =
+      avgOver sublines.D (fun sample =>
+        avgOver (uniformDistribution (DirectScalarQ params.extendedDirectLd)) (fun parameter =>
+          ∑ pair, stateQForm setting.psiHat
+            (setting.place first ((lines.T first.side sample.2.1 sample.2.2).effect pair) *
+              setting.place second (right (sample, parameter)
+                (evalOpt sample.2.1 (projX (point (sample, parameter))) pair.1,
+                  evalOpt sample.2.2 (projZ (point (sample, parameter))) pair.2))))) := by
+    change avgOver (Distribution.prod sublines.D
+      (uniformDistribution (DirectScalarQ params.extendedDirectLd))) _ = _
+    rw [avgOver_prod]
+    apply avgOver_congr
+    intro sample
+    apply avgOver_congr
+    intro parameter
+    exact placed_overlap_postprocess setting first second _ _ _
+  dsimp only [joint, ordered] at hgap
+  rw [hregroup, hregroup] at hgap
+  exact hgap
+
 /-- Chaining Claims 17-1, 17-2, and 17-3 bounds the joint overlap on the
 actual subline law. This is the first route to `eq:qld-combined-lines-consistency`,
 paper `14_analysis_of_the_pauli_basis_test.tex:1134-1241`, with the corrected
 claim errors documented in `docs/paper-gaps/qpbt_subline-claims-line-marginal.tex`.
 It uses no assertion about the joint conditional law of the two projected points.
-The passage from this overlap to an extended-line POVM remains separate. -/
+`SubLineWitness.extended_consistencyDefect_le` now integrates this overlap into
+the actual extended-line comparison. -/
 theorem subline_joint_overlap_near_one :
     ∃ constant : ℝ, 0 < constant ∧
       ∀ (params : AdmissibleParams) (error pointError lineError : ℝ)
@@ -632,6 +1024,36 @@ theorem subline_joint_overlap_near_one :
       mul_nonneg (mul_nonneg hfirstConstant.le hdimension) herrorQuarter,
       mul_nonneg (mul_nonneg hsecondConstant.le hdimension) herrorQuarter]
   exact hchain.trans (by simpa only [Real.rpow_eq_pow, add_assoc] using hbound)
+
+/-- The actual first-player extended-line deficit obeys the first-route
+quantitative estimate at paper lines 1134--1241. This is not the two-player
+witness assertion; see `docs/paper-gaps/qpbt_combined-lines-error-term.tex`. -/
+theorem extended_first_player_deficit_le :
+    ∃ constant : ℝ, 0 < constant ∧
+      ∀ (params : AdmissibleParams) (error pointError lineError : ℝ)
+        (setting : ProjectiveSetting params error)
+        (points : CombinedPointsWitness setting pointError)
+        (lines : CombinedLinesWitness setting points lineError) (sublines : SubLineWitness params),
+        1 - avgOver (directLinePointDist params.extendedDirectLd)
+          (extendedPointOverlap setting points lines sublines .AA' .BA'') ≤
+          constant * (pointError ^ (1 / 2 : ℝ) + Real.sqrt (params.m : ℝ) *
+            (lineError ^ (1 / 4 : ℝ) + pointError ^ (1 / 4 : ℝ) +
+              error ^ (1 / 4 : ℝ))) := by
+  obtain ⟨constant, hconstant, hnear⟩ := subline_joint_overlap_near_one
+  refine ⟨constant, hconstant, ?_⟩
+  intro params error pointError lineError setting points lines sublines
+  have hnear' : |avgOver sublines.D
+      (pairedSublineOverlap setting points lines .AA' .BA'') - 1| ≤
+      constant * (pointError ^ (1 / 2 : ℝ) + Real.sqrt (params.m : ℝ) *
+        (lineError ^ (1 / 4 : ℝ) + pointError ^ (1 / 4 : ℝ) + error ^ (1 / 4 : ℝ))) := by
+    unfold pairedSublineOverlap
+    simp only [Fintype.sum_prod_type]
+    exact hnear params error pointError lineError setting points lines sublines
+  refine (sub_le_sub_left
+    (sublines.avgOver_extendedPointOverlap_ge lines .AA' .BA'' trivial) 1).trans ?_
+  exact (le_abs_self (1 - avgOver sublines.D
+    (pairedSublineOverlap setting points lines .AA' .BA''))).trans
+      (by simpa only [abs_sub_comm] using hnear')
 
 /-- Polynomial absorption for the first combining route, including large errors.
 The independent unit bound on consistency accounts for the minimum. The factor
@@ -838,8 +1260,12 @@ route's joint-overlap estimate is proved by `subline_joint_overlap_near_one`.
 The actual conditional POVM and its axis-degree support are constructed by
 `SubLineWitness.extendedMeasurement` and `SubLineWitness.extendedMeasurement_axis_degree`.
 `SubLineWitness.completedPoint_effect_le` gives the point-effect comparison for either player.
-Integrating the placed overlaps and proving the second-player first-route estimate
-remain to discharge this obligation. Relating
+`SubLineWitness.extended_consistencyDefect_le` integrates the placed overlaps on
+both player orientations, and `extended_first_player_deficit_le` proves the actual
+first-player estimate. The second-player ordered-product replacement is proved by
+`SubLineWitness.paired_ordered_overlap_gap_le`; its X-removal and Z-deficit estimates
+remain. The ten-session ordinary budget is exhausted; the self-contained escalation
+packet is in `audits/2026-09-06-issue118-point-error-dependency.md`. Relating
 its game to the source's seed-bearing game requires the transport and soundness
 obligations in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`.

@@ -1,5 +1,240 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 10: final ordinary-budget owner-escalation dossier
+
+Session `mathfix-118-20260906-10`, baseline
+`924d473e2a440d9199dc69fe4824a3f0791f7c32`. This is **attempt 10/10**,
+not a new gap or a restart. Carry exactly **17558 completed working
+seconds**: 15152 before attempt 9 and its authoritative dispatcher duration
+of 2406 seconds. The original anchor remains **2026-09-05T19:24:00Z**.
+This attempt starts **2026-09-06T02:56:27Z**, has a 2400-second reporting
+target and a 2700-second hard limit. Final dispatcher accounting supersedes
+in-progress snapshots. The ordinary session count is now exhausted.
+
+**Disposition: not converged; owner escalation required.** Preserve the
+independently proved increments for independent review. Do not adopt the
+extended-line correction, launch an eleventh ordinary attempt, or rename
+the gap to evade the count. The operator owns any #26 post and further
+disposition; this session makes no external post or owner contact.
+
+### Printed theorem, exact domain, and demonstrated defects
+
+The source is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex`.
+Under the standing admissible parameters and projective strategy succeeding
+with probability at least `1-epsilon`, `lem:qld-xz-lines` (882--894,
+proof 943--963) chooses a universal polynomial error in `epsilon,md/q`.
+For either expanded player space and every pair of source lines it supplies
+a POVM of degree-`md` polynomial pairs, consistent with the already
+constructed points on two independent line-point samples, in every
+symmetric register placement. Each axis-line coordinate has degree `d`.
+The actual construction is the XZX sandwich, not an arbitrary substitute.
+
+`lem:qld-4-13` (1020--1034) chooses an error `poly(m^2*epsilon,md/q)`
+and asks for a degree-`md+1` POVM on every line in dimension `2m+2`, on
+either player's expanded space. Both directed line-point consistency
+relations must have this error, and axis lines must have degree `d`.
+Its source construction at 1118--1132 is the conditional average of the
+paired-line POVMs under the subline law. The source's answer sums are over
+field values, unlike the explicitly documented completed internal encoding.
+
+Three distinct defects must not be conflated:
+
+1. The old internal helper allowed arbitrary supplied point error `t` but
+   promised a line error independent of `t`. The source constructs its
+   own polynomially controlled points; that stronger internal quantification
+   is unsupported. No projective-strategy counterexample to the printed
+   existence theorem has been constructed in this investigation.
+2. The unrestricted completed collision assertion is false. On a zero
+   direction, the distinct polynomials `T` and `T+1` both evaluate to
+   `none`. Their collision probability is one, exceeding `md/q` when
+   `1 <= md < q`. Conditioning on nonzero X direction and restoring its
+   omitted mass repairs this proof step without changing the source law.
+3. The extended proof's second route (1241--1246) assumes a joint
+   restricted-product law absent from the subline lemma. The first-route
+   error bookkeeping gives `m*poly(epsilon,md/q)`, not the stronger printed
+   form. Even an independently proved joint law would directly give only
+   `m^2*poly(epsilon,md/q)`. No counterexample to the printed extended
+   existence theorem is claimed.
+
+### Attempt ledger and comparison of candidate corrections
+
+| Attempt | Validated progress or obstruction | Proof checkpoint |
+| --- | --- | --- |
+| 1 | Identified missing point-error dependence and prerequisite reconciliation; no source repair adopted. | Historical record below |
+| 2 | Proved point marginals and the actual XZX line sandwich. | `a571fe0` |
+| 3 | Proved completed line-point marginals; isolated the zero-direction collision obstruction. | `46322dd` |
+| 4 | Proved nondegenerate collision bounds, retained-mass positivity, and mass restoration. | `3f359f9` |
+| 5 | Proved the product collision predicate and conditioned operator-family marginal bounds. | `391c86e` |
+| 6 | Proved unequal-dimensional pasting transport for all directed opposite placements. | `857681f` |
+| 7 | Applied actual conditioned pasting and restored the original-law defect, retaining `t`. | `cd1815e` |
+| 8 | Proved polynomial specialization, actual paired-line witnesses, first-route overlap, and scalar absorption. | `f6a340c`, audit `61750e7` |
+| 9 | Constructed actual conditional extended-line POVMs, degree support, and completed point-effect comparison. | `924d473` |
+| 10 | Integrated placed overlaps for every opposite placement; proved ordered-product replacement for both players and the actual first-player estimate. | This increment |
+
+The detailed historical sections remain intact. Their earlier missing-budget
+or unresolved-prerequisite statements describe their checkpoints, not the
+current state or permission to reset the aggregate budget.
+
+Retaining arbitrary numerical `t` in the restored estimate is weaker than
+assuming small error or substituting different points. The proved bound is
+`r*f(rho,u/r) + 1/(2q)`, with `u=8t+C*(epsilon+sqrt epsilon)` and retained
+mass `r`. Specializing a polynomial point function chosen before the line
+error gives the internal paired-line theorem. Requiring exactly
+`K*epsilon^(1/8)` would be stronger than the proved arbitrary-polynomial
+contract. Discarding both zero directions is unnecessary; discarding all
+zero lines from the actual game would change the mathematical definition.
+
+For extended lines, `m*poly(epsilon,md/q)` remains the closest recorded
+candidate supported by first-route bookkeeping. Replacing it by
+`poly(m^2*epsilon,md/q)` does not follow from those majorants, particularly
+the term `m*(md/q)^c`. The trivial bound one alone is not a vanishing
+polynomial error. Adding the desired consistency as an input, adding the
+unsupported joint law as a witness field, changing the game, or choosing
+an unrelated POVM is not an admissible repair. Full-theorem minimality and
+sufficiency have not been established.
+
+### What attempt 10 proves and why
+
+`avgOver_directLinePointDist_resample_parameter` preserves the canonical
+line jointly with the sampled point. It uses the already proved canonical
+projection resampling identity separately on the actual axis and diagonal
+samplers, then their equal mixture. It includes zero-direction fibers.
+
+`SubLineWitness.extendedMeasurement_overlap` expands the *actual*
+conditional POVM inside the placed overlap. Placement, finite sums, and
+real scalar multiplication commute with the state quadratic form.
+Postprocessing merely regroups the outcome sum.
+`avgOver_extendedPointOverlap_ge` applies the existing completed point-effect
+inequality, using positivity of products on opposite registers, then
+exchanges finite averages and disintegrates the subline law. Consequently
+`extended_consistencyDefect_le` proves for every directed opposite pair
+`(p1,p2)` that the actual completed extended defect is at most `1-J[p1,p2]`,
+where `J` is the original paired-line versus point-pair subline overlap.
+No conditional product law is used.
+
+`SubLineWitness.paired_ordered_overlap_gap_le` replaces the point-pair
+measurement by its ordered Z-then-X product at cost `sqrt(4t)` for any
+placements, in particular `(BB',AB'')`. Completed outcomes add zero rows
+to the squared distance. The subline average is the *unconditional*
+uniform joint point average, which is bounded by the proved same-placement
+ordered distance `4t`. Cauchy--Schwarz gives the overlap bound. This is
+Claim 17-1's second-player replacement, not Claims 17-2 and 17-3.
+
+`extended_first_player_deficit_le` combines the all-placement integration
+with the already proved first-player three-claim bound. It bounds the
+deficit of the actual conditional POVM by
+`C*(t^(1/2)+sqrt(m)*(p^(1/4)+t^(1/4)+epsilon^(1/4)))`.
+The existing polynomial absorption needs no reproof.
+
+The edge-case audit checks zero directions, zero or large errors, the
+smallest field, degree at least the field size, and unequal player spaces.
+Resampling retains rather than drops degenerate fibers. The `T,T+1`
+collision counterexample has zero completed point effect, so the new
+operator inequality remains true. All normalization and degree properties
+are reused from attempt 9. These are symbolic checks with general Lean
+proofs, not an exhaustive computational search over quantum strategies.
+
+### Exact remaining source and consumer obligations
+
+The established helper `exists_extendedLinesWitness_established_ofPointsWitness`
+is still open. The precise missing first-route work is the `(BB',AB'')`
+counterpart of X-factor removal and of the Z-overlap deficit estimate.
+The existing `SubLineWitness.one_sub_avgOver_xPointOverlap_le` and
+`SubLineWitness.one_sub_avgOver_zPointOverlap_le` and their restricted
+helpers in `EvalDeficit.lean` are specialized to `(AA',BA'')`.
+The abstract `one_sub_overlap_le_of_consistencyDefect` and the supplied
+all-placement witness fields provide genuine proof ingredients, not an
+already completed second-player theorem. Register commutation alone does
+not change which player's paired-line POVM occurs. After those two
+estimates, combine the established integration, degree support, and scalar
+absorption to fill both consistency fields of the unchanged witness.
+
+`exists_extendedLinesWitness_ofPointsWitness` retains the stronger printed
+error as an explicit separate hole. `exists_globalPairWitness` retains the
+global construction hole: source-question/field-answer transport, direct
+soundness, projectivization, and explicit parameter absorption still require
+their own evidence. Issue 244 independently constructs a direct game from
+a **given** extended-line witness; this attempt neither duplicates that
+file nor treats that given witness as an established source conclusion.
+
+Paper uses: 1058--1061 (restricted consistency) is unchanged; 1118--1132
+(actual POVM and degree) is proved internally; 1134--1241 (first route) now
+has actual first-player integration but still lacks the two second-player
+estimates; 1241--1246 (stronger route) remains unsupported; 1278--1282
+(global pairs) and extraction at 1423, 1465--1492, 1584, 1627, and 1671
+are not certified by this increment.
+
+The full blueprint descendant set and actual prose references are listed
+under **Consumer inventory and limits of sufficiency** below. It comprises
+the Chapter 15 restricted-mixture/one-point-deficit/Claims 17-1--17-3,
+extended-line and global-pair nodes; the Chapter 16 marginal, projectivity,
+tilde-observable, nonencoding, Pauli-construction, swap-unitary, conjugation,
+unitary and extraction nodes through `thm:pauli`; and Chapter 13
+`cor:pauli-binary`, `def:introparams`, `lem:delta-bound`.
+The actual prose references are `rem:claim-17-2-line-marginal`,
+`rem:qld-4-13-source-defects`, and `rem:qld-4-7-divisibility`.
+New auxiliary nodes are `lem:extended-line-overlap-integration` and
+`lem:extended-first-route-partial`, alongside the three prior attempt-8/9
+auxiliaries. None marks the unresolved source theorem complete.
+
+Lean consumers: the existing paired-line wrapper and restricted consumers
+in `Lines.lean`, `EvalDeficit.lean`, `SubLineDeficit.lean`, and `Claims.lean`
+are unchanged. The changed file is `Apply.lean`; its complete actual import
+closure is `MIPStarRE/QPBT.lean` and `MIPStarRE.lean`. Both wrappers and
+the global-pair assertion retain their existing holes. Compilation of that
+closure is required evidence, not a proof of the unresolved mathematical uses.
+
+### Statement integrity, validation, and owner action
+
+Every preexisting paper-labelled public header is unchanged: the printed
+extended wrapper retains its source error, the established wrapper retains
+`C*m*poly(epsilon,md/q)`, and the global-pair conclusion and assumptions are
+unchanged. The direct-carrier/completed-answer boundary is still explicit.
+The new auxiliaries state actual averaging identities and quantitative
+estimates with their hypotheses displayed; they add no load-bearing source
+input. No existing definition, game specification, witness field, source
+mirror, or issue-244 file changes.
+
+Focused and import-closure checks use branch-private artifacts under
+`/tmp/issue118-lean-validation/lib`; attempt-10 logs are under
+`/tmp/issue118-attempt10-*.log`. The debt remains **zero holes in Lines and
+three existing holes in Apply**. The final report records the exact
+declaration-check count, axiom audit, blueprint and note checks, commit,
+and working time. No full build, shared-cache write, `lake update`, runtime
+change, subagent, CI/review/merge dispatch, publication, or owner contact
+occurs. The commit must pass normal hooks and still requires independent review.
+
+Final validation evidence:
+
+- The focused `lake env lean` check of `Apply.lean` and the full affected
+  import closure (`MIPStarRE/QPBT.lean`, `MIPStarRE.lean`) pass against
+  fresh private artifacts. Only the three preexisting holes are warned.
+- The `sorry|axiom` scan confirms zero tokens in `Lines.lean` and exactly
+  those three holes in `Apply.lean`; no new proof debt is introduced.
+- All six newly blueprint-linked declarations have only `propext`,
+  `Classical.choice`, and `Quot.sound` in their axiom dependencies.
+- Blueprint web generation passes with inherited bibliography warnings;
+  all **1883** final generated declaration references resolve. Static
+  synchronization retains **231** baseline stale entries and **15**
+  baseline header-only proof-status warnings.
+- The paper-gap PDF builds to **18 pages**. Blueprint conventions,
+  source-labelled public-header preservation, whitespace, and hook
+  installation checks pass. The note-style gate requires explicit
+  difficulty and estimated-weight headings; these are retained with an
+  honest unresolved-work assessment, rather than the obsolete easy verdict.
+- At **2026-09-06T03:31:41Z**, this attempt's snapshot is **2114 seconds**,
+  with **19672 cumulative working seconds**. The final report and
+  authoritative dispatcher boundary supersede this snapshot. The count,
+  not elapsed working days, exhausts the ordinary budget.
+
+**Owner decision packet for #26, not posted:** the ten ordinary attempts
+end without a fully sufficient minimal source correction. Decide disposition
+of the validated proof increments and the listed remaining mathematical and
+transport obligations. Do not interpret the first-player theorem, successful
+compilation, or issue 244's given-witness construction as adoption of the
+two-player source correction. There is no request here to change a game
+or silently introduce additional source assumptions.
+
 ## Attempt 9: actual conditional extended-line POVMs
 
 Session `mathfix-118-20260906-09`, baseline

@@ -3587,12 +3587,67 @@ obtain the completed evaluation identity, including zero directions.
 Finally, a postprocessed effect contains each of its positive summands.
 \end{proof}
 
+\begin{lemma}[Integration of the actual extended-line overlap]
+\label{lem:extended-line-overlap-integration}
+\lean{MIPStarRE.QPBT.avgOver_directLinePointDist_resample_parameter}
+\lean{MIPStarRE.QPBT.SubLineWitness.extendedMeasurement_overlap}
+\lean{MIPStarRE.QPBT.SubLineWitness.avgOver_extendedPointOverlap_ge}
+\lean{MIPStarRE.QPBT.SubLineWitness.extended_consistencyDefect_le}
+\leanok
+\uses{lem:conditional-extended-line-construction, def:line-point-dist}
+Under the hypotheses of Lemma~\ref{lem:conditional-extended-line-construction},
+let $J_{p_1,p_2}$ be the paired-line versus completed point-pair overlap,
+averaged over the actual subline law and a uniform affine parameter.
+For every directed opposite placement $(p_1,p_2)$, the completed consistency
+defect of the actual conditional extended-line POVM is at most
+$1-J_{p_1,p_2}$. The line-point law is unchanged, including zero directions;
+no conditional independence of the two source line-point pairs is assumed.
+\end{lemma}
+\begin{proof}
+\leanok
+Uniform parameter resampling preserves the canonical line jointly with
+the point. Expand postprocessing and the conditional average inside the
+placed overlap. Opposite placement and positivity preserve the point-effect
+inequality. Exchange the two finite averages and disintegrate the subline
+law. Completeness and normalization identify consistency defect with one
+minus overlap.
+\end{proof}
+
+\begin{lemma}[Established parts of the two-player first route]
+\label{lem:extended-first-route-partial}
+\lean{MIPStarRE.QPBT.SubLineWitness.paired_ordered_overlap_gap_le}
+\lean{MIPStarRE.QPBT.extended_first_player_deficit_le}
+\leanok
+\uses{lem:extended-line-overlap-integration, lem:subline-first-route-quantitative,
+  lem:qld-4-10}
+Let $t,p$ be the supplied point and paired-line errors. Replacing the
+completed point-pair POVM by the ordered $Z$-then-$X$ point product changes
+the subline overlap by at most $\sqrt{4t}$ for either player's placement.
+For the first-player orientation $(\mathsf{AA}',\mathsf{BA}'')$, the
+actual extended-line deficit is at most
+\[
+ C\bigl(t^{1/2}+\sqrt m\,(p^{1/4}+t^{1/4}+\eps^{1/4})\bigr)
+\]
+for a universal $C>0$. This does not assert the second-player X-removal
+and Z-deficit estimates, the two-player witness, or the printed stronger
+error of Lemma~\ref{lem:qld-4-13}.
+\end{lemma}
+\begin{proof}
+\leanok
+The completed ordered-product squared distance is at most $4t$ on every
+placement. Its average on the subline law is the uniform joint point
+average. Cauchy--Schwarz gives the replacement estimate. For the first
+player, combine the already proved three-claim bound with
+Lemma~\ref{lem:extended-line-overlap-integration}.
+\end{proof}
+
 \begin{proof}[Proof of Lemma~\ref{lem:qld-4-13}]
 	\proves{lem:qld-4-13}
 	\uses{lem:qld-xz-lines, lem:qld-sublines, def:combine-map,
 		lem:qld-4-12, lem:claim-17-1, lem:claim-17-2, lem:claim-17-3,
 		lem:subline-first-route-quantitative,
-		lem:conditional-extended-line-construction}
+		lem:conditional-extended-line-construction,
+		lem:extended-line-overlap-integration, lem:extended-first-route-partial}
 	Let $D$ be the distribution of Lemma~\ref{lem:qld-sublines} and let
 	$D_{|\ell}$ denote $D$ conditioned on the first element being $\ell$.
 	For every line $\ell$ in $\F_q^{2m+2}$ and $f \in \deg_{md+1}(\ell)$

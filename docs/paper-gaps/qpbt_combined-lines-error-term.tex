@@ -29,19 +29,23 @@
   error. Polynomial specialization and the actual paired-line witness,
   including every opposite placement and axis-degree support, are now proved.
   The three-claim overlap estimate and its scalar polynomial absorption are
-  also proved. The extended-line POVM construction and its consumers remain
-  open. The printed existence theorem is not disproved; no final correction
+  also proved. The actual extended-line POVM, degree support, and averaged
+  placed-overlap comparison are proved, as is the first-player quantitative
+  estimate. The second-player X-removal and Z-deficit estimates and aggregate
+  consumer sufficiency remain open. The printed existence theorem is not disproved; no final correction
   of the extended-line theorem is adopted by these results.
-  \item \textbf{Difficulty: easy.}  No step of the retained proof route is
-  in doubt.  The obstruction is that the error function claimed in the
+  \item \textbf{Difficulty: substantial proof and transport obligations.}
+  The current verdict is not converged. The ordinary ten-session
+  investigation ends with the unresolved obligations recorded below.
+  The obstruction is that the error function claimed in the
   statement of the combined-lines lemma of the Pauli basis analysis,
   $\poly(m^2\eps, md/q)$, is not delivered by either of the two
   derivations printed in its source proof: one route establishes
   $m \cdot \poly(\eps, md/q)$, the other would give
   $m^2 \cdot \poly(\eps, md/q)$ and rests in addition on a distributional
   decomposition that the stated sub-line lemma does not supply.  The
-  correction is to state the first route's established error form and confirm
-  that the sole consumer tolerates it.
+  candidate correction is the first-route error form, subject to the full
+  two-player construction and consumer sufficiency checks.
   \item \textbf{Key Mathlib inputs:} the
   Cauchy--Schwarz inequality for state-dependent operator distances
   (project-local, blueprint Chapter 12), mixture decompositions of
@@ -49,12 +53,12 @@
   line distributions; no new Mathlib surface beyond finite
   expectations and inner-product estimates already used by the
   low individual degree development.
-  \item \textbf{Estimated weight:} a \textbf{statement-level error-form
-  decision} plus about \textbf{one lemma interface} of checking that the
-  consumer absorbs an $m$ prefactor into its constants; the three chained
-  claims behind the retained route are ordinary Cauchy--Schwarz estimates,
-  on the order of \textbf{a few hundred lines} of formal proof in total
-  when that part of the development is reached.
+  \item \textbf{Estimated weight:} two second-player estimates and witness
+  assembly, followed by source and consumer transport; the aggregate remaining
+  weight is not established. The remaining work comprises the second-player first-route estimates,
+  assembly of both consistency fields, the explicit global-pair parameter
+  absorption, and the source-question and field-answer transport obligations.
+  Compiling an immediate wrapper does not establish these uses.
   \item \textbf{Mathlib/project split:} essentially \textbf{100\%
   project-local}.  The estimates use only the project's state-dependent
   distance calculus, the sub-line distribution, and elementary
@@ -235,10 +239,11 @@ cannot absorb.
 
 \section{Correction and alternative repairs}
 
-The first direction below is the one the blueprint adopts; the remaining
-directions are alternatives, none of which is claimed as established.
+The first direction below is the candidate used in the blueprint's first-route
+discussion. The ten-session investigation does not establish full two-player
+and consumer sufficiency, so no final source correction is adopted.
 
-\paragraph{Corrected error form (adopted in the proof).}
+\paragraph{First-route error form (candidate correction).}
 The operative error form is
 $\delta_{\mathrm{combine}} = m \cdot \poly(\eps, md/q)$ --- concretely,
 the first-route bound.  Following the proof-gap protocol, the source-labelled
@@ -249,8 +254,9 @@ is the polynomial-pair lemma, whose imported error
 $a(md)^a(\delta_{\mathrm{combine}}^b + q^{-b} + 2^{-bmd})$ absorbs
 $m^{O(1)}$ prefactors by enlarging $a$ and shrinking $b$.  The blueprint proof
 records this absorption and the corrected deficit reading of the second claim.
-Two obligations remain: carry out that absorption with explicit constants when
-the lemma is formalized, and prove the three chained estimates.
+The unresolved obligations include explicit global-pair absorption and the
+second-player X-removal and Z-deficit estimates. The first-player chain and
+its integration into the actual conditional POVM are now proved.
 
 \paragraph{Repairing the second route.}
 Strengthen Property~2 of the sub-line lemma to the joint product law: in
@@ -730,14 +736,61 @@ and the compared point effect is zero.
 
 These kernel-checked assertions establish the actual POVM and its degree
 support, but not the two quantitative consistency fields of the extended-line
-witness. The remaining first-route work is the averaged placed-overlap
-comparison and the second-player counterpart of Claims 17-1--17-3; the
-existing scalar absorption is already proved. All three existing holes in
+witness. The following integration results further reduce the remaining work.
+All three existing holes in
 \path{MIPStarRE/QPBT/Combining/Apply.lean} remain explicitly visible.
 Neither the printed stronger error, source-question and field-answer
 transport, nor global-pair sufficiency is certified by this increment.
 The complete consumer inventory remains in
 \path{audits/2026-09-06-issue118-point-error-dependency.md}.
+
+\section{Integration and final ordinary-budget disposition}
+
+Write $J_{p_1,p_2}$ for the actual paired-line versus completed point-pair
+overlap on $D$ with a uniform affine parameter. Uniform resampling preserves
+the direct line descriptor jointly with the sampled point, including zero
+directions. Expand postprocessing and the conditional average inside the
+state overlap. Positive operators on opposite registers preserve the
+point-effect inequality proved above. Exchanging the finite averages and
+disintegrating $D$ gives, for every directed opposite placement,
+\[
+ \operatorname{Defect}_{p_1,p_2}(Q^{\rm line},Q^{\rm point})
+ \le 1-J_{p_1,p_2}.
+\]
+This is proved by
+\leanid{MIPStarRE.QPBT.SubLineWitness.extended\_consistencyDefect\_le};
+it makes no assertion about a joint product law conditional on source lines.
+
+For any placements, the difference between $J$ and the ordered
+$Z$-then-$X$ point-product overlap is at most $\sqrt{4t}$. The completed
+operator squared distance is at most $4t$, and its subline average equals
+its uniform joint point average; Cauchy--Schwarz then gives the estimate.
+This proves the second-player counterpart of the first replacement step,
+\leanid{MIPStarRE.QPBT.SubLineWitness.paired\_ordered\_overlap\_gap\_le}.
+Combining the integration inequality with the previously proved first-player
+three-claim estimate proves
+\leanid{MIPStarRE.QPBT.extended\_first\_player\_deficit\_le} for the actual
+conditional POVM, with bound
+$C(t^{1/2}+\sqrt m(p^{1/4}+t^{1/4}+\eps^{1/4}))$.
+
+The remaining second-player work is specifically the X-removal and
+Z-deficit estimates at placements $(\mathsf{BB}',\mathsf{AB}'')$.
+The existing one-point deficit helpers are specialized to the first-player
+orientation; neither commutation of opposite operators nor the ordered-product
+replacement alone transports those estimates. Once they are proved, the
+existing scalar absorption and degree-support construction can assemble the
+first-route witness. This still would not establish the stronger printed
+error or certify global-pair and extraction sufficiency.
+
+Attempt 10 is the final ordinary attempt. The cumulative completed time
+carried into it is 17558 seconds, including the dispatcher's final
+2406-second duration for attempt 9; the original anchor remains
+September 5, 2026, 19:24 UTC. The complete owner-escalation dossier, including
+all ten attempts, the exact remaining declarations, and the source and
+blueprint consumer inventory, is recorded in
+\path{audits/2026-09-06-issue118-point-error-dependency.md}.
+No additional attempt, source correction adoption, definition change, or
+publication is authorized by this record.
 
 \section{Conclusion}
 
@@ -749,10 +802,10 @@ $O(m(\eps^{1/4} + \delta_P^{1/4} + \delta_Q^{1/4} +
 $O(m^2\delta_P)$, the second resting on a joint-law decomposition that
 the sub-line lemma as stated does not supply; and the error form claimed
 in the lemma statement, $\poly(m^2\eps, md/q)$, follows from neither.
-The first route is sound after a harmless deficit correction in its
-second claim and establishes $m \cdot \poly(\eps, md/q)$.  The
-discrepancy is harmless downstream, since the sole consumer absorbs
-polynomial-in-$m$ prefactors into its constants.  The blueprint therefore
+The first-route error bookkeeping gives $m \cdot \poly(\eps, md/q)$,
+and the global-pair error expression can absorb polynomial-in-$m$
+prefactors. These mathematical observations do not discharge the remaining
+two-player construction and source-transport obligations. The blueprint therefore
 retains the printed statement with the missing step explicitly tracked, uses
 the corrected first-route form in the proof and in the sequel, and cites this
 note; strengthening the sub-line lemma to license the second route is
