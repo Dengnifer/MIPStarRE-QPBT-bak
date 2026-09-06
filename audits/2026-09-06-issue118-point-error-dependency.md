@@ -1,5 +1,207 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 11: authorized continuation and established two-player witness
+
+Session `mathfix-118-20260906-11` starts at **2026-09-06T05:17:08Z**
+from `76f82b6138a1ca5ddf9c7f2946d2ac673f993aa6`. The current task explicitly
+authorizes main's extension to cumulative attempt **11/12**, carrying
+**19931 completed working seconds**. This is not a new gap, anchor, or
+thread. The original anchor remains **2026-09-05T19:24:00Z**. The older
+ten-attempt disposition below is preserved as history, not the current
+authorization. The reporting target is 2400 seconds, hard limit 2700 seconds;
+the extension ceiling after attempt 12 is 25331 cumulative seconds. A fresh
+main assessment is required before attempt 12. Dispatcher accounting is
+authoritative over the final in-progress snapshot.
+
+**Verdict:** the directly indexed, completed-answer, established two-player
+extended-line witness is now proved. **No final source correction is adopted.**
+The stronger printed-error assertion and global-pair construction remain
+explicit obligations. The task reports selected MAX through the authorized
+legacy shim; no provider or server verification is performed.
+
+### Source, obstruction, and statement proved
+
+The canonical source is
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex`.
+Under its standing admissible parameters and projective strategy winning
+with probability at least `1-epsilon`, `lem:qld-xz-lines` (882--894,
+construction 943--963) provides the actual XZX paired-line POVMs, with
+universal polynomial error in `epsilon,md/q`, all opposite placements,
+degree `md` outcomes, and degree `d` support on axis coordinates.
+`lem:qld-4-13` (1020--1034) asks for degree-`md+1` extended-line POVMs
+on both players' expanded spaces, degree `d` on axes, and both line-point
+consistency errors `poly(m^2*epsilon,md/q)`, summing over field answers.
+Its actual construction is the conditional average at 1118--1132.
+
+The old internal error bound ignored the supplied point error `t`; the
+source instead constructs polynomially controlled points. The false
+unrestricted completed-collision assertion is refuted by `T` and `T+1`
+on a zero-direction line: both evaluations are `none`, so the collision
+probability is one, greater than `md/q` for `1 <= md < q`. Earlier attempts
+repair this step by conditioning and restoring the actual question law.
+Neither printed existence theorem has been disproved. The extended proof's
+second route at 1241--1246 still assumes an unsupported joint restricted-
+product law, and neither printed route supplies the stronger printed error.
+
+For any fixed polynomial point-error function `deltaQ`, the unchanged
+internal theorem now proves existence of a universal `C>0` and an additive
+polynomial error function `g` such that, for every admissible `P`, error
+`epsilon`, projective setting `S`, and supplied point witness with error
+`deltaQ epsilon`, the **actual** conditional extended-line measurement is
+an `ExtendedLinesWitness` with error `C*m*g(epsilon,md/q)`. Its two
+completed consistency fields and axis-degree field are all constructed.
+The existential-point wrapper also follows. This is an internal first-route
+theorem, not the source's stronger error or an implicit transport theorem.
+
+### Proof and counterexample audit
+
+Fix any directed opposite placements, including `(BB',AB'')`, and point
+and paired-line errors `t,p`. The witness bounds force both errors to be
+nonnegative. Generalize the existing operator deficit argument, not the
+state, to these placements. Over a product of restricted line-point laws,
+paired-line consistency costs `4*m^2*p` and either completed ordered-point
+distance costs `4*t`. Inserting the joint point measurement and using its
+projectivity bounds each retained X or Z deficit by
+
+`B = 2*sqrt(4*m^2*p) + 2*sqrt(4*t)`.
+
+The trailing retained projection absorbs right multiplication by itself;
+the adjoint of the ordered product reverses its order. Opposite placement
+gives commutation and positivity without identifying the player spaces.
+The generic Cauchy--Schwarz result is
+`one_sub_overlap_le_of_consistencyDefect`. Its numerical consistency and
+ordered-distance premises are derived internally from the actual witnesses
+in the restricted variants; they are not new source inputs.
+
+Transport X and Z separately through their respective one-point mixtures
+from `lem:qld-sublines`. Cauchy--Schwarz bounds X-removal by `sqrt(B)`.
+The Z overlap `L` satisfies `0 <= L <= 1`, whence
+`(1-L)^2 <= 1-L <= B`. The existing scalar bound gives
+`sqrt(B) <= 2*sqrt(m)*(p^(1/4)+t^(1/4))`. Combine these estimates with
+the previously proved ordered replacement cost `sqrt(4*t)` to obtain
+the all-placement first-route bound on `|J-1|`.
+
+Reuse the actual conditional POVM and integration from attempts 9--10:
+completed extended defect is at most `1-J`. Its independent unit bound
+allows the previously proved scalar composition to handle large errors.
+Specialize `t=deltaQ(epsilon)` and the already constructed line error
+`p=deltaP(epsilon,md/q)`, and fill both consistency fields and the existing
+degree field. No replacement witness, game change, conditional joint law,
+or new proof debt is introduced.
+
+Undefined completed outcomes have zero point effect, so the zero-direction
+collision example does not contradict this operator argument. The symbolic
+proofs include zero and large errors, small fields, degree at least the
+field size, and heterogeneous player spaces. No exhaustive computational
+search over quantum strategies is claimed. Full-source correctness and
+minimality remain separate from these proved internal estimates.
+
+### Full sufficiency inventory and remaining obligations
+
+Paper uses: restricted consistency at 1058--1061 remains valid; the actual
+POVM and degree construction at 1118--1132 remains valid; the first-route
+calculation at 1134--1241 now has both player orientations and an assembled
+internal witness. The stronger route at 1241--1246 is still unsupported.
+The global-pair use at 1278--1282 and extraction at 1423, 1465--1492,
+1584, 1627, and 1671 still require source-question/field-answer transport,
+soundness, projectivization, and explicit parameter absorption. Issue 244's
+independent direct-game construction from a **given** witness is neither
+duplicated nor treated as proof of those remaining obligations.
+
+The full blueprint descendant set is retained:
+
+- Chapter 15: `lem:restricted-line-mixture-bounds`,
+  `lem:qld-sublines-one-point-deficit`, `lem:claim-17-1`, `lem:claim-17-2`,
+  `lem:claim-17-3`, `lem:qld-4-13`, `lem:qld-4-13-established`, `lem:qld-4-7`.
+- Chapter 16: `def:s-w-marginals`, `lem:s-w-marginals-projective`,
+  `def:tilde-m-measurement`, `lem:tilde-m-projective`, `def:tilde-w-observables`,
+  `lem:tildew-product-form`, `lem:qld-nonencoding-mass-bound`,
+  `lem:qld-constructing-the-paulis-helper`, `lem:qld-construct-the-paulis`,
+  `def:v-swap-unitary`, `lem:v-swap-conjugation`, `lem:qld-unitary`,
+  `lem:qld-unitary-given-global-pair`, `lem:qld-extraction-error-form`, `thm:pauli`.
+- Chapter 13: `cor:pauli-binary`, `def:introparams`, `lem:delta-bound`.
+- Actual prose: `rem:claim-17-2-line-marginal`,
+  `rem:qld-4-13-source-defects`, `rem:qld-4-7-divisibility`.
+- Auxiliary nodes: `lem:combined-line-polynomial-specialization`,
+  `lem:subline-first-route-quantitative`, `lem:conditional-extended-line-construction`,
+  `lem:extended-line-overlap-integration`, `lem:extended-first-route-partial`,
+  and the new `lem:extended-first-route-opposite`, `lem:extended-first-route-witness`.
+
+The first-route witness node explicitly states its direct indexing and
+completed-answer boundary. No unresolved printed theorem receives a new
+certification. Compilation is not a mathematical sufficiency proof for the
+global-pair, extraction, or final Pauli-test nodes.
+
+The changed Lean files are `Combining/EvalDeficit.lean`,
+`Combining/SubLineDeficit.lean`, and `Combining/Apply.lean`. The affected
+import consumers are `Combining/Claims.lean`, `MIPStarRE/QPBT.lean`, and
+`MIPStarRE.lean`. The old first-player helper statements and Claims 17-2/3
+are preserved; the former proofs specialize the new arbitrary-placement
+versions. `Lines.lean`, all witness fields, and all existing mathematical
+definitions remain unchanged. The source-facing paired-line wrapper and
+restricted-use interfaces therefore retain their established conclusions.
+
+The two exact remaining holes are
+`exists_extendedLinesWitness_ofPointsWitness` (stronger printed error) and
+`exists_globalPairWitness` (global construction and its transport/parameters).
+The former's wrapper still depends on that hole. The established helper and
+its wrapper no longer do. Aggregate convergence and final-source adoption
+remain unestablished.
+
+### Minimality, integrity, and validation disposition
+
+The attempted corrections and failures from attempts 1--10 remain in the
+ledger below. Dropping `t`, changing the supplied points, excluding zero
+directions from the source law, assuming the desired consistency, adding a
+joint-product witness field, or substituting the unit bound for a vanishing
+polynomial error do not suffice. The first-route `m*poly` estimate is the
+closest established candidate; no claim of full-source minimality is made.
+
+Statement audit: every preexisting paper-labelled public header retains its
+assumptions, quantifier order, conclusion, constants, and domain. The printed
+extended helper retains `poly(m^2*epsilon,md/q)`. The established helper
+retains `C*m*poly(epsilon,md/q)` and now proves it. New `_at` lemmas explicitly
+quantify opposite placements and are internal stronger placement versions,
+not replacements for source-labelled theorems. No existing definition,
+game, witness field, paper mirror, or issue-244 file changes.
+
+Private validation artifacts are under `/tmp/issue118-lean-validation/lib`;
+logs are `/tmp/issue118-attempt11-*.log`. The final report records focused
+checks, all three import consumers, axiom dependency checks, declaration
+resolution, blueprint web/PDF and style checks, normal hooks, exact commit,
+and elapsed time. The debt is now **zero holes in Lines, EvalDeficit, and
+SubLineDeficit; two existing holes in Apply**, down from three. No full
+build, shared-cache write, `lake update`, runtime change, external post,
+subagent, CI/review/merge invocation, or independent self-review occurs.
+
+Lean elaboration initially timed out converting expanded operator formulas.
+Normalizing the source point effects to completed effects before comparing
+the formulas resolves the issue. A definitional quadratic-form identity
+and locally scoped unfolding handle carrier instances; all proofs remain
+kernel checked. One `apply_patch` invocation failed with `Text file busy`
+and was retried successfully; `rg` was temporarily unavailable, so a few
+read-only searches used `grep`. No runtime file was modified by this lane.
+
+Proposed operator announcement, **not posted**: “#118 attempt 11 proves Bob's
+one-point estimates and the actual established two-player extended-line
+witness; stronger printed error and aggregate source/consumer transport
+remain open, with no final correction adopted.” Further work requires main's
+fresh assessment within the authorized cumulative extension, not an automatic
+restart or a renamed issue.
+
+Validation at **2026-09-06T05:52:00Z**: focused Lean checks pass for all
+three changed files, followed by `Claims.lean`, `MIPStarRE/QPBT.lean`, and
+`MIPStarRE.lean`, using private artifacts. Nine inspected declarations,
+including both established-witness declarations, depend only on `propext`,
+`Classical.choice`, and `Quot.sound`. The final blueprint web build passes
+and **1890 declaration references resolve**. The paper-gap PDF builds to
+20 pages; gap style, LaTeX convention, source-statement, and whitespace
+checks pass. Static synchronization retains its **231 baseline stale
+entries and 15 header-only warnings**, not a clean whole-tree sync verdict.
+At this snapshot the attempt uses **2092 seconds**, cumulative **22023
+seconds (6h 7m 3s)**. Normal commit hooks and the final elapsed-time snapshot
+are recorded in the captured session report; the dispatcher remains authoritative.
+
 ## Attempt 10: final ordinary-budget owner-escalation dossier
 
 Session `mathfix-118-20260906-10`, baseline

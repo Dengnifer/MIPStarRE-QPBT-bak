@@ -31,12 +31,16 @@
   The three-claim overlap estimate and its scalar polynomial absorption are
   also proved. The actual extended-line POVM, degree support, and averaged
   placed-overlap comparison are proved, as is the first-player quantitative
-  estimate. The second-player X-removal and Z-deficit estimates and aggregate
-  consumer sufficiency remain open. The printed existence theorem is not disproved; no final correction
+  estimate. The second-player X-removal and Z-deficit estimates are now
+  proved, and the established two-player witness is assembled and checked
+  in Lean. Aggregate consumer sufficiency remains open.
+  The printed existence theorem is not disproved; no final correction
   of the extended-line theorem is adopted by these results.
   \item \textbf{Difficulty: substantial proof and transport obligations.}
   The current verdict is not converged. The ordinary ten-session
-  investigation ends with the unresolved obligations recorded below.
+  investigation ended with the unresolved obligations recorded below.
+  An explicitly owner-authorized continuation retains the same cumulative
+  attempt count and original time anchor.
   The obstruction is that the error function claimed in the
   statement of the combined-lines lemma of the Pauli basis analysis,
   $\poly(m^2\eps, md/q)$, is not delivered by either of the two
@@ -53,10 +57,9 @@
   line distributions; no new Mathlib surface beyond finite
   expectations and inner-product estimates already used by the
   low individual degree development.
-  \item \textbf{Estimated weight:} two second-player estimates and witness
-  assembly, followed by source and consumer transport; the aggregate remaining
-  weight is not established. The remaining work comprises the second-player first-route estimates,
-  assembly of both consistency fields, the explicit global-pair parameter
+  \item \textbf{Estimated weight:} source and consumer transport; the
+  aggregate remaining weight is not established. The remaining mathematical
+  work comprises the stronger printed-error obligation, explicit global-pair parameter
   absorption, and the source-question and field-answer transport obligations.
   Compiling an immediate wrapper does not establish these uses.
   \item \textbf{Mathlib/project split:} essentially \textbf{100\%
@@ -792,6 +795,82 @@ blueprint consumer inventory, is recorded in
 No additional attempt, source correction adoption, definition change, or
 publication is authorized by this record.
 
+\section{Opposite-player estimates in the authorized continuation}
+
+The operator estimates do not depend on equality of the players' Hilbert
+spaces or symmetry of the state. Fix a directed opposite register placement
+$(p_1,p_2)$, in particular $(\mathsf{BB}',\mathsf{AB}'')$, and supplied
+point and paired-line witnesses with errors $t$ and $p$. These errors are
+nonnegative because their witness inequalities bound nonnegative defects.
+For either retained coordinate, insertion of the completed joint point
+measurement and replacement by the appropriate ordered point product give
+the one-point deficit bound
+\[
+ B=2\sqrt{4m^2p}+2\sqrt{4t}.
+\]
+Here $4m^2p$ is the restricted paired-line consistency bound, and $4t$ is
+the completed ordered-point squared-distance bound. Opposite placement gives
+commuting positive operators. The point effect is a projection, including
+the zero effect at the undefined completed outcome. The ordered product
+is unchanged upon right multiplication by its retained projection; this
+is the algebra used by the three Cauchy--Schwarz comparisons.
+
+Only the corresponding one-point mixture of the subline lemma is required
+to average this estimate over the actual subline law. The X-mixture and
+Z-mixture are used separately. Neither step asserts a joint product law
+for both projected points conditional on the two source lines.
+Consequently X-removal costs at most $\sqrt B$. The Z overlap $L$ satisfies
+$0\leq L\leq1$ by positivity and completeness, so
+$(1-L)^2\leq1-L\leq B$. The previously proved scalar inequality gives
+\[
+ \sqrt B\leq2\sqrt m\,(p^{1/4}+t^{1/4}).
+\]
+Combining these two estimates with the already proved ordered-product
+replacement of cost $\sqrt{4t}$ yields, for every opposite placement,
+\[
+ |J_{p_1,p_2}-1|
+ \leq C\bigl(t^{1/2}+\sqrt m\,(p^{1/4}+t^{1/4}+\eps^{1/4})\bigr).
+\]
+This supplies the missing second-player mathematical estimate. It reuses
+the actual paired-line and conditional extended-line POVMs, the positive
+conditioning, degree support, and integrated completed-evaluation comparison.
+The scalar composition from the earlier attempt applies to
+$t=\delta_Q(\eps)$ and $p=\delta_P(\eps,md/q)$. The independent defect
+bound one handles large errors; no small-parameter assumption is introduced.
+
+The Lean declarations for X-removal and the Z estimate are
+\leanid{MIPStarRE.QPBT.subline\_remove\_X\_factor\_at} and
+\leanid{MIPStarRE.QPBT.subline\_Z\_term\_near\_one\_at}.
+Their restricted and one-point mixture estimates are the opposite-placement
+variants in \path{Combining/EvalDeficit.lean} and
+\path{Combining/SubLineDeficit.lean}; the original first-player statements
+and definitions remain unchanged specializations.
+The resulting all-placement overlap bound is checked by
+\leanid{MIPStarRE.QPBT.subline\_joint\_overlap\_near\_one\_at}.
+The unchanged declaration
+\leanid{MIPStarRE.QPBT.exists\_extendedLinesWitness\_established\_ofPointsWitness}
+now constructs both consistency fields and the degree field from these
+proofs. Its existential-point wrapper is also proved. The stronger printed
+helper and global-pair construction remain the two explicit proof holes
+in \path{Combining/Apply.lean}.
+
+The zero-direction $T,T+1$ counterexample still refutes unrestricted
+completed collision counting, but does not refute these operator estimates:
+the undefined point effects are zero. The proofs cover zero or large errors,
+small fields, polynomial degrees at least the field size, and unequal player
+spaces. These are symbolic arguments, not an exhaustive search over quantum
+strategies. No counterexample to either printed existence theorem is claimed.
+Source-question and field-answer transport, the stronger printed error, and
+global-pair and extraction sufficiency remain distinct obligations. No final
+source correction is adopted.
+
+This is cumulative attempt 11, authorized after the ordinary ten-attempt
+disposition, carrying exactly 19931 completed working seconds with the
+original September 5, 2026, 19:24 UTC anchor unchanged. The authorization
+does not reset the history or imply mathematical convergence. The audit
+records the exact proof checkpoint, validation, remaining consumer set,
+and final elapsed-time snapshot; dispatcher accounting remains authoritative.
+
 \section{Conclusion}
 
 There is a proof-level gap in the cited lemma, together with an
@@ -805,7 +884,7 @@ in the lemma statement, $\poly(m^2\eps, md/q)$, follows from neither.
 The first-route error bookkeeping gives $m \cdot \poly(\eps, md/q)$,
 and the global-pair error expression can absorb polynomial-in-$m$
 prefactors. These mathematical observations do not discharge the remaining
-two-player construction and source-transport obligations. The blueprint therefore
+source-transport and aggregate sufficiency obligations. The blueprint therefore
 retains the printed statement with the missing step explicitly tracked, uses
 the corrected first-route form in the proof and in the sequel, and cites this
 note; strengthening the sub-line lemma to license the second route is

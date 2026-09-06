@@ -3641,6 +3641,67 @@ player, combine the already proved three-claim bound with
 Lemma~\ref{lem:extended-line-overlap-integration}.
 \end{proof}
 
+\begin{lemma}[Opposite-placement first-route estimates]
+\label{lem:extended-first-route-opposite}
+\lean{MIPStarRE.QPBT.CombinedLinesWitness.one_sub_X_overlap_restricted_le_at}
+\lean{MIPStarRE.QPBT.CombinedLinesWitness.one_sub_Z_overlap_restricted_le_at}
+\lean{MIPStarRE.QPBT.SubLineWitness.one_sub_avgOver_xPointOverlap_le_at}
+\lean{MIPStarRE.QPBT.SubLineWitness.one_sub_avgOver_zPointOverlap_le_at}
+\lean{MIPStarRE.QPBT.subline_remove_X_factor_at}
+\lean{MIPStarRE.QPBT.subline_Z_term_near_one_at}
+\leanok
+\uses{lem:extended-first-route-partial, lem:qld-sublines-one-point-deficit,
+  lem:qld-xz-lines, lem:qld-4-10}
+Let $t,p$ be the supplied point and paired-line errors. For every directed
+opposite register placement, including $(\mathsf{BB}',\mathsf{AB}'')$,
+the X and Z one-point overlap deficits on the subline law are at most
+\[
+ B=2\sqrt{4m^2p}+2\sqrt{4t}.
+\]
+Removing the X factor from the ordered Z-then-X overlap costs at most
+$2\sqrt m(p^{1/4}+t^{1/4})$. The remaining Z overlap differs from one
+by at most $2\sqrt m(p^{1/4}+t^{1/4}+\eps^{1/4})$.
+No state symmetry, equality of the player spaces, or joint restricted-product
+law is assumed.
+\end{lemma}
+\begin{proof}
+\leanok
+Apply the operator deficit estimate to arbitrary opposite placements.
+Restricted paired-line consistency costs $4m^2p$, and the ordered point
+distance costs $4t$. Transport each one-point overlap separately through
+the corresponding mixture from the subline lemma. Cauchy--Schwarz bounds
+X-removal by $\sqrt B$. The Z overlap $L$ lies in $[0,1]$, so
+$(1-L)^2\leq 1-L\leq B$. Finally
+$\sqrt B\leq2\sqrt m(p^{1/4}+t^{1/4})$.
+\end{proof}
+
+\begin{lemma}[Directly indexed first-route witness]
+\label{lem:extended-first-route-witness}
+\lean{MIPStarRE.QPBT.subline_joint_overlap_near_one_at}
+\lean{MIPStarRE.QPBT.exists_extendedLinesWitness_established}
+\leanok
+\uses{lem:extended-first-route-opposite, lem:extended-line-overlap-integration,
+  lem:conditional-extended-line-construction, lem:combined-line-polynomial-specialization}
+There exist polynomial error functions $\delta_Q$ and $g$, and a universal
+$C>0$, such that every admissible projective strategy with error $\eps$
+admits combined points with error $\delta_Q(\eps)$ and an actual conditional
+extended-line POVM with both completed consistency defects at most
+$Cm g(\eps,md/q)$. Its outcomes have degree at most $md+1$, and at most
+$d$ on axis lines. The line questions and completed evaluations are the
+directly indexed ones of Lemma~\ref{lem:conditional-extended-line-construction}.
+This is an internal first-route theorem, not the printed stronger estimate
+or a certification of source-game and field-answer transport.
+\end{lemma}
+\begin{proof}
+\leanok
+The opposite-placement estimates bound $|J-1|$ for both players.
+Integrate the actual POVM and retain its degree support. Specialize the
+supplied point error to its polynomial bound and reuse the established
+paired-line construction. The previously proved scalar composition absorbs
+the first-route expression into $mg(\eps,md/q)$, using the independent
+unit defect bound for large parameters.
+\end{proof}
+
 \begin{proof}[Proof of Lemma~\ref{lem:qld-4-13}]
 	\proves{lem:qld-4-13}
 	\uses{lem:qld-xz-lines, lem:qld-sublines, def:combine-map,
