@@ -1,5 +1,178 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 9: actual conditional extended-line POVMs
+
+Session `mathfix-118-20260906-09`, baseline
+`61750e7c41c1ea246333afc1f2aa173e915dba07`, attempt **9/10**. Carry
+exactly **15152 completed working seconds**; the original anchor is
+September 5, 2026, 19:24 UTC. This session starts September 6, 2026,
+02:08:43 UTC. Its reporting target is 2400 seconds, with a 2700-second
+dispatcher limit. The final dispatcher duration remains authoritative.
+The two committed attempt-8 increments are retained, not restarted.
+
+### Source statement and obstruction
+
+The printed `lem:qld-xz-lines`, source lines 882--894 and 943--963,
+constructs the actual XZX paired-line POVMs for the already constructed
+points, with polynomial error in epsilon and `rho = md/q`, both opposite
+placements, and degree `d` on axis lines. Attempt 8 proves this internal
+completed-answer construction with its polynomial point function fixed
+before the line-error function. No signature in `Lines.lean` changes here.
+
+The printed `lem:qld-4-13`, lines 1020--1034, asks, for every admissible
+projective setting winning with probability at least `1-epsilon`, for a
+POVM on each extended line and each player space, supported on degree
+`md+1` (degree `d` on axis lines), and both line-point consistency
+relations with universal error `poly(m^2*epsilon,md/q)`. Lines 1118--1132
+specify its actual conditional-average construction. The existing first
+route yields an `m*poly(epsilon,md/q)` majorant, not the stronger printed
+form; the second route at 1241--1246 uses an unsupported joint product
+law. Neither printed existence theorem is disproved here.
+
+The genuine prior collision counterexample is unchanged: on a zero
+direction the distinct coefficient polynomials `T` and `T+1` both evaluate
+to `none`; their collision probability is one, greater than `md/q` when
+`1 <= md < q`. It invalidates an unrestricted conditional-collision
+assertion, not the conditional construction proved in this attempt.
+
+### Proved construction and proof sketch
+
+`Apply.lean` now defines `SubLineWitness.conditionalLaw` on the supported
+fiber over an extended line. Every direct line has positive marginal
+weight: its canonical base, stored index, and stored direction supply a
+positive uniform sampling seed. This includes zero-direction diagonal
+lines. The prescribed marginal transfers positivity to the subline law.
+Normalization therefore needs no default family or null-event branch.
+`conditionalLaw_isProbability` and `avgOver_conditionalLaw` prove
+normalization and finite disintegration by summing each fiber and
+cancelling its positive mass.
+
+`SubLineWitness.affineData` chooses only coordinates satisfying the
+existing compatibility field. `combinedPolynomial` is exactly the source
+coefficient formula, transported through the existing scalar equivalence.
+`extendedMeasurement` postprocesses the supplied `lines.T` and averages
+under the conditional law. Positivity and completeness follow from the
+POVM properties of `T` and finite sum interchange. This is the actual
+source construction for either player, not an existence placeholder.
+
+`affineData_axis`, `combineLinePoly_axis_degree`, and
+`extendedMeasurement_axis_degree` discharge the axis-degree assertion.
+For nonscalar coordinate directions both scalar slopes vanish; affine
+substitution does not increase degree. For alpha or beta directions the
+projected directions vanish. Compatibility at zero and one and nonzero
+source axis directions force both projected parameter slopes to vanish.
+The composed source polynomials are constant, so the combination has
+degree at most one, at most `d` by the existing admissibility hypothesis.
+Source outcomes violating their degree bound already have zero effect;
+postprocessing and averaging preserve that zero support.
+
+`combinedPolynomial_evaluatesTo` checks *every* parameter representing the
+extended point. Determined projected evaluations consequently give the
+required determined linear combination, even on a zero direction.
+`combinedPolynomial_evalOpt` identifies the completed answer.
+`completedPoint_effect_le` proves operator domination for any point-pair
+POVM on any finite carrier: a defined pair effect is a positive summand
+of its linear postprocessing; an undefined pair effect is zero. This
+comparison applies independently to both players, with unequal local
+dimensions and without a symmetric-strategy hypothesis.
+
+The edge-case audit is symbolic, backed by the general Lean proofs:
+zero direction and the `T,T+1` counterexample enter the zero point-effect
+case; the smallest admissible field and `d=1` obey the axis argument;
+degrees at least the field size use coefficient support, never equality
+of polynomial functions; positive marginal mass excludes an empty fiber;
+no small-error hypothesis or player-space identification enters. No
+exhaustive computational search over quantum strategies is claimed.
+
+### Sufficiency, minimality, and integrity
+
+The complete paper-use, blueprint-descendant, and prose-reference inventory
+under **Consumer inventory and limits of sufficiency** remains in force.
+The new construction supplies precisely the POVM and axis-degree use at
+1118--1132, without changing the restricted-law use at 1058--1061. The
+new auxiliary node is `lem:conditional-extended-line-construction`, used
+in the proof of `lem:qld-4-13`; the prior two attempt-8 auxiliary nodes
+are retained. All Chapter 15, 16, and 13 descendants and the three prose
+references in that inventory remain tracked, not newly certified.
+
+The remaining first-route work is to integrate the placed overlap using
+the constructed conditional law and point-effect comparison, and to prove
+the **second-player first-route overlap bound**. An operator comparison
+valid on either space does not itself prove that second-player bound.
+The scalar absorption from attempt 8 is already available. Three existing
+holes remain: both extended-line internal helpers and the global-pair
+construction. The unsupported stronger route, direct-game/field-answer
+transport, global-pair use at 1278--1282, and extraction uses at 1423,
+1465--1492, 1584, 1627, and 1671 remain open in the aggregate assessment.
+No final source correction is adopted.
+
+There is no new restriction to compare by strength: the construction uses
+the existing subline and paired-line properties. Excluding zero directions,
+assuming a small parameter regime, or requiring equal player spaces would
+be unnecessary strengthening. The earlier weaker quantitative alternatives
+and their obstructions remain recorded; full-theorem minimality is not
+established by this proof increment.
+
+Statement integrity: every preexisting paper-labelled declaration in
+`Apply.lean` keeps exactly its public assumptions and conclusion. The
+printed-error wrapper still asks for `poly(m^2*epsilon,md/q)`; the
+established wrapper still asks for `C*m*poly(epsilon,md/q)`. Both retain
+their explicitly documented direct-carrier and completed-answer boundary,
+and both retain their unresolved quantitative proof. The global-pair
+statement and Claims 17-1--17-3 are unchanged. New green blueprint entries
+are only the explicit construction and operator assertions proved here.
+No existing mathematical definition, game, witness field, source mirror,
+or downstream-tail file changes. Final independent review is still required.
+
+### Validation and operator handoff
+
+Validation uses `/tmp/issue118-lean-validation/lib`, with attempt-9 logs
+under `/tmp/issue118-attempt9-*.log`. The affected import closure is
+`Apply.lean`, `MIPStarRE/QPBT.lean`, and `MIPStarRE.lean`; no declaration
+outside `Apply.lean` directly calls the new auxiliaries yet. No full build
+or shared-cache write is needed for this local proof increment.
+No `lake update`, subagent, review dispatch, publication, merge, runtime
+state change, or owner contact is performed. Normal hooks are required
+for the validated commit. The final report supplies exact validation
+results, the commit, and the cumulative working-time estimate.
+
+Final validation results for this increment:
+
+- `lake env lean` checks pass for `Apply.lean`, `MIPStarRE/QPBT.lean`,
+  and `MIPStarRE.lean`, using fresh private output artifacts. The only
+  warnings are the three preexisting construction holes in `Apply.lean`.
+- The `sorry|axiom` scan finds zero tokens in `Lines.lean` and the same
+  three holes in `Apply.lean`; no proof debt is introduced or hidden.
+- Axiom inspection of seven construction declarations
+  reports only `propext`, `Classical.choice`, and `Quot.sound`.
+- Blueprint web generation passes, with inherited bibliography warnings.
+  All **1879** initially generated declaration references resolve against
+  the fresh private root artifact. The static synchronization report has
+  the same **231** baseline stale entries and **15** baseline header-only
+  proof-status entries, not a new clean whole-repository sync verdict.
+- The paper-gap PDF builds to **17 pages** through LaTeX, BibTeX, and two
+  further LaTeX passes. Paper-gap style, blueprint LaTeX conventions,
+  unchanged source-labelled public headers, and whitespace checks pass.
+  The worktree hook installation check passes; hooks are not bypassed.
+- At September 6, 2026, 02:44:08 UTC, the working-time snapshot is
+  **2125 seconds** this attempt and **17277 seconds** cumulatively.
+  The final report and dispatcher accounting supersede this snapshot.
+  Attempt 10 remains available; this increment does not justify adoption.
+
+The normal hook initially rejected the two blueprint links containing
+`conditionalLaw` as conditional-theorem names, although these are ordinary
+conditional probability laws with their normalization proved. Following
+the normative gate without changing it, those two supplementary links are
+replaced by explicit prose references. Their Lean statements and proofs
+are unchanged; the five other links still identify the construction and
+point-effect assertions. This is a metadata naming friction, not a
+mathematical prerequisite or an authorization to bypass the hook.
+
+Proposed operator announcement, not posted: **#118 attempt 9 proves the
+actual conditional extended-line POVM, degree support, and both-space
+point-effect comparison; averaged consistency and the second-player
+first-route estimate remain, so no source correction is adopted.**
+
 ## Attempt 8: polynomial specialization and paired-line witness assembly
 
 Session `mathfix-118-20260906-08`, baseline

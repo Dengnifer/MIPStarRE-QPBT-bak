@@ -657,10 +657,10 @@ Their existential wrappers still produce that function internally and
 have unchanged statements. Three existing obligations remain in
 \path{Combining/Apply.lean}: the printed-error construction, the
 first-route extended-line construction, and the global-pair construction.
-For the first-route obligation, one must still form the source's
-conditional average of the actual line POVMs, prove axis-degree support
-and its completed-evaluation comparison, and establish the second player
-placement. The source-question and field-answer transport obligations in
+For the first-route obligation, the conditional average, axis-degree support,
+and point-effect comparison are now proved as described below. One must still
+integrate the placed overlaps and establish the second-player first-route
+estimate. The source-question and field-answer transport obligations in
 the earlier section are unchanged. In particular neither the new scalar
 estimate nor the overlap estimate establishes the printed stronger error
 $\poly(m^2\eps,md/q)$.
@@ -676,6 +676,68 @@ quantum strategies. Restricting the internal function to exactly
 $K\eps^{1/8}$ would be stronger than the proved sufficient polynomial
 contract. No minimality claim for the unresolved extended-line theorem is
 made.
+
+\section{The actual conditional extended-line construction}
+
+The construction at source lines 1118--1132 can be carried out without
+changing any game, line carrier, or evaluation convention. Let $D$ be a
+subline witness and let $T$ be the supplied paired-line POVMs. Every
+canonical direct line has positive marginal mass: its stored base is fixed
+by the canonical projection, and its stored direction satisfies the prefix
+condition in the diagonal case. Sampling that base, index, and direction
+therefore produces the line with positive probability. This argument
+includes diagonal lines with zero direction. The marginal property of $D$
+then makes each supported fiber have positive mass.
+
+Normalize that fiber, choose affine coordinates whose compatibility is
+proved by the subline witness, and apply the source polynomial combination
+to the actual outcomes of $T$. The resulting conditional average is a
+complete POVM: positive scalar combinations preserve positivity, and
+interchanging the two finite sums gives the identity operator. No
+replacement POVM, default answer, or zero-mass branch is used. Finite
+disintegration cancels the positive fiber mass and recovers the original
+law $D$. These assertions are proved by
+\leanid{MIPStarRE.QPBT.SubLineWitness.extendedMeasurement},
+\leanid{MIPStarRE.QPBT.SubLineWitness.conditionalLaw\_isProbability}, and
+\leanid{MIPStarRE.QPBT.SubLineWitness.avgOver\_conditionalLaw}.
+
+For axis lines, there are two cases. If the direction is not a scalar
+coordinate, both scalar weights are constant; affine substitution preserves
+the two source degree bounds. If the direction is a scalar coordinate,
+both projected directions vanish. Compatibility at parameters zero and one,
+together with the nonzero source axis directions, forces both projected
+parameter slopes to vanish. The two composed source polynomials are then
+constant, and the combined polynomial has degree at most one, hence at most
+$d$. Coefficients above $d$ vanish algebraically, even when $d\ge q$;
+this argument does not infer polynomial equality from equality of functions
+on the field. The zero effects of invalid source outcomes pass through
+postprocessing and averaging. This proves
+\leanid{MIPStarRE.QPBT.SubLineWitness.extendedMeasurement\_axis\_degree}.
+
+At a point $u=(x,z,\alpha,\beta)$, suppose both completed source evaluations
+are determined values $a,b$. Every parameter representing $u$ also presents
+the projected points, so the combination formula gives $\alpha a+\beta b$
+for every such parameter. Thus the combined completed evaluation is the
+corresponding field answer, including the zero-direction case. For any
+point-pair POVM, its effect at $(a,b)$ is a positive summand of its linear
+postprocessing at $\alpha a+\beta b$. If either source evaluation is
+undefined, the completed point-pair effect is zero instead. This gives
+\leanid{MIPStarRE.QPBT.SubLineWitness.completedPoint\_effect\_le}
+on either player space, without assuming equal dimensions or a symmetric
+strategy. The earlier collision counterexample $T,T+1$ on a zero direction
+does not violate this assertion: both source evaluations are undefined,
+and the compared point effect is zero.
+
+These kernel-checked assertions establish the actual POVM and its degree
+support, but not the two quantitative consistency fields of the extended-line
+witness. The remaining first-route work is the averaged placed-overlap
+comparison and the second-player counterpart of Claims 17-1--17-3; the
+existing scalar absorption is already proved. All three existing holes in
+\path{MIPStarRE/QPBT/Combining/Apply.lean} remain explicitly visible.
+Neither the printed stronger error, source-question and field-answer
+transport, nor global-pair sufficiency is certified by this increment.
+The complete consumer inventory remains in
+\path{audits/2026-09-06-issue118-point-error-dependency.md}.
 
 \section{Conclusion}
 

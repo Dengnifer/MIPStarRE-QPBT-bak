@@ -3541,11 +3541,58 @@ $m(\eps^\theta+\rho^{b/4})$, since $\sqrt m\le m$.
 For $\eps>1$, this polynomial bound can be chosen at least one.
 \end{proof}
 
+\begin{lemma}[Conditional extended-line construction]
+\label{lem:conditional-extended-line-construction}
+\lean{MIPStarRE.QPBT.directLinePointDist_line_weight_pos}
+\lean{MIPStarRE.QPBT.SubLineWitness.extendedMeasurement}
+\lean{MIPStarRE.QPBT.SubLineWitness.extendedMeasurement_axis_degree}
+\lean{MIPStarRE.QPBT.SubLineWitness.combinedPolynomial_evalOpt}
+\lean{MIPStarRE.QPBT.SubLineWitness.completedPoint_effect_le}
+\leanok
+\uses{lem:qld-sublines, lem:qld-xz-lines, def:combine-map}
+Work with the directly indexed line carrier and completed evaluations.
+Let $D$ satisfy the subline witness properties, and let $T$ be a supplied
+paired-line POVM family with the stated axis-degree support. Every extended
+line has positive marginal mass, and conditioning $D$ on that line defines
+a probability law $D_{|\ell}$ without a zero-mass convention. The family
+\[
+ Q^\ell_f=\mathbb E_{s\sim D_{|\ell}}
+   \sum_{f_X,f_Z:\,\operatorname{combine}_s(f_X,f_Z)=f}
+     T^{s_X,s_Z}_{f_X,f_Z}
+\]
+is a POVM on either player space and has degree at most $d$ on axis lines.
+Integrating its conditional law against the extended-line marginal
+recovers $D$. At a point $u=(x,z,\alpha,\beta)$ on the extended line,
+if the two source evaluations are $a,b$, the combined completed evaluation
+is $\operatorname{some}(\alpha a+\beta b)$. For any point-pair POVM $R$,
+the completed pair effect at those source evaluations is bounded in
+positive-semidefinite order by the effect of the postprocessed $R$ at the
+combined evaluation. This operator comparison also holds when a source
+evaluation is undefined, since the completed point-pair effect is then zero.
+These are construction and point-effect assertions, not the two quantitative
+consistency conclusions of Lemma~\ref{lem:qld-4-13}.
+The probability and disintegration identities are proved separately by
+\texttt{SubLineWitness.conditionalLaw\_isProbability} and
+\texttt{SubLineWitness.avgOver\_conditionalLaw}.
+\end{lemma}
+\begin{proof}
+\leanok
+A canonical line's base and stored direction give a positive-mass sampling
+seed. Normalize each supported fiber and postprocess the actual $T$; finite
+sum interchange proves normalization and disintegration. On an axis line,
+either both scalar coordinates are constant or both projected parameters
+are constant. Affine substitution therefore preserves degree $d$ (using
+$d\ge1$ in the latter case). Check every parameter representing $u$ to
+obtain the completed evaluation identity, including zero directions.
+Finally, a postprocessed effect contains each of its positive summands.
+\end{proof}
+
 \begin{proof}[Proof of Lemma~\ref{lem:qld-4-13}]
 	\proves{lem:qld-4-13}
 	\uses{lem:qld-xz-lines, lem:qld-sublines, def:combine-map,
 		lem:qld-4-12, lem:claim-17-1, lem:claim-17-2, lem:claim-17-3,
-		lem:subline-first-route-quantitative}
+		lem:subline-first-route-quantitative,
+		lem:conditional-extended-line-construction}
 	Let $D$ be the distribution of Lemma~\ref{lem:qld-sublines} and let
 	$D_{|\ell}$ denote $D$ conditioned on the first element being $\ell$.
 	For every line $\ell$ in $\F_q^{2m+2}$ and $f \in \deg_{md+1}(\ell)$
