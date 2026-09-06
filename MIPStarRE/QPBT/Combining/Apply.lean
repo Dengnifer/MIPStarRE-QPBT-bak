@@ -87,6 +87,22 @@ noncomputable def combinedPolyEmbedding (P : AdmissibleParams) :
     exact Prod.ext (Subtype.ext (congrArg Prod.fst hpair))
       (Subtype.ext (congrArg Prod.snd hpair))
 
+/-- Evaluation of a combined outcome is the affine combination of its two
+components.  This is the pointwise algebraic identity used when transferring
+the global-pair measurement to the expanded point measurements in
+`lem:qld-4-7`, paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1364--1380`.
+It is a formalization-only consequence of `def:combine-map`; it does not assert
+any consistency or quantitative error estimate.
+-/
+theorem combinedPolyEmbedding_eval (P : AdmissibleParams)
+    (u : Fin (2 * P.m + 2) → PauliScalar P) (pair : PolyPair P) :
+    MvPolynomial.eval u (combinedPolyEmbedding P pair).1 =
+      u (alphaVar P.m) * evalAt .X (projX u) pair +
+        u (betaVar P.m) * evalAt .Z (projZ u) pair := by
+  change MvPolynomial.eval u (combinePoly pair.1.1 pair.2.1) = _
+  rw [combinePoly_eval]
+  rfl
+
 /-- Restrict an extended-polynomial measurement to combined outcomes, as in
 `eq:qld-sgg-completeness`, paper lines 1375--1380. Injectivity of the combining
 map ensures that the retained effects sum to at most the identity. This
