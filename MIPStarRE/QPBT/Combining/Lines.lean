@@ -2038,6 +2038,187 @@ theorem ProjectiveSetting.combinedLineMeasurement_evaluated_eq_pasted
   simp_rw [setting.combinedLineMeasurement_effect_eq_pastedMeasurement]
   exact Finset.sum_comm
 
+set_option synthInstance.maxSize 400 in
+set_option maxHeartbeats 800000 in
+/-- Applying heterogeneous one-sided pasting to the actual completed point
+and line families bounds their conditional defect. Both supplied point
+families and both marginal errors are retained. Answers are ordered Z then X,
+as required by the X-outer sandwich. Source: `eq:qld-4-13-1`, paper
+`14_analysis_of_the_pauli_basis_test.tex:950-963`; the proof-only conditioning
+and point-error dependence are explained in
+`docs/paper-gaps/qpbt_combined-lines-error-term.tex`. -/
+theorem exists_combinedLine_conditioned_defect_le :
+    ∃ constant : ℝ, 1 ≤ constant ∧
+      ∃ pastingError : ℝ → ℝ → ℝ, IsPolyErr₂ pastingError ∧
+        ∀ (params : AdmissibleParams) (error pointError : ℝ)
+          (setting : ProjectiveSetting params error)
+          (points : CombinedPointsWitness setting pointError)
+          (first second : Placement), first.IsOpposite second →
+          consistencyDefect (nondegenerateLinePastingDist params.toLdParams)
+            (fun query output => setting.place first
+              (((points.Q first.side query.2.2 query.1.2.2).postprocess
+                (fun pair => (some pair.2, some pair.1))).effect output))
+            (fun query output => setting.place second
+              (((setting.combinedLineMeasurement second.side query.1.1.1 query.1.1.2).postprocess
+                (fun polys => (evalOpt query.1.1.2 query.1.2.2 polys.2,
+                  evalOpt query.1.1.1 query.2.2 polys.1))).effect output)) setting.psiHat ≤
+            pastingError ((params.m * params.d : ℕ) / (Fintype.card (ScalarQ params.toLdParams) : ℝ))
+              ((8 * pointError + constant * (error + deltaLine error)) /
+                nondegenerateLinePastingMass params.toLdParams) := by
+  classical
+  obtain ⟨constant, hconstant, hmarginals⟩ :=
+    exists_combinedPoints_conditioned_line_marginal_defect_le
+  obtain ⟨pastingError, hpoly, hpasting⟩ := exists_pasting_error_heterogeneous
+  refine ⟨constant, hconstant, pastingError, hpoly, ?_⟩
+  intro params error pointError setting points first second hopposite
+  obtain ⟨equivalence, hfirst, hsecond⟩ :=
+    setting.exists_opposite_bipartition first second hopposite
+  have hpoint : 0 ≤ pointError :=
+    (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _).trans
+      (points.self_consistent first second hopposite)
+  have hmass := (prod_linePointDist_nondegenerate_mass_pos params.toLdParams).le
+  have hextra : 0 ≤ constant * (error + deltaLine error) :=
+    mul_nonneg (by linarith) (add_nonneg setting.eps_nonneg (Real.sqrt_nonneg _))
+  have herror : 0 ≤ (8 * pointError + constant * (error + deltaLine error)) /
+      nondegenerateLinePastingMass params.toLdParams :=
+    div_nonneg (by linarith) hmass
+  have hpoint_le : pointError / nondegenerateLinePastingMass params.toLdParams ≤
+      (8 * pointError + constant * (error + deltaLine error)) /
+        nondegenerateLinePastingMass params.toLdParams :=
+    div_le_div_of_nonneg_right (by linarith) hmass
+  have hbound := hpasting (nondegenerateLinePastingDist params.toLdParams)
+    (fun (poly : DegPoly params.toLdParams (params.m * params.d)) sample =>
+      evalOpt sample.1 sample.2 poly)
+    (fun (poly : DegPoly params.toLdParams (params.m * params.d)) sample =>
+      evalOpt sample.1 sample.2 poly)
+    (fun pair => DistanceCalculus.leftPlacedMeasurement
+      (ιB := PauliRegister params × PauliRegister params)
+      (setting.lineMeasExp second.side .Z pair.2))
+    (fun pair => DistanceCalculus.leftPlacedMeasurement
+      (ιB := PauliRegister params × PauliRegister params)
+      (setting.lineMeasExp second.side .X pair.1))
+    (fun query => (points.Q first.side query.2.2 query.1.2.2).postprocess
+      (fun pair => (some pair.2, some pair.1)))
+    (fun query => DistanceCalculus.leftPlacedMeasurement
+      (ιB := PauliRegister params × PauliRegister params)
+      ((points.Q second.side query.2.2 query.1.2.2).postprocess
+        (fun pair => (some pair.2, some pair.1))))
+    (reindexState equivalence setting.psiHat)
+    ((params.m * params.d : ℕ) / (Fintype.card (ScalarQ params.toLdParams) : ℝ))
+    ((8 * pointError + constant * (error + deltaLine error)) /
+      nondegenerateLinePastingMass params.toLdParams)
+    (nondegenerateLinePastingDist_isProbability params.toLdParams)
+    (by rw [norm_reindexState, setting.psiHat_norm]) (by positivity) herror
+    (fun pair => MIPStarRE.QPBT.Measurement.isProjective_leftPlacement _
+      (setting.lineMeasExp_isProjective second.side .X pair.1))
+    (fun query => WinImplications.postprocess_isProjective _ (points.projective _ _ _) _)
+    (fun query => MIPStarRE.QPBT.Measurement.isProjective_leftPlacement _
+      (WinImplications.postprocess_isProjective _ (points.projective _ _ _) _))
+    (nondegenerateLinePastingDist_collision_bound params (params.m * params.d))
+  simp_rw [leftPlacedMeasurement_postprocess_effect] at hbound
+  simp only [DistanceCalculus.leftPlacedMeasurement, Quantum.Measurement.ofSumEqOne] at hbound
+  simp_rw [evaluated_pastedMeasurement_heteroKron_one,
+    setting.consistencyDefect_bipartition first second equivalence hfirst hsecond] at hbound
+  have hmarginal := hmarginals params error pointError setting points first second hopposite
+  have hjoint := (points.self_consistency_conditioned_swapped_defect_le
+    first second hopposite).trans hpoint_le
+  unfold consistencyDefect nondegenerateLinePastingDist at hbound hmarginal hjoint ⊢
+  simp only [Distribution.avgOver_map, ProjectiveSetting.lineEvalMeasExp]
+    at hbound hmarginal hjoint ⊢
+  have hresult := hbound hmarginal.1 hmarginal.2 hjoint
+  simp_rw [setting.combinedLineMeasurement_evaluated_eq_pasted]
+  convert hresult using 1
+  clear hpasting hmarginals hbound hmarginal hjoint hresult
+  apply avgOver_congr
+  intro sample
+  apply Finset.sum_congr rfl
+  intro output _
+  apply Finset.sum_congr rfl
+  intro other _
+  by_cases hsame : output = other
+  · subst other
+    simp
+  · have hsame' : ¬ @Eq
+        (Option (ScalarQ params.toLdParams) × Option (ScalarQ params.toLdParams))
+        output other := hsame
+    simp only [if_neg hsame, if_neg hsame']
+    congr 1
+
+set_option synthInstance.maxSize 400 in
+set_option maxHeartbeats 800000 in
+/-- The actual X-outer line POVM and the supplied points satisfy the restored
+source-law bound. Only zero X directions are discarded during the proof;
+their contribution is restored as `1/(2q)`, and the retained mass multiplies
+the pasting error. Source: `lem:qld-xz-lines`, paper
+`14_analysis_of_the_pauli_basis_test.tex:950-963`; see
+`docs/paper-gaps/qpbt_combined-lines-error-term.tex`. -/
+theorem exists_combinedLine_restored_defect_le :
+    ∃ constant : ℝ, 1 ≤ constant ∧
+      ∃ pastingError : ℝ → ℝ → ℝ, IsPolyErr₂ pastingError ∧
+        ∀ (params : AdmissibleParams) (error pointError : ℝ)
+          (setting : ProjectiveSetting params error)
+          (points : CombinedPointsWitness setting pointError)
+          (first second : Placement), first.IsOpposite second →
+          consistencyDefect (Distribution.prod (linePointDist params.toLdParams)
+            (linePointDist params.toLdParams))
+            (fun sample output => setting.place first
+              (((points.Q first.side sample.1.2 sample.2.2).postprocess
+                (fun pair => (some pair.1, some pair.2))).effect output))
+            (fun sample output => setting.place second
+              (((setting.combinedLineMeasurement second.side sample.1.1 sample.2.1).postprocess
+                (fun polys => (evalOpt sample.1.1 sample.1.2 polys.1,
+                  evalOpt sample.2.1 sample.2.2 polys.2))).effect output)) setting.psiHat ≤
+            nondegenerateLinePastingMass params.toLdParams *
+              pastingError ((params.m * params.d : ℕ) /
+                (Fintype.card (ScalarQ params.toLdParams) : ℝ))
+                ((8 * pointError + constant * (error + deltaLine error)) /
+                  nondegenerateLinePastingMass params.toLdParams) +
+              1 / (2 * Fintype.card (ScalarQ params.toLdParams)) := by
+  classical
+  obtain ⟨constant, hconstant, pastingError, hpoly, hconditional⟩ :=
+    exists_combinedLine_conditioned_defect_le
+  refine ⟨constant, hconstant, pastingError, hpoly, ?_⟩
+  intro params error pointError setting points first second hopposite
+  have hbound := hconditional params error pointError setting points first second hopposite
+  have hswapPoints (side : PlayerSide) (pointX pointZ : Fin params.m → PauliScalar params)
+      (output : Option (PauliScalar params) × Option (PauliScalar params)) :
+      ((points.Q side pointX pointZ).postprocess
+        (fun pair => (some pair.2, some pair.1))).effect output =
+      ((points.Q side pointX pointZ).postprocess
+        (fun pair => (some pair.1, some pair.2))).effect output.swap :=
+    postprocess_pair_swap_effect (points.Q side pointX pointZ)
+      (fun pair : PauliScalar params × PauliScalar params => (some pair.1, some pair.2)) output
+  have hswapLines (side : PlayerSide) (lineX lineZ : LineDesc params.toLdParams)
+      (pointX pointZ : Fin params.m → PauliScalar params)
+      (output : Option (PauliScalar params) × Option (PauliScalar params)) :
+      ((setting.combinedLineMeasurement side lineX lineZ).postprocess
+        (fun polys => (evalOpt lineZ pointZ polys.2, evalOpt lineX pointX polys.1))).effect
+          output =
+      ((setting.combinedLineMeasurement side lineX lineZ).postprocess
+        (fun polys => (evalOpt lineX pointX polys.1, evalOpt lineZ pointZ polys.2))).effect
+          output.swap :=
+    postprocess_pair_swap_effect (setting.combinedLineMeasurement side lineX lineZ)
+      (fun polys => (evalOpt lineX pointX polys.1, evalOpt lineZ pointZ polys.2)) output
+  simp_rw [hswapPoints, hswapLines] at hbound
+  have hswap := consistencyDefect_outcome_equiv
+    (nondegenerateLinePastingDist params.toLdParams)
+    (Equiv.prodComm (Option (PauliScalar params)) (Option (PauliScalar params)))
+    (fun query output => setting.place first
+      (((points.Q first.side query.2.2 query.1.2.2).postprocess
+        (fun pair => (some pair.1, some pair.2))).effect output))
+    (fun query output => setting.place second
+      (((setting.combinedLineMeasurement second.side query.1.1.1 query.1.1.2).postprocess
+        (fun polys => (evalOpt query.1.1.1 query.2.2 polys.1,
+          evalOpt query.1.1.2 query.1.2.2 polys.2))).effect output)) setting.psiHat
+  have hnatural := hswap.symm.trans_le hbound
+  refine (setting.combinedLineMeasurement_consistency_le_conditioned
+    points first second hopposite).trans ?_
+  unfold consistencyDefect nondegenerateLinePastingDist at hnatural ⊢
+  simp only [Distribution.avgOver_map] at hnatural ⊢
+  have hmass : 0 ≤ nondegenerateLinePastingMass params.toLdParams :=
+    (prod_linePointDist_nondegenerate_mass_pos params.toLdParams).le
+  exact add_le_add (mul_le_mul_of_nonneg_left hnatural hmass) le_rfl
+
 /-! ## Restricted line distributions -/
 
 /-- The axis and diagonal line-point laws are uniform mixtures of their

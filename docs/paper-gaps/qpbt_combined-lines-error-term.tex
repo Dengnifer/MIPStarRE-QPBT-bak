@@ -23,6 +23,12 @@
 \section{At a glance}
 
 \begin{itemize}
+  \item \textbf{Current paired-line construction status:} for
+  \texttt{lem:qld-xz-lines}, actual conditional pasting and restoration to
+  the original question law are now proved, retaining the supplied point
+  error. Scalar specialization, final witness assembly, and the extended-line
+  consumers remain open. The printed existence theorem is not disproved;
+  no final correction is adopted by these auxiliary results.
   \item \textbf{Difficulty: easy.}  No step of the retained proof route is
   in doubt.  The obstruction is that the error function claimed in the
   statement of the combined-lines lemma of the Pauli basis analysis,
@@ -486,15 +492,44 @@ state. Thus they introduce no exception at degree zero, at $q=2$, or on a
 zero Z direction. These are symbolic boundary checks covered by the proofs,
 not a claim to have enumerated all finite strategies.
 
-\paragraph{Remaining operator application and quantitative dependence.}
+\paragraph{Application to the actual conditional families.}
 The supplied joint-point marginals already have proved bounds
 $u=8t+C(\eps+\sqrt\eps)$ for a universal $C\ge1$; joint self-consistency
 has bound $t$. Conditioning on nondegenerate $X$ lines therefore retains
-both errors, with the marginal bound $u/r$. The heterogeneous pasting theorem
-and register identities are now proved. Applying them to these actual
-families and reconciling the duplicated descriptors on the support would give
-$D_0(\rho^{1/4}+(u/r)^{1/8})$ on the conditional law. Restoring its mass
-would give
+both errors, with the marginal bound $u/r$. These are now the actual inputs
+to heterogeneous pasting: the right line families are $Z$ then $X$, and
+the two joint families are the supplied completed points with answers
+exchanged. The point witness itself implies $t\ge0$, so $t/r\le u/r$;
+no new error hypothesis is needed. Pulling the conditioned question law back
+to the original line-point samples makes the common descriptor and its
+local duplicate identical. This is an identity of averages under the defined
+map, not an assumption that all ambient questions have consistent descriptors.
+The four bipartitions and the evaluated sandwich identity then give
+\[
+ d_E\le f(\rho,u/r),\qquad
+ d\le r f(\rho,u/r)+\frac1{2q},
+\]
+where $f$ is the same universal additive polynomial error function supplied
+by pasting. The second bound exchanges both answers back to $(X,Z)$ and
+applies the proved restoration inequality. In particular neither $r$ nor
+the discarded contribution is dropped. These two inequalities are proved in
+\leanid{MIPStarRE.QPBT.exists\_combinedLine\_conditioned\_defect\_le} and
+\leanid{MIPStarRE.QPBT.exists\_combinedLine\_restored\_defect\_le}, and linked
+by the separate blueprint auxiliary
+\texttt{lem:combined-line-actual-pasting-bound}.
+
+The construction applies to unequal local dimensions, all four directed
+placements, and differing supplied joint families. It retains zero $Z$
+directions. For $q=2$ the retained mass is still positive. The two
+polynomials $T,T+1$ on a zero $X$ direction no longer satisfy the retained
+event; their original-law contribution is bounded by the restored term.
+Positive supplied error $t$ is not silently set to zero when $\eps=0$.
+These are symbolic counterexample and boundary checks, not an exhaustive
+numerical search over quantum strategies.
+
+\paragraph{Remaining quantitative specialization.}
+For the explicit pasting estimate $D_0(\rho^{1/4}+(u/r)^{1/8})$, the
+corresponding scalar calculation is
 \[
  rD_0\bigl(\rho^{1/4}+(u/r)^{1/8}\bigr)+(1-r)
  \le D_0\bigl(\rho^{1/4}+u^{1/8}\bigr)+\frac1{2q}.
@@ -504,11 +539,22 @@ For the constructed points, $t=K\eps^{1/8}$. On $0\le\eps,\rho\le1$,
 $u\le(8K+2C)\eps^{1/8}$, while $1/(2q)\le\rho/2$ since $md\ge1$.
 Thus this calculation has the additive polynomial form
 $O(\rho^{1/4}+\eps^{1/64})$. Larger parameters can use the unit bound for
-normalized POVM consistency. This is an analysis of the proposed operator
-construction, not an adopted Lean signature: the one-sided operator
-application to the actual families, the final conditional
-consistency bound, and its specialization in \path{Combining/Apply.lean}
-remain to be completed. The equal-carrier interface is no longer a
+normalized POVM consistency. The new Lean inequalities expose a general
+additive polynomial function, not these particular exponents. More generally,
+if $f(x,y)\le A(x^a+y^b)$ with $a,b>0$, the mass bound $r\ge3/4$
+gives
+\[
+ r f(\rho,u/r)\le
+ A\rho^a+A\max\{1,(4/3)^{b-1}\}u^b.
+\]
+On the unit square this gives an additive bound with exponents
+$b/8$ in $\eps$ and $\min\{a,1\}$ in $\rho$. This explains why the
+existential pasting interface suffices mathematically without assuming
+monotonicity of its unspecified function. Formal scalar composition,
+assembly into the existing line witness (including exchange of the two
+opposite placements), and specialization in \path{Combining/Apply.lean}
+remain to be completed. No speculative public signature is adopted.
+The equal-carrier interface is no longer a
 representation obstruction: the proved isometric inclusion eliminates it
 without assuming equal player dimensions or equal supplied point families.
 The source existence theorem is still not disproved, and neither final
@@ -524,8 +570,9 @@ Neither the new auxiliary node nor the algebraic orientation identity marks
 any of those source results as proved. Claims 17-2 and 17-3, the public
 existence statements, and all witness fields remain unchanged.
 The verdict is proved product collisions, conditioned supplied marginals,
-and restoration for the actual POVMs, with operator integration still
-incomplete. No final correction or minimality claim is
+actual heterogeneous operator application, and restored consistency for
+the actual POVMs. Quantitative specialization and the affected consumer
+construction remain incomplete. No final correction or minimality claim is
 adopted, and no change to a mathematical definition or game is requested.
 
 \section{Conclusion}

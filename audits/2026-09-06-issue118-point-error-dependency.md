@@ -1,5 +1,154 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 7: actual conditional pasting and restored source-law defect
+
+Session `mathfix-118-20260906-07`, baseline
+`857681fc1cc60ec13925b1533c7269fdcf634b28`, attempt **7/10**. The original
+anchor remains September 5, 2026, 19:24 UTC. The resumed session started
+at 23:29:11 UTC with **9852 cumulative working seconds** supplied by the
+operator for attempts 1--6. Read-only process inspection confirms actual
+arguments `-m gpt-6-astra -c model_reasoning_effort="xhigh"`; no new session
+was launched. Earlier attempt sections below are historical records, not
+the current verdict.
+
+### Mathematical statement and proof
+
+The printed existence theorem `lem:qld-xz-lines`, paper lines 882--894,
+is still not disproved. Its quantifiers concern the constructed point
+family, both expanded player spaces, every pair of line descriptors, and
+all directed opposite placements. The conclusion is polynomial consistency
+on independent source line-point samples and axis-degree support. The
+internal arbitrary-point helper, unlike that source theorem, quantifies an
+arbitrary supplied point error but omits it from the bound. Zero-X-direction
+completed collisions of `T` and `T+1` remain a separate proof obstruction.
+
+Two new theorems in `Combining/Lines.lean` now apply the actual construction,
+rather than adding another representation interface. There exist a universal
+`C >= 1` and `f` satisfying the current additive `IsPolyErr₂` such that, for
+every admissible parameter tuple, projective setting with error `epsilon`,
+supplied point witness of error `t`, and directed opposite placement pair,
+
+```
+rho = md / card(ScalarQ),  u = 8*t + C*(epsilon + sqrt epsilon),
+d_E <= f(rho, u/r),
+d   <= r*f(rho, u/r) + 1/(2*card(ScalarQ)).
+```
+
+Here `r > 0` is the retained mass of nonzero X directions, `d_E` is the
+actual conditional defect with completed answers ordered Z then X, and `d`
+is the original product-law defect with answers ordered X then Z. The
+supplied points are on the first placement and the actual XZX line POVM
+on the second. Field-model cardinality identifies `card(ScalarQ)` with `q`.
+The quantifier order is `exists C, exists f, forall parameters and witnesses`;
+neither constant depends on the supplied witness.
+
+For correctness, apply `exists_pasting_error_heterogeneous` with the actual
+right Z and X line families, in that order, and the two supplied projective
+joint families with completed answers exchanged. The earlier two marginal
+bounds are `u/r`, the joint comparison is `t/r`, and the actual product
+collision estimate is `rho`. The witness's nonnegative squared distance
+proves `t >= 0`, hence `t/r <= u/r`; the setting proves `epsilon >= 0`.
+No additional error or consistency premise is introduced. The source
+grounding is pasting at paper lines 950--963, its marginal comparisons at
+936--949, and `lem:pasting` in Section 6.
+
+All four bipartitions transport the supplied state and effects exactly,
+retaining the unused EPR pair. Pulling the defined question map back to the
+conditioned original samples resolves duplicated descriptors: common and
+local descriptors are then the same components of the sample. We do not
+require equality for ambient questions outside the map's image. The proved
+evaluated identity identifies the output with the actual XZX POVM. This
+proves `exists_combinedLine_conditioned_defect_le`. Bijectively exchange
+both answers and apply the existing actual-POVM restoration estimate to
+prove `exists_combinedLine_restored_defect_le`, with both `r` and `1/(2q)`
+unchanged.
+
+### Counterexample audit and remaining convergence criteria
+
+The zero-X collision example is outside the retained event, and its full-law
+mass is paid for rather than removed from the game. Zero Z directions are
+retained. Unequal carrier dimensions, unequal supplied families, spectator
+entanglement, `q=2`, and evaluations with collisions introduce no additional
+assumption. A positive supplied `t` remains in the error even at `epsilon=0`.
+Inconsistent duplicated descriptors are handled by the pushforward identity,
+not by a new domain restriction. These are symbolic checks and general
+proofs, not an exhaustive computational enumeration of strategies.
+
+**Correctness:** both displayed actual bounds are proved, and axiom audits
+exclude dependence on the unfinished source theorem. **Sufficiency:** actual
+conditional application, descriptor identification, answer order, and mass
+restoration are discharged. Full source/consumer convergence remains open:
+
+1. Specialize the constructed point error `t=K*epsilon^(1/8)` and formalize
+   additive polynomial composition, including large parameters. The current
+   pasting API exposes general positive exponents, not the specific powers
+   in its construction. If `f(x,y)<=A*(x^a+y^b)`, `r>=3/4` gives
+   `r*f(rho,u/r)<=A*rho^a+A*max(1,(4/3)^(b-1))*u^b`. On the unit square,
+   `u<=(8*K+2*C)*epsilon^(1/8)` and `1/(2*q)<=rho/2`; exponents `b/8`
+   and `min(a,1)` suffice. This calculation does not assume `f` monotone.
+2. Assemble the source-facing line witness, including exchange of opposite
+   placements in the consistency expression and the already proved axis
+   degree properties. Only then discharge or replace the wrong internal
+   arbitrary-point helper; no speculative public signature is committed.
+3. Adapt both arbitrary-point extended-line helpers and their constructed
+   point wrappers in `Apply`. Recheck the restricted-average prefactors and
+   the error absorption at each mathematical consumer in the complete
+   inventory below. Claims 17-2 and 17-3 remain unchanged.
+
+The complete paper-use, blueprint-descendant, actual prose-reference and Lean
+inventory under **Consumer inventory and limits of sufficiency** remains
+applicable. In particular source uses at 1058--1061, 1118--1132, 1241--1246,
+1278--1282, 1423, 1465--1492, 1584, 1627, and 1671 are not certified by these
+two auxiliary inequalities alone. The separate stronger-error discrepancy
+for `lem:qld-4-13` is not eliminated.
+
+**Minimality:** no final source correction is adopted. Retaining arbitrary
+supplied `t` in this proved bound is weaker than requiring it to be small
+externally. The source construction supplies its own error. Dropping `t`,
+replacing the witness, assuming equal dimensions/families or reverse marginal
+bounds, or discarding Z directions remains unnecessary or unjustified.
+No definition/game change requiring an immediate owner decision is identified.
+
+### Validation and operator record
+
+The edited file and all six consumer/import-closure files (`EvalDeficit`,
+`SubLineDeficit`, `Claims`, `Apply`, QPBT, and the project root) type-check
+against fresh private artifacts in `/tmp/issue118-lean-validation/lib`.
+Logs use prefix `/tmp/issue118-attempt7-`. Both new declarations depend only
+on `propext`, `Classical.choice`, and `Quot.sound`. Existing debt remains one
+hole in `Lines` and three in `Apply`, with no new debt. This is Lean
+convergence of the bounded increment, not of the final correction.
+
+All **1867** generated blueprint declaration references resolve against the
+fresh private root artifact. Blueprint web generation passes with unchanged
+warning/error lines; static synchronization retains **231 baseline stale
+entries** and **15 baseline header-only proof-status entries**. Paper-gap
+style, blueprint LaTeX conventions, source-header integrity, whitespace,
+and hook-installation checks pass. The revised gap note compiles with its
+bibliography to a thirteen-page PDF under `/tmp/issue118-attempt7-gap-pdf`.
+No full build, baseline rebuild, or shared-cache write is performed.
+
+At the validation cutoff, September 6, 2026, 00:09:33 UTC, this session has
+used **2422 working seconds (40 minutes 22 seconds)**; adding the supplied
+9852 seconds gives **12274 seconds** through that cutoff, without resetting
+either budget. Commit preparation and the final report follow this cutoff.
+Attempt 7 leaves at most three further sessions under the count limit;
+neither the count nor the working-time cap requires immediate escalation.
+
+Statement integrity: public source assumptions, conclusions, games and
+witness fields are unchanged. The new auxiliary statements explicitly retain
+the arbitrary supplied error in the conclusion and derive all pasting inputs
+from the setting and witness. The blueprint adds only the separate auxiliary
+`lem:combined-line-actual-pasting-bound`; the source-labelled theorem remains
+unfinished. The paper-gap note records the exact inequalities and the
+remaining scalar calculation. No paper mirror or PR 205 implementation file
+is edited, and no publication, merge, runtime-state edit, subagent dispatch,
+or independent-review action is performed.
+
+Unposted operator draft: "#118 attempt 7 proves actual conditioned pasting and
+source-law mass restoration, retaining both supplied errors; scalar
+specialization and Apply remain open. No final correction adopted."
+
 ## Attempt 6: heterogeneous pasting and all directed register placements
 
 Session `mathfix-118-20260906-06`, baseline

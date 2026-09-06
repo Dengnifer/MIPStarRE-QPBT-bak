@@ -1476,8 +1476,8 @@ defects, and adjoining the unused identity commutes with pasting and
 evaluation. Reversing the completed joint answers preserves their conditional
 self-consistency bound $t/r$. Evaluating the actual $XZX$ line POVM with
 answer order $(Z,X)$ gives exactly the evaluated pasting sandwich with
-$G_1=Z,G_2=X$. These assertions do not yet bound the actual conditional
-line defect or specialize the point error to the constructed witness.
+$G_1=Z,G_2=X$. The following auxiliary applies these identities to the
+actual conditional line defect; specialization to constructed points is separate.
 \end{lemma}
 \begin{proof}
 \leanok
@@ -1493,6 +1493,48 @@ $AA'\mid BA''(B'B'')$, $BA''\mid AA'(B'B'')$,
 $BB'\mid AB''(A'A'')$, and $AB''\mid BB'(A'A'')$.
 The remaining assertions follow from tensor multiplication and bijective
 relabeling of the two answers. No state or family symmetry is assumed.
+\end{proof}
+
+\begin{lemma}[Conditioned and restored consistency of the actual line POVM]
+\label{lem:combined-line-actual-pasting-bound}
+\lean{MIPStarRE.QPBT.exists_combinedLine_conditioned_defect_le}
+\lean{MIPStarRE.QPBT.exists_combinedLine_restored_defect_le}
+\leanok
+\uses{lem:combined-line-bipartite-transport, lem:combined-line-conditioned-product,
+  lem:combined-line-sandwich-construction}
+There exist a universal $C\ge1$ and an additive polynomial error function $f$
+such that the following holds for every admissible parameter tuple, every
+projective setting with error $\eps$, and every supplied joint-point witness
+with error $t$. Put $\rho=md/q$, $u=8t+C(\eps+\sqrt\eps)$, and let $r$ be
+the mass of nonzero $X$ directions in the product line-point law.
+For every directed opposite placement pair, the supplied completed points
+on the first placement and the actual $XZX$ paired-line POVM on the second
+satisfy
+\[
+ d_E\le f(\rho,u/r),\qquad
+ d\le r f(\rho,u/r)+\frac1{2q}.
+\]
+Here $d_E$ uses the normalized restricted law and answer order $(Z,X)$;
+$d$ uses the original product law and answer order $(X,Z)$.
+Both supplied marginal errors are retained. Only the proof law is restricted;
+the game, point witness, and line POVM are unchanged. This auxiliary does
+not assert an error independent of $t$ for arbitrary supplied points.
+\end{lemma}
+\begin{proof}
+\leanok
+Apply heterogeneous pasting with the actual $Z$ and $X$ line families,
+in that order, and the two supplied completed joint families with swapped
+answers. The collision error is $\rho$ on the restricted law. The two
+marginal defects are at most $u/r$, while joint consistency is at most
+$t/r\le u/r$; nonnegativity of $t$ follows from the witness's self-consistency
+inequality. The four register identities preserve the state and all defects.
+Pull the law back to its original line-point samples. Each duplicated line
+descriptor is then literally the descriptor of that sample; no assertion
+about questions outside the support is needed. The evaluated pasting output
+is the actual $XZX$ POVM, proving the first bound. Exchange both answers
+bijectively and use the proved mass-restoration inequality to obtain the
+second bound. No reverse marginal comparison or equality of the supplied
+families is used.
 \end{proof}
 
 \begin{lemma}[The constructed paired-line POVM]
