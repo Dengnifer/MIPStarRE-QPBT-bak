@@ -5000,3 +5000,98 @@ and the supplied API-max versus official-Ultra distinction remain preserved
 with provenance under results/telemetry/model-comparison/, without policy change
 or a causal latency/quality claim. Boundary report5556912589 was posted once for
 the previous04:30 observation;247<-237 native dependency is recorded.
+
+## 2026-09-06 - Archived primary event changes from 6f367190562a2622eee0ccc333d46127b2c91ee7
+
+Raw added/replacement blocks follow verbatim. Incoming historical rows
+remain unchanged; this archival restoration issues no new disposition.
+
+- Session orc-246-20260906-02 (role orc, difficulty: nontrivial faithful shared-algebra proof refactoring) implements normal PR255 review F1 from review 5124167850 at fe26d4ab1a19419594619b3e4b984eae2252f64b. Commit 815978233b44122e6c67c53e2b2770ecc1be9729 generalizes and exposes the existing quditQubitLabelEquiv and pauliProj_reindex_quditQubitLabelEquiv in PauliTheorems, uses them from both exists_qubitIsometry and the cube-indexed witness transport, and removes the duplicated algebra and label aliases from QubitForm. The audit has a dated supplement and actual PR255 metadata. Both files type-check; 21 fresh-source axiom checks use only propext, Classical.choice, and Quot.sound. The public source headers/docstrings match byte-for-byte, the original soundness proof hole remains, and normal commit hooks pass. No source statement is widened, no issue245 construction is duplicated, and F1 acceptance still requires independent review; this author session performs no review, adjudication, merge, or agent dispatch. Detached deterministic supervisor 3151470, child 3151480, is at stage aggregate, result running, for the exact repair head. The sequence is primary locked warm-worktree aggregate build, checked pr_open.py on the same PR255, remote-head verification, and primary ci.sh with the unchanged 14400-second build-lock wait; all failures stop it. Initial waiting owner was 3138050. Runtime state is ~/.cache/mipstarre-dev/sessions/orc-246-20260906-02.publication-state.txt, with .aggregate.log/.publish.log/.ci.log and the .publication.sh script beside it. No new remote CI or review success is claimed while publication is pending. Local configuration verifies primary gpt-6-astra/max, not server-side effort. No explicit session token allowance was supplied; the locally advertised context window is 258400. Observed 2026-09-06T13:07:18+08:00: wall=828s, resumed-session usage snapshot={"input_tokens":2256825,"cached_input_tokens":2129280,"cache_write_input_tokens":0,"output_tokens":17574,"reasoning_output_tokens":6598,"total_tokens":2274399}. The dispatcher records terminal time/tokens. No proof retry or model-service probe occurred; deterministic build-lock wait remains external delay. Review cap4, B7/B8, and #118 at 10/10 and 19931 seconds with its original anchor are unchanged. Lesson: generalize the shared finite-index algebra rather than reproducing inaccessible private proofs in a downstream soundness module.
+- orc-261-20260906-01 publication: two executions of the apply_patch symlink failed with ETXTBSY (Text file busy); the first chained pr_open.py consequently found no PR body and exited before publishing. The active executable inode was available via /proc, so a branch-private runtime copy named apply_patch restored the deterministic patch tool. No agent was spawned and no repository tool, proof, or commit was changed. Publication resumed through canonical pr_open.py and normal hooks; lesson: keep an executable replacement incident separate from mathematical/CI failure evidence.
+
+
+## 2026-09-06 — PR254 F1 public-import coverage repair
+
+Session `orc-244-20260906-02` resumed the existing issue244 author thread.
+Normal review `5124169631` on `0aa439066ee2d79c5c78a1a45f14d18530e5d317`
+reported F1: the 31 construction declarations were not reachable from the
+public root, so the previous green default build did not cover their module.
+The repair commit `7691c2cee6cf754c5add3661a15ec342799b1575` adds exactly one
+import to `MIPStarRE/QPBT.lean:51`. The default path is now `MIPStarRE` to
+`MIPStarRE.QPBT` to `MIPStarRE.QPBT.Combining.ExtendedLineGame`. No theorem,
+proof, given-witness restriction, original hole, paper-gap marker, or blueprint
+tag changed. The source and protected-file comparisons against the reviewed
+head are unchanged; the verdict is statement preservation, not completion of
+`lem:qld-4-7`. The passing-value and witness-existence obligations remain open.
+
+The construction source check passed without warnings in 9.34 seconds, and
+the edited public aggregate check passed without warnings in 5.90 seconds.
+Source-import traversal confirmed default-root reachability. A subsequent
+public-import Lean check resolved `strategy`, `strategy_value_eq`, and
+`projectiveStrategy_value` through `import MIPStarRE.QPBT` in 6.08 seconds.
+Proof-hole/bypass, whitespace, and hook-installation checks passed. Normal
+commit hooks passed; canonical primary `pr_open.py` then ran the ordinary
+checked-push gate, including aggregate-module rebuild and declaration checks,
+and adopted the same PR254. The PR description was minimally corrected to
+record F1 and its tests; no review checkbox or review/status evidence was
+hand-edited. The previous review remains tied to its old head.
+
+Publication completed at 2026-09-06T12:59:11+08:00,
+79 seconds after its detached driver started. The established
+command-local fresh-DNS SSH route retained the existing identity and host-key
+verification, with connection/server-alive bounds; no persistent Git, host,
+or protocol configuration changed. One publication attempt was observed in
+this resume, with no reported transport failure. Wrapper-internal retry
+counts are not exposed by the successful publication log.
+
+Primary exact-head CI is running for PR254 at the repair SHA. Remote verification
+at 13:00 +0800 found all nine `local-ci/*` contexts pending on that exact head,
+with no new-head review. Its log reports waiting for the machine-wide full-build
+lock held by PID `3078749`; the normal 14400-second wait is unchanged. Detached
+driver PID `3121415` has parent 1 and its own session. Runtime logs and terminal
+status files are under `~/.cache/mipstarre-dev/issue-244/import-fix/`; see
+`ci.log`, `status`, `exit-status` when present, and `publish-and-ci.sh`. No
+second full build, gate bypass, self-review, subagent, or merge was invoked.
+The original issue118/119 dependencies, exhausted mathematical budget, normal
+repair-cap policy, and owner B7/B8 holds were not changed.
+
+This snapshot is 2026-09-06T13:02:33+08:00,
+543 seconds into the resumed session, within its 900-second limit.
+The rollout records configured `gpt-6-astra` / `xhigh`; server-verified effort
+is unavailable. Available in-progress token-counter deltas since the resume
+boundary are `{"cache_write_input_tokens": 0, "cached_input_tokens": 1657600, "input_tokens": 1682140, "output_tokens": 8444, "reasoning_output_tokens": 4146, "total_tokens": 1690584}`. These are not terminal billing,
+and no remaining-token allowance is exposed. Final wall time and token usage
+are left to dispatcher telemetry. The full-build wait is detached rather than
+charged to repeated model polling. Next, the operator should collect the actual
+exact-head CI outcome; a green result or new independent approval is not claimed
+by this handoff.
+
+
+## 2026-09-06T06:28:46Z — Autonomous cycle, actual integration and separate admission incidents
+
+Main records the owner05:56 continuous reassessment duty and06:14 two-hour meta
+audit cadence in `owner-messages/qpbt-owner-autonomous-cycle-20260906.md`. Meta
+audits are verification only, not a scheduler or a condition for development.
+Existing PR260 carries the reviewed durable main-cycle guidance; no unrelated
+meta process or cron job was changed. Main owns useful task selection throughout.
+
+`useful-cycle-recovery-20260906.md` preserves separate queue1800/1200-second
+timeouts, the transient CLI launcher outage, GitHub DNS/transport recovery, and
+the interim waiters false positive on quoted historical error text. It records
+actual PR262 merge/local fast-forward and lossless restoration, B7 terminal
+disposition, assessed B8 attempt12, and the completed six-hourly estimate change.
+No fixture pass or temporary occupancy snapshot is labelled production queue
+completion. PR269 is published/CI-green and independently reviewing; actual
+reviewed installation and completion-triggered useful replacements remain gates.
+
+`model-comparison/queue-recovery-observations-20260906.json` preserves three
+executions/two threads/one episode with raw-capture hashes, selected effort,
+time, available counters, validation and service delays. Both max timeouts have
+unknown terminal usage; their cumulative shared-rollout observations are not
+added together. The xhigh publication inherited the max implementation, so this
+is not causal evidence comparing efforts. Original records are unchanged.
+
+Issue27 comment5557378277 is the single combined integration boundary report.
+The failure of the integration coordinator to give a final handoff after its
+1200-second timeout remains a failed session even though the detached daemon
+and subsequent preservation evidence independently establish successful actions.
