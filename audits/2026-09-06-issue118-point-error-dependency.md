@@ -117,9 +117,9 @@ All existing blueprint descendants in Chapters 15, 16, and 13, and the
 three prose references listed below, are retained. Two new auxiliary nodes
 are `lem:combined-line-polynomial-specialization` and
 `lem:subline-first-route-quantitative`. The source-labelled paired-line
-node retains `notready`: the new green auxiliary explicitly states the
-completed-answer comparison instead of marking the field-answer source
-entry as an additional formalized statement. No extended-line or
+node retains `notready`: the new green auxiliary states the scalar and
+register-symmetry estimates; the completed witness construction is described
+in prose without marking the field-answer source entry complete. No extended-line or
 global-pair source node is newly marked complete.
 
 Statement-integrity audit:
@@ -174,7 +174,7 @@ An independent floating-point sweep of the extremal power majorants checks
 including zero, unit, small, and large parameters and exponents above one.
 These computational checks supplement, and do not replace, the proofs.
 
-All **1873** web-generated blueprint declaration references resolve against
+All **1872** final web-generated blueprint declaration references resolve against
 the fresh private root artifact. Blueprint web generation passes with the
 inherited missing-bibliography warnings. The final static synchronization
 report retains **231 baseline stale entries** and **15 baseline header-only
@@ -182,6 +182,12 @@ proof-status entries**, rather than being claimed fully clean. The paper-gap
 note compiles with its bibliography to a fifteen-page PDF. Paper-gap style,
 blueprint LaTeX conventions, source-header integrity, added-line lengths,
 whitespace, and hook-installation checks pass.
+
+The normal commit hook initially rejected a theorem-level reference to the
+conditional `_ofPointsWitness` helper. Its mathematical contract remains
+explicit in prose, while the green auxiliary records the scalar estimates.
+The revised blueprint web build and declaration check pass, and normal
+hooks accept proof commit `f6a340c8dc3c12566d9312215c578939efeb8b4a`.
 
 At the validation cutoff, September 6, 2026, **01:58:59 UTC**, the session
 has used **2265 working seconds (37 minutes 45 seconds)**. Adding the
