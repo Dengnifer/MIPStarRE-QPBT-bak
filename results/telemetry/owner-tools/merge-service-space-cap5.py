@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bounded owner merge service for the active space/cap5 episode.
+"""Bounded owner merge service for the active relay-3/cap11 episode.
 
 The service is intentionally conservative: each tick records remote/main
 identity, dirty-primary and gate state, reports the oldest eligible PR age, and
@@ -10,8 +10,10 @@ pass. Refreshing stale branches remains a separate lane-owned operation.
 from __future__ import annotations
 
 import argparse
+from contextlib import redirect_stdout
 from datetime import datetime, timezone
 import fcntl
+import io
 import json
 import os
 from pathlib import Path
@@ -49,11 +51,11 @@ def remote_main() -> str:
 def runtime_gate() -> tuple[bool, str]:
     capacity = CACHE / "watchdog" / "primary-key-capacity"
     external = CACHE / "watchdog" / "primary-external-admission"
-    if not capacity.exists() or capacity.read_text().strip() != "5":
-        return False, "space capacity file is missing or not 5"
+    if not capacity.exists() or capacity.read_text().strip() != "11":
+        return False, "relay-3 capacity file is missing or not 11"
     if not external.exists() or external.read_text().strip() != "0":
         return False, "external admission gate is missing or not 0"
-    return True, "space cap5/external0 verified"
+    return True, "relay-3 cap11/external0 verified"
 
 
 def lock_quiet() -> tuple[bool, str]:
@@ -82,43 +84,44 @@ def _alarm(_signum: int, _frame: Any) -> None:
 def eligible_prs(remote: str) -> list[dict]:
     sys.path.insert(0, str(ROOT / "local" / "bin"))
     import gh_common
+    import pr_merge
 
     now = datetime.now(timezone.utc)
     result = []
     for pr in gh_common.api("pulls?state=open&per_page=100") or []:
-        if pr.get("draft"):
+        if pr.get("draft") is not False:
             continue
         number = int(pr["number"])
         head = pr.get("head", {}).get("sha")
         if not head:
             continue
         statuses = gh_common.latest_statuses(head)
-        if statuses.get("local-ci/summary", {}).get("state") != "success":
+        try:
+            with redirect_stdout(io.StringIO()):
+                pr_merge.check_ci(statuses, head)
+        except pr_merge.GateFailure:
             continue
-        if statuses.get("local-review/summary", {}).get("state") != "success":
+        reviews = gh_common.pr_reviews(number)
+        try:
+            # Keep selection aligned with the newest exact-head canonical verdict.
+            with redirect_stdout(io.StringIO()):
+                pr_merge.check_review(ROOT, number, head, reviews, statuses,
+                                      adjudicated=False)
+        except pr_merge.GateFailure:
             continue
-        marker = False
-        unresolved = 0
-        for review in gh_common.pr_reviews(number):
-            body = review.get("body") or ""
-            if f"head={head}" not in body:
-                continue
-            marker = True
-            if "VERDICT: APPROVED" in body or (
-                    "VERDICT: COMMENTED" in body and "- [ ]" not in body):
-                unresolved += body.count("- [ ]")
-                if unresolved == 0:
-                    fresh = subprocess.run(
-                        ["git", "-C", str(ROOT), "merge-base", "--is-ancestor",
-                         remote, head], timeout=READ_TIMEOUT_S).returncode == 0
-                    result.append(dict(number=number, head=head,
-                                       created=pr["created_at"],
-                                       pr_age_s=int((now - datetime.fromisoformat(
-                                           pr["created_at"].replace("Z", "+00:00"))).total_seconds()),
-                                       branch=pr["head"]["ref"], marker=marker,
-                                       fresh_against_remote=fresh,
-                                       eligibility_age_s=None))
-                    break
+        if any(review.get("state") == "CHANGES_REQUESTED"
+               and review.get("commit_id") == head for review in reviews):
+            continue
+        fresh = subprocess.run(
+            ["git", "-C", str(ROOT), "merge-base", "--is-ancestor",
+             remote, head], timeout=READ_TIMEOUT_S).returncode == 0
+        result.append(dict(number=number, head=head,
+                           created=pr["created_at"],
+                           pr_age_s=int((now - datetime.fromisoformat(
+                               pr["created_at"].replace("Z", "+00:00"))).total_seconds()),
+                           branch=pr["head"]["ref"], marker=True,
+                           fresh_against_remote=fresh,
+                           eligibility_age_s=None))
     return sorted(result, key=lambda row: row["created"])
 
 
@@ -169,8 +172,8 @@ def tick(merge: bool, interval: int = 300) -> dict:
                   eligible_count=len(candidate), fresh_count=len(fresh_candidates),
                   eligible_age_s=None, eligibility_budget_s=ELIGIBILITY_BUDGET_S,
                   eligibility_duration_s=eligibility_duration, read_failure=read_failure,
-                  external_admission=0, owner_total_limit=5,
-                  native_descendant_limit=4, hold_reasons=reasons,
+                  external_admission=0, owner_total_limit=11,
+                  native_descendant_limit=9, hold_reasons=reasons,
                   action="hold", duration_s=round(time.monotonic() - started, 3),
                   cadence_sleep_s=max(0, interval - round(time.monotonic() - started, 3)))
     if not reasons and oldest and merge:
@@ -212,7 +215,7 @@ def main() -> int:
         try:
             fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise SystemExit("space-cap5 merge service already owns its lock")
+            raise SystemExit("merge service already owns its shared lock")
         try:
             while True:
                 record = tick(args.merge, args.interval)

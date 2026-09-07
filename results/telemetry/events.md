@@ -5617,3 +5617,31 @@ not actual commit/publication hooks. No productive session was killed.
   ENOENT, EACCES, and EIO separately. This enforces the existing vanished-PID
   behavior and does not amend policy. Actual credential remains relay-3, Astra
   Ultra, three shared descendants/five total including VS Code, external0.
+
+## 2026-09-07 - Merge selector review ordering and main publication delay
+
+The owner reported that GitHub main had not advanced for two hours. At
+12:54 UTC, GitHub still reported a4b2a792 from 10:53:54 UTC. The service was
+alive with bounded five-minute ticks. The old cap5 guard mismatch had already
+been corrected during the cap11 transition; current ticks passed cap11 and
+external0. PR270 completed CI and independent review, then waited for owned
+telemetry to be preserved outside the primary working tree. The existing
+coordinator released that clean tree and the existing service merged PR270
+as a2f52f6d at 13:11:26 UTC. No merge gate was bypassed.
+
+A separate reproduced selector defect could hide a clean latest review behind
+an older review's unchecked findings, or repeatedly select an older approval
+despite a newer adverse verdict. Its loose head substring and checkbox parsing
+also differed from the canonical merge gate. The selector now calls
+pr_merge.check_ci and pr_merge.check_review with adjudicated=False, rejects
+same-head CHANGES_REQUESTED reviews, and requires draft=False. These enforce
+the existing evidence contract. Seventeen regression tests pass; the previous
+selector failed 45 assertions including parameterized cases.
+
+The source also records the already-authorized cap11/nine-descendant runtime
+guard under its historical filename. The tested replacement was installed
+after PR270 merged, at 13:12:28 UTC, PID1354901. Its shared lock, journal,
+cadence, freshness and worktree checks, and canonical merge authority remain
+unchanged. Runtime receipt: ~/.cache/mipstarre-dev/owner-tools/
+merge-selector-fix-20260907.json. This repair does not explain the entire
+earlier delay; it removes an independently verified scheduling defect.
