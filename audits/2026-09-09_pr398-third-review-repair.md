@@ -89,11 +89,50 @@ default witness, external premise, or duplicate foundational proof.
   POVM and its two axis-support theorems. Each uses only `propext`,
   `Classical.choice`, and `Quot.sound`.
 - `texra-blueprint bbl` and `leanblueprint web` passed.
+- `texra-blueprint --root . paper-gaps check` passed.
 - `lake exe checkdecls blueprint/lean_decls` resolved all 1,675 declarations.
 - Hook installation/check and `git diff --check` passed.
+- A full `lake build` passed (9,170 jobs) on implementation commit
+  `35ab7198c27968c38780a6fa8c7f44f0b2ad54ac`, through the primary checkout's
+  `warm-worktree.sh --build --skip-packages --lock-timeout 1`. The helper
+  retained the populated branch cache and acquired the machine-wide lock.
+  The later audit update changes no Lean or blueprint source.
 
-Publication and canonical CI evidence belong to the resulting commit's GitHub
-statuses. No fourth review is dispatched by this repair.
+## Publication obstruction
+
+The primary checkout's `checked-push.sh` completed its changed-file Lean,
+statement-integrity, blueprint-rendering, and forward declaration-sync checks,
+then failed in the reverse-coverage invocation of
+`scripts/blueprint_lean_sync.py`. That script uses
+`git diff --merge-base origin/main HEAD`, which fails with
+`fatal: multiple merge bases found`. At the time of the attempt, `origin/main`
+was `550b392f3f62b4a9f2f821cb728e50133ceff288`; its two best common ancestors
+with the repair were:
+
+- `ffd964652f53b82315cabdcd42b63a6ef08c0663`;
+- `2cc44385ac07b34bd0e3b023c35afd6c95ba4a87`.
+
+Publication therefore never reached push transport. GitHub PR 398 still had
+head `c9784bc726ddcc9283449bb60746fab98b0d15b5`. A subsequent invocation of
+the primary `ci.sh 398 --worktree ...` exited 2 at its exact-head precondition
+and posted no statuses. The same reverse-coverage implementation is present in
+the primary checkout, so merely selecting the primary helper does not resolve
+the failure. No hook bypass, ref rewrite, history merge, workflow patch, or
+fourth review was attempted. Main must resolve the publication obstruction
+within its workflow scope before scheduling canonical CI and disposing of the
+three existing reviews.
+
+Runtime evidence under `~/.cache/mipstarre-dev/`:
+
+- `prover-395-20260909-01-push.log`: complete guarded-publication failure;
+- `prover-395-20260909-01-ci.log`: canonical CI refusal;
+- `logs/worktree-build-20260909T082122Z-1484468.log`: successful full build;
+- `prover-395-20260909-01/telemetry/builds.jsonl`: build telemetry, retained
+  for main to incorporate without this bounded worker writing to main.
+
+This section records the workflow incident for main's telemetry handoff;
+repository edits in this session remain within the authorized mathematical
+repair and audit scope.
 
 ## Unchanged open obligations
 
