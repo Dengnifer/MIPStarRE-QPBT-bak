@@ -1075,7 +1075,7 @@ analyzed, together with candidate repairs, in
 	\lean{MIPStarRE.QPBT.combineLinePoly}
 	\lean{MIPStarRE.QPBT.combineLinePolynomial_natDegree_le}
 	\lean{MIPStarRE.QPBT.IsCombineLineCompatible, MIPStarRE.QPBT.combineLinePoly_spec}
-	\notready
+	\leanok
 	\uses{def:polyfunc, def:line, def:ideg-deg-polynomials}
 	For $f, g \in \mathrm{ideg}_{d,m}(\F_q)$, the polynomial
 	$\mathrm{combine}_{f,g} \in \mathrm{ideg}_{d,2m+2}(\F_q)$ is defined by
@@ -1108,8 +1108,6 @@ analyzed, together with candidate repairs, in
 
 \begin{lemma}[Combined point measurement on the extended coordinates]
 	\label{lem:qld-4-12}
-	\lean{MIPStarRE.QPBT.CombinedPointsWitness.extendedQ}
-	\lean{MIPStarRE.QPBT.extendedQ_spec}
 	\notready
 	\uses{lem:qld-4-10, def:expanded-state, def:expanded-point-measurement,
 		def:povm-distance, def:symmetric-equivalents}
@@ -1150,7 +1148,7 @@ analyzed, together with candidate repairs, in
 	Furthermore, all symmetric equivalents of these approximations also hold.
 \end{lemma}
 \begin{proof}
-	\uses{lem:qld-4-10, fact:data-processing}
+	\uses{lem:qld-4-10, lem:extended-points-from-supplied-measurements}
 	Define
 	$\hat{Q}^{x,z,\alpha,\beta}_{c}
 	= \sum_{a,b \,:\, \alpha a + \beta b = c} \hat{Q}^{x,z}_{a,b}$,
@@ -1159,8 +1157,96 @@ analyzed, together with candidate repairs, in
 	point of $\F_q^{2m+2}$ has uniformly random coordinates $(x,z)$, so the
 	self-consistency and consistency properties follow from those of
 	$\{\hat{Q}^{x,z}_{a,b}\}$ established in Lemma~\ref{lem:qld-4-10}
-	together with Lemma~\ref{fact:data-processing}, which shows that
-	coarse-graining the outcomes preserves the $\delta_Q$ bounds.
+	together with the affine coarse-graining and placement identities in
+	Lemma~\ref{lem:extended-points-from-supplied-measurements}, which preserve
+	the $\delta_Q$ bounds after averaging over the scalar coefficients.
+\end{proof}
+
+\begin{lemma}[Formalization support for affine coarse-graining]
+	\label{lem:affine-coarse-graining}
+	\lean{MIPStarRE.QPBT.opFamilyDistSq_uniform_affine_postprocess_le}
+	\leanok
+	\uses{def:povm-distance}
+	This formalization-only auxiliary is not a named statement of the paper;
+	it isolates the averaging calculation used in the proof of
+	Lemma~\ref{lem:qld-4-12}. Let $K$ be a finite field, $X$ a nonempty finite
+	set, and $A^x_{a,b},B^x_{a,b}$ two operator families on a finite-dimensional
+	Hilbert space with equal totals for every $x\in X$:
+	$\sum_{a,b}A^x_{a,b}=\sum_{a,b}B^x_{a,b}$. For any vector $\psi$,
+	\[
+		\E_{x,\alpha,\beta}\sum_{c\in K}
+		\Bigl\|\sum_{\alpha a+\beta b=c}
+		(A^x_{a,b}-B^x_{a,b})\psi\Bigr\|^2
+		\leq \E_x\sum_{a,b\in K}
+		\|(A^x_{a,b}-B^x_{a,b})\psi\|^2,
+	\]
+	where all averages are uniform. Positivity, projectivity, and normalization
+	of $\psi$ are not required.
+\end{lemma}
+\begin{proof}
+	\leanok
+	Two distinct pairs have equal scalar images with probability $1/|K|$.
+	Expanding the squared norm and using the equality of totals shows that the
+	left side equals $1-1/|K|$ times the right side.
+\end{proof}
+
+\begin{lemma}[Formalization support for register placement and completeness]
+	\label{lem:placement-completeness}
+	\lean{MIPStarRE.QPBT.place_sum}
+	\lean{MIPStarRE.QPBT.sum_placed_measurement_eq_one}
+	\lean{MIPStarRE.QPBT.sum_placed_measurement_products_eq_one}
+	\leanok
+	\uses{def:expanded-state, def:povm-conventions}
+	These formalization-only identities are not named statements of the paper;
+	they supply the equal totals needed in the proof of
+	Lemma~\ref{lem:qld-4-12}. In a projective QPBT setting, let $p$ be any
+	register placement and $A_a$ any finite operator family on its local space.
+	Then $(\sum_a A_a)_p=\sum_a(A_a)_p$. For complete measurements $M,N$ on
+	that space,
+	\[
+		\sum_a(M_a)_p=I,
+		\qquad \sum_{a,b}(M_aN_b)_p=I.
+	\]
+	The ordered-product identity requires no commutation assumption.
+\end{lemma}
+\begin{proof}
+	\leanok
+	Placement is linear and preserves the identity. Distribute the finite
+	product sum and use $\sum_a M_a=\sum_b N_b=I$.
+\end{proof}
+
+\begin{lemma}[Formalization support for extended points from supplied measurements]
+	\label{lem:extended-points-from-supplied-measurements}
+	\lean{MIPStarRE.QPBT.CombinedPointsWitness.extendedQ}
+	\lean{MIPStarRE.QPBT.extendedQ_spec}
+	\leanok
+	\uses{lem:qld-4-10, def:expanded-state, def:expanded-point-measurement,
+		def:povm-distance, def:symmetric-equivalents}
+	This formalization-only conditional result is not the existence assertion
+	of Lemma~\ref{lem:qld-4-12}. Fix a projective QPBT setting and
+	$\delta\in\R$. Suppose that complete projective joint point measurements
+	$\{\hat Q^{x,z}_{a,b}\}$ on both players' expanded spaces are supplied,
+	with all three squared-distance bounds of Lemma~\ref{lem:qld-4-10}
+	bounded by $\delta$, including both ordered products and all directed
+	opposite placements. Define
+	\[
+		\hat Q^{x,z,\alpha,\beta}_c
+		=\sum_{\alpha a+\beta b=c}\hat Q^{x,z}_{a,b}.
+	\]
+	These measurements are projective and satisfy all three bounds displayed
+	in Lemma~\ref{lem:qld-4-12}, with $\delta$ in place of $\delta_Q$, and
+	all their symmetric equivalents. To obtain the source existence theorem,
+	one must first construct the supplied joint measurements from the QPBT
+	hypotheses as asserted in Lemma~\ref{lem:qld-4-10}; that construction
+	remains unfinished.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:affine-coarse-graining, lem:placement-completeness}
+	Coarse-graining a projective measurement preserves projectivity. The
+	placement identities give total identity for each measurement and for each
+	ordered product. Apply the affine coarse-graining inequality to each of
+	the three supplied bounds, for every directed opposite placement.
 \end{proof}
 
 \begin{lemma}[Combined line measurement on the extended coordinates]
@@ -2014,6 +2100,100 @@ projective measurement whose outcomes are pairs of global polynomials.
 	candidate repairs are analyzed in
 	\cite{gap:qpbt_ld-dimension-divisibility}.
 \end{remark}
+
+\begin{lemma}[Formalization support for extended line-point branch rejection]
+	\label{lem:extended-line-point-branch-rejection}
+	\lean{MIPStarRE.QPBT.ExtendedLineGame.dline_point_rejection_eq_completedLinePointDefect}
+	\lean{MIPStarRE.QPBT.ExtendedLineGame.point_aline_rejection_eq_completedLinePointDefect}
+	\leanok
+	\uses{lem:qld-4-13-established, def:consistency, def:expanded-state, def:ld-game}
+	These formalization-only identities are not named statements of the paper;
+	they support the strategy construction at the start of the proof of
+	Lemma~\ref{lem:qld-4-7}. Fix admissible $(q,m,d)$ and a projective QPBT
+	setting. Suppose combined point measurements with the three bounds of
+	Lemma~\ref{lem:qld-4-10} and extended-line POVMs with the degree condition
+	and directly indexed completed-answer bounds described in
+	Lemma~\ref{lem:qld-4-13-established} are supplied, with errors $\delta_Q$
+	and $\delta_L$, respectively.
+	Let $\sigma$ be the resulting strategy for the directly indexed game with
+	parameters $(q,2m+2,d,1)$ in the associated paired state. Write
+	$\widetilde Q^{\ell,u}_a$ for completed line evaluation at $u$ and
+	$\widetilde Q^u_b$ for the extended point measurement, both with outcome
+	alphabet $\F_q\cup\{\bot\}$. For a line-point distribution $\mu$, set
+	\[
+		\Delta^{p_1,p_2}_\mu
+		=\E_{(\ell,u)\sim\mu}\sum_{a\ne b}
+		\langle\hat\psi|
+		(\widetilde Q^{\ell,u}_a)_{p_1}(\widetilde Q^u_b)_{p_2}
+		|\hat\psi\rangle.
+	\]
+	Then the conditional branch rejection probabilities satisfy
+	\begin{align*}
+		\Pr_\sigma[\mathrm{reject}\mid(\mathrm{DLine},\mathrm{Point})]
+		&=\Delta^{\mathsf{AA}',\mathsf{BA}''}_{D_{\mathrm{DLine}}},\\
+		\Pr_\sigma[\mathrm{reject}\mid(\mathrm{Point},\mathrm{ALine})]
+		&=\Delta^{\mathsf{BB}',\mathsf{AB}''}_{D_{\mathrm{ALine}}}.
+	\end{align*}
+	Here the two laws are the directly indexed diagonal and axis line-point
+	laws in dimension $2m+2$. Undefined evaluations, including those for zero
+	diagonal directions, remain the outcome $\bot$ and contribute to rejection.
+\end{lemma}
+\begin{proof}
+	\leanok
+	Rejection is disagreement of the evaluated line answer and the point
+	answer. Coarse-graining the answer measurements and transporting their
+	correlations from the paired state to the indicated six-register
+	placements gives each identity. For the reversed branch, use the second
+	register correlation; no symmetry of the strategy is assumed.
+\end{proof}
+
+\begin{lemma}[Formalization support for nonnegativity of the supplied errors]
+	\label{lem:combining-error-nonnegativity}
+	\lean{MIPStarRE.QPBT.CombinedPointsWitness.delta_nonneg}
+	\lean{MIPStarRE.QPBT.ExtendedLineGame.completedLinePointDefect_aaBa_nonneg}
+	\lean{MIPStarRE.QPBT.ExtendedLinesWitness.delta_nonneg}
+	\leanok
+	\uses{lem:extended-line-point-branch-rejection, def:povm-distance}
+	These formalization-only estimates are not named statements of the paper;
+	they concern the supplied measurements used for
+	Lemmas~\ref{lem:qld-4-10} and~\ref{lem:qld-4-13}. For supplied combined
+	point measurements with the three bounds of Lemma~\ref{lem:qld-4-10},
+	the error satisfies $\delta_Q\geq0$. If extended-line measurements as in
+	Lemma~\ref{lem:extended-line-point-branch-rejection} are also supplied,
+	then $\Delta^{\mathsf{AA}',\mathsf{BA}''}_\mu\geq0$ for every finite
+	nonnegative line-point distribution $\mu$, without a normalization
+	assumption on $\mu$, and $\delta_L\geq0$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	The point self-consistency distance is a sum of squared norms and is
+	bounded by $\delta_Q$. Each summand in the completed line-point defect
+	is a correlation of positive POVM effects on separate tensor factors in
+	the associated paired state, hence is nonnegative. The supplied bound on
+	that defect for the equal axis-diagonal mixture implies $\delta_L\geq0$.
+\end{proof}
+
+\begin{lemma}[Formalization support for the extended coefficient-collision loss]
+	\label{lem:extended-direct-coefficient-loss}
+	\lean{MIPStarRE.QPBT.extendedDirectLd_coefficientCollisionLoss_le_five_mul}
+	\leanok
+	\uses{def:admissible}
+	This formalization-only scalar estimate is not a named statement of the
+	paper. It combines the collision losses for the axis and diagonal
+	coefficient answers of the directly indexed game used in the construction
+	for Lemma~\ref{lem:qld-4-7}. Their degrees are $d$ and $(2m+2)d$,
+	respectively, as specified by the coefficient answer format in
+	Section~8 of \cite{Ji2020MIPStar}. For every admissible $(q,m,d)$,
+	\[
+		\frac{d+(2m+2)d}{q}\leq5\frac{md}{q}.
+	\]
+	Only admissibility of the original parameters is assumed.
+\end{lemma}
+\begin{proof}
+	\leanok
+	Admissibility gives $m\geq1$ and $q>0$. Thus $2m+3\leq5m$;
+	multiply by $d\geq0$ and divide by $q$.
+\end{proof}
 
 % The two lemmas below are not statements of the source; they record the
 % coordinate change for the LDT consistency conclusions and the compression of

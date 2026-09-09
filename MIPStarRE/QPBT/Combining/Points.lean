@@ -66,9 +66,12 @@ private theorem place_finset_sum {P : AdmissibleParams} {ε : ℝ}
     Finset.sum_mul, Finset.mul_sum]
 
 set_option maxHeartbeats 1600000 in
-/-- Projectivity and the three data-processed consistency guarantees for
-`CombinedPointsWitness.extendedQ`.  This is `lem:qld-4-12`, paper lines
-993--1011; the `XZ` and `ZX` source products remain separate. -/
+/-- Given projective joint point measurements with the three consistency bounds,
+their scalar coarse-graining is projective and retains those bounds, for both
+ordered products. This is formalization-only support for `lem:qld-4-12`, paper
+lines 993--1018, recorded in blueprint `lem:extended-points-from-supplied-measurements`.
+The source existence conclusion still requires the joint point construction of
+`lem:qld-4-10`; this theorem assumes those measurements. -/
 theorem extendedQ_spec {P : AdmissibleParams} {ε δ : ℝ}
     {S : ProjectiveSetting P ε} (points : CombinedPointsWitness S δ) :
     (∀ side x z alpha beta,

@@ -42,7 +42,7 @@ private theorem linePolynomialOfCoefficients_injective_at_degree
 /-- Two distinct direct coefficient vectors of degree at most `degree` agree
 at a uniformly sampled parameter with probability at most `degree / q`.
 
-This is a Lean-only auxiliary. The cited paper passages describe the coefficient
+This is a formalization-only auxiliary. The cited paper passages describe the coefficient
 answer format and apply Schwartz-Zippel to a later multivariate collision term;
 they do not state this exact univariate averaging bound.
 

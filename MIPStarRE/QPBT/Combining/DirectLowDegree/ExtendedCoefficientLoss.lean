@@ -18,7 +18,7 @@ namespace MIPStarRE.QPBT
 /-- The axis loss `d/q` plus the diagonal loss `(2m+2)d/q` at the extended
 direct parameters is at most five times the original loss `md/q`.
 
-This is a Lean-only scalar auxiliary for combining the two coefficient-POVM
+This is a formalization-only scalar estimate for combining the two coefficient-POVM
 consistency estimates. It uses only admissibility of the original parameters. -/
 theorem extendedDirectLd_coefficientCollisionLoss_le_five_mul
     (P : AdmissibleParams) :

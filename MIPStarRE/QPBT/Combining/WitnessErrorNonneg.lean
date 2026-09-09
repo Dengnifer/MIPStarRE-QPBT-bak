@@ -27,9 +27,9 @@ open MIPStarRE.Quantum
 
 noncomputable section
 
-/-- This formalization-only auxiliary records that the error parameter of a supplied
-`CombinedPointsWitness` is nonnegative. It supports `lem:qld-4-10`, paper lines
-689--709, and does not construct or assert existence of the witness. -/
+/-- This formalization-only auxiliary records that the error parameter of supplied
+combined point measurements is nonnegative. It supports `lem:qld-4-10`, paper lines
+689--709, and does not construct or assert existence of the measurements. -/
 theorem CombinedPointsWitness.delta_nonneg {P : AdmissibleParams} {epsilon deltaQ : ℝ}
     {setting : ProjectiveSetting P epsilon}
     (points : CombinedPointsWitness setting deltaQ) :
@@ -50,9 +50,9 @@ variable {setting : ProjectiveSetting P epsilon}
 variable {points : CombinedPointsWitness setting deltaQ}
 
 /-- This formalization-only auxiliary records nonnegativity of the completed
-`AA'`--`BA''` line-point defect for a supplied `ExtendedLinesWitness`. It supports
+`AA'`--`BA''` line-point defect for supplied extended-line measurements. It supports
 `lem:qld-4-13`, paper lines 1020--1034, by expressing the correlation terms as
-those of genuine POVMs on `pairState setting`; it does not construct the witness. -/
+those of genuine POVMs in the associated paired state; it does not construct the measurements. -/
 theorem completedLinePointDefect_aaBa_nonneg
     (lines : ExtendedLinesWitness setting points deltaL)
     (mu : Distribution
@@ -103,9 +103,9 @@ theorem completedLinePointDefect_aaBa_nonneg
 
 end ExtendedLineGame
 
-/-- This formalization-only auxiliary records that the error parameter of a supplied
-`ExtendedLinesWitness` is nonnegative. It supports `lem:qld-4-13`, paper lines
-1020--1034, and does not construct or assert existence of the witness. -/
+/-- This formalization-only auxiliary records that the error parameter of supplied
+extended-line measurements is nonnegative. It supports `lem:qld-4-13`, paper lines
+1020--1034, and does not construct or assert existence of the measurements. -/
 theorem ExtendedLinesWitness.delta_nonneg {P : AdmissibleParams}
     {epsilon deltaQ deltaL : ℝ} {setting : ProjectiveSetting P epsilon}
     {points : CombinedPointsWitness setting deltaQ}

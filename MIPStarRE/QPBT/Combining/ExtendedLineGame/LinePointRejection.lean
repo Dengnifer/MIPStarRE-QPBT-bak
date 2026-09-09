@@ -4,11 +4,11 @@ import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
 # Line/point rejection for the extended direct game
 
 This module identifies the axis-line/point, diagonal-line/point, and reversed
-point/axis-line branch rejections of the strategy constructed from an
-`ExtendedLinesWitness` with the corresponding completed line-point defects.
+point/axis-line branch rejections of the strategy constructed from the supplied
+extended-line measurements with the corresponding completed line-point defects.
 These are finite postprocessing and state-transport steps in the first
 paragraph of the proof of `lem:qld-4-7`; they do not establish a passing-value
-bound or construct the supplied witness.
+bound or construct the supplied measurements.
 
 ## References
 
@@ -39,8 +39,8 @@ variable {points : CombinedPointsWitness setting deltaQ}
 private def onlyCoordinate : Fin P.extendedDirectLd.k :=
   ⟨0, by change 0 < 1; decide⟩
 
-/-- Evaluate an axis-line answer at the sampled point, returning `none` for
-invalid answer formats or evaluations. -/
+/-- Evaluate an axis-line answer at the sampled point, returning the distinguished
+undefined outcome for invalid answer formats or evaluations. -/
 private def axisGameRead
     (sample : DirectLdSpace P.extendedDirectLd) :
     DirectLdAnswer P.extendedDirectLd → Option (PauliScalar P)
@@ -49,8 +49,8 @@ private def axisGameRead
         (coeffs onlyCoordinate)).map (extendedDirectScalarEquiv P)
   | _ => none
 
-/-- Read the unique coordinate of a point-format answer, returning `none` for
-other answer formats. -/
+/-- Read the unique coordinate of a point-format answer, returning the distinguished
+undefined outcome for other answer formats. -/
 private def pointGameRead :
     DirectLdAnswer P.extendedDirectLd → Option (PauliScalar P)
   | .pointVals values => some (extendedDirectScalarEquiv P (values onlyCoordinate))
@@ -360,8 +360,8 @@ theorem aline_point_rejection_eq_completedLinePointDefect
         (directALinePointDist P.extendedDirectLd) :=
       (completed_defect_eq_read_defect lines).symm
 
-/-- Evaluate a completed diagonal answer at the sampled point, returning `none` for
-other answer formats or when the evaluation is undefined. -/
+/-- Evaluate a completed diagonal answer at the sampled point, returning the distinguished
+undefined outcome for other answer formats or when the evaluation is undefined. -/
 private def diagonalGameRead
     (sample : DirectLdSpace P.extendedDirectLd) :
     DirectLdAnswer P.extendedDirectLd → Option (PauliScalar P)
@@ -610,7 +610,7 @@ private theorem diagonal_completed_defect_eq_read_defect
 
 /-- The diagonal-line/point branch rejection of the supplied strategy is exactly
 the `AA'`--`BA''` completed line-point defect. This includes zero diagonal
-directions: failed completed evaluation remains the `none` outcome and
+directions: failed completed evaluation remains the distinguished undefined outcome $\bot$ and
 contributes to rejection rather than being replaced by a scalar value. -/
 theorem dline_point_rejection_eq_completedLinePointDefect
     (lines : ExtendedLinesWitness setting points deltaL) :
