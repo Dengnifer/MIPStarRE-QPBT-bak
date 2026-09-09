@@ -183,13 +183,25 @@ combines it with \path{exists_combinedPointsWitness}.  Until those construction
 obligations are recovered and checked, both theorem proofs remain explicit proof
 obligations rather than bridge assumptions.
 
-At the time of this repair, \path{exists_conditioned_polynomial_bound} is already
-available in \path{MIPStarRE/QPBT/Combining/ErrorBounds.lean}.  The remaining
-proof extension is a focused modular recovery of the XZX measurement definition,
-its two axis-degree lemmas, \path{exists_combinedLine_restored_defect_le},
-\path{nondegenerateLinePastingMass_bounds}, and
-\path{consistencyDefect_opposite_symm}.  It must reuse the current pasting and
-line-measurement APIs rather than importing the protected monolithic file.
+The XZX POVM of the source passage at lines 942--949 is constructed for both
+players and every pair of lines. Its effects have the stated XZX form, and
+exchanging the two outcome coordinates identifies it with the one-sided pasted
+measurement. Both axis-degree support properties are proved: an outcome has
+zero effect whenever either axis-parallel component has degree greater than
+$d$. These assertions are formalized by \path{combinedLineMeasurement}, its
+effect identity and pasting identity, and
+\path{combinedLineMeasurement_axis_degree_X} and
+\path{combinedLineMeasurement_axis_degree_Z} in
+\path{MIPStarRE/QPBT/Combining/Lines/CombinedMeasurement.lean}.
+The scalar result \path{exists_conditioned_polynomial_bound} is also proved in
+\path{MIPStarRE/QPBT/Combining/ErrorBounds.lean}.
+
+The remaining obligations are the conditioned defect estimate
+\path{exists_combinedLine_restored_defect_le}, the conditioning-mass bounds
+\path{nondegenerateLinePastingMass_bounds}, and the opposite-placement symmetry
+\path{consistencyDefect_opposite_symm}, followed by the two combined-line
+existence proofs. The completed POVM construction and its axis support do not
+establish these consistency estimates.
 
 \section{The source assertion and the two routes}
 

@@ -36,9 +36,9 @@ point-witness family supporting `lem:qld-xz-lines`.
 `lem:qld-xz-lines`, from
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:882-894`.
 The error depends polynomially on `ε` and `md/q`, and the witness retains all
-directed opposite-placement comparisons.  This Lean-only conditional form takes
+directed opposite-placement comparisons. This formalization-only auxiliary fixes
 the point-error function and its polynomial bound before choosing the line-error
-function.  The witness at strategy error `ε` must have error `deltaQ ε`.
+function. The witness at strategy error `ε` must have error `deltaQ ε`.
 
 **Domain repair (issue #389):** The former statement quantified an arbitrary
 scalar point error after choosing `deltaP`, although the pasting estimate depends

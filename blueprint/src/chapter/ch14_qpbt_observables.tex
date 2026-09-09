@@ -1692,6 +1692,7 @@ variants.
 	\label{lem:qld-comm-line-cons}
 	\lean{MIPStarRE.QPBT.deltaLine, MIPStarRE.QPBT.deltaLine_isPolyErr}
 	\lean{MIPStarRE.QPBT.expLine_self_cons, MIPStarRE.QPBT.expLine_point_cons}
+	\lean{MIPStarRE.QPBT.expLine_point_cons_linear}
 	\lean{MIPStarRE.QPBT.expLine_point_cons', MIPStarRE.QPBT.exists_deltaLine}
 	\lean{MIPStarRE.QPBT.ExpandedLineConclusions}
 	\lean{MIPStarRE.QPBT.ProjectiveSetting.lineEvalMeasExp}
@@ -1848,7 +1849,7 @@ variants.
 	equivalents follow from
 	Lemma~\ref{lem:symmetric-equivalents-transfer}.
 
-	The formalization uses an equivalent order of the estimates. The exact
+	An equivalent argument reverses the order of the estimates. The exact
 	Pauli overlap computation identifies the inconsistency of the expanded
 	evaluation classes with that of the strategy's original completed
 	evaluation classes. Applying the winning implication and the
@@ -1860,8 +1861,8 @@ variants.
 	$\eps\leq\sqrt{\eps}$ when $0\leq\eps\leq 1$ and
 	$1\leq\sqrt{\eps}$ when $\eps\geq 1$.
 	The four directed opposite-placement pairs are proved separately by
-	their explicit bipartition identities. Thus the Lean proof does not
-	rely on the symmetric-equivalent transfer lemma or the intermediate
+	their explicit bipartition identities. Thus this argument does not
+	require the symmetric-equivalent transfer lemma or the intermediate
 	sub-measurement inequality in the preceding source argument.
 \end{proof}
 

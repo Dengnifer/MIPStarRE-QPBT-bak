@@ -174,19 +174,61 @@ theorem expLine_self_cons :
       (by simpa only [Placement.side] using
         ProjectiveSetting.expLineDist_abBb_le_four S W)
 
+/-- An expanded line effect is consistent with itself followed by its selected
+expanded point effect, with error linear in `ε` and a universal constant for
+all directed opposite placements. This is the intermediate estimate
+`eq:qld-comm-line-pt-cons-eps` in the proof of `lem:qld-comm-line-cons`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:560-596`,
+blueprint `eq:qld-comm-line-pt-cons`. The completed evaluation convention also
+includes outcomes without a value at the sampled point. -/
+theorem expLine_point_cons_linear :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+        (p₁ p₂ : Placement), p₁.IsOpposite p₂ → ∀ W : PauliKind,
+        opFamilyDistSq (linePointDist P.toLdParams)
+          (fun sample f => S.place p₁
+            ((S.lineMeasExp p₁.side W sample.1).effect f))
+          (fun sample f =>
+            S.place p₁ ((S.lineMeasExp p₁.side W sample.1).effect f) *
+              S.place p₂ (S.expPointEffectAtLineAnswer p₂.side W
+                sample.1 sample.2 f))
+          S.psiHat ≤ C * ε := by
+  obtain ⟨C₁, hC₁, h₁⟩ := win_low_degree
+  obtain ⟨C₂, hC₂, h₂⟩ := WinImplications.win_low_degree_interchanged_proof
+  refine ⟨2 * (C₁ + C₂), by linarith, ?_⟩
+  intro P ε S p₁ p₂ hopp W
+  have hε : 0 ≤ ε := S.eps_nonneg
+  have h₁' := (h₁ P ε S hε W).trans
+    (mul_le_mul_of_nonneg_right (show C₁ ≤ C₁ + C₂ by linarith) hε)
+  have h₂' := (h₂ P ε S hε W).trans
+    (mul_le_mul_of_nonneg_right (show C₂ ≤ C₁ + C₂ by linarith) hε)
+  have htwo : (0 : ℝ) ≤ 2 := by norm_num
+  cases p₁ <;> cases p₂ <;> simp only [Placement.IsOpposite] at hopp
+  · simpa only [Placement.side, mul_assoc] using
+      ((ProjectiveSetting.linePointDist_aaBa_le S W).trans
+      (ProjectiveSetting.evalClassDist_aaBa_le S W)).trans
+      (mul_le_mul_of_nonneg_left h₁' htwo)
+  · simpa only [Placement.side, mul_assoc] using
+      ((ProjectiveSetting.linePointDist_baAa_le S W).trans
+      (ProjectiveSetting.evalClassDist_baAa_le S W)).trans
+      (mul_le_mul_of_nonneg_left h₂' htwo)
+  · simpa only [Placement.side, mul_assoc] using
+      ((ProjectiveSetting.linePointDist_bbAb_le S W).trans
+      (ProjectiveSetting.evalClassDist_bbAb_le S W)).trans
+      (mul_le_mul_of_nonneg_left h₂' htwo)
+  · simpa only [Placement.side, mul_assoc] using
+      ((ProjectiveSetting.linePointDist_abBb_le S W).trans
+      (ProjectiveSetting.evalClassDist_abBb_le S W)).trans
+      (mul_le_mul_of_nonneg_left h₁' htwo)
+
 /-- An expanded line effect is consistent with itself followed by the expanded
 point effect selected by its value at the sampled point. This is item 2 of
 `lem:qld-comm-line-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:534-539`, blueprint
 `eq:qld-comm-line-pt-cons`.
 
-The estimate established below is linear in `ε`, matching the error `ε` with
-which the source states this item. Combined with the universal bound `4` on the
-distance between two placed complete measurements, it is weakened by
-`le_mul_sqrt_of_le_mul_of_le_four` to the square-root form `C * √ε`, so that the
-three items of the lemma share the single error function `deltaLine ε = √ε`
-that the source requires; for `ε ≤ 1` the linear bound is the stronger
-statement. -/
+The linear estimate `expLine_point_cons_linear` and the uniform distance bound
+`4` give the common square-root error of the three conclusions. -/
 theorem expLine_point_cons :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -199,51 +241,20 @@ theorem expLine_point_cons :
               S.place p₂ (S.expPointEffectAtLineAnswer p₂.side W
                 sample.1 sample.2 f))
           S.psiHat ≤ C * deltaLine ε := by
-  obtain ⟨C₁, hC₁, h₁⟩ := win_low_degree
-  obtain ⟨C₂, hC₂, h₂⟩ := WinImplications.win_low_degree_interchanged_proof
-  refine ⟨2 * (C₁ + C₂) + 4, by linarith, ?_⟩
+  obtain ⟨C, hC, hlinear⟩ := expLine_point_cons_linear
+  refine ⟨C + 4, by linarith, ?_⟩
   intro P ε S p₁ p₂ hopp W
-  have hε : 0 ≤ ε := S.eps_nonneg
-  have key : ∀ (x a : ℝ), 1 ≤ a → a ≤ C₁ + C₂ → 0 ≤ x → x ≤ 2 * (a * ε) →
-      x ≤ 4 → x ≤ (2 * (C₁ + C₂) + 4) * deltaLine ε := by
-    intro x a ha haC hx0 hxa hx4
-    calc
-      x ≤ (2 * a + 4) * Real.sqrt ε :=
-        le_mul_sqrt_of_le_mul_of_le_four (by linarith) hx0
-          (by rw [mul_assoc]; exact hxa) hx4
-      _ ≤ (2 * (C₁ + C₂) + 4) * Real.sqrt ε := by
-        apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg ε)
-        linarith
-  have htwo : (0 : ℝ) ≤ 2 := by norm_num
+  apply le_mul_sqrt_of_le_mul_of_le_four hC
+    (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) (hlinear P ε S p₁ p₂ hopp W)
   cases p₁ <;> cases p₂ <;> simp only [Placement.IsOpposite] at hopp
-  · have hb := ((ProjectiveSetting.linePointDist_aaBa_le S W).trans
-      (ProjectiveSetting.evalClassDist_aaBa_le S W)).trans
-      (mul_le_mul_of_nonneg_left (h₁ P ε S hε W) htwo)
-    have h4 := (ProjectiveSetting.linePointDist_aaBa_le S W).trans
+  · exact (ProjectiveSetting.linePointDist_aaBa_le S W).trans
       (ProjectiveSetting.evalClassDist_aaBa_le_four S W)
-    simpa only [Placement.side] using key _ C₁ hC₁ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb h4
-  · have hb := ((ProjectiveSetting.linePointDist_baAa_le S W).trans
-      (ProjectiveSetting.evalClassDist_baAa_le S W)).trans
-      (mul_le_mul_of_nonneg_left (h₂ P ε S hε W) htwo)
-    have h4 := (ProjectiveSetting.linePointDist_baAa_le S W).trans
+  · exact (ProjectiveSetting.linePointDist_baAa_le S W).trans
       (ProjectiveSetting.evalClassDist_baAa_le_four S W)
-    simpa only [Placement.side] using key _ C₂ hC₂ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb h4
-  · have hb := ((ProjectiveSetting.linePointDist_bbAb_le S W).trans
-      (ProjectiveSetting.evalClassDist_bbAb_le S W)).trans
-      (mul_le_mul_of_nonneg_left (h₂ P ε S hε W) htwo)
-    have h4 := (ProjectiveSetting.linePointDist_bbAb_le S W).trans
+  · exact (ProjectiveSetting.linePointDist_bbAb_le S W).trans
       (ProjectiveSetting.evalClassDist_bbAb_le_four S W)
-    simpa only [Placement.side] using key _ C₂ hC₂ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb h4
-  · have hb := ((ProjectiveSetting.linePointDist_abBb_le S W).trans
-      (ProjectiveSetting.evalClassDist_abBb_le S W)).trans
-      (mul_le_mul_of_nonneg_left (h₁ P ε S hε W) htwo)
-    have h4 := (ProjectiveSetting.linePointDist_abBb_le S W).trans
+  · exact (ProjectiveSetting.linePointDist_abBb_le S W).trans
       (ProjectiveSetting.evalClassDist_abBb_le_four S W)
-    simpa only [Placement.side] using key _ C₁ hC₁ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb h4
 
 /-- Evaluation classes of expanded line measurements are consistent with the
 completed expanded point family, including the `none` class. This is item 3 of
