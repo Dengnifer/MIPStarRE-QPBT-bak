@@ -1,3 +1,4 @@
+import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
 import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 
 /-!
@@ -119,6 +120,27 @@ theorem uniformDistribution_map_lineRepMap_add_smul {K : Type*} [Field K]
         rw [lineRepMap_add_smul, lineRepMap_apply_self]
         exact (directLineRepParameter_spec v x).symm
     rw [himg, Finset.card_image_of_injective _ hinj, Finset.card_univ]
+
+/-- A uniform point may be replaced by a uniform affine parameter on its
+canonical line, while preserving the canonical representative jointly with the
+point. This formalization-only identity includes the zero direction and supports
+the conditional sampling step at paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:955`. -/
+theorem avgOver_lineRepMap_resample_parameter {K : Type*} [Field K]
+    [Fintype K] [DecidableEq K] {dimension : ℕ}
+    (direction : Fin dimension → K)
+    (value : (Fin dimension → K) → (Fin dimension → K) → ℝ) :
+    avgOver (uniformDistribution (Fin dimension → K))
+        (fun point => value (lineRepMap direction point) point) =
+      avgOver (uniformDistribution (Fin dimension → K)) (fun point =>
+        avgOver (uniformDistribution K) (fun param =>
+          value (lineRepMap direction point)
+            (lineRepMap direction point + param • direction))) := by
+  have hmap := uniformDistribution_map_lineRepMap_add_smul direction
+  have havg := congrArg (fun dist => avgOver dist
+    (fun point => value (lineRepMap direction point) point)) hmap
+  rw [Distribution.avgOver_map, uniformDistribution_prod, avgOver_prod] at havg
+  simpa only [lineRepMap_add_smul, lineRepMap_apply_self] using havg.symm
 
 /-! ## Injectivity of the two block embeddings -/
 
