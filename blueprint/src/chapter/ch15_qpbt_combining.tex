@@ -799,6 +799,40 @@ assembled by Fourier averaging.
 	$\mathcal{O}^u$ is used. The hypothesis then bounds the average by $\eta$.
 \end{proof}
 
+\begin{lemma}[Formalization support for the EPR register exchange]
+	\label{lem:combined-points-epr-exchange}
+	\lean{MIPStarRE.QPBT.ProjectiveSetting.opFamilyDistSq_place_AB''_eq_AA'}
+	\lean{MIPStarRE.QPBT.ProjectiveSetting.opFamilyDistSq_place_BB'_eq_BA''}
+	\leanok
+	\uses{def:expanded-state, def:symmetric-equivalents, def:povm-distance}
+	This auxiliary identity isolates the register exchange used in the
+	formal proof of Lemma~\ref{lem:qld-4-10}; it is not a named statement
+	of the paper. Let $\mu$ be a finitely supported distribution and let
+	$F^x_a,G^x_a$ be two operator families with a finite outcome set, acting
+	on one player's expanded local space. Then
+	\[
+		\E_{x\sim\mu}\sum_a
+		\big\|((F^x_a)_p-(G^x_a)_p)\ket{\hat\psi}\big\|^2
+		=
+		\E_{x\sim\mu}\sum_a
+		\big\|((F^x_a)_{p'}-(G^x_a)_{p'})\ket{\hat\psi}\big\|^2,
+	\]
+	where $(p,p')=(\mathsf{A}\mathsf{B}'',\mathsf{A}\mathsf{A}')$
+	for Alice's families and
+	$(p,p')=(\mathsf{B}\mathsf{B}',\mathsf{B}\mathsf{A}'')$
+	for Bob's families. No symmetry assumption on the strategy is required.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:expanded-state, def:EPR, def:povm-distance}
+	Exchange $\mathsf{A}'$ with $\mathsf{B}''$ and $\mathsf{A}''$
+	with $\mathsf{B}'$, leaving the strategy registers fixed. This unitary
+	fixes $\ket{\hat\psi}$ because it exchanges the two identical EPR
+	pairs and reverses their halves. It carries each placement $p$ to $p'$,
+	so unitary invariance gives equality of the displayed norms term by term.
+	Summing over outcomes and averaging proves the assertion.
+\end{proof}
+
 \begin{lemma}[Combined point measurements]
 	\label{lem:qld-4-10}
 	\lean{MIPStarRE.QPBT.CombinedPointsWitness}
@@ -846,7 +880,7 @@ assembled by Fourier averaging.
 \begin{proof}
 	\leanok
 	\uses{lem:qld-comm-cons, lem:cancellation, lem:ortho-explicit-constant,
-		fact:triangle, lem:symmetric-equivalents-transfer,
+		fact:triangle, lem:combined-points-epr-exchange,
 		def:expanded-point-measurement, def:povm-distance}
 	We give the field-valued construction used in the formal proof.
 	For each player and each pair $(x,z)$, form the sandwich POVM
@@ -874,7 +908,8 @@ assembled by Fourier averaging.
 	projective family $Q$ to $R$ by
 	$O((\eps+\sqrt\eps)^{1/4})$. The crosswise exchange of the two EPR pairs
 	fixes the expanded state and transfers this bound to the other two
-	placements by Lemma~\ref{lem:symmetric-equivalents-transfer}.
+	placements by Lemma~\ref{lem:combined-points-epr-exchange}, without
+	assuming symmetry of the strategy.
 	Insert $R$ and the ordered products in the squared-distance triangle
 	inequality. Their commutation and cross-placement consistency estimates
 	give all three asserted comparisons. For $0\le\eps\le1$ the total error
@@ -887,6 +922,29 @@ assembled by Fourier averaging.
 \end{proof}
 
 \section{Combined line measurements}
+
+\begin{definition}[The paired-line sandwich POVM]
+	\label{def:combined-line-measurement}
+	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
+	\leanok
+	\uses{def:expanded-line-measurement, def:povm-conventions,
+		lem:pasting-measurement}
+	For either player and every pair of lines $\ell_X,\ell_Z$, define
+	the POVM from the proof of Lemma~\ref{lem:qld-xz-lines} by
+	\[
+		T^{\ell_X,\ell_Z}_{f_X,f_Z}
+		=\hat M^{(\mathrm{Line},X),\ell_X}_{f_X}
+		 \hat M^{(\mathrm{Line},Z),\ell_Z}_{f_Z}
+		 \hat M^{(\mathrm{Line},X),\ell_X}_{f_X},
+		\qquad
+		(f_X,f_Z)\in\deg_{md}(\ell_X)\times\deg_{md}(\ell_Z).
+	\]
+	Each effect is positive: writing the two line effects as $X$ and $Z$,
+	the sandwich is $X^*ZX$ with $Z\geq0$. Summing first over $f_Z$
+	gives $X^2=X$, and then summing over $f_X$ gives the identity.
+	This construction asserts no consistency estimate with the joint point
+	measurement; that estimate is recorded separately below.
+\end{definition}
 
 \begin{lemma}[Combined line measurements]
 	\label{lem:qld-xz-lines}
@@ -921,7 +979,8 @@ assembled by Fourier averaging.
 	$\ell_W$ is axis-parallel, then $f_W \in \deg_{d}(\ell_W)$.
 \end{lemma}
 \begin{proof}
-	\uses{def:expanded-line-measurement, lem:qld-4-10, fact:add-a-proj,
+	\uses{def:combined-line-measurement, def:expanded-line-measurement,
+		lem:qld-4-10, fact:add-a-proj,
 		lem:cool-closeness-fact, lem:qld-comm-line-cons, fact:agreement,
 		fact:data-processing, lem:pasting, lem:schwartz-zippel-total-degree,
 		def:symmetric-equivalents}
@@ -985,9 +1044,9 @@ assembled by Fourier averaging.
 \begin{lemma}[Consistency of the constructed paired-line measurement]
 	\label{lem:combined-line-measurement-consistency}
 	\lean{MIPStarRE.QPBT.combined_line_measurement_consistency}
-	\notready
 	\uses{lem:qld-4-10, lem:qld-comm-line-cons, lem:pasting,
-		def:expanded-line-measurement, def:consistency}
+		def:combined-line-measurement, def:expanded-line-measurement,
+		def:consistency}
 	This is a Lean-only construction obligation. Fix a polynomially small
 	function $\delta_Q(\eps)$. There is a function
 	$\delta_P(\eps,md/q)=\poly(\eps,md/q)$, in the corrected sum sense,
@@ -1180,7 +1239,7 @@ and a diagonal component $D_{\mathrm{DLine}}$.
 	\lean{MIPStarRE.QPBT.restrictedALineDist, MIPStarRE.QPBT.restrictedDLineDist}
 	\lean{MIPStarRE.QPBT.restrictedALineDist_isProbability}
 	\lean{MIPStarRE.QPBT.restrictedDLineDist_isProbability}
-	\notready
+	\leanok
 	\uses{def:line-point-dist, def:ld-question-distribution}
 	For any $i \in \{1, \dots, m\}$, the \emph{$i$-th restricted
 	axis-parallel line distribution} $D_{\mathrm{ALine},i}$ is the

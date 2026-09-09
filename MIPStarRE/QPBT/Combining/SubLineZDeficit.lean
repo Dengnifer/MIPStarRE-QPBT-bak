@@ -2,28 +2,26 @@ import MIPStarRE.QPBT.Combining.ZEvalDeficit
 import MIPStarRE.QPBT.Combining.UniformLinePoint
 
 /-!
-# Sub-line averages of the one-point overlaps
+# Sub-line averages of the Z-point overlap
 
-The two one-point overlaps of the paired-line measurement --- with the expanded
-`X`-point effect at the `X`-point of the sampled extended point, and with the
-expanded `Z`-point effect at its `Z`-point --- depend on the sample only through
-the two source lines and one of the two source points.  Property~2 of the
-sub-line lemma identifies the law of each such triple as a mixture of products
+The overlap of the paired-line measurement with the expanded `Z`-point effect
+at the `Z`-point of the sampled extended point depends on the sample only through
+the two source lines and that source point. Property~2 of the
+sub-line lemma identifies the law of this triple as a mixture of products
 of two restricted line-point laws, with the fresh point of the other factor
 unused.  Summing the line answers over the fibers of the evaluation at that
-fresh point writes each overlap as the overlap of the evaluated pair-line
-measurement with the retained point effect, so that the one-point deficits of
-`MIPStarRE.QPBT.Combining.EvalDeficit` apply component by component.
+fresh point writes the overlap as the overlap of the evaluated pair-line
+measurement with the retained `Z`-point effect, so that the deficit bound of
+`MIPStarRE.QPBT.Combining.ZEvalDeficit` applies component by component.
 
-The `_at` estimates and `xPointOverlapAt`, `zPointOverlapAt` retain arbitrary
-opposite placements. The original overlap definitions and first-player
-statements are unchanged. Only the one-point mixture laws are used.
+The `_at` estimates and `zPointOverlapAt` allow arbitrary opposite placements.
+Only the `Z`-point mixture law is used.
 
 ## References
 
-The statements support `lem:claim-17-2` and `lem:claim-17-3` in
+The statements support `lem:claim-17-3` in
 `blueprint/src/chapter/ch15_qpbt_combining.tex`, paper
-`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1168-1239`; the
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1203-1239`; the
 mixture is Property~2 of `lem:qld-sublines`.
 -/
 

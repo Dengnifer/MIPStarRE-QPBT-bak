@@ -1,5 +1,6 @@
 import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
 import MIPStarRE.QPBT.Combining.Witnesses
+import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
 import MIPStarRE.QPBT.Games.DistributionMarginals
 import MIPStarRE.LDT.Basic.DistributionAvg
 
@@ -67,77 +68,6 @@ theorem uniformDistribution_map_uncurry {α β γ : Type*}
       fun _ => ν from funext hg]
   exact Distribution.bind_const_current _ (uniformDistribution_isProbability α) ν
 
-/-- For the zero direction, the canonical representative map is the identity. -/
-private theorem lineRepMap_zero_apply_current {K : Type*} [Field K] {m : ℕ}
-    (u : Fin m → K) : lineRepMap (0 : Fin m → K) u = u := by
-  have hspan : Submodule.span K ({0} : Set (Fin m → K)) = ⊥ := by simp
-  have h := sub_lineRepMap_mem_span (0 : Fin m → K) u
-  rw [hspan, Submodule.mem_bot, sub_eq_zero] at h
-  exact h.symm
-
-/-- A uniform canonical representative together with a uniform affine
-parameter gives a uniform point of the ambient coordinate space. -/
-theorem uniformDistribution_map_lineRepMap_add_smul_current
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K] {m : ℕ}
-    (v : Fin m → K) :
-    (uniformDistribution ((Fin m → K) × K)).map
-        (fun w => lineRepMap v w.1 + w.2 • v) =
-      uniformDistribution (Fin m → K) := by
-  refine uniformDistribution_map_of_card_fiber _ (Fintype.card K) fun x => ?_
-  by_cases hv : v = 0
-  · subst hv
-    have hfilter :
-        ((Finset.univ : Finset ((Fin m → K) × K)).filter
-            fun w => lineRepMap (0 : Fin m → K) w.1 + w.2 • (0 : Fin m → K) = x) =
-          ({x} : Finset (Fin m → K)) ×ˢ (Finset.univ : Finset K) := by
-      ext w
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-        Finset.mem_product, Finset.mem_singleton, and_true, smul_zero,
-        add_zero, lineRepMap_zero_apply_current]
-    rw [hfilter, Finset.card_product]
-    simp
-  · have hinj : Function.Injective
-        (fun c : K => (lineRepMap v x + c • v, directLineRepParameter v x)) := by
-      intro c₁ c₂ hc
-      have hc' : c₁ • v = c₂ • v := by
-        have h := congrArg Prod.fst hc
-        simpa using h
-      have hsub : (c₁ - c₂) • v = 0 := by
-        rw [sub_smul, hc', sub_self]
-      rcases smul_eq_zero.mp hsub with h | h
-      · exact sub_eq_zero.mp h
-      · exact absurd h hv
-    have himg :
-        ((Finset.univ : Finset ((Fin m → K) × K)).filter
-            fun w => lineRepMap v w.1 + w.2 • v = x) =
-          (Finset.univ : Finset K).image
-            (fun c => (lineRepMap v x + c • v, directLineRepParameter v x)) := by
-      ext w
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image]
-      constructor
-      · intro hw
-        have hrep : lineRepMap v w.1 = lineRepMap v x := by
-          rw [← hw, lineRepMap_add_smul, lineRepMap_apply_self]
-        have hx : x = lineRepMap v x + w.2 • v := by
-          rw [← hrep]
-          exact hw.symm
-        have ht : directLineRepParameter v x = w.2 :=
-          directLineRepParameter_eq_of_nonzero hv hx
-        obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp
-          (sub_lineRepMap_mem_span v w.1)
-        refine ⟨c, ?_⟩
-        have hw1 : lineRepMap v x + c • v = w.1 := by
-          rw [← hrep, hc]
-          abel
-        rw [Prod.ext_iff]
-        exact ⟨hw1, ht⟩
-      · rintro ⟨c, rfl⟩
-        show lineRepMap v (lineRepMap v x + c • v) +
-          directLineRepParameter v x • v = x
-        rw [lineRepMap_add_smul, lineRepMap_apply_self]
-        exact (directLineRepParameter_spec v x).symm
-    rw [himg, Finset.card_image_of_injective _ hinj, Finset.card_univ]
-
 /-- Reading a point at a uniform affine parameter on the canonical line of a
 uniform direct sample gives a uniform point of the direct coordinate space. -/
 theorem uniformDistribution_map_directLine_add_smul (D : DirectLdParams)
@@ -169,7 +99,7 @@ theorem uniformDistribution_map_directLine_add_smul (D : DirectLdParams)
     rfl
   rw [hmap, hequiv]
   refine uniformDistribution_map_uncurry _ _ fun a => ?_
-  exact uniformDistribution_map_lineRepMap_add_smul_current (V a)
+  exact uniformDistribution_map_lineRepMap_add_smul (V a)
 
 /-- Averaging a function at a uniform affine parameter on the canonical line
 of a uniform direct sample is averaging it at a uniform point. -/

@@ -4,10 +4,8 @@ import MIPStarRE.QPBT.Observables.LineMeasurement
 /-!
 # Placement support for expanded line measurements
 
-This compatibility module re-exports the placement calculus from
-`MIPStarRE.QPBT.Combining.Points.Placement` together with the expanded line
-measurement API. The placement declarations have a single definition, so both
-module paths can be imported together.
+This module provides the register-placement identities and expanded line
+measurements.
 
 ## References
 
