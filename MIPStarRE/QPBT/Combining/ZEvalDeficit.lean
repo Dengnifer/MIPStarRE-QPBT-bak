@@ -320,7 +320,7 @@ theorem one_sub_overlap_le_of_consistencyDefect {X α ι : Type*}
   have h5' := abs_le.mp h5
   linarith [h2'.1, h4'.1, h5'.1, h2'.2, h4'.2, h5'.2]
 
-/-! ## The two placed deficits -/
+/-! ## The Z-point deficit at opposite placements -/
 
 /-- A pair of line-point pairs of the source space: the sample type of the
 consistency display of `lem:qld-xz-lines`. -/
@@ -482,7 +482,7 @@ theorem CombinedLinesWitness.one_sub_Z_overlap_le
 
 end Placed
 
-/-! ## The two deficits over a product of restricted line-point laws -/
+/-! ## The Z-point deficit over a product of restricted line-point laws -/
 
 /-- Every restricted line-point law has total mass one. -/
 theorem restrictedLinePointDist_isProbability (P : AdmissibleParams)

@@ -161,7 +161,7 @@ theorem SubLineWitness.exists_avgOver_Z_eq_mixture (P : AdmissibleParams)
   rw [subLineZComponentDist, Distribution.avgOver_map, Distribution.prod_map_left,
     Distribution.avgOver_map]
 
-/-! ## The two one-point overlaps -/
+/-! ## The Z-point overlap -/
 
 section Overlaps
 
