@@ -1,5 +1,6 @@
 import MIPStarRE.QPBT.Combining.Points
 import MIPStarRE.QPBT.Combining.ErrorObstruction
+import MIPStarRE.QPBT.Combining.LinePointCoupling
 import MIPStarRE.QPBT.Test.SoundnessDefs
 
 /-!
@@ -43,6 +44,14 @@ alphabet documented in `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 Their conversion to the source's verifier game remains open. This declaration takes
 an already constructed point witness; the companion obligation below supplies that
 witness existentially.
+
+The arbitrary scalar `δQ` also admits point measurements unrelated to the
+strategy, including deterministic quadratic answers that obstruct a vanishing
+line-error bound; see issue #509 and the same paper-gap note. The auxiliary
+`consistencyDefect_line_point_coupling_le` retains the actual point disagreement
+with a deterministic reference with coefficient one. It does not discharge this
+unrestricted existence assertion. Its statement audit and the remaining formal
+counterexample prerequisites are in `audits/2026-09-12_issue509-line-point-coupling.md`.
 
 **Error contract:** the polynomial bound printed in the source is carried
 by `IsPolyErr₂`, which states the corrected sum form
