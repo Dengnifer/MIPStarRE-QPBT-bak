@@ -1,3 +1,4 @@
+import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
 import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 
 /-!
@@ -119,6 +120,28 @@ theorem uniformDistribution_map_lineRepMap_add_smul {K : Type*} [Field K]
         rw [lineRepMap_add_smul, lineRepMap_apply_self]
         exact (directLineRepParameter_spec v x).symm
     rw [himg, Finset.card_image_of_injective _ hinj, Finset.card_univ]
+
+/-- Resampling an independent uniform affine parameter preserves the joint law
+of a canonical representative and its uniformly sampled point, for every direction,
+including zero. This formalization-only identity supports `def:line-point-dist` at
+`references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:274-287`
+and the conditional sampling at
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:955`.
+Blueprint `thm:line-rep-resample-parameter`. -/
+theorem avgOver_lineRepMap_resample_parameter {K : Type*} [Field K]
+    [Fintype K] [DecidableEq K] {m : ℕ} (direction : Fin m → K)
+    (value : (Fin m → K) → (Fin m → K) → ℝ) :
+    avgOver (uniformDistribution (Fin m → K))
+        (fun point => value (lineRepMap direction point) point) =
+      avgOver (uniformDistribution (Fin m → K)) (fun point =>
+        avgOver (uniformDistribution K) (fun param =>
+          value (lineRepMap direction point)
+            (lineRepMap direction point + param • direction))) := by
+  have hmap := uniformDistribution_map_lineRepMap_add_smul direction
+  have havg := congrArg (fun dist => avgOver dist
+    (fun point => value (lineRepMap direction point) point)) hmap
+  rw [Distribution.avgOver_map, uniformDistribution_prod, avgOver_prod] at havg
+  simpa only [lineRepMap_add_smul, lineRepMap_apply_self] using havg.symm
 
 /-! ## Injectivity of the two block embeddings -/
 
