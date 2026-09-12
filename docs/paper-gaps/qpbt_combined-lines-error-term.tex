@@ -167,29 +167,61 @@ The repaired conditional helper has the form
 This is not a new hypothesis on the paper theorem.  The source-facing Lean
 declaration \path{exists_combinedLinesWitness} preserves its original statement:
 it existentially obtains $\delta_Q$ and its point witnesses from the preceding
-point construction, then applies the conditional helper.
+point construction, then uses the concrete-measurement consistency obligation
+described below.
 
-The preserved proof route isolates four named obligations.  First,
-\path{exists_combinedLine_restored_defect_le} constructs the conditioned XZX
-line measurement and retains the numerical point error in its raw defect bound.
-Second, \path{exists_conditioned_polynomial_bound} uses the hypothesis
-$\delta_Q=\poly(\eps)$ to choose the two-variable line-error function.  Third,
-\path{nondegenerateLinePastingMass_bounds} controls the conditioning mass between
-$1/2$ and $1$.  Fourth, \path{consistencyDefect_opposite_symm} restores every
-directed opposite placement.  After these are available in the current modular
-tree, the conditional theorem can reuse their proof from protected commit
-\path{0f4ef05370350f4017439ebd839ef0561f13130f}; the source-facing theorem then
-combines it with \path{exists_combinedPointsWitness}.  Until those construction
-obligations are recovered and checked, both theorem proofs remain explicit proof
-obligations rather than bridge assumptions.
+Both existence proofs use the fixed measurement
+\[
+  T^{\ell_X,\ell_Z}_{f_X,f_Z}
+  =\hat M^{(\mathrm{Line},X),\ell_X}_{f_X}
+   \hat M^{(\mathrm{Line},Z),\ell_Z}_{f_Z}
+   \hat M^{(\mathrm{Line},X),\ell_X}_{f_X}.
+\]
+This is the construction in the proof of the source lemma
+\path{lem:qld-xz-lines}, at lines~942--961 of the same paper mirror.  Positivity,
+completeness, and both axis-degree support properties are proved.  The remaining
+obligation is to bound the evaluated consistency defect of this particular
+$T$ with the supplied joint point family, over two independent line-point
+samples and for every directed opposite placement.  The point family is
+completed by zero at undefined evaluations, as in the formal consistency
+statement.  The error function must be chosen after $\delta_Q$ and its
+polynomial bound, uniformly over strategies and parameters.\footnote{The
+construction and degree results are
+\path{ProjectiveSetting.combinedLineMeasurement} and its
+\path{combinedLineMeasurement_axis_degree_X} and
+\path{combinedLineMeasurement_axis_degree_Z} theorems in
+\path{MIPStarRE/QPBT/Combining/Lines/CombinedMeasurement.lean}.
+Both existence proofs in \path{MIPStarRE/QPBT/Combining/Lines.lean} use
+\path{combined_line_measurement_consistency}, linked by blueprint
+\path{lem:combined-line-measurement-consistency}.  The obligation is tracked
+by \ghissue{414} and
+\path{docs/paper-gaps/qpbt_subline-claims-line-marginal.tex}.}
 
-At the time of this repair, \path{exists_conditioned_polynomial_bound} is already
-available in \path{MIPStarRE/QPBT/Combining/ErrorBounds.lean}.  The remaining
-proof extension is a focused modular recovery of the XZX measurement definition,
-its two axis-degree lemmas, \path{exists_combinedLine_restored_defect_le},
-\path{nondegenerateLinePastingMass_bounds}, and
-\path{consistencyDefect_opposite_symm}.  It must reuse the current pasting and
-line-measurement APIs rather than importing the protected monolithic file.
+A conditioning argument can discharge this obligation only by estimating
+the same measurement.  Write $\rho=md/q$ and let $p$ be the mass of the
+conditioning event.  One possible route would establish $1/2\leq p\leq1$ and,
+for a universal $c\geq1$, bound the full consistency defect by
+\[
+  \min\!\left\{1,\,
+  p\,\delta_{\mathrm{past}}\!\left(\rho,
+     \frac{8\delta_Q(\eps)+c(\eps+\sqrt\eps)}{p}\right)+\rho\right\},
+\]
+where $\delta_{\mathrm{past}}$ is the two-variable polynomial error of the
+pasting estimate.  Such a proof must identify its pasted effects with the
+displayed XZX effects, account for the discarded event in the full question
+law, and establish the estimate for every directed opposite placement.
+For the convention in which the second factor of pasting is the outer
+projector, this uses $G_1=Z$, $G_2=X$, and an exchange of the answer labels.
+Producing an unspecified consistent measurement does not establish this
+fixed-measurement assertion.
+
+The scalar theorem \path{exists_conditioned_polynomial_bound} in
+\path{MIPStarRE/QPBT/Combining/ErrorBounds.lean} already bounds the last display
+by a two-variable polynomial error when $\delta_Q=\poly(\eps)$.
+It supplies no operator estimate or conditioning-mass bound.  Thus the
+construction and scalar majorization are available, while consistency of
+the concrete measurement remains an explicit proof obligation; neither
+existence proof certifies that obligation as complete.
 
 \section{The source assertion and the two routes}
 

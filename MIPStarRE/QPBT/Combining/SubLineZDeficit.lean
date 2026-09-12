@@ -2,22 +2,19 @@ import MIPStarRE.QPBT.Combining.ZEvalDeficit
 import MIPStarRE.QPBT.Combining.UniformLinePoint
 
 /-!
-# Sub-line averages of the one-point overlaps
+# Separate sub-line marginals and the Z-point overlap
 
-The two one-point overlaps of the paired-line measurement --- with the expanded
-`X`-point effect at the `X`-point of the sampled extended point, and with the
-expanded `Z`-point effect at its `Z`-point --- depend on the sample only through
-the two source lines and one of the two source points.  Property~2 of the
-sub-line lemma identifies the law of each such triple as a mixture of products
-of two restricted line-point laws, with the fresh point of the other factor
-unused.  Summing the line answers over the fibers of the evaluation at that
-fresh point writes each overlap as the overlap of the evaluated pair-line
-measurement with the retained point effect, so that the one-point deficits of
-`MIPStarRE.QPBT.Combining.EvalDeficit` apply component by component.
+For the directly indexed sub-line law, this module proves separate mixture
+identities for functions of the two source lines and either the `X` or the `Z`
+block of the sampled extended point. Each identity uses the corresponding
+marginal in Property 2 of the sub-line lemma; neither requires a joint
+conditional law for both points.
 
-The `_at` estimates and `xPointOverlapAt`, `zPointOverlapAt` retain arbitrary
-opposite placements. The original overlap definitions and first-player
-statements are unchanged. Only the one-point mixture laws are used.
+The remaining results concern the `Z`-point overlap `zPointOverlapAt`.
+Regrouping line answers by their evaluations allows the restricted estimate
+in `MIPStarRE.QPBT.Combining.ZEvalDeficit` to be averaged over the separate
+`Z` marginal. This bounds the overlap and its deficit for arbitrary opposite
+placements, with specializations to the first-player line measurement.
 
 ## References
 
@@ -197,7 +194,7 @@ theorem SubLineWitness.exists_avgOver_Z_eq_mixture (P : AdmissibleParams)
   rw [subLineZComponentDist, Distribution.avgOver_map, Distribution.prod_map_left,
     Distribution.avgOver_map]
 
-/-! ## The two one-point overlaps -/
+/-! ## The Z-point overlap -/
 
 section Overlaps
 
@@ -216,7 +213,7 @@ def zPointOverlapAt (lines : CombinedLinesWitness S points δP)
     (S.place first ((lines.T first.side w.1.1 w.1.2).effect (fX, fZ)) *
       S.place second ((S.pointMeasExpOption second.side .Z w.2).effect (evalOpt w.1.2 w.2 fZ)))
 
-/-- The original first-player specialization of the placed overlap. -/
+/-- The Z-point overlap with the line measurement on `AA'` and the point on `BA''`. -/
 def zPointOverlap (lines : CombinedLinesWitness S points δP)
     (w : (LineDesc P.toLdParams × LineDesc P.toLdParams) ×
       (Fin P.m → PauliScalar P)) : ℝ :=
@@ -240,7 +237,7 @@ theorem zPointOverlap_eq_at (lines : CombinedLinesWitness S points δP)
   (regroup_line_answer_sum_at lines first second w.1.1 w.2.1 w.1.2 w.2.2
     (fun _ o2 => (S.pointMeasExpOption second.side .Z w.2.2).effect o2)).symm
 
-/-- The original first-player specialization of the placed estimate. -/
+/-- The specialization with the line measurement on `AA'` and the point on `BA''`. -/
 theorem zPointOverlap_eq (lines : CombinedLinesWitness S points δP)
     (w : LinePointPairSample P) :
     zPointOverlap lines ((w.1.1, w.2.1), w.2.2) =
@@ -263,7 +260,7 @@ theorem zPointOverlap_nonneg_at (lines : CombinedLinesWitness S points δP)
       ((lines.T first.side w.1.1 w.1.2).pos (fX, fZ))
       ((S.pointMeasExpOption second.side .Z w.2).pos (evalOpt w.1.2 w.2 fZ)))
 
-/-- The original first-player specialization of the placed estimate. -/
+/-- The specialization with the line measurement on `AA'` and the point on `BA''`. -/
 theorem zPointOverlap_nonneg (lines : CombinedLinesWitness S points δP)
     (w : (LineDesc P.toLdParams × LineDesc P.toLdParams) ×
       (Fin P.m → PauliScalar P)) :
@@ -309,7 +306,7 @@ theorem SubLineWitness.avgOver_zPointOverlap_le_one_at (sublines : SubLineWitnes
     _ ≤ avgOver components (fun _ => (1 : ℝ)) := avgOver_mono _ _ _ hc
     _ = 1 := avgOver_const_of_isProbability components hcomp 1
 
-/-- The original first-player specialization of the placed estimate. -/
+/-- The specialization with the line measurement on `AA'` and the point on `BA''`. -/
 theorem SubLineWitness.avgOver_zPointOverlap_le_one (sublines : SubLineWitness P)
     (lines : CombinedLinesWitness S points δP) :
     avgOver sublines.D (fun sample =>
@@ -352,7 +349,7 @@ theorem SubLineWitness.one_sub_avgOver_zPointOverlap_le_at
       exact lines.one_sub_Z_overlap_restricted_le_at first second hopposite c.1 c.1 c.2.1 c.2.2
     _ = _ := avgOver_const_of_isProbability components hcomp _
 
-/-- The original first-player specialization of the placed estimate. -/
+/-- The specialization with the line measurement on `AA'` and the point on `BA''`. -/
 theorem SubLineWitness.one_sub_avgOver_zPointOverlap_le
     (sublines : SubLineWitness P) (lines : CombinedLinesWitness S points δP) :
     1 - avgOver sublines.D (fun sample =>

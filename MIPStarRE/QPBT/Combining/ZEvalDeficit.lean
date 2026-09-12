@@ -4,30 +4,25 @@ import MIPStarRE.QPBT.Combining.OverlapGap
 import MIPStarRE.QPBT.Combining.Points.Placement
 
 /-!
-# One-point deficits of the evaluated pair-line measurement
+# Z-point deficits of the evaluated pair-line measurement
 
-The proofs of `lem:claim-17-2` and `lem:claim-17-3` bound, after their
-Cauchy--Schwarz step, the deficit of the overlap between the evaluated
-pair-line measurement and one of the two expanded point measurements: the
-`X`-point measurement at the `X`-point of the sample, or the `Z`-point
-measurement at its `Z`-point.  This module derives those two deficits from the
-consistency of the evaluated pair-line measurement with the completed joint
-point measurement and from the closeness of the joint point measurement to the
-two ordered point products.  The derivation inserts the joint point measurement
-on the point side, replaces it by the ordered product whose trailing factor is
-the retained point effect, and sums the other factor, at the cost of three
-square roots.  The deficits are first bounded over an arbitrary probability
-law on pairs of line-point pairs and then over a product of two restricted
-line-point laws, whose point marginal is the uniform pair.
-The `_at` variants retain arbitrary opposite placements, including Bob at
-`BBprime` and Alice at `ABdoubleprime`. The original statements are unchanged
-specializations; register commutation does not assume symmetry of the state.
+This module bounds the deficit of the overlap between the evaluated paired-line
+measurement and the expanded `Z`-point measurement. The estimates use consistency
+with the completed joint point measurement and its squared distance to the
+`Z`-then-`X` product. Cauchy--Schwarz gives twice the square root of each error.
+The deficit is first bounded over an arbitrary probability law on pairs of
+line-point pairs, and then over products of restricted line-point laws, whose
+point marginal is a uniform pair.
+
+The estimates hold for arbitrary opposite placements, with specializations to
+the first-player line measurement. Register commutation does not assume symmetry
+of the state.
 
 ## References
 
-The two deficits are the quantities bounded in the proofs of `lem:claim-17-2`
-and `lem:claim-17-3` in `blueprint/src/chapter/ch15_qpbt_combining.tex`, paper
-`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1168-1239`; the
+The Z deficit supports `lem:claim-17-3` in
+`blueprint/src/chapter/ch15_qpbt_combining.tex`, paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1204-1239`; the
 consistency input is `lem:qld-xz-lines` and the ordered products are those of
 `lem:qld-4-10`.
 -/
@@ -322,7 +317,7 @@ theorem one_sub_overlap_le_of_consistencyDefect {X α ι : Type*}
   have h5' := abs_le.mp h5
   linarith [h2'.1, h4'.1, h5'.1, h2'.2, h4'.2, h5'.2]
 
-/-! ## The two placed deficits -/
+/-! ## The Z deficit on opposite placements -/
 
 /-- A pair of line-point pairs of the source space: the sample type of the
 consistency display of `lem:qld-xz-lines`. -/
@@ -451,7 +446,7 @@ theorem CombinedLinesWitness.one_sub_Z_overlap_le_at
     (fun s o => S.place_comm first second hopposite _ _)
     hWR hnonneg η ζ hcons hdist
 
-/-- The original first-player specialization of the opposite-placement estimate. -/
+/-- The specialization with the line measurement on `AA'` and the point on `BA''`. -/
 theorem CombinedLinesWitness.one_sub_Z_overlap_le
     (lines : CombinedLinesWitness S points δP)
     (ν : Distribution (LinePointPairSample P)) (hν : ν.IsProbability) (η ζ : ℝ)
@@ -484,7 +479,7 @@ theorem CombinedLinesWitness.one_sub_Z_overlap_le
 
 end Placed
 
-/-! ## The two deficits over a product of restricted line-point laws -/
+/-! ## The Z deficit over a product of restricted line-point laws -/
 
 /-- Every restricted line-point law has total mass one. -/
 theorem restrictedLinePointDist_isProbability (P : AdmissibleParams)
@@ -602,7 +597,7 @@ theorem CombinedLinesWitness.one_sub_Z_overlap_restricted_le_at
           S.completedPair_norm_sq_sum_ZX points second xz.1 xz.2
       _ ≤ 4 * δQ := points.orderedZX_dist_le second
 
-/-- The original first-player specialization of the opposite-placement estimate. -/
+/-- The specialization with the line measurement on `AA'` and the point on `BA''`. -/
 theorem CombinedLinesWitness.one_sub_Z_overlap_restricted_le
     (lines : CombinedLinesWitness S points δP) (kindX kindZ : LineKind)
     (i j : Fin P.m) :

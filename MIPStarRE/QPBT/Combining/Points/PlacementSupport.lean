@@ -4,8 +4,7 @@ import MIPStarRE.QPBT.Observables.LineMeasurement
 /-!
 # Placement support for expanded line measurements
 
-Re-export the placement calculus and expanded line measurements together.
-All placement declarations are defined in `Points.Placement`.
+This module provides tensor-placement identities for expanded line measurements.
 
 ## References
 

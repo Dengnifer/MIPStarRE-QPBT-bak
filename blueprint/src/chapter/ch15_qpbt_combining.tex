@@ -882,7 +882,6 @@ assembled by Fourier averaging.
 	\label{lem:qld-xz-lines}
 	\lean{MIPStarRE.QPBT.CombinedLinesWitness}
 	\lean{MIPStarRE.QPBT.exists_combinedLinesWitness}
-	\notready
 	\uses{lem:qld-4-10, def:line, def:line-point-dist, def:consistency,
 		def:bracket, def:expanded-state, def:symmetric-equivalents,
 		def:ideg-deg-polynomials}
@@ -970,14 +969,14 @@ assembled by Fourier averaging.
 	This gives the stated relation with $\delta_P$ equal to the pasting
 	error, a $\poly(\eps, md/q)$ function, and the identical argument with
 	the registers modified gives all symmetric equivalents.
+	The formal consistency proof for this concrete measurement remains
+	unfinished, as recorded in
+	Lemma~\ref{lem:combined-line-measurement-consistency}.
 \end{proof}
 
-\begin{definition}[The constructed paired-line POVM]
+\begin{definition}[The paired-line operators]
 	\label{def:combined-line-measurement}
-	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
 	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_effect}
-	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_X}
-	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_Z}
 	\leanok
 	\uses{def:expanded-line-measurement}
 	For either player, define
@@ -985,11 +984,31 @@ assembled by Fourier averaging.
 	=\hat M^{(\mathrm{Line},X),\ell_X}_{f_X}
 	 \hat M^{(\mathrm{Line},Z),\ell_Z}_{f_Z}
 	 \hat M^{(\mathrm{Line},X),\ell_X}_{f_X}$.
-	This is a POVM. If $\ell_W$ is axis-parallel, effects whose
-	$W$-polynomial answer has degree greater than $d$ vanish.
 	This construction, from the proof of Lemma~\ref{lem:qld-xz-lines},
 	asserts no consistency estimate.
 \end{definition}
+
+\begin{lemma}[POVM and degree support of the paired-line operators]
+	\label{lem:combined-line-measurement-support}
+	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement}
+	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_X}
+	\lean{MIPStarRE.QPBT.ProjectiveSetting.combinedLineMeasurement_axis_degree_Z}
+	\leanok
+	\uses{def:combined-line-measurement, def:expanded-line-measurement}
+	For either player and every pair of source lines, the operators of
+	Definition~\ref{def:combined-line-measurement} form a POVM. If $\ell_W$
+	is axis-parallel, its effects vanish whenever the $W$-polynomial answer
+	has degree greater than $d$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:pasting-measurement, def:expanded-line-measurement}
+	Apply Lemma~\ref{lem:pasting-measurement} with $G_1$ the $Z$ line
+	measurement and $G_2$ the projective $X$ line measurement, exchanging
+	the answer labels. This gives positivity and completeness of the XZX
+	operators. On an axis line, the corresponding expanded line effect
+	vanishes outside degree $d$, so its sandwich vanishes as well.
+\end{proof}
 
 \begin{lemma}[The exact $X$ marginal of the paired-line POVM]
 	\label{lem:combined-line-measurement-x-marginal}
@@ -1617,6 +1636,8 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 \end{lemma}
 \begin{proof}
 	\leanok
+	\uses{lem:overlap-gap-distance, lem:qld-sublines-uniform-point,
+		lem:qld-4-10-same-placement}
 	Regroup by optional point evaluations and apply
 	Lemma~\ref{lem:overlap-gap-distance}. Completing the point outcomes
 	adds zero terms, and Lemma~\ref{lem:qld-sublines-uniform-point}
@@ -1648,6 +1669,85 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 	$X$ marginal of $D_{\mathrm{dir}}$.
 \end{lemma}
 
+\begin{lemma}[Auxiliary $Z$ deficit on restricted line-point laws]
+	\label{lem:restricted-z-overlap-deficit}
+	\lean{MIPStarRE.QPBT.CombinedLinesWitness.one_sub_Z_overlap_restricted_le_at}
+	\leanok
+	\uses{lem:qld-4-10, lem:qld-xz-lines, def:ith-restricted-line,
+		def:symmetric-equivalents}
+	Fix an admissible projective setting, a joint projective point family
+	with error $\delta_Q$ as in Lemma~\ref{lem:qld-4-10}, and a paired-line
+	POVM family satisfying the degree and evaluated consistency conclusions
+	of Lemma~\ref{lem:qld-xz-lines} with error $\delta_P$ for that point
+	family. Use the optional evaluations of
+	Remark~\ref{rem:subline-real-part-scope}. For any directed opposite
+	placements $p_1,p_2$, kinds $v_X,v_Z$, and indices $i,j$, set
+	\[
+		B_Z=\E_{(\ell_X,x)\sim D_{v_X,i}}
+		\E_{(\ell_Z,z)\sim D_{v_Z,j}}\sum_{a,b}
+		\operatorname{Re}\bra{\hat\psi}
+		\big(T^{\ell_X,\ell_Z}_{[\mathrm{eval}_x=a,\mathrm{eval}_z=b]}\big)_{p_1}
+		\big(\hat M^{(\mathrm{Point},Z),z}_b\big)_{p_2}
+		\ket{\hat\psi}.
+	\]
+	Then $1-B_Z\leq2\sqrt{4m^2\delta_P}+2\sqrt{4\delta_Q}$.
+	This estimate concerns products of restricted source line-point laws;
+	its use below with $D_{\mathrm{dir}}$ does not identify that law with
+	the source extended-line law.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:restricted-line-mixture-bounds, lem:qld-4-10-same-placement,
+		lem:overlap-gap-distance, def:expanded-point-measurement}
+	The evaluated line-to-point consistency defect is at most
+	$\eta=4m^2\delta_P$ by Lemma~\ref{lem:restricted-line-mixture-bounds}.
+	The two sampled points are independent and uniform, so
+	Lemma~\ref{lem:qld-4-10-same-placement} bounds the squared distance
+	from the joint point measurement to the $Z$-then-$X$ product by
+	$\zeta=4\delta_Q$ on this law. Insert the joint point measurement in
+	the overlap and apply Cauchy--Schwarz to the consistency and
+	ordered-product errors. Projectivity of the point effects and
+	commutation across opposite placements give the deficit bound
+	$2\sqrt\eta+2\sqrt\zeta$.
+\end{proof}
+
+\begin{lemma}[Auxiliary $Z$ deficit under the directly indexed law]
+	\label{lem:subline-z-overlap-deficit-direct}
+	\lean{MIPStarRE.QPBT.SubLineWitness.one_sub_avgOver_zPointOverlap_le_at}
+	\lean{MIPStarRE.QPBT.SubLineWitness.avgOver_zPointOverlap_le_one_at}
+	\lean{MIPStarRE.QPBT.zPointOverlap_nonneg_at}
+	\leanok
+	\uses{lem:qld-sublines-direct, lem:qld-4-10, lem:qld-xz-lines,
+		def:symmetric-equivalents}
+	Let $D_{\mathrm{dir}}$ be any witness of
+	Lemma~\ref{lem:qld-sublines-direct}, and let the point and line
+	families satisfy the hypotheses of
+	Lemma~\ref{lem:restricted-z-overlap-deficit}. For any directed opposite
+	placements $p_1,p_2$, place $T$ on $p_1$ and the $Z$-point effect on
+	$p_2$ in the definition of $A_Z(D_{\mathrm{dir}})$ from
+	Remark~\ref{rem:subline-real-part-scope}. Then
+	\[
+		0\leq\operatorname{Re}A_Z(D_{\mathrm{dir}})\leq1,
+		\qquad
+		1-\operatorname{Re}A_Z(D_{\mathrm{dir}})
+		\leq2\sqrt{4m^2\delta_P}+2\sqrt{4\delta_Q}.
+	\]
+	The assertion uses only the separate $Z$ marginal of the directly
+	indexed law, with no source-law correspondence assumed.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:qld-sublines-direct, lem:restricted-z-overlap-deficit,
+		def:expanded-point-measurement}
+	Decompose the separate $Z$ marginal into its restricted product laws.
+	Regroup the line answers by their optional evaluations, introducing
+	an independent $X$ point whose evaluation classes sum to the same
+	overlap. Apply Lemma~\ref{lem:restricted-z-overlap-deficit} in each
+	component and average. Positivity on opposite placements gives the
+	lower bound; completeness of the line POVM and the upper bound
+	$\hat M^Z_b\leq\Id$ give the upper bound.
+\end{proof}
+
 \begin{lemma}[Auxiliary real-part $Z$-correlation estimate]
 	\label{lem:claim-17-3-re-direct}
 	\lean{MIPStarRE.QPBT.subline_Z_term_near_one_re_direct}
@@ -1665,7 +1765,8 @@ $(f_X, f_Z) \in \deg_{md}(\ell_X) \times \deg_{md}(\ell_Z)$.
 \end{lemma}
 \begin{proof}
 	\leanok
-	The separate restricted $Z$ marginal and point comparisons bound
+	\uses{lem:subline-z-overlap-deficit-direct}
+	Lemma~\ref{lem:subline-z-overlap-deficit-direct} bounds
 	$1-\operatorname{Re}A_Z$ by
 	$2\sqrt{4m^2\delta_P}+2\sqrt{4\delta_Q}$.
 	Since $0\leq\operatorname{Re}A_Z\leq1$, its deficit is at most the
