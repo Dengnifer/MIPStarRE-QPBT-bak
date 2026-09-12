@@ -1,5 +1,6 @@
 import MIPStarRE.QPBT.Combining.Points
 import MIPStarRE.QPBT.Combining.ErrorObstruction
+import MIPStarRE.QPBT.Combining.AxisObstructionTransport
 import MIPStarRE.QPBT.Test.SoundnessDefs
 
 /-!
