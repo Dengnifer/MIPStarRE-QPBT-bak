@@ -153,6 +153,35 @@ We often specify symmetric games $\mathfrak G$ and symmetric strategies $\mathca
 	Apply Naimark dilation (Theorem~\ref{thm:naimark}) to $\mathcal S'$, completing each dilated family at one fixed outcome as described in Remark~\ref{rem:naimark-for-games}, and then form the permutation-invariant state $\ket{\psi}$ and the block-diagonal measurements $M^x$ of the proof of Lemma~\ref{lem:symmetric-strat}. Both steps preserve the value of the strategy they are applied to, so $\mathcal S$ has exactly the value of $\mathcal S'$. No attainment step is involved, since the strategy $\mathcal S'$ is given rather than extracted from the supremum defining $\operatorname{val}^*(\mathfrak G)$.
 \end{proof}
 
+\begin{lemma}[Approximate symmetrization]\label{lem:symmetric-strat-approximate}
+	\lean{MIPStarRE.QPBT.exists_symmetric_projective_strategy_approx}
+	\leanok
+	\uses{def:symmetric-game, def:tensor-product-value, def:projective-strategy-general}
+	This formalization-only auxiliary states the approximate conclusion of the
+	proof of Lemma~\ref{lem:symmetric-strat}. Let
+	$\mathfrak G = (\mathcal X, \mathcal A, \mu, D)$ be a symmetric game with
+	$\mathcal A \ne \varnothing$. Then
+	\[
+		\forall \delta > 0\quad \exists\ \mathcal S_\delta
+		\text{ symmetric and projective}\quad
+		\operatorname{val}^*(\mathfrak G,\mathcal S_\delta)
+		> \operatorname{val}^*(\mathfrak G)-\delta\,.
+	\]
+	Each strategy is finite-dimensional; its dimension may depend on $\delta$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:symmetric-strat-given-strategy}
+	Choose an answer in $\mathcal A$. Returning it on every question defines a
+	strategy on one-dimensional local spaces, so the set of strategy values is
+	nonempty. For each $\delta>0$, the least-upper-bound property supplies a
+	strategy of value strictly greater than
+	$\operatorname{val}^*(\mathfrak G)-\delta$. Apply the value-preserving
+	construction of Lemma~\ref{lem:symmetric-strat-given-strategy}.
+	There is no claim at $\delta=0$; the attainment obligation in
+	Remark~\ref{rem:symmetric-strat-limit} remains open.
+\end{proof}
+
 \begin{definition}[Commuting strategies]\label{def:comm-strategy}
 	\lean{MIPStarRE.QPBT.IsCommutingOn, MIPStarRE.QPBT.Strategy.IsCommuting}
 	\leanok

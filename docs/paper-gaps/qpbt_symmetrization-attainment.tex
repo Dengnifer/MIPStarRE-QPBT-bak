@@ -185,6 +185,40 @@ development.
 Consequently, no consumer of the lemma --- in the source or here --- requires
 the attainment form.
 
+\section{Formal approximation on nonempty answer alphabets}
+
+Suppose the answer alphabet $\mathcal A$ is nonempty. A strategy that always
+returns a fixed answer, on one-dimensional local spaces with their unit
+product state, proves that the set $V$ of finite-dimensional strategy values
+is nonempty. This witness is used only to establish $V\ne\varnothing$;
+it is not asserted to be near optimal.
+
+The least-upper-bound property implies that whenever $v<\sup V$, there is
+$w\in V$ with $v<w$. Indeed, otherwise $v$ would be an upper bound for $V$
+and hence $\sup V\leq v$. The formal proof uses Mathlib's
+\leanid{exists\_lt\_of\_lt\_csSup}, with nonemptiness supplied by the
+explicit strategy above. Applying the already proved value-preserving
+symmetrization construction to the strategy realizing $w$ yields
+\[
+  \forall\delta>0\quad\exists\strategy_\delta
+  \text{ symmetric and projective}\quad
+  \val^*(\game,\strategy_\delta)>\val^*(\game)-\delta.
+\]
+This is \leanid{exists\_symmetric\_projective\_strategy\_approx}, linked to
+the separate blueprint node \path{lem:symmetric-strat-approximate}.
+The strict-bound form is
+\leanid{exists\_symmetric\_projective\_strategy\_of\_lt\_value}.
+For $\val^*(\game)=1-\eps$ and $\eps'>\eps$, taking
+$\delta=\eps'-\eps$ gives a strategy of value greater than $1-\eps'$.
+The finite local dimension remains inside the existential quantifier and
+may depend on $\delta$. These results therefore do not justify exchanging
+$\forall\delta>0\,\exists\strategy_\delta$ with
+$\exists\strategy\,\forall\delta>0$, or passing to $\delta=0$.
+The source-facing statement is preserved, with its original recorded gap.%
+\footnote{Independent approximation packet: \ghissue{524}. The earlier
+empty-answer obstruction is recorded separately in PR~540; it is not a
+nonattainment example on the nonempty domain considered here.}
+
 \section{Comparison with the blueprint}
 
 The blueprint \cite{MIPStarREBlueprint} states the lemma in the source shape,

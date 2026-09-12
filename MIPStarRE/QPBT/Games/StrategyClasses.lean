@@ -1,4 +1,5 @@
 import MIPStarRE.QPBT.Games.Defs
+import MIPStarRE.QPBT.Games.StrategyApproximation
 import MIPStarRE.QPBT.Games.Consistency
 import MIPStarRE.QPBT.State
 import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkFull
@@ -914,6 +915,37 @@ theorem exists_symmetric_projective_strategy_of_strategy (G : SymmetricGame)
       _ = S₀.value := projectiveDilation_value S₀ a₀ a₀
   exact ⟨S, symmetrizedStrategy_isProjective T hT_proj,
     hvalue, h.trans_eq hvalue.symm⟩
+
+/-- Formalization-only strict-bound form of `lem:symmetric-strat`, paper
+`06_nonlocal_games_and_mipstar.tex:101-130`, on nonempty answer alphabets.
+This is the form used in `11_answer_reduction.tex:2322-2332`.
+It does not assert attainment; the source statement and the gap recorded in
+`docs/paper-gaps/qpbt_symmetrization-attainment.tex` remain unchanged. -/
+theorem exists_symmetric_projective_strategy_of_lt_value (G : SymmetricGame)
+    [Nonempty G.Answer] (v : ℝ) (hv : v < G.toGame.value) :
+    ∃ S : SymmetricStrategy G, S.toStrategy.IsProjective ∧ v < S.toStrategy.value := by
+  letI : Nonempty G.toGame.AnswerA := inferInstanceAs (Nonempty G.Answer)
+  letI : Nonempty G.toGame.AnswerB := inferInstanceAs (Nonempty G.Answer)
+  obtain ⟨S₀, hS₀⟩ := G.toGame.exists_strategy_of_lt_value v hv
+  obtain ⟨S, hproj, hvalue, _⟩ :=
+    exists_symmetric_projective_strategy_of_strategy G (1 - v) S₀ (by linarith)
+  exact ⟨S, hproj, hvalue.symm ▸ hS₀⟩
+
+/-- Approximate symmetrization on nonempty answer alphabets: for every positive
+tolerance there is a finite-dimensional symmetric projective strategy whose
+value exceeds the game value minus that tolerance. The strategy, including its
+local dimension, may depend on the tolerance. This formalization-only form of
+the proof of `lem:symmetric-strat`, paper `06_nonlocal_games_and_mipstar.tex:101-130`,
+is distinct from the source's unresolved attainment statement; see blueprint
+`lem:symmetric-strat-approximate` and
+`docs/paper-gaps/qpbt_symmetrization-attainment.tex`. -/
+theorem exists_symmetric_projective_strategy_approx (G : SymmetricGame)
+    [Nonempty G.Answer] :
+    ∀ δ : ℝ, 0 < δ → ∃ S : SymmetricStrategy G,
+      S.toStrategy.IsProjective ∧ G.toGame.value - δ < S.toStrategy.value := by
+  intro δ hδ
+  exact exists_symmetric_projective_strategy_of_lt_value G (G.toGame.value - δ)
+    (sub_lt_self _ hδ)
 
 end
 
