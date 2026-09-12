@@ -1,4 +1,5 @@
 import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
+import MIPStarRE.QPBT.Extraction.CharacterConsistency
 import MIPStarRE.QPBT.Extraction.Observables
 
 /-!
@@ -872,8 +873,10 @@ Item 2 of blueprint
 The construction scale exposes the square-root game error and
 Schwartz--Zippel loss that the source absorbs into `deltaS`.
 
-**Proof obligation:** issue #47 tracks the pulling-consistency calculation and
-the final trace postprocessing from measurements to observables. -/
+**Proof obligation:** issue #520 tracks the pulling-consistency calculation.
+The final trace postprocessing is proved independently by
+`tildeObs_opDistSq_le_four_consistencyDefect`; its right-hand side still needs
+the construction-scale measurement bound of `eq:qld-pulling-cons`. -/
 theorem tildeObs_selfConsistent :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
