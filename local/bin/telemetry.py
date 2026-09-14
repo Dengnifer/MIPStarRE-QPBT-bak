@@ -54,6 +54,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterator, Sequence
+from urllib.parse import urlsplit
 
 # ---------------------------------------------------------------------------
 # Layout
@@ -190,7 +191,7 @@ KNOWN_FAILURE_CLASSES = (
 
 # `Reconnecting... 3/5`
 RETRY_RE = re.compile(r"reconnecting\.{2,}\s*(\d{1,3})\s*/\s*(\d{1,3})", re.I)
-URL_HOST_RE = re.compile(r"https?://([A-Za-z0-9.-]{1,64})")
+URL_HOST_RE = re.compile(r"https?://[^\s\"'<>]+")
 # Exit statuses `timeout(1)` uses for TERM and KILL of the session guard.
 TIMEOUT_EXIT_CODES = (124, 137)
 
@@ -246,6 +247,11 @@ def cache_dir() -> Path:
     if override:
         return Path(override).expanduser()
     return Path.home() / ".cache" / "mipstarre-dev"
+
+
+def run_mode_active() -> bool:
+    """Configured telemetry starts with run_mode.py's canonical record."""
+    return (cache_dir() / "watchdog/run-mode.json").is_file()
 
 
 @contextmanager
@@ -543,7 +549,10 @@ def classify_failure(
     endpoint = None
     host = URL_HOST_RE.search(text)
     if host:
-        candidate = host.group(1).lower().strip(".")
+        try:
+            candidate = (urlsplit(host.group(0)).hostname or "").lower().strip(".")
+        except ValueError:
+            candidate = ""
         if LABEL_RE.match(candidate):
             endpoint = candidate
 
@@ -771,7 +780,8 @@ def append_event_bullet(
     heading = f"## {date_str}"
     # The lock is per path: sharded writers never contend, and two writers that
     # do share a path (two unnamed callers) still cannot interleave a bullet.
-    with named_lock("events-" + re.sub(r"[^A-Za-z0-9._-]+", "-", path.name)):
+    lock = "events-" + re.sub(r"[^A-Za-z0-9._-]+", "-", path.name)
+    with named_lock(lock if run_mode_active() else "events-md"):
         path.parent.mkdir(parents=True, exist_ok=True)
         original = (
             path.read_text(encoding="utf-8") if path.exists() else header
@@ -1078,7 +1088,7 @@ def cmd_session_summarize(args: argparse.Namespace) -> int:
         # provider's refusal is not scored as a failed attempt against a proof
         # packet's budget (2026-09-12, ~90 sessions lost to 503s and the cap).
         if (
-            status == "failed"
+            run_mode_active() and status == "failed"
             and failure["failure_class"] in TRANSIENT_FAILURE_CLASSES
             and not turns
             and not has_model_output(events)
@@ -1115,6 +1125,9 @@ def cmd_session_summarize(args: argparse.Namespace) -> int:
         endpoint=endpoint or key_label,
         failure=failure,
     )
+    if not run_mode_active():
+        for key in ("endpoint", "failure_class", "failure_detail", "failure_endpoint", "retries_seen"):
+            record.pop(key, None)
     if args.continuation_json:
         record['continuation'] = json.loads(args.continuation_json)
     if getattr(args, 'model_policy_file', None):
@@ -1258,11 +1271,13 @@ def cmd_event(args: argparse.Namespace) -> int:
         fail("--text is empty; an events.md bullet must say something", code=2)
     date_str = args.date or datetime.now().astimezone().strftime("%Y-%m-%d")
     session = event_session_label(getattr(args, "session", None))
-    header = EVENTS_SHARD_HEADER
+    header = EVENTS_SHARD_HEADER if run_mode_active() else EVENTS_HEADER
     if args.out is not None:
         path = args.out
         if path.name == "events.md":
             header = EVENTS_HEADER
+    elif not run_mode_active():
+        path, header = telemetry_dir(args) / "events.md", EVENTS_HEADER
     else:
         # Sharded by (date, session): two sessions never touch one path, so a
         # merge of `main` no longer conflicts on the incident log.  The path is
@@ -1270,7 +1285,8 @@ def cmd_event(args: argparse.Namespace) -> int:
         path = event_shard_path(telemetry_dir(args), date_str, session)
     bullet = append_event_bullet(path, text, date_str, header)
     sys.stdout.write(bullet + "\n")
-    sys.stderr.write(f"telemetry.py: wrote {path}\n")
+    if run_mode_active():
+        sys.stderr.write(f"telemetry.py: wrote {path}\n")
     return 0
 
 

@@ -1574,3 +1574,11 @@ class. Coupled scripts make apply and resume transactional and park failed lanes
 **Expected effect:** publication, notification and success telemetry cannot
 outrun their final verdict or postcondition, while failed transitions preserve
 the previous coherent runtime state.
+
+## 2026-09-14 - Preserve the unconfigured pipeline (PR 552 owner conditions)
+
+**Trigger:** PR 552 comment 5661388494; evidence in
+`results/telemetry/events.d/2026-09-14-pr552-owner-conditions.md`.
+**Change:** full-speed-mode.md and its dispatch, telemetry, router, model and CI
+activation guards preserve the unconfigured pipeline. **Expected effect:** the
+running slow pipeline changes only after run_mode.py establishes a run.

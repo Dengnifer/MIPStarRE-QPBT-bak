@@ -38,6 +38,7 @@ class RouterHarness(unittest.TestCase):
         self.root = Path(self.tmp.name)
         self.watchdog = self.root / "watchdog"
         self.watchdog.mkdir(parents=True)
+        (self.watchdog / "run-mode.json").write_text('{}')
         self.accounts = self.root / "accounts"
         self.set_caps(primary=2, second=2)
 

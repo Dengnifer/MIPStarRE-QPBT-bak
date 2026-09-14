@@ -820,7 +820,9 @@ step_build() {
   # them and the re-export file each belongs in).  Making the step fail before
   # those five imports exist would turn every open PR red for a defect none of
   # them introduced.  Issue 551 removes --warn-only.
-  if [ -f scripts/check_umbrella_imports.py ]; then
+  if [ ! -f "$CACHE_ROOT/watchdog/run-mode.json" ]; then
+    : # Keep the existing command set until run_mode.py activates a run.
+  elif [ -f scripts/check_umbrella_imports.py ]; then
     echo "+ scripts/check_umbrella_imports.py --root . --ci --warn-only"
     run_outside_git_env python3 scripts/check_umbrella_imports.py --root . --ci \
       --warn-only

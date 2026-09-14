@@ -113,6 +113,7 @@ class DispatchFixture:
         self.marker = tmp / "codex-ran.txt"
 
         (self.cache / "watchdog").mkdir(parents=True)
+        (self.cache / "watchdog/run-mode.json").write_text('{}')
         (self.cache / "watchdog" / "max-codex-primary").write_text("2\n", encoding="utf-8")
         (self.cache / "watchdog" / "max-codex-second").write_text("0\n", encoding="utf-8")
 

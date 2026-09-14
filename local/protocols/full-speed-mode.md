@@ -4,6 +4,11 @@ Normative for a *run*: a bounded period in which the fleet works at the owner's
 stated capacity and speed. Read `local/protocols/meta.md` first, then this file
 before starting or pausing a run.
 
+Without `watchdog/run-mode.json`, the existing slow pipeline remains in force:
+one dispatch attempt, historical telemetry status/event writing, cap-only routing,
+and the existing CI command set. Stale health, drain, claim and override files do
+not activate these run features; `run_mode.py` owns the activation record.
+
 The rule this protocol exists to enforce: **the owner gives one briefing and
 afterwards receives only the estimate one-liner and the progress log.** Every
 number the owner states lives in exactly one file, and every component reads it

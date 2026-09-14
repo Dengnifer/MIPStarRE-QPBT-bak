@@ -105,6 +105,8 @@ def runtime_override() -> dict | None:
 
 def active_override(policy: dict) -> dict | None:
     """The override in force: the runtime knob first, then the reviewed policy."""
+    if not (cache_root() / 'watchdog/run-mode.json').is_file():
+        return None
     return runtime_override() or _validate_override(
         policy.get('override'), 'policy:local/model-policy.json')
 
@@ -164,8 +166,9 @@ def select_model(role: str, job_class: str = 'general', requested_model: str = '
                      hardness_reason=reason or None, policy_version=policy['schema_version'],
                      rationale=reason or ('Owner-authorized routine/bounded Sol default'
                                           if selected == SOL else 'Pre-activation Astra configuration'))
-    selection.update(override_mode=override['mode'] if override else None,
-                     override_source=override['source'] if override else None)
+    if (cache_root() / 'watchdog/run-mode.json').is_file():
+        selection.update(override_mode=override['mode'] if override else None,
+                         override_source=override['source'] if override else None)
     if override:
         selection['rationale'] = (f"Owner model override {override['mode']} "
                                   f"({override['source']})"

@@ -44,6 +44,7 @@ class _Base(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self.cache = Path(self._tmp.name) / "cache"
         (self.cache / "watchdog").mkdir(parents=True)
+        (self.cache / "watchdog/run-mode.json").write_text('{}')
         self._env = os.environ.get("MIPSTARRE_CACHE_ROOT")
         os.environ["MIPSTARRE_CACHE_ROOT"] = str(self.cache)
         self._loader = model_policy.load_policy

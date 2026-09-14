@@ -13,6 +13,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -20,6 +21,17 @@ BIN_DIR = REPO_ROOT / "local" / "bin"
 sys.path.insert(0, str(BIN_DIR))
 
 import telemetry  # noqa: E402
+
+
+class ConfiguredTelemetryTests(unittest.TestCase):
+    def setUp(self) -> None:
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        cache = Path(directory.name)
+        (cache / "watchdog").mkdir()
+        (cache / "watchdog/run-mode.json").write_text('{}')
+        patch = mock.patch.object(telemetry, "cache_dir", return_value=cache)
+        patch.start(); self.addCleanup(patch.stop)
 
 
 # ── fixtures ────────────────────────────────────────────────────────────────
@@ -114,6 +126,10 @@ class ClassifyFailureTests(unittest.TestCase):
         self.assertEqual(result["retries_seen"], 5)
 
     def test_endpoint_is_read_off_the_stream(self) -> None:
+        result = telemetry.classify_failure(_stream(
+            "503 https://fixture-secret:fixture-secret@api.example/v1?key=fixture-secret"))
+        self.assertEqual(result["failure_endpoint"], "api.example")
+        self.assertNotIn("fixture-secret", json.dumps(result))
         result = telemetry.classify_failure(
             FIVE_HUNDRED_THREE, patterns=telemetry.DEFAULT_FAILURE_PATTERNS
         )
@@ -185,7 +201,7 @@ def _summarize(root: Path, events: list[dict], **kwargs) -> dict:
     return rows[-1]
 
 
-class SessionRowTests(unittest.TestCase):
+class SessionRowTests(ConfiguredTelemetryTests):
     def test_a_refusal_is_not_scored_as_a_failed_attempt(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             row = _summarize(_repo(Path(tmp)), CONCURRENCY, exit_code=1,
@@ -236,7 +252,7 @@ class SessionRowTests(unittest.TestCase):
 # ── events.d sharding ───────────────────────────────────────────────────────
 
 
-class EventShardTests(unittest.TestCase):
+class EventShardTests(ConfiguredTelemetryTests):
     def test_two_sessions_never_touch_one_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = _repo(Path(tmp))

@@ -51,6 +51,8 @@ def health_state(root: Path, account: str) -> str:
     router behaves exactly as it did before this field existed, and the cap
     files alone govern admission.
     """
+    if not (root / "watchdog/run-mode.json").is_file():
+        return "up"
     path = root / "watchdog" / "capacity" / f"health-{account}.json"
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
@@ -141,6 +143,8 @@ def account_homes(root: Path) -> dict[str, Path]:
         if isinstance(row, dict) and row.get("name") in ACCOUNTS and row.get("codex_home"):
             values[row["name"]] = Path(row["codex_home"]).expanduser()
     for name in ACCOUNTS:
+        if name == "primary" and not (root / "watchdog/run-mode.json").is_file():
+            continue
         override = os.environ.get(f"MIPSTARRE_CODEX_HOME_{name.upper()}")
         if override:
             values[name] = Path(override).expanduser()
@@ -235,7 +239,7 @@ def reserve(root: Path, requested: str, pid: int, wait: int, dry_run: bool = Fal
     accounts.mkdir(parents=True, exist_ok=True)
     deadline = time.monotonic() + wait
     while True:
-        if (root / "watchdog" / "drain").exists():
+        if (root / "watchdog/run-mode.json").is_file() and (root / "watchdog/drain").exists():
             raise DrainRequested('drain in progress; no reservation made')
         with (accounts / "router.lock").open("a") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
@@ -293,7 +297,8 @@ def main() -> None:
     except DrainRequested as error:
         parser.exit(DRAIN_EXIT, f"account routing: {error}\n")
     except CapacityExhausted as error:
-        parser.exit(CAPACITY_EXIT, f"account routing: {error}\n")
+        code = CAPACITY_EXIT if (args.root / "watchdog/run-mode.json").is_file() else 4
+        parser.exit(code, f"account routing: {error}\n")
     except (OSError, ValueError) as error:
         parser.exit(4, f"account routing: {error}\n")
 

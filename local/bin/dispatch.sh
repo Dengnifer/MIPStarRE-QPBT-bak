@@ -86,6 +86,11 @@
 
 set -euo pipefail
 
+# Only run_mode.py's canonical record activates the configured-run machinery.
+RUN_MODE_ACTIVE=0
+[ ! -f "${MIPSTARRE_CACHE_ROOT:-$HOME/.cache/mipstarre-dev}/watchdog/run-mode.json" ] ||
+  RUN_MODE_ACTIVE=1
+
 PROG="${0##*/}"
 
 ROLES="orc prover reviewer simplifier blueprint splitter scout mathfix"
@@ -280,6 +285,10 @@ FAILURE_CLASS=""
 FAILURE_DETAIL=""
 KEY_LABEL=""
 ENDPOINT_LABEL=""
+if [ "$RUN_MODE_ACTIVE" -eq 0 ]; then
+  ATTEMPT=1; MAX_ATTEMPTS=1; BACKOFF_BASE_S=30; BACKOFF_MAX_S=600
+  DISPATCH_CUTOFF_RAW=""
+fi
 
 require_value() {
   # require_value <flag> <count-remaining>
@@ -871,6 +880,12 @@ resolve_labels() {
   # the mode file does not know); an unnamed account is `unknown`, which is
   # inside the character class and therefore a legal, honest label.
   local account="$1" lines=""
+  if [ "$RUN_MODE_ACTIVE" -eq 0 ]; then
+    KEY_LABEL="${MIPSTARRE_KEY_LABEL:-${MIPSTARRE_NATIVE_KEY_LABEL:-unknown}}"
+    case "$account:$KEY_LABEL" in primary:relay-1|primary:space) ;; *) KEY_LABEL=unknown ;; esac
+    ENDPOINT_LABEL="$KEY_LABEL"
+    return 0
+  fi
   lines="$(account_labels "$account")"
   KEY_LABEL="$(printf '%s\n' "$lines" | sed -n 1p)"
   ENDPOINT_LABEL="$(printf '%s\n' "$lines" | sed -n 2p)"
@@ -893,6 +908,7 @@ endpoint_health() {
   # exactly today's behaviour, and an unreadable file also means healthy so a
   # broken knob can never stop every dispatch.
   local file="$CAPACITY_DIR/health-$1.json"
+  [ "$RUN_MODE_ACTIVE" -eq 1 ] || { printf healthy; return 0; }
   if [ ! -f "$file" ]; then
     printf 'healthy'
     return 0
@@ -1119,7 +1135,7 @@ the spool entry is left for the janitor"
 # ---------------------------------------------------------------------------
 
 ACCOUNT_REQUESTED="$ACCOUNT"
-resolve_cutoff
+[ "$RUN_MODE_ACTIVE" -eq 0 ] || resolve_cutoff
 
 if [ "$DRY_RUN" -eq 0 ] && [ "$SANDBOX" != "read-only" ]; then
   WT_KEY="$(printf '%s' "$WORKTREE_ABS" | cksum | tr -d ' ' | cut -c1-12)"
@@ -1128,7 +1144,7 @@ if [ "$DRY_RUN" -eq 0 ] && [ "$SANDBOX" != "read-only" ]; then
 fi
 
 BRANCH="$(git -C "$WORKTREE_ABS" symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
-if [ "$SANDBOX" = "read-only" ]; then
+if [ "$RUN_MODE_ACTIVE" -eq 0 ] || [ "$SANDBOX" = "read-only" ]; then
   : # a reader writes nothing, and must not refuse against its own lane's prover
 elif [ "$ALLOW_CONCURRENT" -eq 1 ]; then
   note "--allow-concurrent: not claiming branch '${BRANCH:-<detached>}'; say why in events.md"
@@ -1140,7 +1156,7 @@ fi
 
 resolve_labels "$ACCOUNT_REQUESTED"
 
-if [ "$DRY_RUN" -eq 0 ]; then
+if [ "$RUN_MODE_ACTIVE" -eq 1 ] && [ "$DRY_RUN" -eq 0 ]; then
   SPOOL_FILE="$SPOOL_DIR/$NAME_BASE.json"
   SPOOL_PROMPT="$SPOOL_DIR/$NAME_BASE.prompt.txt"
   mkdir -p "$SPOOL_DIR"
@@ -1167,6 +1183,7 @@ while :; do
   [ -f "$CAPTURE" ] || : >"$CAPTURE"
   rm -f "$LAST_MESSAGE"
   ATTEMPT_START_TS="$(date +%Y-%m-%dT%H:%M:%S%z)"
+  [ "$RUN_MODE_ACTIVE" -eq 1 ] || ATTEMPT_START_TS="$START_TS"
   FAILURE_CLASS=""
   FAILURE_DETAIL=""
 
@@ -1198,6 +1215,7 @@ while :; do
   ROUTER_RC=$?
   set -e
   if [ "$ROUTER_RC" -ne 0 ]; then
+    [ "$RUN_MODE_ACTIVE" -eq 1 ] || exit "$ROUTER_RC"
     FAILURE_CLASS="refused"
     if [ "$DRY_RUN" -eq 1 ]; then
       die 4 "account routing refused the dry-run reservation (exit $ROUTER_RC)"
@@ -1227,7 +1245,12 @@ while :; do
     [ -n "$ACCOUNT_HOME" ] || ACCOUNT_HOME="$HOME/.cache/mipstarre-dev/codex-home-yxy"
   fi
   case "$ACCOUNT_HOME" in "~/"*) ACCOUNT_HOME="$HOME/${ACCOUNT_HOME#\~/}" ;; esac
-  ACCOUNT_ENV+=("CODEX_HOME=$ACCOUNT_HOME")
+  if [ "$RUN_MODE_ACTIVE" -eq 0 ] && [ "$ACCOUNT" = second ]; then
+    ACCOUNT_HOME="${MIPSTARRE_CODEX_HOME_SECOND:-$HOME/.cache/mipstarre-dev/codex-home-yxy}"
+  fi
+  if [ "$RUN_MODE_ACTIVE" -eq 1 ] || [ "$ACCOUNT" = second ]; then
+    ACCOUNT_ENV+=("CODEX_HOME=$ACCOUNT_HOME")
+  fi
 
   CODEX_ARGS=(exec)
   CODEX_ARGS[${#CODEX_ARGS[@]}]="--json"
@@ -1262,18 +1285,22 @@ while :; do
   if [ "$DRY_RUN" -eq 1 ]; then
     printf 'name: %s\n' "$NAME"
     printf 'account: %s\n' "$ACCOUNT"
+    if [ "$RUN_MODE_ACTIVE" -eq 1 ]; then
     printf 'key_label: %s\n' "$KEY_LABEL"
     printf 'endpoint: %s\n' "$ENDPOINT_LABEL"
     printf 'branch: %s\n' "${BRANCH:-<detached>}"
     printf 'branch_claim: %s\n' "${BRANCH_CLAIM:-none}"
+    fi
     printf 'worktree: %s\n' "$WORKTREE_ABS"
     printf 'sandbox: %s\n' "$SANDBOX"
     printf 'persona: %s\n' "$PERSONA_LABEL"
     printf 'capture: %s\n' "$CAPTURE"
     printf 'last_message: %s\n' "$LAST_MESSAGE"
     printf 'prompt_bytes: %s\n' "$PROMPT_BYTES"
+    if [ "$RUN_MODE_ACTIVE" -eq 1 ]; then
     printf 'attempts: %s\n' "$ATTEMPT"
     printf 'spool: %s\n' "${SPOOL_FILE:-(dry-run)}"
+    fi
     printf 'command:'
     printf ' %s' codex "${CODEX_ARGS[@]:0:$((${#CODEX_ARGS[@]} - 1))}" '<prompt>'
     printf '\n'
@@ -1283,8 +1310,12 @@ while :; do
   fi
 
   (umask 077; set -C; printf '%s\n' "$MODEL_POLICY_JSON" > "$MODEL_POLICY_FILE")
-  note "dispatching $NAME (role=$ROLE account=$ACCOUNT key=$KEY_LABEL sandbox=$SANDBOX \
+  if [ "$RUN_MODE_ACTIVE" -eq 0 ]; then
+    note "dispatching $NAME (role=$ROLE account=$ACCOUNT sandbox=$SANDBOX worktree=$WORKTREE_ABS)"
+  else
+    note "dispatching $NAME (role=$ROLE account=$ACCOUNT key=$KEY_LABEL sandbox=$SANDBOX \
 attempt=$ATTEMPT/$MAX_ATTEMPTS worktree=$WORKTREE_ABS)"
+  fi
   write_spool running
 
   # stdin is closed: codex exec reads piped stdin as extra prompt input, which
@@ -1307,6 +1338,7 @@ attempt=$ATTEMPT/$MAX_ATTEMPTS worktree=$WORKTREE_ABS)"
   WORKTREE_STATUS_AFTER_CODEX="$(git -C "$WORKTREE_ABS" status --porcelain 2>/dev/null || true)"
 
   END_TS="$(date +%Y-%m-%dT%H:%M:%S%z)"
+  [ "$RUN_MODE_ACTIVE" -eq 1 ] || release_locks
   cp "$CAPTURE" "$PUBLISHED_CAPTURE_DIR/$NAME.jsonl" 2>/dev/null ||
     note "warning: could not copy final capture into $PUBLISHED_CAPTURE_DIR"
   cp "$LAST_MESSAGE" "$PUBLISHED_CAPTURE_DIR/$NAME.last.md" 2>/dev/null ||
@@ -1341,7 +1373,8 @@ attempt=$ATTEMPT/$MAX_ATTEMPTS worktree=$WORKTREE_ABS)"
   # BOTH accounts record their key label and endpoint. The old three-value
   # whitelist and the `primary only` conditional wrote `unknown` for every
   # second-account session, so no failure could be attributed to a key.
-  TELEM_ARGS+=(--key-label "$KEY_LABEL" --endpoint "$ENDPOINT_LABEL")
+  TELEM_ARGS+=(--key-label "$KEY_LABEL")
+  [ "$RUN_MODE_ACTIVE" -eq 0 ] || TELEM_ARGS+=(--endpoint "$ENDPOINT_LABEL")
 
   REPLAY_EFFORT_ARG=" --requested-effort $EFFORT"
   printf -v REPLAY_POLICY_ARG ' --model-policy-file %q' "$MODEL_POLICY_FILE"
@@ -1374,7 +1407,8 @@ attempt=$ATTEMPT/$MAX_ATTEMPTS worktree=$WORKTREE_ABS)"
   FAILURE_CLASS="${DISPATCH_FAILURE_CLASS:-unknown}"
   FAILURE_DETAIL="${DISPATCH_FAILURE_DETAIL:-}"
 
-  if [ "$CODEX_EXIT" -ne 0 ] && transient_class "$FAILURE_CLASS" && retry_is_safe; then
+  if [ "$RUN_MODE_ACTIVE" -eq 1 ] && [ "$CODEX_EXIT" -ne 0 ] &&
+      transient_class "$FAILURE_CLASS" && retry_is_safe; then
     if backoff_or_give_up; then
       continue
     fi
@@ -1404,12 +1438,14 @@ printf 'last_message: %s\n' "$LAST_MESSAGE"
 printf 'capture: %s\n' "$CAPTURE"
 printf 'wall_s: %s\n' "${DISPATCH_WALL_S:-}"
 printf 'tokens_total: %s\n' "${DISPATCH_USAGE_TOTAL:-}"
+if [ "$RUN_MODE_ACTIVE" -eq 1 ]; then
 printf 'account: %s\n' "$ACCOUNT"
 printf 'key_label: %s\n' "$KEY_LABEL"
 printf 'endpoint: %s\n' "$ENDPOINT_LABEL"
 printf 'status: %s\n' "${DISPATCH_STATUS:-}"
 printf 'failure_class: %s\n' "$FAILURE_CLASS"
 printf 'attempts: %s\n' "$ATTEMPT"
+fi
 printf 'exit: %s\n' "$CODEX_EXIT"
 
 if [ -z "${DISPATCH_THREAD_ID:-}" ]; then
@@ -1417,6 +1453,10 @@ if [ -z "${DISPATCH_THREAD_ID:-}" ]; then
 fi
 
 if [ "$CODEX_EXIT" -ne 0 ]; then
+  if [ "$RUN_MODE_ACTIVE" -eq 0 ]; then
+    note "codex exited $CODEX_EXIT; the session is recorded with status failed"
+    exit "$CODEX_EXIT"
+  fi
   note "codex exited $CODEX_EXIT; the session is recorded with status ${DISPATCH_STATUS:-failed} \
 (failure_class=$FAILURE_CLASS${FAILURE_DETAIL:+: $FAILURE_DETAIL})"
   exit "$CODEX_EXIT"
