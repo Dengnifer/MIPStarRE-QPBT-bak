@@ -289,8 +289,14 @@ structure ExtendedLinesWitness {P : AdmissibleParams} {ε δQ : ℝ}
     S.psiHat <= δ
 
 /-- The side-indexed global polynomial-pair measurements handed to Chapter 16.
-This is the exact conclusion of `lem:qld-4-7`, paper lines 1267--1274, with
-the two heterogeneous point-consistency displays stated separately. -/
+This records the conclusion data of `lem:qld-4-7`, paper lines 1267--1274,
+with the two heterogeneous point-consistency displays stated separately.
+Defining this structure does not construct an inhabitant.
+
+**Proof obligation:** `exists_globalPairWitness` must produce these measurements
+and estimates from the strategy. Its proof and the zero-error extension needed
+by `exists_pulled_apart_consistency` remain open; see issues #518 and #519 and
+`docs/paper-gaps/qpbt_decoding-identity.tex`. -/
 structure GlobalPairWitness {P : AdmissibleParams} {ε : ℝ}
     (S : ProjectiveSetting P ε) (δ : ℝ) where
   /-- The complete global polynomial-pair measurement on each player side. -/

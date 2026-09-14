@@ -186,6 +186,15 @@ remain open and are documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`.  Absorption of the established
 combined-lines prefactor into the final universal constants is to use
 `deltaQld_mono` on its stated source parameter domain.
+
+**Scope restriction:** This statement assumes positive error. The zero-error
+case of `exists_pulled_apart_consistency` is not covered; see issues #518 and
+#519 and `docs/paper-gaps/qpbt_decoding-identity.tex`.
+
+**Proof obligation:** The retained `sorry` is the construction in `lem:qld-4-7`.
+Discharge `exists_globalPairWitness` using the combined-lines estimates and the
+source-import obligations documented above. No inhabitant of `GlobalPairWitness`
+is supplied by the current proof without `sorryAx`.
 -/
 theorem exists_globalPairWitness :
     ∃ a b : ℝ, 1 < a ∧ 0 < b ∧ b < 1 ∧
