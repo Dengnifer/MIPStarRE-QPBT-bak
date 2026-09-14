@@ -129,7 +129,7 @@ $g_{\operatorname{Dec}(g)}=g$ of polynomial representatives, and
 of that predicate.  It therefore matches the corrected evaluation lemma and
 does not assert the false unrestricted identity.  Finally,
 \path{nonencodingMarginalMass_le} in
-\path{MIPStarRE/QPBT/Extraction/Consistency.lean} concludes the complementary
+\path{MIPStarRE/QPBT/Extraction/MeasurementConsistency.lean} concludes the complementary
 mass bound from the projective strategy and global polynomial-pair witness; it
 does not add the bound as a witness field or theorem hypothesis.
 
@@ -139,18 +139,77 @@ and \path{decodeFq_dotProduct_indicatorVec} carry complete proofs: the degree
 side-condition on $g_h$, the two linearity laws, the inversion
 $\operatorname{Dec}_{\mathbb F_q}(g_h)=h$, and the evaluation identity under the
 explicit \path{IsEncoding} hypothesis.  The complementary estimate
-\path{nonencodingMarginalMass_le} is the remaining open proof of this note.
+\path{nonencodingMarginalMass_le} remains an open proof obligation.
 Issue~\#19 owns the Stage~4.2 statements and this discrepancy record;
 \ghissue{47} owns the Stage~4.3 decoder calculations, now discharged, and the
 non-encoding support estimate.  No unrestricted theorem, residual assumption, or
 additional witness field was introduced.
+
+\section{Supplied measurements and the source construction}
+
+Fix the expanded state $\widehat\psi$ of a projective strategy passing the
+Pauli basis test with error $0\leq\epsilon\leq1$. Let
+$\widehat S^{\mathrm A}$ and $\widehat S^{\mathrm B}$ be projective
+polynomial-pair measurements whose evaluated marginals are consistent with
+the opposite expanded point measurements at error $\delta_G\geq0$.
+Lemma~\texttt{qld-4-7} constructs such measurements with universal constants
+$a>1$ and $0<b<1$ at error
+$\delta_G=a(md)^a(\epsilon^b+q^{-b}+2^{-bmd})$
+\cite[lines~1267--1274]{Ji2020MIPStar}. Assuming the pair is additional proof
+data when compared with this source construction.
+
+For a supplied pair, observable self-consistency follows by measuring the
+difference polynomial $g-g_h$, comparing its evaluations with the original
+point measurements, and applying Schwartz--Zippel. Equal difference
+polynomials have equal decoded labels, since
+$\operatorname{Dec}(g-g_h)=\operatorname{Dec}(g)-h$.
+The argument therefore uses decoder linearity and the valid inverse identity,
+without applying the false unrestricted evaluation identity.
+Agreement and two squared-distance triangle inequalities, followed by the
+fixed-coordinate character conversion, give the observable squared-distance
+bound
+\[
+ 48\delta_G+32N\epsilon+4md/q
+ \leq (48+32N)(\delta_G+\sqrt\epsilon+md/q),
+\]
+where $N$ is the parameter-independent number of Pauli test edges.
+This estimate is proved in
+\path{tildeObs_selfConsistent_ofGlobalPairWitness}, in
+\path{MIPStarRE/QPBT/Extraction/Consistency.lean}. It concerns the same uniform
+register average and fixed coordinate as the source
+\cite[lines~1476--1605]{Ji2020MIPStar}. It does not construct the pair.
+
+The separate source obligation
+\path{exists_pulled_apart_consistency}, in
+\path{MIPStarRE/QPBT/Extraction/Construction.lean}, requires one constructed
+pair satisfying both point estimates and observable self-consistency. Its
+universal constants precede the strategy quantifiers. The proof hole records
+the source realignment in \ghissue{519}. Discharge requires
+\path{exists_globalPairWitness}, including zero error: the current constructor
+in \path{MIPStarRE/QPBT/Combining/Apply.lean} is unfinished and assumes strictly
+positive error, whereas the source setting includes zero
+\cite[lines~197--199]{Ji2020MIPStar}.
+
+Both point estimates remain unfinished here under the names
+\path{tildeM_consistent_pointMeas_ofGlobalPairWitness} and
+\path{tildeM_consistent_pointMeas'_ofGlobalPairWitness}, in
+\path{MIPStarRE/QPBT/Extraction/MeasurementConsistency.lean}. Once established,
+they can be applied to the same constructed pair as the observable estimate;
+the maximum of the three universal constants supplies a common scale.
+The source blueprint node and the separate conditional entry have no
+completion marker. A proved supplied-witness estimate does not discharge
+the construction premise.
 
 \section{Conclusion}
 
 The decoding identity is false for a general polynomial outcome.  Restricting
 it to the encoding image is a necessary local correction.  Recovering the
 source's measurement-consistency conclusion then requires the separate
-non-encoding-mass estimate, which remains an open proof obligation.
+non-encoding-mass estimate and the global measurement construction, which
+remain open here. Observable self-consistency is proved for supplied global
+measurements; it does not resolve either point estimate or the joint source
+construction. The additional witness premise is formal proof debt, not an
+assumption of the paper theorem.
 
 \bibliographystyle{alpha}
 \bibliography{references}

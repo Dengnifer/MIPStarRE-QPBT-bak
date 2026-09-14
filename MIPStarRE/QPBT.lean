@@ -74,6 +74,7 @@ import MIPStarRE.QPBT.Extraction.Defs
 import MIPStarRE.QPBT.Extraction.EncodingSupport
 import MIPStarRE.QPBT.Extraction.Observables
 import MIPStarRE.QPBT.Extraction.Consistency
+import MIPStarRE.QPBT.Extraction.Construction
 import MIPStarRE.QPBT.Extraction.PullingDefect
 import MIPStarRE.QPBT.Extraction.Unitary
 

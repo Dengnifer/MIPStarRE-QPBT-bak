@@ -11,11 +11,11 @@ consistency declarations.
 
 ## References
 
-- Blueprint `lem:qld-construct-the-paulis`, Item 2.
+- Blueprint `lem:qld-construct-the-paulis-given-global-pair`, Item 2.
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1476-1662`.
 - Issues #520 and #519; `docs/paper-gaps/qpbt_decoding-identity.tex`.
-- PR #539 at `27f4c8110d0ff41fe834a8bb5b12bab72de44a33` names this supplied-witness
-  interface `tildeObs_selfConsistent_ofGlobalPairWitness`.
+- The joint source obligation for `lem:qld-construct-the-paulis` is stated in
+  `Extraction.Construction`.
 -/
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
@@ -30,7 +30,7 @@ noncomputable section
 /-- Conditional self-consistency of the pulled-apart observables on Alice's and
 Bob's extraction blocks, averaged over the uniformly random Pauli register.
 This is the supplied-witness form of Item 2 in blueprint
-`lem:qld-construct-the-paulis`, paper
+`lem:qld-construct-the-paulis-given-global-pair`, paper
 `14_analysis_of_the_pauli_basis_test.tex:1476-1605`.
 
 The construction scale exposes the square-root game error and
@@ -44,9 +44,9 @@ here from `lem:qld-4-7`. Issue #519 and
 `docs/paper-gaps/qpbt_decoding-identity.tex` record this distinction.
 Elimination: discharge the construction required by `exists_pulled_apart_consistency`
 using `exists_globalPairWitness`, including its missing zero-error case.
-The source-facing interfaces occur in PR #539; this checkpoint retains its
-original conditional signature and declaration name. -/
-theorem tildeObs_selfConsistent :
+The joint source obligation is stated separately in `Extraction.Construction`;
+this proof establishes only the supplied-witness estimate. -/
+theorem tildeObs_selfConsistent_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
         0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →

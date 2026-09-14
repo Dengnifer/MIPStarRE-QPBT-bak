@@ -283,3 +283,127 @@ checkpoint as well as this worktree. That generated manifest was not changed.
 Blueprint rendering was not run under the owner's restriction to focused
 Lean, axiom, declaration checks, and normal commit hooks. The terminal receipt
 records the exact final commit and hook result.
+
+## Source-interface finalization
+
+This finalization begins at the proved checkpoint
+`604ba48542a04b6d022c3b650be8c79f184fa33d`. The first observed timestamp is
+2026-09-14 07:12:14Z, with an owner-imposed fifteen-minute limit. The owner
+records predecessor `01a09ea5-9138-7b01-8679-ad0fd7d30634` as completed and
+closed. This is interface finalization of the same proof attempt, not another
+proof attempt; all preceding attempts, costs, and historical results above
+remain intact. MAIN records the additional native rollout and token costs.
+
+The assigned worktree was clean at the exact checkpoint and registered to
+branch `issue-520-independent-attempt3-20260912`. Primary
+`local/bin/worktree-setup.sh --no-build` preserved its populated private build
+directory, and hook verification passed. Read-only ownership checks through
+primary `local/bin/gh_common.py` found issue #520 open without assignees or
+comments, and no repository labels beginning `opus-`. No other proof worktree
+was read or modified. No router worker, child, CI, full build, review,
+publication, lane operation, primary edit, shell change, or credential/cap
+change is part of this finalization.
+
+### Interfaces and proof preservation
+
+The shared reference was read through `git show`, at immutable source-alignment
+commit `27f4c8110d0ff41fe834a8bb5b12bab72de44a33` and published PR #539 head
+`ca866da402947c9ee7e1dd5e935a2782fe0d1602`. Its unfinished observable proof was
+not copied. The completed result is now named
+`tildeObs_selfConsistent_ofGlobalPairWitness`. A textual comparison verifies
+that its entire signature and proof are byte-identical to the proved
+checkpoint after this name substitution. In particular, the proof still
+chooses `C = 48 + 32 * (Fintype.card PauliEdge : Real)`.
+
+Both existing point obligations now have the shared conditional names
+`tildeM_consistent_pointMeas_ofGlobalPairWitness` and
+`tildeM_consistent_pointMeas'_ofGlobalPairWitness`. Their signatures and holes
+are unchanged. Each supplied-witness declaration has the source-debt marker
+and a discharge plan through `exists_pulled_apart_consistency` and
+`exists_globalPairWitness`, including the zero-error case.
+
+`Extraction/Construction.lean` contains the shared
+`exists_pulled_apart_consistency` statement and its documented source hole,
+byte-identical to PR #539 from the theorem declaration onward. Only its
+explanatory status is adapted: the observable estimate is proved here, while
+both point estimates remain unfinished. No Alice or Bob proof from another
+worktree is imported or counted. The four inherited measurement/marginal
+holes remain; the shared source obligation is the only added hole. The
+character, collision, placement, overlap, and quantitative pulling support
+is unchanged.
+
+The canonical `MIPStarRE.QPBT` import now re-exports `Construction`. All current
+blueprint references use the aligned names. The source node links to the
+joint construction, while the three supplied-witness declarations belong to
+`lem:qld-construct-the-paulis-given-global-pair`. Neither node has a statement
+or proof completion marker. The decoder gap note describes the proved
+observable estimate and the remaining construction and point obligations.
+
+### Statement integrity
+
+Paper assumptions: the admissible Pauli-test setting and a passing projective
+strategy, with the global measurements constructed in `lem:qld-4-7`.
+The paper includes zero game error. Paper conclusions: both point-consistency
+orientations, averaged over uniform field points, and observable
+self-consistency over a uniform full Pauli register for every fixed basis
+coordinate, all on the same expanded six-register state.
+
+Lean supplied-witness assumptions: admissible `P`, epsilon in [0,1],
+nonnegative `deltaG`, `ProjectiveSetting P epsilon`, the supplied
+`GlobalPairWitness S deltaG`, the basis `W`, and, for the observable result,
+`j : Fin P.model.basisDim`. Lean conclusions retain the exact two point
+placements and the exact observable `opDistSq`, bounded by
+`deltaConstructPaulis C epsilon deltaG P.m P.d P.q`. Each universal constant
+precedes the parameter and strategy quantifiers. Verdict: unchanged
+conditional statements with an extra supplied-witness premise relative to
+the source construction; no weakened conclusion or new premise.
+
+The separate joint Lean statement quantifies universal `a`, `b`, and `C`
+first, then all admissible parameters and strategies with epsilon in [0,1],
+then one global witness at `deltaQld a b epsilon P.m P.d P.q`, and concludes
+all three estimates for that witness. Verdict: the shared source-facing
+encoding, with the documented explicit error enlargement and faithful
+boundary hypotheses. There is no witness input. Its proof remains open.
+
+### Finalization validation
+
+Focused checks compile `MeasurementConsistency`, `PullingDefect`,
+`Consistency`, `Construction`, and the canonical `QPBT` and root re-exports
+using `lake env lean`, with output confined to the worktree's private `.lake`
+directory. That directory resolves to the issue-520-specific path under
+`/data/users/drx/mipstarre-cache/lake/`, not the shared hot main cache.
+
+The fresh axiom inspection in ignored `.lake/Issue520Axioms.lean` imports
+`MIPStarRE.QPBT`. The renamed observable target and all eleven checked
+projectivity, character/collision reduction, overlap, and quantitative pulling
+dependencies have exactly `propext`, `Classical.choice`, and `Quot.sound`.
+Both point obligations and the shared joint source obligation still depend
+on `sorryAx`, as expected. No diagnostic commands enter production files.
+
+The synchronization tool regenerates ignored `blueprint/lean_decls` with
+1446 entries and reports success. The focused source/conditional-node check
+confirms the new links and the absence of both completion markers.
+`leanblueprint web` exits successfully; it reports unavailable bibliography
+entries because the generated `web.bbl` is absent. The LaTeX convention check
+passes. Synchronization retains thirteen existing header/proof-marker
+warnings, none introduced by these changes. The edited Lean modules contain
+81, 72, and 884 lines, with no line over 100 characters.
+
+The first root declaration check found one pre-existing stale import:
+`not_exists_combining_quarter_power_bound` was present in source but absent
+from the cached `Combining.Apply` imports. Focused recompilation of
+`Combining.ErrorObstruction` and `Combining.Apply` restores that import without
+any source changes or a full build. After refreshing the two root re-exports,
+`lake env lean --run scripts/Checkdecls.lean blueprint/lean_decls` resolves all
+1446 declarations. The terminal receipt records the commit-hook, head, and
+cleanliness results.
+
+### Integration requirement
+
+Integrate the aligned interfaces while retaining this exact observable proof
+and the independently reviewed point proofs when available. Prove the global
+measurement construction, including zero error, and combine all three
+estimates for the same witness with a common universal constant. Source
+construction remains open. Publication stays on hold until MAIN observes
+the review queue drained; this worktree is to end at a clean unpublished
+checkpoint committed with normal hooks.
