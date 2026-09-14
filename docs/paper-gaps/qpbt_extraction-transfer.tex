@@ -150,6 +150,53 @@ These are conditional transfer results in a projective setting. Supplying
 their extraction premise remains necessary before applying them to the
 source-labelled soundness theorem.
 
+\section{Returning through a general Naimark dilation}
+
+The preceding ancilla argument must be distinguished from the dilation of an
+arbitrary original POVM. Let $J$ be its ground embedding and $P_h$ its dilated
+projectors. Naimark dilation gives $M_h=J^\dagger P_hJ$; it does not give
+$P_hJ=JM_h$. If $\phi$ is a supplied soundness isometry for the dilated
+strategy, set $Q=\phi JJ^\dagger\phi^\dagger$ and
+$N_h=\phi P_h\phi^\dagger$. The original conjugated effect is exactly
+$QN_hQ$. Summation over fibers shows that the same identity holds for the
+actual Pauli readouts after the game's answer postprocessing.
+
+Let $\theta$ be the transformed actual state and $\Delta$ the unit ideal
+auxiliary-state/EPR vector. Exact dilation preparation preserves the state
+error and gives $Q\theta=\theta$. The required decomposition is
+\[
+ (QN_hQ-T_h)\Delta
+ =Q(N_h-T_h)\Delta-QN_h(I-Q)\Delta-(I-Q)T_h\Delta.
+\]
+On an EPR vector, a matrix on one register equals its transpose acting on
+the other register. The opposite-register family therefore commutes with
+$Q$ and controls the final term by $\|(I-Q)\Delta\|^2$ after summing squares.
+The general complex-matrix transpose identity is proved explicitly. For the
+existing fixed-field Pauli API, its previously proved
+\path{pauliProj_transpose} identifies the transpose with the same Pauli
+label. This uses the existing model, not an additional field restriction or
+an assumption that arbitrary complex projectors are real.
+
+If the state norm error and dilated Pauli squared-sum error are at most
+$\delta$, the result is at most $3\delta+6\delta^2$. The families $N_h$
+are generally not complete on the witness space: their total is a range
+projection. Nevertheless isometry conjugation preserves
+$\sum_h N_h^\dagger N_h\le I$. Thus any two such contractions have
+squared distance at most four on a unit vector. The two estimates give the
+common operator bound $9\delta$ for every $\delta\ge0$, while the state
+norm error remains at most $\delta$. No ideal-state range assumption or
+outcome-count factor occurs.
+
+These calculations, both player placements, the actual value-preserving
+dilation, and the pullback of supplied witnesses are proved in
+\path{MIPStarRE/QPBT/Test/Soundness/NaimarkTransfer.lean}, with analytic and
+EPR support in \path{CompressionBounds.lean} and \path{IdealPauli.lean}.
+Replacing $a$ by $9a$ absorbs the factor nine into
+$\delta_{\mathrm{qld}}^{a,b}$ for $a\ge1$ and $\eps\ge0$, preserving $b$.
+The blueprint entries \path{ex:pauli-naimark-support} and
+\path{ex:pauli-naimark-error-support} explicitly assume soundness data for
+the dilated strategy. They do not construct those upstream data.
+
 \section{Blueprint and formalization status}
 
 The proof of Lemma~\path{lem:qld-unitary} and the soundness proof in
@@ -208,8 +255,9 @@ be derived from the concrete data rather than stored in the witness.
 The independent range-projection estimates and the complete transfer from
 supplied extraction data are recorded by \ghissue{529}; these results do not
 discharge the global-pair construction, the zero-error endpoint of that
-construction, projectivization of a general strategy, or the source-domain
-and combined-lines error comparisons.
+construction, or the source-domain and combined-lines error comparisons.
+The separate return through the genuine Naimark dilation is now proved as
+above, conditional on supplied soundness data for that dilation.
 
 \section{Conclusion}
 

@@ -711,6 +711,60 @@ is discussed in \cite{gap:qpbt_extraction-transfer}.
   Example~\ref{ex:pauli-supplied-extraction-support} has the asserted form.
 \end{proof}
 
+\begin{example}[Pullback of supplied soundness data through Naimark dilation]
+  \label{ex:pauli-naimark-support}
+  \lean{MIPStarRE.QPBT.pauli_soundness_ofNaimarkWitness}
+  \leanok
+  Fix an admissible parameter tuple and an arbitrary strategy $S$ for its
+  Pauli basis test. Let $\widehat S$ be the concrete local Naimark dilation
+  obtained by adjoining a distinguished ancillary coordinate to each local
+  space and completing each dilated projective measurement at a fixed answer.
+  Suppose local isometries $\phi_{\mathrm A},\phi_{\mathrm B}$ and a unit
+  auxiliary vector are supplied for $\widehat S$, with state norm error at
+  most $\delta$ and both Pauli squared-sum errors at most $\delta$ on the
+  ideal auxiliary-state/EPR vector. Composing these isometries with the two
+  ground embeddings gives soundness data for $S$ with state norm error at
+  most $\delta$ and both Pauli squared-sum errors at most $9\delta$.
+  The two original local spaces may differ; no projectivity of $S$ is assumed.
+\end{example}
+\begin{proof}
+  \leanok
+  Write $J$ for one ground embedding, $\Pi=JJ^\dagger$,
+  $Q=\phi\Pi\phi^\dagger$, and $N_h=\phi P_h\phi^\dagger$.
+  Compression commutes with the game's answer postprocessing, so the original
+  conjugated effects are exactly $QN_hQ$. The prepared state $\theta$ is
+  fixed by $Q$, and its distance to the ideal vector $\Delta$ is unchanged.
+  For the ideal Pauli readout $T_h$, decompose
+  \[
+    (QN_hQ-T_h)\Delta
+    =Q(N_h-T_h)\Delta-QN_h(I-Q)\Delta-(I-Q)T_h\Delta.
+  \]
+  The transpose readout on the opposite EPR register agrees with $T_h$ on
+  $\Delta$ and commutes with $Q$. Summed-square contraction thus bounds the
+  three terms by $3\delta+6\delta^2$. Isometry conjugation preserves that
+  contraction even though its effects sum only to a range projection.
+  Both actual and ideal families consequently have squared distance at most
+  four on a unit vector. For $\delta\le1$ use the first bound, and for
+  $\delta\ge1$ use the bound four, obtaining $9\delta$ in either case.
+\end{proof}
+
+\begin{example}[Robustness form after Naimark pullback]
+  \label{ex:pauli-naimark-error-support}
+  \lean{MIPStarRE.QPBT.pauli_soundness_deltaQld_ofNaimarkWitness}
+  \leanok
+  In the setting of Example~\ref{ex:pauli-naimark-support}, let $a\ge1$,
+  $b\in\mathbb R$, and $\eps\ge0$. If all three supplied errors are bounded
+  by $\delta_{\mathrm{qld}}^{a,b}(\eps,m,d,q)$, the pulled-back data have
+  all three errors bounded by $\delta_{\mathrm{qld}}^{9a,b}(\eps,m,d,q)$.
+  In particular, an exponent satisfying $0<b<1$ is preserved.
+\end{example}
+\begin{proof}
+  \leanok
+  \uses{ex:pauli-naimark-support}
+  Since $md\ge1$, increasing $a$ to $9a$ absorbs the factor nine. This
+  scalar comparison requires no upper bound on $\eps$.
+\end{proof}
+
 We can now prove the soundness theorem for the Pauli basis test, stated as Theorem~\ref{thm:pauli} in Chapter~\ref{chap:qpbt-test}.
 
 \begin{proof}

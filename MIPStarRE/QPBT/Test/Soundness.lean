@@ -3,14 +3,16 @@ import MIPStarRE.QPBT.Test.Soundness.RangeProjection
 import MIPStarRE.QPBT.Test.Soundness.ErrorBounds
 import MIPStarRE.QPBT.Test.Soundness.Ancilla
 import MIPStarRE.QPBT.Test.Soundness.OperatorTransfer
+import MIPStarRE.QPBT.Test.Soundness.NaimarkTransfer
 
 /-!
 # Pauli basis test soundness
 
 This module states the source-shaped soundness theorem and imports the
 range-projection estimates and the proved transfer from supplied extraction
-data in a projective setting. Constructing that data from an arbitrary
-successful strategy remains a proof obligation.
+data in a projective setting. The Naimark transfer returns a supplied witness
+to an arbitrary original strategy. Constructing the upstream extraction data
+from successful play remains a proof obligation.
 
 ## References
 
