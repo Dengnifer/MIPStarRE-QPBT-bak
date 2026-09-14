@@ -645,6 +645,72 @@ is discussed in \cite{gap:qpbt_extraction-transfer}.
   $U(M\ot I\ot I)U^\dagger UJ=UJM$.
 \end{proof}
 
+\begin{example}[Isometry transfer from supplied extraction data in a projective setting]
+  \label{ex:pauli-supplied-extraction-support}
+  \lean{MIPStarRE.QPBT.pauli_soundness_ofExtractionWitness}
+  \leanok
+  Fix an admissible parameter tuple and a projective setting, together with
+  global polynomial-pair measurements and extraction data for their concrete
+  swap operators $V_{\mathrm A},V_{\mathrm B}$. Assume the data supplies
+  two-sided unitarity, a unit auxiliary vector, squared state error at most
+  $\delta$, and both complete Pauli-family comparisons on the ideal state
+  at squared error at most $\delta$, as in Lemma~\ref{lem:qld-unitary}.
+  Then adjoining local EPR states and applying these unitaries gives local
+  isometries and an auxiliary unit vector satisfying all three conclusions
+  of Theorem~\ref{thm:pauli} with common bound
+  $\max\{\sqrt\delta,4\delta\}$.
+  The separate bounds are $\sqrt\delta$ for the state norm and $4\delta$
+  for each player's sum of squared Pauli errors, for each $W\in\{X,Z\}$.
+  The two original local spaces may differ. This assertion assumes the
+  extraction data; it does not assert its existence from successful play.
+\end{example}
+\begin{proof}
+  \leanok
+  \uses{thm:pauli-ancilla-intertwining-support,
+    thm:pauli-isometry-transfer-alice-support,
+    thm:pauli-isometry-transfer-bob-support}
+  Group the six registers as $(\mathrm{AA'})\mathrm{A''}$ and
+  $(\mathrm{BB'})\mathrm{B''}$. The ancilla embeddings produce exactly the
+  expanded state, and applying their swap operators gives the transformed
+  extraction state. The ideal auxiliary-state/EPR vector is unchanged by
+  this reassociation. Thus the squared state error remains at most $\delta$.
+  For each player let $N_h=V(M_h\ot I\ot I)V^\dagger$ and $\phi=VJ$.
+  The family $\{N_h\}$ is complete and $N_h\phi=\phi M_h$.
+  The transformed actual state is fixed by each local range projection.
+  The two range-projection estimates therefore give
+  $2\delta+2\delta=4\delta$ on the ideal state, without requiring that
+  state to lie in either range and without any factor for the answer count.
+\end{proof}
+
+\begin{example}[Robustness form for supplied extraction data]
+  \label{ex:pauli-supplied-extraction-error-support}
+  \lean{MIPStarRE.QPBT.pauli_soundness_deltaQld_ofExtractionWitness}
+  \leanok
+  Fix $C\ge1$, $a>1$, and $0<b<1$. There are universal constants
+  $a'\ge1$ and $0<b'<1$ such that the following holds for every admissible
+  parameter tuple and $0\le\eps\le1$. In a projective setting, suppose
+  global polynomial-pair measurements are supplied at error
+  $\delta_G=\delta_{\mathrm{qld}}^{a,b}(\eps,m,d,q)$, and extraction data
+  are supplied at error
+  \[
+    \delta=C\bigl((C(\delta_G+\sqrt\eps+md/q))^{1/4}+md/q\bigr).
+  \]
+  Then the local isometries and auxiliary unit vector satisfy the state
+  norm bound and both Pauli-family bounds with common error
+  $\delta_{\mathrm{qld}}^{a',b'}(\eps,m,d,q)$.
+\end{example}
+\begin{proof}
+  \leanok
+  \uses{ex:pauli-supplied-extraction-support, lem:qld-extraction-error-form,
+    thm:pauli-error-square-root-support}
+  Lemma~\ref{lem:qld-extraction-error-form} bounds $\delta$ by a function
+  $\delta_{\mathrm{qld}}^{A,B}$. Its square root is bounded by
+  $\delta_{\mathrm{qld}}^{A,B/2}$. Since $md\ge1$, increasing $A$ to $4A$
+  absorbs the factor four, and decreasing $B$ to $B/2$ increases the error
+  function on $0\le\eps\le1$. Thus the common bound of
+  Example~\ref{ex:pauli-supplied-extraction-support} has the asserted form.
+\end{proof}
+
 We can now prove the soundness theorem for the Pauli basis test, stated as Theorem~\ref{thm:pauli} in Chapter~\ref{chap:qpbt-test}.
 
 \begin{proof}

@@ -133,10 +133,22 @@ $U(M\ot I\ot I)U^\dagger\phi=\phi M$ from $\|\eta\|=1$ and
 $U^\dagger U=I$. Thus this algebraic identity is available without a
 separate intertwining assumption for these explicitly constructed maps.
 
-Their application to the concrete swap unitaries, together with construction
-of the transformed state and its comparison estimates, remains a proof
-obligation. No such construction may be replaced by a bridge field, residual
-assumption, or hypothesis of the source-labelled soundness theorem.
+Their application to supplied extraction data is now proved in
+\path{MIPStarRE/QPBT/Test/Soundness/StateTransfer.lean} and
+\path{MIPStarRE/QPBT/Test/Soundness/OperatorTransfer.lean}.
+The local isometries adjoin the local EPR vectors and apply the concrete swap
+unitaries. Reassociation identifies their joint action with the transformed
+six-register state and identifies both ideal Pauli readouts exactly.
+If the extraction data bounds the squared state error and both complete
+unitary-conjugated Pauli comparisons by $\delta$, the resulting unsquared
+state error is at most $\sqrt\delta$ and each isometry-conjugated Pauli
+comparison has squared error at most $4\delta$. The actual transformed
+state is fixed by both local range projections; no such condition is imposed
+on the ideal state. The common bound is therefore
+$\max\{\sqrt\delta,4\delta\}$, with no outcome or dimension factor.
+These are conditional transfer results in a projective setting. Supplying
+their extraction premise remains necessary before applying them to the
+source-labelled soundness theorem.
 
 \section{Blueprint and formalization status}
 
@@ -171,9 +183,15 @@ conditional helper.  It therefore cannot be mistaken for the source result.
 Apart from that hypothesis the
 conclusion matches the Stage~4.2 extraction lemma, including the corrected
 numerical estimates. The general range-projection estimates described above
-justify the analytic part of the later passage to isometries. Constructing
-the concrete isometries and deriving their intertwining identities from the
-swap construction remain necessary before applying those estimates.
+justify the analytic part of the later passage to isometries. The concrete
+isometries, intertwining, and state and measurement transport from supplied
+extraction data are proved by the two transfer modules above. The separate
+blueprint support entries
+\path{ex:pauli-supplied-extraction-support} and
+\path{ex:pauli-supplied-extraction-error-support} explicitly assume this
+data in a projective setting. The latter composes the extraction error
+estimate with the square-root and prefactor adjustments for all three
+conclusions. Neither entry certifies the unrestricted source theorem.
 
 The conditional character of the result is visible wherever the declaration is
 invoked: the suffix \path{ofGlobalPairWitness} names the extra premise in the
@@ -187,8 +205,11 @@ Issue~\#19 owns this concrete Stage~4.2 interface and discrepancy record.
 \path{exists_globalPairWitness}.  \ghissue{47} tracks the separate
 range-projection transfer needed by \path{pauli_soundness}; that theorem must
 be derived from the concrete data rather than stored in the witness.
-The independent range-projection estimates are recorded by \ghissue{529};
-that issue does not discharge the global-pair or extraction constructions.
+The independent range-projection estimates and the complete transfer from
+supplied extraction data are recorded by \ghissue{529}; these results do not
+discharge the global-pair construction, the zero-error endpoint of that
+construction, projectivization of a general strategy, or the source-domain
+and combined-lines error comparisons.
 
 \section{Conclusion}
 
@@ -196,8 +217,8 @@ The printed triangle calculation has repairable numerical errors, and the
 last passage from unitaries to isometries omits a genuine range-projection
 argument.  Neither defect is a counterexample to Pauli soundness.  The former
 is corrected by positive-contraction inequalities and a small-error split;
-the latter has a proved general analytic estimate, with its application to the
-concrete extraction data still outstanding. Independently of both defects, the
+the latter has a proved general analytic estimate and a proved application to
+supplied concrete extraction data. Independently of both defects, the
 present extraction declaration is conditional on the global polynomial-pair
 measurement, and that conditionality must be removed before it may be
 advertised as the source lemma.
