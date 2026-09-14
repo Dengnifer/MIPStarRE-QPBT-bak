@@ -796,7 +796,14 @@ must use the point-consistency hypotheses and Schwartz--Zippel. See
 
 The reference-measurement comparison and collision estimate are proved in
 `NonencodingSupport`. This discharges the support obligation of issues #47
-and #517 for a supplied `GlobalPairWitness`; it does not construct that witness. -/
+and #517 for a supplied `GlobalPairWitness`; it does not construct that witness.
+
+**Unfaithful:** As in `global_marginal_encoding_consistency`, the supplied
+witness is not constructed here from `lem:qld-4-7`, paper
+`14_analysis_of_the_pauli_basis_test.tex:1267-1274`. The missing construction
+is documented in `docs/paper-gaps/qpbt_decoding-identity.tex` and issue #519.
+Elimination: prove `exists_globalPairWitness` before applying this conditional
+support estimate in the source-facing `exists_pulled_apart_consistency`. -/
 theorem nonencodingMarginalMass_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),

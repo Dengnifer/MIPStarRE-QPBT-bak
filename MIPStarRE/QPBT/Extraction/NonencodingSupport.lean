@@ -23,7 +23,6 @@ mass outside the encoding image by evaluated reference inconsistency.
 -/
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
-open scoped Classical
 
 namespace MIPStarRE.QPBT
 
@@ -50,6 +49,7 @@ theorem consistencyDefect_comm_of_commute {X A I : Type*}
   intro a _
   simp only [hcomm x a b, eq_comm]
 
+open Classical in
 /-- A polynomial measurement's mass outside the encoding image is at most
 its evaluated inconsistency with an encoding-supported reference, plus `md/q`.
 This is the Schwartz-Zippel step in blueprint `eq:qld-nonencoding-mass`.
@@ -158,6 +158,7 @@ theorem expanded_point_consistency_eq {P : AdmissibleParams} {epsilon : ℝ}
 
 end ProjectiveSetting
 
+open Classical in
 /-- The right-hand marginal version of the support estimate, obtained by
 interchanging the two tensor factors and using the same collision bound. -/
 theorem right_mass_outside_encoding_le_evaluated_defect {P : AdmissibleParams}
@@ -179,10 +180,18 @@ theorem right_mass_outside_encoding_le_evaluated_defect {P : AdmissibleParams}
     WinImplications.reindexOp_prodComm_heteroKron,
     WinImplications.consistencyDefect_swappedState] using h
 
-/-- Both evaluated global marginals are consistent with the opposite
-encoding-supported reference. The universal square-root coefficient comes
-from the two Pauli-basis checks and point self-consistency; it does not assume
-the non-encoding support estimate or the existence of a global witness. -/
+/-- For a supplied `GlobalPairWitness`, both evaluated global marginals are
+consistent with the opposite encoding-supported reference. The universal
+square-root coefficient comes from the two Pauli-basis checks and point
+self-consistency. This auxiliary uses both point-consistency fields of the
+witness; it neither constructs that witness nor uses the non-encoding support
+estimate.
+
+**Unfaithful:** The supplied witness is not derived here from `lem:qld-4-7`,
+paper `14_analysis_of_the_pauli_basis_test.tex:1267-1274`. Issue #519 and
+`docs/paper-gaps/qpbt_decoding-identity.tex` record the missing construction.
+Elimination: prove `exists_globalPairWitness` before using this auxiliary in
+the source-facing `exists_pulled_apart_consistency`. -/
 theorem global_marginal_encoding_consistency :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → ∀ (S : ProjectiveSetting P epsilon)
