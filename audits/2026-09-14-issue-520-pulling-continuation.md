@@ -164,3 +164,122 @@ checks are reproducible from `.lake/Issue520Axioms.lean`; no diagnostic
 commands occur in production modules. All new production files are below
 the 1000-line limit. The final receipt records the commit/hook outcome and
 continuation end time.
+
+## Second continuation: supplied-witness proof completed
+
+The next owner-authorized continuation started from the clean checkpoint
+`a337bb42991f67a88c2df4db356cb7d0ead9f493`. Its first observed UTC timestamp was
+2026-09-14 06:40:53Z; the assignment allows at most 25 minutes. It continues
+the same proof attempt and does not reset any preceding cost. The predecessor
+native thread `01a09e8f-4578-7681-89b5-755afffa1331` was completed, recorded, and
+closed before this assignment. Its reported work was 1197 seconds and its
+measured rollout wall time was 1229.33 seconds. Preserve both measurements,
+the earlier 2722 recorded seconds, the approximately 25-minute `c2176cc3`
+checkpoint, and the original attempt records. MAIN records this continuation's
+native rollout and token totals after the terminal receipt.
+
+Primary `worktree-setup.sh --no-build` and hook verification passed again.
+Read-only GitHub checks through primary `gh_common.py` found issue #520 open,
+without assignees or comments, and no repository labels beginning `opus-`.
+The other worktrees, including the parallel Alice source-alignment repair,
+were not edited. No router worker, child, CI workflow, review, full build,
+lane operation, publication, primary edit, shell change, or credential/cap
+change was performed.
+
+### Quantitative comparison
+
+Write A and B for the evaluated difference-polynomial measurements on the
+two extraction blocks, and P_A and P_B for the original point measurements
+on the six-register state. The preceding checkpoint proves
+
+    Cons(A, P_B) <= deltaG,    Cons(P_A, B) <= deltaG.
+
+The new `point_consistencyDefect_psiHat` identifies the consistency defect of
+P_A and P_B with the original strategy defect, by tensoring with the two
+normalized EPR states. The existing `point_self_consistency_le` bounds this
+defect by N * epsilon, where N is the parameter-independent number
+`Fintype.card PauliEdge`.
+
+Agreement first bounds the squared distances of these three pairs by
+2 * deltaG, 2 * N * epsilon, and 2 * deltaG. Two squared-distance triangle
+inequalities, along A, P_B, P_A, B, give
+
+    DistSq(A, B) <= 12 * deltaG + 8 * N * epsilon.
+
+Both evaluated difference-polynomial measurements are projective, including
+their six-register placements. Applying the projective agreement inequality
+therefore proves `pullingMeas_eval_consistencyDefect_le` with the same bound
+on Cons(A, B). Combining this actual estimate with the saved collision and
+fixed-coordinate character comparisons gives
+
+    observable distance <= 48 * deltaG + 32 * N * epsilon + 4 * m*d/q.
+
+Since epsilon <= sqrt(epsilon) for epsilon <= 1, the universal choice
+C = 48 + 32 * N bounds this expression by
+`deltaConstructPaulis C epsilon deltaG P.m P.d P.q`. No field cardinality or
+basis-coordinate factor enters C. All question distributions remain uniform,
+and both extraction-block placements remain those of the original target.
+
+This proof does not depend on `marginalPoly_sub_pointMeas_approx_zero`,
+`nonencodingMarginalMass_le`, or either unfinished `tildeM_consistent_pointMeas`
+declaration in this checkpoint. PR #399's verified absorption proof and issue
+#517's verified mass estimate retain their previously recorded status, but
+neither is needed for this comparison.
+
+### File boundary and source debt
+
+The original marginal and point declarations moved without statement or proof
+changes to `Extraction/MeasurementConsistency.lean`. Only its module
+description changed. `Extraction/Consistency.lean` re-exports them and proves
+the original `tildeObs_selfConsistent` signature. `PullingDefect.lean` imports
+the prerequisite module, avoiding a dependency cycle. The three files have
+869, 81, and 264 lines respectively, below the 1000-line guard.
+
+The four unrelated inherited holes remain in `MeasurementConsistency.lean`:
+`marginalPoly_sub_pointMeas_approx_zero`, `nonencodingMarginalMass_le`,
+`tildeM_consistent_pointMeas`, and `tildeM_consistent_pointMeas'`. Their existing
+proof-obligation markers remain. No new hole or axiom was introduced.
+
+The completed declaration is conditional on a supplied `GlobalPairWitness`.
+Its docstring carries the source-debt marker from PR #539 and identifies
+`exists_pulled_apart_consistency` and `exists_globalPairWitness`, including the
+zero-error construction, as remaining source obligations. At immutable
+`27f4c8110d0ff41fe834a8bb5b12bab72de44a33` / published
+`ca866da402947c9ee7e1dd5e935a2782fe0d1602`, the corresponding conditional name
+is `tildeObs_selfConsistent_ofGlobalPairWitness`. Integration must retain that
+name and marker; this proof does not complete the joint source construction.
+The stale `leanok` on blueprint `lem:qld-construct-the-paulis` was removed.
+No source statement was changed or newly advertised as proved.
+
+### Final statement audit and validation
+
+Paper assumptions: a passing projective strategy and the global measurements
+constructed in `lem:qld-4-7`, with the absorbed construction error.
+Lean assumptions: exactly the checkpoint's admissible parameters, epsilon in
+[0,1], nonnegative deltaG, `ProjectiveSetting`, supplied `GlobalPairWitness`,
+Pauli basis W, and fixed basis coordinate j. A textual comparison of the full
+public signature with `a337bb4` is identical.
+
+Paper conclusion: observable self-consistency uniformly over the full Pauli
+register. Lean conclusion: the same squared-distance expression bounded by
+the unchanged construction scale, with a single universal C preceding all
+parameter and strategy quantifiers. Verdict: unchanged conditional statement;
+the supplied witness remains an extra premise relative to the source
+construction, and its construction is not discharged here.
+
+Focused Lean checks passed for `MeasurementConsistency.lean`,
+`PullingDefect.lean`, `Consistency.lean`, and the `QPBT.lean` re-export.
+The fresh target axiom closure is exactly `propext`, `Classical.choice`, and
+`Quot.sound`. The two new quantitative/transport lemmas and all reused pulling
+comparisons have the same standard closure. The reproducible diagnostic is
+the ignored `.lake/Issue520Axioms.lean`; production modules contain no diagnostic
+commands. The target no longer depends on `sorryAx`.
+
+The focused blueprint check resolves all four links at
+`lem:qld-construct-the-paulis` and confirms that the entry has neither statement
+nor proof `leanok`. The broader declaration-sync command reports 1445 missing
+manifest entries because `blueprint/lean_decls` is absent in the starting
+checkpoint as well as this worktree. That generated manifest was not changed.
+Blueprint rendering was not run under the owner's restriction to focused
+Lean, axiom, declaration checks, and normal commit hooks. The terminal receipt
+records the exact final commit and hook result.

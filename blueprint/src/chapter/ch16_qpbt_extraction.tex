@@ -222,7 +222,8 @@ Each displayed construction estimate below has its own universal constant $C_E \
 	\lean{MIPStarRE.QPBT.tildeM_consistent_pointMeas'}
 	\lean{MIPStarRE.QPBT.tildeObs_selfConsistent}
 	\lean{MIPStarRE.QPBT.deltaConstructPaulis}
-	\leanok
+	% The linked consistency declarations assume a supplied GlobalPairWitness.
+	% The joint source construction remains open; see issue #519 and PR #539.
 	\uses{def:tilde-m-measurement, def:tilde-w-observables,
 		lem:projective-strategy-setup, def:expanded-state, def:consistency,
 		def:approx-question-indexed-operators, lem:qld-4-7,
