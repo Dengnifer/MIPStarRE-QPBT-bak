@@ -1200,15 +1200,17 @@ assembled by Fourier averaging.
 	\leanok
 	\uses{def:povm-distance, def:expanded-state, def:povm-conventions}
 	This is not a named statement of \cite{Ji2020MIPStar}. Adjoining an
-	outcome $\bot$ carrying the zero effect to two families of operators,
-	placed on any two registers, leaves their state-dependent squared
-	distance unchanged, for any question law.
+	outcome $\bot$ carrying the zero effect to two question-indexed families
+	of complete measurements with a common finite outcome set, placed on any
+	two registers, leaves their state-dependent squared distance unchanged,
+	for any question law.
 \end{lemma}
 \begin{proof}
 	\leanok
 	\uses{def:povm-distance, def:expanded-state}
-	The summand at $\bot$ is the norm of the difference of two zero
-	operators, hence zero, and the remaining summands are unchanged.
+	The added outcome has zero effect in each measurement. The summand at
+	$\bot$ is the norm of the difference of two zero operators, hence zero,
+	and the remaining summands are unchanged.
 \end{proof}
 
 \begin{lemma}[Formalization support: the completed marginal comparisons]
@@ -1342,9 +1344,10 @@ assembled by Fourier averaging.
 	$D_{\mathrm{Paste}}$ for the probability law obtained from
 	$D_{\mathrm{Line}} \times D_{\mathrm{Line}}$ by conditioning on that
 	event and recording the two lines together with the two line-point
-	samples in the order required by the pasting lemma. For any two families
-	of operators placed on opposite registers, the consistency defect under
-	$D_{\mathrm{Paste}}$ is at most the consistency defect under
+	samples in the order required by the pasting lemma. For any two
+	question-indexed families of complete measurements with a common finite
+	outcome set, placed on any directed pair of opposite registers, the
+	consistency defect under $D_{\mathrm{Paste}}$ is at most the consistency defect under
 	$D_{\mathrm{Line}} \times D_{\mathrm{Line}}$ divided by $\mu$.
 \end{lemma}
 \begin{proof}
@@ -1352,10 +1355,11 @@ assembled by Fourier averaging.
 	\uses{def:line-point-dist, def:consistency}
 	The axis-parallel component of the line-point law has nonzero direction
 	almost surely, which gives $\mu \ge \tfrac12$; normalization gives
-	$\mu \le 1$. The consistency-defect integrand is nonnegative on opposite
-	placements, so restricting the question law to an event of mass $\mu$ and
-	renormalizing multiplies the average by at most $1/\mu$; relabeling the
-	samples is a change of variables.
+	$\mu \le 1$. The measurement effects are positive, and effects on opposite
+	placements commute. Their products are therefore positive, so the
+	consistency-defect integrand is nonnegative. Restricting the question law
+	to an event of mass $\mu$ and renormalizing multiplies the average by at
+	most $1/\mu$; relabeling the samples is a change of variables.
 \end{proof}
 
 \begin{lemma}[Formalization support: the conditioned point-to-line marginal defects]
