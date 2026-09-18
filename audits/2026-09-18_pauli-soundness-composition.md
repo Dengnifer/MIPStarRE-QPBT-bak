@@ -78,8 +78,11 @@ The supplied kernel evidence reports a fresh 9258-job root build and axiom
 closure `propext`, `Classical.choice`, and `Quot.sound` for
 `pauli_soundness`, `exists_projective_setting_isometry_bounds`, and both Naimark
 operator-transfer bounds. The normal merge of PR605 parent
-`ffec0957019fedb5f7877adaec924e3791faa007` was attempted but was blocked by
-the worktree's read-only shared Git metadata when Git tried to create
-`ORIG_HEAD.lock`; no proof source was rewritten and no public merge/status,
-CI, or review action was performed in this task. The incoming Naimark-removal
-path was treated as a substantive conflict and was not adopted.
+`ffec0957019fedb5f7877adaec924e3791faa007` subsequently succeeded at
+`f98d4ecb1e68607c9dc062ed8395c7ed42f4464d`; the reference-transaction
+merge-loss guard passed, and no incoming Naimark file was deleted. An earlier
+sandbox attempt failed to create `ORIG_HEAD.lock`, but that was not a
+mathematical conflict or a current blocker. The apparent incoming Naimark
+removal arose from comparing branch tips rather than the incoming changes
+against their merge base: the `Soundness.lean` diff is empty, and only the
+`OperatorTransfer` and `StateTransfer` docstrings change in that subtree.
