@@ -1319,6 +1319,43 @@ final soundness argument. The omitted step in the source is discussed in
   equalities are the exact compression identities for the pulled-back witness.
 \end{proof}
 
+\begin{theorem}[Pauli soundness for the formalized game]
+  \label{thm:pauli-formalized-game-support}
+  \lean{MIPStarRE.QPBT.pauli_soundness}
+  \leanok
+  \uses{thm:pauli-projective-setting-isometry-support,
+    thm:pauli-naimark-reduction-support,
+    thm:pauli-naimark-operator-transfer-support,
+    def:pauli-question-distribution, def:pauli-win-predicate,
+    def:admissible, def:povm-distance}
+  For the finite-dimensional game \(\mathfrak{G}^{\mathrm{Pauli}}_{(q,m,d)}\)
+  represented by the formalization, there are universal constants \(a\geq1\)
+  and \(0<b<1\) such that every admissible parameter tuple, every
+  \(\eps\geq0\), and every strategy of value at least \(1-\eps\) admits
+  local isometries and a normalized auxiliary state for which the state norm
+  and both complete Pauli-family distances, for each \(W\in\{X,Z\}\), are
+  bounded by \(a(md)^a(\eps^b+q^{-b}+2^{-bmd})\). This is a
+  formalization-only support statement: it records the checked theorem for
+  the existing game definition and does not certify the printed source's
+  tensor-code correspondence.
+\end{theorem}
+\begin{proof}
+  \leanok
+  \uses{thm:pauli-projective-setting-isometry-support,
+    thm:pauli-naimark-reduction-support,
+    thm:pauli-naimark-operator-transfer-support}
+  First compose the projective-setting estimates with the questionwise
+  Naimark dilation and the two operator-family transfers, obtaining all three
+  bounds on the original spaces for \(0\leq\eps\leq1\). The private scalar
+  estimates absorb the square of the intermediate error by increasing the
+  universal prefactor and replacing the exponent by one quarter. For
+  \(\eps>1\), apply the unit-interval result at the endpoint \(\eps=1\),
+  using nonnegativity of the strategy value, and use monotonicity of the
+  robustness function in \(\eps\). The constants are fixed before the
+  parameters and strategy, and the same witness supplies the state and both
+  operator conclusions.
+\end{proof}
+
 We can now prove the soundness theorem for the Pauli basis test, stated as Theorem~\ref{thm:pauli} in Chapter~\ref{chap:qpbt-test}.
 
 \begin{proof}
