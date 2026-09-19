@@ -86,14 +86,13 @@ PRB="$STATE/$N.pr.md"
   echo "## Description"; echo; git -C "$W" log --format="- %s" "$BEFORE..$AFTER"; echo
   echo "## Testing"; echo; echo "Worker checked every changed file with \`lake env lean\`; exact-head CI and review follow."; } > "$PRB"
 TITLE=$(gh issue view "$N" --json title --jq .title)
-PR=$(local/bin/pr_open.py --branch "$BR" --issue "$N" --title "$TITLE" --body-file "$PRB" --label formalization) || {
-  log "pr_open failed; pushing directly and retrying (pre-push output in $STATE/$N.push.log)"
-  REMOTE_SHA=$(git -C "$W" ls-remote github "refs/heads/$BR" | cut -f1); [ -n "$REMOTE_SHA" ] || REMOTE_SHA=0000000000000000000000000000000000000000
-  ( cd "$W" && printf "%s %s %s %s\n" "refs/heads/$BR" "$(git rev-parse HEAD)" "refs/heads/$BR" "$REMOTE_SHA" | sh .githooks/pre-push github "$(git remote get-url github)" ) > "$STATE/$N.push.log" 2>&1 || true
-  grep -q "MIPStarRE pre-push: ok" "$STATE/$N.push.log" || fail "pre-push gate failed (see $STATE/$N.push.log)"
-  MIPSTARRE_SKIP_HOOKS=1 git -C "$W" push github "refs/heads/$BR:refs/heads/$BR" >> "$STATE/$N.push.log" 2>&1 || fail "direct push failed (see $STATE/$N.push.log)"
-  PR=$(local/bin/pr_open.py --branch "$BR" --issue "$N" --title "$TITLE" --body-file "$PRB" --label formalization) || fail "pr_open failed after direct push"
-}
+# Guarded publication (issue #552): the lane publishes only through pr_open.py,
+# which pushes under the pre-push gate.  The former fallback re-pushed with
+# MIPSTARRE_SKIP_HOOKS=1 whenever pr_open failed, so a pr_open failure could still
+# publish with the hooks skipped.  A failure now leaves the lane through the normal
+# control flow: fail() records needs-attention and exits non-zero for the caller.
+PR=$(local/bin/pr_open.py --branch "$BR" --issue "$N" --title "$TITLE" --body-file "$PRB" --label formalization) \
+  || fail "pr_open failed for #$N (branch $BR); nothing published: the hook-skipping direct-push fallback was removed, rerun the lane once pr_open works"
 echo "PR=$PR"
 for _ in $(seq 1 30); do [ "$(gh pr view "$PR" --json headRefOid --jq .headRefOid)" = "$AFTER" ] && break; sleep 10; done
 log "ci.sh $PR"; local/bin/ci.sh "$PR" >> "$STATE/$N.ci.log" 2>&1; echo "CI_EXIT=$?"
