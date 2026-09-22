@@ -67,4 +67,52 @@ theorem exists_coefficients {u v : Fin m → K} (f : LinePolynomialFunction u v 
 
 end LinePolynomialFunction
 
+/-- The source combining function on geometric lines, with degree at most
+`c + 1`. Its only geometric hypothesis is the projection inclusion preceding
+`eq:combine-lines`. Affine parameters and bounded polynomial representatives
+are constructed inside the degree proof. The function itself uses neither
+choice, and zero directions and constant projections are allowed.
+Blueprint `def:combine-map`; paper
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:984-989`. -/
+noncomputable def combineLineFunction
+    (u v : Fin (2 * m + 2) → K) (uX vX uZ vZ : Fin m → K)
+    (hproj : ∀ p ∈ linePoints u v,
+      projX p ∈ linePoints uX vX ∧ projZ p ∈ linePoints uZ vZ)
+    (f : LinePolynomialFunction uX vX c) (g : LinePolynomialFunction uZ vZ c) :
+    LinePolynomialFunction u v (c + 1) := by
+  refine ⟨fun p => p.1 (alphaVar m) * f.1 ⟨projX p.1, (hproj p.1 p.2).1⟩ +
+    p.1 (betaVar m) * g.1 ⟨projZ p.1, (hproj p.1 p.2).2⟩, ?_⟩
+  obtain ⟨pf, hf⟩ := f.exists_coefficients
+  obtain ⟨pg, hg⟩ := g.exists_coefficients
+  obtain ⟨aX, bX, aZ, bZ, hcompat⟩ :=
+    exists_isCombineLineCompatible_of_projection_mem u v uX vX uZ vZ hproj
+  refine ⟨combineLinePolynomial aX bX aZ bZ
+    (u (alphaVar m)) (v (alphaVar m)) (u (betaVar m)) (v (betaVar m)) pf pg,
+    combineLinePolynomial_natDegree_le _ _ _ _ _ _ _ _ pf pg, ?_⟩
+  intro t
+  simp only [combineLinePolynomial, Polynomial.eval_add, Polynomial.eval_mul,
+    Polynomial.eval_comp, Polynomial.eval_C, Polynomial.eval_X,
+    linePolynomialOfCoefficients_eval, hf, hg, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  have hX : f.1 ⟨projX (u + t • v), (hproj _ ⟨t, rfl⟩).1⟩ =
+      f.1 ⟨uX + (aX + bX * t) • vX, ⟨_, rfl⟩⟩ :=
+    congrArg f.1 (Subtype.ext (hcompat.2.2.2.2 t).1)
+  have hZ : g.1 ⟨projZ (u + t • v), (hproj _ ⟨t, rfl⟩).2⟩ =
+      g.1 ⟨uZ + (aZ + bZ * t) • vZ, ⟨_, rfl⟩⟩ :=
+    congrArg g.1 (Subtype.ext (hcompat.2.2.2.2 t).2)
+  rw [← hX, ← hZ]
+  ring
+
+/-- The pointwise source identity for the combining function. All arguments
+are geometric points; no parameter or coefficient representative is selected.
+This is `eq:combine-lines` of blueprint `def:combine-map`. -/
+theorem combineLineFunction_apply
+    (u v : Fin (2 * m + 2) → K) (uX vX uZ vZ : Fin m → K)
+    (hproj : ∀ p ∈ linePoints u v,
+      projX p ∈ linePoints uX vX ∧ projZ p ∈ linePoints uZ vZ)
+    (f : LinePolynomialFunction uX vX c) (g : LinePolynomialFunction uZ vZ c)
+    (p : ↥(linePoints u v)) :
+    (combineLineFunction u v uX vX uZ vZ hproj f g).1 p =
+      p.1 (alphaVar m) * f.1 ⟨projX p.1, (hproj p.1 p.2).1⟩ +
+        p.1 (betaVar m) * g.1 ⟨projZ p.1, (hproj p.1 p.2).2⟩ := rfl
+
 end MIPStarRE.QPBT
