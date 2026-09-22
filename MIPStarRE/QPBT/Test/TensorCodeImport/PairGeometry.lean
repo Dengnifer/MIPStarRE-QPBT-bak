@@ -77,6 +77,47 @@ theorem tensorPairDistribution_eq_diagonal (D : DirectLdParams) :
         else sample.direction j.rev - sample.point j.rev)
     split_ifs <;> simp
 
+/-- Translation by the projected direction preserves uniform sampling of
+the point, index, and unrestricted direction. -/
+def endpointShiftEquiv (D : DirectLdParams) : DirectLdSpace D ≃ DirectLdSpace D where
+  toFun sample :=
+    ⟨sample.point + directPrefixProjection sample.index sample.direction,
+      sample.index, sample.direction⟩
+  invFun sample :=
+    ⟨sample.point - directPrefixProjection sample.index sample.direction,
+      sample.index, sample.direction⟩
+  left_inv sample := by simp
+  right_inv sample := by simp
+
+/-- The second endpoint and the sampled diagonal line have exactly the
+original line/point law. The line retains its index and its full projected
+direction; no uniformity conditional on a nonzero direction is assumed. -/
+theorem diagonal_endpoint_distribution (D : DirectLdParams) :
+    (uniformDistribution (DirectLdSpace D)).map (fun sample =>
+      (directDLineDescOf D sample,
+        sample.point + directPrefixProjection sample.index sample.direction)) =
+      directDLinePointDist D := by
+  calc
+    _ = ((uniformDistribution (DirectLdSpace D)).map (endpointShiftEquiv D)).map
+        (fun sample => (directDLineDescOf D sample, sample.point)) := by
+      rw [Distribution.map_map]
+      congr 1
+      funext sample
+      apply Prod.ext
+      · change directDLineDescOf D sample = directDLineDescOf D
+          ⟨sample.point + directPrefixProjection sample.index sample.direction,
+            sample.index, sample.direction⟩
+        unfold directDLineDescOf
+        have hbase := lineRepMap_add_smul
+          (directPrefixProjection sample.index sample.direction) sample.point
+          (1 : DirectScalarQ D)
+        simp only [one_smul] at hbase
+        simp only [hbase]
+      · rfl
+    _ = directDLinePointDist D := by
+      rw [uniformDistribution_map_equiv]
+      rfl
+
 end
 
 end MIPStarRE.QPBT.TensorCodeImport
