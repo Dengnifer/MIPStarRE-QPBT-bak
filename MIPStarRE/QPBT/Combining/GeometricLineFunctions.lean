@@ -93,6 +93,22 @@ theorem ofCoefficients_apply (u v : Fin m → K) (p : Fin (c + 1) → K)
   exact congrArg Subtype.val (Function.surjInv_eq
     (f := fun s : K => (⟨u + s • v, ⟨s, rfl⟩⟩ : ↥(linePoints u v))) _ _)
 
+/-- Two descending coefficient lists define the same geometric function
+exactly when their polynomial functions on the parameter field agree.
+Formal polynomial equality is not required, even on a nondegenerate line. -/
+theorem ofCoefficients_eq_iff (u v : Fin m → K) (p q : Fin (c + 1) → K)
+    (hp : Function.FactorsThrough (evalCoefficient p) (fun t : K => u + t • v))
+    (hq : Function.FactorsThrough (evalCoefficient q) (fun t : K => u + t • v)) :
+    ofCoefficients u v p hp = ofCoefficients u v q hq ↔
+      ∀ t : K, evalCoefficient p t = evalCoefficient q t := by
+  constructor
+  · intro h t
+    simpa only [ofCoefficients_apply] using
+      congrArg (fun f : LinePolynomialFunction u v c => f.1 ⟨u + t • v, ⟨t, rfl⟩⟩) h
+  · intro h
+    apply LinePolynomialFunction.ext
+    simpa only [ofCoefficients_apply] using h
+
 end LinePolynomialFunction
 
 /-- The source combining function on geometric lines, with degree at most
