@@ -65,6 +65,37 @@ theorem exists_coefficients {u v : Fin m → K} (f : LinePolynomialFunction u v 
     Polynomial.ofFn_comp_toFn_eq_id_of_natDegree_lt (Nat.lt_succ_of_le hp)]
   exact hf t
 
+/-- Restrict a polynomial function to a contained geometric line, preserving
+its degree bound. Applied to equal point sets in both directions, this shows
+that the carrier is independent of the chosen line presentation, including
+singleton presentations. The affine parameters are supplied by line inclusion. -/
+noncomputable def restrictToLine {u v u' v' : Fin m → K}
+    (h : linePoints u v ⊆ linePoints u' v') (f : LinePolynomialFunction u' v' c) :
+    LinePolynomialFunction u v c := by
+  refine ⟨fun x => f.1 ⟨x.1, h x.2⟩, ?_⟩
+  obtain ⟨p, hp, hf⟩ := f.2
+  obtain ⟨a, b, hu, hv⟩ := exists_affine_parameters_of_linePoints_subset u v u' v' h
+  refine ⟨p.comp (Polynomial.C a + Polynomial.C b * Polynomial.X), ?_, ?_⟩
+  · refine Polynomial.natDegree_comp_le.trans ?_
+    have haff : (Polynomial.C a + Polynomial.C b * Polynomial.X).natDegree ≤ 1 := by
+      rw [Polynomial.natDegree_C_add]
+      exact (Polynomial.natDegree_C_mul_le b Polynomial.X).trans Polynomial.natDegree_X_le
+    simpa using Nat.mul_le_mul hp haff
+  · intro t
+    simp only [Polynomial.eval_comp, Polynomial.eval_add, Polynomial.eval_mul,
+      Polynomial.eval_C, Polynomial.eval_X, hf]
+    apply congrArg f.1
+    apply Subtype.ext
+    dsimp
+    rw [hu, hv]
+    module
+
+/-- Restriction preserves the value at every geometric point. In particular,
+transport between equal line point sets is independent of affine parameters. -/
+theorem restrictToLine_apply {u v u' v' : Fin m → K}
+    (h : linePoints u v ⊆ linePoints u' v') (f : LinePolynomialFunction u' v' c)
+    (x : ↥(linePoints u v)) : (restrictToLine h f).1 x = f.1 ⟨x.1, h x.2⟩ := rfl
+
 /-- Descend a coefficient answer to a geometric polynomial function when its
 evaluation is constant on parameter fibers. Mathlib's inverse of the
 surjective parameterization selects a parameter; the fiber condition makes
