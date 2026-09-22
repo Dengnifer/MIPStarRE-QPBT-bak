@@ -109,6 +109,25 @@ theorem ofCoefficients_eq_iff (u v : Fin m → K) (p q : Fin (c + 1) → K)
     apply LinePolynomialFunction.ext
     simpa only [ofCoefficients_apply] using h
 
+/-- On descending coefficient answers, geometric evaluation agrees exactly
+with the existing universal `EvaluatesTo` relation at every point of the
+line. This comparison does not assert descent of arbitrary game outcomes. -/
+theorem ofCoefficients_evaluatesTo_iff {L : LdParams} (line : LineDesc L)
+    (p : DegPoly L c)
+    (h : Function.FactorsThrough (evalCoefficient p)
+      (fun t : ScalarQ L => line.base + t • line.direction))
+    (x : ↥(linePoints line.base line.direction)) (a : ScalarQ L) :
+    EvaluatesTo line p x.1 a ↔
+      (ofCoefficients line.base line.direction p h).1 x = a := by
+  rcases x with ⟨x, t, rfl⟩
+  rw [ofCoefficients_apply]
+  constructor
+  · intro hx
+    exact hx.2 t rfl
+  · intro ht
+    refine ⟨⟨t, rfl⟩, fun s hs => ?_⟩
+    exact (h hs.symm).trans ht
+
 end LinePolynomialFunction
 
 /-- The source combining function on geometric lines, with degree at most
