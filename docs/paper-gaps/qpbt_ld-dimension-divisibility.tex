@@ -271,6 +271,55 @@ difficult to state, but none is carried out in the source, and together
 they replace the asserted one-line identity by a reduction carrying its
 own value bound.
 
+\paragraph{Established pair sampling and projectivity.}
+Write a directly indexed sample as $(u,i,w)$, with independent uniform
+components, and let $v=\pi_{i-1}(w)$. Coordinate reversal identifies the
+tensor-code convention with the source's prefix convention. The change of
+variables from an independent second point to its difference from $u$
+identifies the hidden-subcube pair law with $(u,u+v)$ exactly. Translation
+$u\mapsto u+v$ preserves the full canonical diagonal description, including
+the index and direction, and proves that either endpoint has the source
+line-point law. These statements retain $v=0$ as a repeated point.
+
+For each visible pair $p$, the finite fiber $F_p$ of compatible source
+samples is nonempty. A common uniform register in $\prod_p F_p$ gives the
+uniform conditional sample at $p$. Sampling the pair and reading that
+register entry recovers the original uniform diagonal sample. In each
+register block, measure the source diagonal polynomial once and evaluate
+it at the parameters of both endpoints. Postprocessing within a block
+and taking the block diagonal family preserve projectivity.%
+\footnote{The exact identities are
+\leanid{tensorPairDistribution\_eq\_diagonal},
+\leanid{diagonal\_endpoint\_distribution},
+\leanid{pairRegister\_marginal}, and \leanid{pairRegister\_average};
+the projectivity result is \leanid{pairMeasurement\_isProjective}, under
+\path{MIPStarRE/QPBT/Test/TensorCodeImport/}. They are recorded separately
+in blueprint \path{prop:tensor-import-pair-sampling}; see \ghissue{704}.}
+Adjoining the maximally correlated state of the two finite registers
+preserves normalization, and the Born weight of two block diagonal
+operators equals the uniform average of their Born weights in matching
+register blocks. The scalar branch comparison is also established:
+if $B_{xy}$ denotes a source branch rejection probability after the exact
+seed lift, then
+\[
+ \frac{B_{ap}+B_{pa}+B_{dp}+B_{pd}}6+
+ \frac{B_{pp}+B_{aa}+B_{dd}}9\le\frac32(1-\operatorname{val}(S)).
+\]
+Here $p,a,d$ denote the point, axis-line, and diagonal-line types. This
+inequality follows from nonnegativity and the source weight $1/9$ for each
+ordered type pair; it does not assert that the left side is the rejection
+probability of the constructed tensor-code strategy.%
+\footnote{See \leanid{weighted\_source\_rejection\_le} in
+\path{MIPStarRE/QPBT/Test/TensorCodeImport/Weights.lean} and blueprint
+\path{prop:tensor-import-weights}.}
+This establishes auxiliary distribution identities and a projective pair
+family on a normalized state. Composing these identities to prove either
+endpoint's rejection comparison, pair synchronicity, and the complete
+weighted value bound remains open. Theorem~4.7 itself also has no formalized
+provider in the active Lean tree. Thus the original game-correspondence
+obligation remains open, without an assumed reduction certificate or an
+external soundness hypothesis.
+
 \paragraph{Obligation 2: the parameter bound.}
 Theorem~4.7 requires $K \ge 12 m' t = 12 m' (d+1)$.  The source
 instantiates $K = (m')^3 d$, which meets the bound iff
@@ -282,12 +331,27 @@ instantiation violates the hypothesis exactly at $m' \in \{1,2\}$ for
 every $d$ and at $m' = 4$ for $d \in \{1,2\}$ --- in particular, in the
 multilinear regime $d = 1$, at every dimension $m' \le 4$.  A candidate
 repair is to instantiate $K = \max((m')^3 d,\, 12 m'(d+1))$; the open
-obligation is then to re-absorb the error, that is, to check that
-$\mathrm{poly}(m',t,K)$ and $e^{-K/(m')^2}$ still collapse to the form
-$a(dm')^a(\eps^b + q^{-b} + 2^{-bm'd})$ in the small-$m'$ cases where the
-maximum is $12m'(d+1)$ --- plausible, since there
-$e^{-K/(m')^2} = e^{-12(d+1)/m'}$ decays in $d$ at a rate comparable to
-$2^{-m'd}$ for $m' \le 4$, but not checked here.
+application must still use a formalized version of the cited theorem and
+its quantitative error bound. The scalar estimates for this proposal are
+now established uniformly for positive $m',d$:
+\[
+  12m'(d+1)\le K,\qquad (m')^3d\le K\le24(m')^3d,
+  \qquad e^{-bK/(m')^2}\le2^{-bm'd}\quad(b\ge0).
+\]
+Indeed $d+1\le2d$, $m'\le(m')^3$, and $\log 2\le1$. Thus the
+proposed increase does not worsen the exponential term and increases a
+polynomial prefactor only polynomially; for example
+$m'(d+1)K\le48(m'd)^4$. This gives a uniform arithmetic justification
+for the proposal, including the small dimensions, without a change of
+game semantics.%
+\footnote{The scalar bounds are \leanid{sampling\_bounds} and
+\leanid{sampling\_exp\_le} in
+\path{MIPStarRE/QPBT/Test/TensorCodeImport/Parameters.lean}, recorded in
+blueprint \path{prop:tensor-import-sampling-parameter}.}
+It is not a proof that the printed choice is admissible. Adopting the
+auxiliary parameter and absorbing the actual theorem's explicitly
+quantified polynomial error in the complete source import remain separate
+steps. No soundness statement is assumed as a hypothesis.
 
 In the correspondence of Obligation~1, the only role of the divisibility
 $m' \mid q$ is to make the $\chi$-sampled index uniform.  The underlying

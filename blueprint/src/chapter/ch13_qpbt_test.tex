@@ -340,6 +340,96 @@ Quantum soundness of a version of the classical low-degree test for polynomials 
 	Quantum soundness of the low individual degree test itself is the result of~\cite{Ji2020LowIndividualDegree}; Remark~\ref{rem:ld-soundness-provider} relates the present statement to Theorem~\ref{thm:main-formal}, which proves that result.
 \end{proof}
 
+\begin{proposition}[Auxiliary subcube pair sampling]\label{prop:tensor-import-pair-sampling}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.tensorPairDistribution_eq_diagonal}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.diagonal_endpoint_distribution}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.pairRegister_marginal}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.pairRegister_average}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.pairMeasurement_isProjective}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.correlatedPairState_norm}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.correlatedPairState_born}
+  \leanok
+  This is a formalization-only auxiliary result for the printed proof of
+  Theorem~\ref{lem:ld-soundness}. Let $m,d,k\geq1$ and let $\F_q$ have an
+  admissible size; no divisibility condition is needed for this directly
+  indexed sampling statement. Sample $u,w\in\F_q^m$ and $i\in\{1,\ldots,m\}$
+  independently and uniformly, and let $\pi_{i-1}$ zero the first $i-1$
+  coordinates. After reversing coordinates, the ordered pair
+  $(u,u+\pi_{i-1}(w))$ has the hidden-subcube pair distribution of
+  Figure~1 of~\cite{Ji2021Quantum}. Either endpoint, together with the
+  canonical diagonal description retaining $i$ and $\pi_{i-1}(w)$, has the
+  directly indexed diagonal line-point law. These identities include the
+  zero-direction event.
+
+  For a visible pair $p$, let $F_p$ be the finite set of compatible samples.
+  Every $F_p$ is nonempty. A uniform register in $\prod_p F_p$ has the uniform
+  marginal on each $F_p$; sampling $p$ from the pair law and then reading its
+  register entry recovers the uniform source sample. Given projective source
+  measurements, evaluating a diagonal answer at both endpoints in each
+  register block defines a projective measurement indexed only by the visible
+  pair and the local register. At $k>1$ this assertion concerns one fixed
+  answer coordinate and is not a simultaneous soundness theorem.
+  Tensoring a normalized strategy state with the maximally correlated state
+  of the two registers gives a normalized bipartite state for this family.
+  The Born weight of two block diagonal operators is the uniform average
+  of the original Born weights in matching register blocks.
+\end{proposition}
+\begin{proof}
+  \leanok
+  Subtraction of $u$ from the independent second point is a bijection of the
+  uniform samples. Translation of $u$ by $\pi_{i-1}(w)$ is another such
+  bijection and preserves the canonical diagonal line. Splitting the finite
+  register at one pair gives its uniform marginal. Summation over the fibers
+  recovers the source average. Postprocessing and block diagonal sums
+  preserve projectivity. This proves neither a comparison of game values nor
+  the imported soundness theorem; these remain the distinct obligations in
+  \cite{gap:qpbt_ld-dimension-divisibility}.
+\end{proof}
+
+\begin{proposition}[Auxiliary source branch weights]\label{prop:tensor-import-weights}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.weighted_source_rejection_le}
+  \leanok
+  Let $S$ be a strategy for the source classical game on its valid parameter
+  domain, including $m\mid q$. Write $B_{xy}$ for the rejection probability
+  of the ordered type branch $(x,y)$ of its correlated seed lift to the
+  directly indexed game, where $p,a,d$ denote point, axis-line, and diagonal-line
+  questions. Then
+  \[
+    \frac{B_{ap}+B_{pa}+B_{dp}+B_{pd}}6+
+    \frac{B_{pp}+B_{aa}+B_{dd}}9
+    \leq\frac32(1-\operatorname{val}(S)).
+  \]
+  This formalization-only assertion compares source branch weights; it
+  does not identify the left-hand side with a tensor-code strategy's loss.
+\end{proposition}
+\begin{proof}
+  \leanok
+  The seed lift preserves value, and source ordered type pairs have weight
+  $1/9$. Every branch loss is nonnegative; each displayed coefficient is at
+  most $(3/2)/9$.
+\end{proof}
+
+\begin{proposition}[Auxiliary tensor-code sampling parameter]
+  \label{prop:tensor-import-sampling-parameter}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.sampling_bounds}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.sampling_exp_le}
+  \leanok
+  This formalization-only scalar estimate concerns the proposed parameter
+  in \cite{gap:qpbt_ld-dimension-divisibility}, not an application of
+  Theorem~4.7 of~\cite{Ji2021Quantum}. For integers $m,d\geq1$, set
+  $K=\max(m^3d,12m(d+1))$. Then
+  \[
+    12m(d+1)\leq K,\qquad m^3d\leq K\leq24m^3d.
+  \]
+  For every real $b\geq0$, one also has
+  $e^{-bK/m^2}\leq2^{-bmd}$.
+\end{proposition}
+\begin{proof}
+  \leanok
+  Use $d+1\leq2d$ and $m\leq m^3$ for the upper bound. The exponential
+  estimate follows from $K/m^2\geq md$ and $\log2\leq1$.
+\end{proof}
+
 % This node is not a statement from the paper: it records the route by which
 % Theorem lem:ld-soundness is formalized, so that a proof-level formalization
 % mark certifies the formalized route and not the printed tensor-code one.
