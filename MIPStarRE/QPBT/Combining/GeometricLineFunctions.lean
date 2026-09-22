@@ -65,6 +65,33 @@ theorem exists_coefficients {u v : Fin m → K} (f : LinePolynomialFunction u v 
     Polynomial.ofFn_comp_toFn_eq_id_of_natDegree_lt (Nat.lt_succ_of_le hp)]
   exact hf t
 
+/-- Over a finite field the pullback has a reduced representative, of degree
+less than the field size, without increasing the given bound. This connects
+the existential pullback convention with the polynomial-function convention
+of `references/qpbt-paper/04_preliminaries.tex:835-845`. -/
+theorem exists_reduced_representative [Fintype K] {u v : Fin m → K}
+    (f : LinePolynomialFunction u v c) :
+    ∃ p : Polynomial K, p.natDegree ≤ c ∧ p.natDegree < Fintype.card K ∧
+      ∀ t : K, p.eval t = f.1 ⟨u + t • v, ⟨t, rfl⟩⟩ := by
+  obtain ⟨p, hp, hf⟩ := f.2
+  let z : Polynomial K := Polynomial.X ^ Fintype.card K - Polynomial.X
+  have hz : z.Monic := Polynomial.monic_X_pow_sub (by
+    rw [Polynomial.degree_X]
+    exact_mod_cast (Fintype.one_lt_card : 1 < Fintype.card K))
+  have hdegree : z.natDegree = Fintype.card K :=
+    FiniteField.X_pow_card_sub_X_natDegree_eq K Fintype.one_lt_card
+  have hne : z ≠ 1 := by
+    intro h
+    have hzdeg := congrArg Polynomial.natDegree h
+    rw [hdegree, Polynomial.natDegree_one] at hzdeg
+    exact (Fintype.card_pos (α := K)).ne' hzdeg
+  refine ⟨p %ₘ z, Polynomial.natDegree_modByMonic_le_left.trans hp, ?_, ?_⟩
+  · simpa only [hdegree] using Polynomial.natDegree_modByMonic_lt p hz hne
+  · intro t
+    change (p %ₘ z).eval₂ (RingHom.id K) t = _
+    rw [Polynomial.eval₂_modByMonic_eq_self_of_root (by simp [z, FiniteField.pow_card])]
+    exact hf t
+
 /-- Restrict a polynomial function to a contained geometric line, preserving
 its degree bound. Applied to equal point sets in both directions, this shows
 that the carrier is independent of the chosen line presentation, including
