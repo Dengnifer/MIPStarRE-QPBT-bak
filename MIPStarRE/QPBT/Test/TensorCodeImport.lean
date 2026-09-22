@@ -4,16 +4,18 @@ import MIPStarRE.QPBT.Test.TensorCodeImport.PairMeasurement
 import MIPStarRE.QPBT.Test.TensorCodeImport.PairState
 import MIPStarRE.QPBT.Test.TensorCodeImport.Parameters
 import MIPStarRE.QPBT.Test.TensorCodeImport.Weights
+import MIPStarRE.QPBT.Test.TensorCodeImport.Comparison
 
 /-!
-# Auxiliary constructions for the tensor-code soundness import
+# The source-to-tensor-code strategy reduction
 
 The modules collected here prove the hidden-subcube pair sampling identities,
-construct a finite shared register and projective pair measurements, and
-verify bounds for a proposed auxiliary sampling parameter. The strategy's
-weighted rejection estimate and the cited tensor-code soundness theorem
-remain open. The independent direct low-degree proof does not use these
-constructions.
+construct a finite shared register and all six projective measurement families,
+and bound the actual tensor-test rejection by `3/2` times source rejection.
+The stronger endpoint bound in Definition 4.6 is also proved. Scalar bounds
+verify an auxiliary sampling parameter. The cited tensor-code soundness theorem
+and transport of its global measurements remain open. The independent direct
+low-degree proof does not use these constructions.
 
 ## References
 

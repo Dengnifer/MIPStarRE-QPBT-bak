@@ -6,7 +6,7 @@ import Mathlib.Tactic
 
 The printed value `m^3 * d` does not always satisfy the lower bound in the
 cited tensor-code theorem. This module verifies scalar estimates for the
-proposed maximum of that value and the required lower bound. It does not
+auxiliary maximum of that value and the required lower bound. It does not
 change a game or apply an unformalized soundness theorem.
 
 ## References
@@ -18,9 +18,10 @@ change a game or apply an unformalized soundness theorem.
 
 namespace MIPStarRE.QPBT.TensorCodeImport
 
-/-- Candidate auxiliary parameter for Theorem 4.7. This is the least value
+/-- Auxiliary parameter for Theorem 4.7. This is the least value
 at least the printed `m^3 * d` and the required `12 * m * (d + 1)`. Its
-adoption in the source import is separate from the scalar facts proved here. -/
+use in a soundness application still requires the cited theorem and its
+quantified error estimate, which are separate from these scalar facts. -/
 def samplingCount (m d : ℕ) : ℕ := max (m ^ 3 * d) (12 * m * (d + 1))
 
 /-- For all positive dimensions and degrees, the candidate satisfies the

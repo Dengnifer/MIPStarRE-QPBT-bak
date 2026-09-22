@@ -340,9 +340,15 @@ Quantum soundness of a version of the classical low-degree test for polynomials 
 	Quantum soundness of the low individual degree test itself is the result of~\cite{Ji2020LowIndividualDegree}; Remark~\ref{rem:ld-soundness-provider} relates the present statement to Theorem~\ref{thm:main-formal}, which proves that result.
 \end{proof}
 
+The strategy and game-value comparison are established separately in
+Proposition~\ref{prop:tensor-import-strategy-reduction}. The application of the
+cited tensor-code soundness theorem and transport of its global measurements
+remain open, so the printed soundness route has no proof-completion mark.
+
 \begin{proposition}[Auxiliary subcube pair sampling]\label{prop:tensor-import-pair-sampling}
   \lean{MIPStarRE.QPBT.TensorCodeImport.tensorPairDistribution_eq_diagonal}
   \lean{MIPStarRE.QPBT.TensorCodeImport.diagonal_endpoint_distribution}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.tensorPairDistribution_swap}
   \lean{MIPStarRE.QPBT.TensorCodeImport.pairRegister_marginal}
   \lean{MIPStarRE.QPBT.TensorCodeImport.pairRegister_average}
   \lean{MIPStarRE.QPBT.TensorCodeImport.pairMeasurement_isProjective}
@@ -359,7 +365,9 @@ Quantum soundness of a version of the classical low-degree test for polynomials 
   Figure~1 of~\cite{Ji2021Quantum}. Either endpoint, together with the
   canonical diagonal description retaining $i$ and $\pi_{i-1}(w)$, has the
   directly indexed diagonal line-point law. These identities include the
-  zero-direction event.
+  zero-direction event. The pair law is invariant under exchanging the two
+  points, so the order-bit experiment is the mean of the two ordered endpoint
+  checks even when the pair measurements are not symmetric.
 
   For a visible pair $p$, let $F_p$ be the finite set of compatible samples.
   Every $F_p$ is nonempty. A uniform register in $\prod_p F_p$ has the uniform
@@ -409,12 +417,54 @@ Quantum soundness of a version of the classical low-degree test for polynomials 
   most $(3/2)/9$.
 \end{proof}
 
+\begin{proposition}[The source-to-tensor strategy reduction]
+  \label{prop:tensor-import-strategy-reduction}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.tensorCodeStrategyOfLd}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.tensorCodeStrategyOfDirectLd_isProjective}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.tensorCodeStrategyOfLd_isProjective}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.axis_readout_accepts}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.pair_readout_accepts}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.tensorCodeStrategyOfDirectLd_branch_bounds}
+  \lean{MIPStarRE.QPBT.TensorCodeImport.tensorCodeStrategyOfLd_rejection_le}
+  \leanok
+  Let $S$ be a strategy for the source classical low-degree game on its
+  valid parameter domain, including $m\mid q$, and fix one of its $k$
+  answer coordinates. There is a tensor-test strategy $T$, with actual
+  Reed--Solomon evaluation words as its axis answers, such that
+  \[
+    \operatorname{rej}(T)\leq\frac32(1-\operatorname{val}(S)).
+  \]
+  The same inequality holds for the goodness error of
+  Definition~4.6 of~\cite{Ji2021Quantum}, which bounds both ordered
+  endpoints separately. If $S$ is projective, all six measurement
+  families of $T$ are projective. The hidden subcube index is absent
+  from the visible pair question. This is an auxiliary game reduction;
+  it does not assert the cited tensor-code soundness theorem, transport
+  its global measurements, or establish simultaneous soundness from
+  separately chosen coordinate measurements.
+\end{proposition}
+\begin{proof}
+  \leanok
+  Use the correlated seed lift and the register of compatible diagonal
+  samples. Translate axis polynomials from their canonical affine parameter
+  to the varying coordinate, then return their evaluation words. Accepted
+  source answers pass the corresponding axis or endpoint predicate;
+  malformed source answers already contribute to source rejection.
+  Equal source answers give equal point, codeword, and pair readouts.
+  The matching-block Born identity and exact register resampling therefore
+  bound each tensor branch by its source branch. The source universal
+  evaluation convention also proves both checks for coincident endpoints.
+  Summing the tensor weights bounds actual rejection by the source loss sum
+  in Proposition~\ref{prop:tensor-import-weights}. Bounding the maximum
+  of the two endpoint errors gives the stronger goodness assertion.
+\end{proof}
+
 \begin{proposition}[Auxiliary tensor-code sampling parameter]
   \label{prop:tensor-import-sampling-parameter}
   \lean{MIPStarRE.QPBT.TensorCodeImport.sampling_bounds}
   \lean{MIPStarRE.QPBT.TensorCodeImport.sampling_exp_le}
   \leanok
-  This formalization-only scalar estimate concerns the proposed parameter
+  This formalization-only scalar estimate concerns the auxiliary parameter
   in \cite{gap:qpbt_ld-dimension-divisibility}, not an application of
   Theorem~4.7 of~\cite{Ji2021Quantum}. For integers $m,d\geq1$, set
   $K=\max(m^3d,12m(d+1))$. Then

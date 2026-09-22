@@ -12,8 +12,8 @@ measurement depends only on the pair and the local shared register, and it
 is projective whenever the source measurements are projective.
 
 This constructs the pair family needed by the tensor-code reduction. The
-joint Born-weight comparison and the complete game-value estimate remain
-separate obligations; projectivity alone does not prove them.
+joint Born-weight comparison and complete game-value estimate are proved
+separately in `PairState` and `Comparison`.
 
 ## References
 

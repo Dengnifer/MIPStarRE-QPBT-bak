@@ -5,6 +5,79 @@ Session `prover-704-20260922-01`, assigned base
 3600-second continuation of #18/#173/#527, not a new cumulative budget.
 The source-import row remains **OPEN**.
 
+## Continuation result, 2026-09-23
+
+Session `prover-704-20260922-02` is the one admitted 3600-second continuation
+from `eedcde3c347b607ff5114ab194afa1b3181253c7`. The first tranche's final
+dispatcher time is 3264 seconds. Its eleven commits, ten proved constructions,
+all #18/#173/#527 history below, and every unknown predecessor cost are retained.
+There is no budget reset or further continuation authorization.
+
+The actual source-to-tensor strategy and its rejection bound are now proved.
+`Strategy.lean` constructs the six measurement families on the correlated
+pair state. Point measurements read one source coordinate; axis measurements
+return actual Reed--Solomon evaluation words. The axis polynomial is translated
+by minus the varying coordinate of its canonical base, so its evaluation at
+the geometric point's coordinate is the source affine evaluation. The pair
+family uses the previously constructed shared register, with no hidden index
+in its visible question. `tensorCodeStrategyOfLd_isProjective` proves that the
+source construction, including the seed-residue lift, is projective.
+
+`Rejection.lean` proves the exact finite-postprocessing identity and the
+correlated-block rejection identity, followed by monotonicity under enlarging
+the accepted event. `Predicates.lean` proves the actual axis and both endpoint
+acceptance implications in both player roles. Malformed source answers are
+included: they fail the original predicate. The universal zero-direction
+predicate implies both endpoint checks even for coincident points.
+
+`Comparison.lean` proves `tensorCodeStrategyOfDirectLd_branch_bounds` for every
+branch. Composing with the earlier scalar weights gives
+`tensorCodeStrategyOfLd_rejection_le`: the actual tensor rejection and the
+stronger Definition 4.6 goodness error are each at most `3/2 * (1-S.value)`.
+The goodness error uses the maximum of the two endpoint errors. This distinction
+is necessary because the referee uses their mean, whereas Definition 4.6 bounds
+both separately. `tensorPairDistribution_swap` proves exchangeability, so the
+endpoint average equals the random-order experiment for arbitrary pair
+measurements. No symmetry assumption on those measurements is imposed.
+
+This is a genuine game-value comparison, not only a source loss sum. Its inputs
+are the original strategy and an answer coordinate, without a reduction
+certificate, assumed rejection identity, soundness provider, or compression
+assumption. At `k>1` it constructs a strategy for each fixed coordinate; this
+does not choose jointly consistent global measurements for all coordinates.
+
+Main admitted `K=max(m^3*d,12*m*(d+1))` as an auxiliary parameter for this
+construction, subject to independent mathematical review. This adopts no
+verifier change, source-statement change, printed-claim correction, or C3 closure.
+The quantitative bounds proved in the first tranche remain unchanged.
+
+The complete import remains **OPEN**. The actual named remaining targets are:
+
+1. `exists_reedSolomonTensor_soundness`: prove the required instance of
+   arXiv:2111.08131 Theorem 4.7, including explicitly quantified error constants.
+   Searches of the active project and Mathlib found no theorem to apply.
+2. Identify tensor-codeword functions with bounded multivariate polynomial
+   representatives for `d<q`. The new axis outcome type supplies genuine
+   univariate evaluation words; it does not prove that tensor identification.
+3. `tensorCodeSoundness_to_source`: obtain both mixed relations for the same
+   global measurements, compress the registers, and recover global agreement
+   on the original spaces. Independent double compression is still invalid.
+4. Finish the `d>=q` branch, actual error absorption at the admitted parameter,
+   and composition with the existing general-simultaneity construction. The
+   existing `one_le_deltaLd_of_fieldSize_le_degree` and
+   `consistencyDefect_heteroKron_le_one` supply the unit-bound inputs; they are
+   not re-proved or advertised as a completed tensor-import theorem here.
+
+These targets are recorded obligations, not declarations with proof holes or
+extra assumptions on a source theorem. The independent direct, seed-indexed,
+general-simultaneity, and global-pair proofs are unchanged. The separate
+undefined `2m+2` seed-law obstruction remains explicit.
+
+The sections below preserve the first-tranche analysis and evidence. Statements
+there about unfinished game construction describe that earlier checkpoint;
+the current status is the continuation result above. Final evidence,
+check results, and receipt paths are recorded at the end of this audit.
+
 ## Sources and scope
 
 The primary passage is `lem:ld-soundness` and its proof in
@@ -146,7 +219,7 @@ relation, point synchronicity, and the consistency triangle inequality (or
 a fully justified symmetric construction). Applying the theorem twice does
 not by itself identify the two resulting global measurements.
 
-## Remaining targets
+## Remaining targets at the first-tranche checkpoint
 
 1. Complete the tensor-code strategy, including point and axis families and
    their codeword outcomes, using the proved normalized shared state and
@@ -219,7 +292,7 @@ remain recorded in `audits/2026-09-18_seed-indexed-soundness-faithfulness-542.md
 and the original telemetry. This session does not rewrite any of those
 records or assert that the displayed subtotals include every predecessor.
 
-## Validation
+## First-tranche validation
 
 All six new leaves, the collection module, and `MIPStarRE/QPBT.lean` pass
 focused `lake env lean` checks. The ten new theorems and the unchanged
@@ -249,3 +322,49 @@ checkpoint, hook bypass, unproved declaration, or retained unfinished Lean
 file resulted. The final receipt records the exact head and log locations.
 No full build, CI publication, independent review, or merge was attempted;
 those gates belong to main under this assignment.
+
+## Continuation validation and integrity
+
+All eleven current tensor-import leaves, their collection module, and both
+the QPBT and root umbrellas pass focused `lake env lean` checks without
+warnings. Lean build artifacts were written only under this worktree's private build
+directory. All twenty tensor-import lemmas (ten from each tranche), plus
+`exists_ld_soundness`, `exists_direct_ld_soundness`, and
+`exists_globalPairWitness`, have exactly `propext`, `Classical.choice`, and
+`Quot.sound` in their axiom closure. The owned Lean files contain no proof
+holes, explicit axioms, prohibited bypasses, or retained debug commands.
+Whitespace and the 100-character Lean line check pass.
+
+Blueprint synchronization passes, with only the pre-existing four orphan
+marks and two statement/proof marking differences. The declaration checker,
+run with `lake env lean --run scripts/Checkdecls.lean blueprint/lean_decls`,
+resolves all 1895 entries in the regenerated list. The blueprint web build
+passes without warnings. The updated note builds successfully with `latexmk`
+and passes its structural style check. No full build, CI publication, review,
+or merge was run; those gates remain with main. Every proved milestone was
+committed through the normal hooks, and the hook installation check passes.
+
+One pending monotonicity commit was cancelled when a focused check exposed an
+elaboration mismatch. It was repaired and checked before the normal hooks were
+rerun. No broken proof was committed and no hook was bypassed. The branch proof
+also required explicit conversions between definitionally equal finite carriers;
+all diagnostic attempts were removed, and the final file checks cleanly.
+
+No paper-labelled theorem statement changed. The source assumptions remain
+positive admissible parameters, `m|q`, projectivity, and success at least
+`1-epsilon`; its conclusion remains the same two mixed and one global
+consistency bounds. The new auxiliary reduction assumes only a source strategy
+and a fixed answer coordinate for the rejection bound, and projectivity for
+its separate preservation theorem. Verdict: faithful auxiliary construction;
+the source soundness statement is unchanged. Self-checking against A1--A6 finds
+no assumed soundness or reduction output, no altered verifier, and no discarded
+malformed-answer probability. This is not an independent review.
+
+Runtime evidence is in
+`/home/drx/.cache/mipstarre-dev/prover-704-20260922-02/`, including the
+`final-*.log`, `consumer-*.log`, `axioms.log`, `checkdecls.log`,
+`blueprint-sync-final.log`, `blueprint-web-final.log`, `paper-gap-build-final.log`,
+and normal commit logs. The final receipt is
+`/tmp/main-fullspeed-tensor-import-continuation-20260922-result.md`; the updated
+PR body is `/tmp/main-tensor-import-pr-body-20260922.md`. The receipt records
+the exact final head and time snapshot. No further continuation is authorized.

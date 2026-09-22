@@ -26,10 +26,10 @@
   only $m \mid q$.  A separate directly indexed auxiliary game avoids this
   obstruction without strengthening the source statement.  Second, the
   import of the classical
-  game's quantum soundness from the tensor-code paper carries two open
-  verification obligations at every dimension: the asserted identity with
-  the cited tensor-code test is not an identity and must be replaced by a
-  reduction with a value bound, and the source's instantiation of the
+  game's quantum soundness from the tensor-code paper carries open proof
+  obligations at every dimension. The asserted identity with
+  the cited tensor-code test is not an identity; an explicit strategy
+  reduction with a value bound is now proved. The source's instantiation of the
   theorem's auxiliary parameter violates its lower bound at small
   dimensions (Section~\ref{sec:import-obligations}).  Soundness of a directly
   indexed game is now established by an independent application of the low
@@ -46,10 +46,10 @@
   seed-indexed soundness. The downstream use at dimension $2m+2$ remains
   separate from this transport. Independently, discharging
   the original import obligations of
-  Section~\ref{sec:import-obligations} adds the pair-measurement
-  construction with its distributional matching, the branch-weight value
-  bound, and the parameter-bound case split; this remains several hundred
-  lines of project-local formal proof.  The padding fallback is heavier,
+  Section~\ref{sec:import-obligations} still requires the cited tensor-code
+  theorem, codeword identification, global-measurement transport, and error
+  absorption. The strategy construction, distributional matching, branch-weight
+  bound, and auxiliary parameter inequalities are now formalized. The padding fallback is heavier,
   roughly 6--10 reworked lemmas.
   \item \textbf{Mathlib/project split:} approximately \textbf{15\% Mathlib}
   and \textbf{85\% project-local}.  Mathlib supplies uniform distributions on
@@ -249,18 +249,18 @@ only the line.  A strategy may depend on the seed beyond its class
 $\chi^{-1}(i)$.  For the comparison with the directly indexed game, this
 dependence is now retained in a correlated residue register rather than
 averaged away, as explained below.  That construction resolves this part of
-the direct-game transport, but it has not been composed with the distinct
-pair-question construction required for the tensor-code test.
+the direct-game transport, and is now composed with the distinct pair-question
+construction in the strategy described below.
 (iii)~The branch weights differ: each nontrivial cross-test has mass $1/3$
-in the test against $2/9$ in the game.  Once the per-branch predicates are
-matched, the intended bookkeeping bound is that the constructed strategy's
-rejection probability in the test is at most $\tfrac32$ times the game's
-rejection probability, up to the $O(1/(m'q))$ of item~(iv); this bound is
-the target of the obligation, not an established fact.
+in the test against $2/9$ in the game. The per-branch comparisons established
+below imply that the constructed strategy's rejection probability is at most
+$\tfrac32$ times the game's rejection probability.
 (iv)~The game's predicate fixes an acceptance convention on diagonal
 questions with zero direction --- an event of probability at most
-$2/(m'q)$, recorded in the blueprint's remark on zero directions --- for
-which the test has no counterpart branch.
+$2/(m'q)$, recorded in the blueprint's remark on zero directions --- which
+becomes a repeated pair in the tensor test. The formal source's universal
+evaluation convention suffices for both checks at that repeated pair,
+as verified below.
 Finally, the displayed conclusions of Theorem~4.7 pair one prover's points
 measurements with the other prover's tensor-codeword measurement, and the
 first prover's tensor-codeword measurement with the second prover's lines
@@ -312,13 +312,36 @@ probability of the constructed tensor-code strategy.%
 \footnote{See \leanid{weighted\_source\_rejection\_le} in
 \path{MIPStarRE/QPBT/Test/TensorCodeImport/Weights.lean} and blueprint
 \path{prop:tensor-import-weights}.}
-This establishes auxiliary distribution identities and a projective pair
-family on a normalized state. Composing these identities to prove either
-endpoint's rejection comparison, pair synchronicity, and the complete
-weighted value bound remains open. Theorem~4.7 itself also has no formalized
-provider in the active Lean tree. Thus the original game-correspondence
-obligation remains open, without an assumed reduction certificate or an
-external soundness hypothesis.
+\paragraph{Established strategy and game bound.}
+The complete construction now also supplies point and axis measurements.
+An axis answer is the evaluation word of a degree-$d$ polynomial; translating
+the canonical source parameter to the varying coordinate preserves its degree.
+For every fixed simultaneous answer coordinate, the resulting tensor strategy
+$T$ satisfies
+\[
+ \operatorname{rej}(T)\leq
+ \frac{B_{ap}+B_{pa}+B_{dp}+B_{pd}}6+
+ \frac{B_{pp}+B_{aa}+B_{dd}}9
+ \leq\frac32(1-\operatorname{val}(S)).
+\]
+Each ordered endpoint is bounded separately by $(B_{dp}+B_{pd})/2$.
+Consequently the same bound holds for the goodness error of Definition~4.6,
+which uses the larger endpoint error rather than their mean. These are actual
+Born rejection probabilities of the constructed measurements. Malformed source
+answers already fail the source predicate; completing their tensor answers
+cannot invalidate the rejection upper bound. On zero directions the universal
+source predicate supplies both endpoint checks, so this comparison needs no
+additional zero-direction error.%
+\footnote{See \leanid{tensorCodeStrategyOfLd},
+\leanid{tensorCodeStrategyOfDirectLd\_branch\_bounds}, and
+\leanid{tensorCodeStrategyOfLd\_rejection\_le} in
+\path{MIPStarRE/QPBT/Test/TensorCodeImport/}, and blueprint
+\path{prop:tensor-import-strategy-reduction}.}
+Projectivity follows from postprocessing within each correlated register block.
+Theorem~4.7 itself remains unproved in the active Lean tree, as do the required
+tensor-codeword identification and transport of the same global measurements
+back to the source spaces. Thus the complete soundness-import obligation
+remains open. No reduction certificate or external soundness hypothesis is assumed.
 
 \paragraph{Obligation 2: the parameter bound.}
 Theorem~4.7 requires $K \ge 12 m' t = 12 m' (d+1)$.  The source
@@ -329,8 +352,8 @@ $m' \le 3$.  In the game's parameter domain the dimension divides the
 admissible field size and is therefore a power of two, so the source's
 instantiation violates the hypothesis exactly at $m' \in \{1,2\}$ for
 every $d$ and at $m' = 4$ for $d \in \{1,2\}$ --- in particular, in the
-multilinear regime $d = 1$, at every dimension $m' \le 4$.  A candidate
-repair is to instantiate $K = \max((m')^3 d,\, 12 m'(d+1))$; the open
+multilinear regime $d = 1$, at every dimension $m' \le 4$. The auxiliary
+construction uses $K = \max((m')^3 d,\, 12 m'(d+1))$; the open
 application must still use a formalized version of the cited theorem and
 its quantitative error bound. The scalar estimates for this proposal are
 now established uniformly for positive $m',d$:
@@ -348,8 +371,9 @@ game semantics.%
 \leanid{sampling\_exp\_le} in
 \path{MIPStarRE/QPBT/Test/TensorCodeImport/Parameters.lean}, recorded in
 blueprint \path{prop:tensor-import-sampling-parameter}.}
-It is not a proof that the printed choice is admissible. Adopting the
-auxiliary parameter and absorbing the actual theorem's explicitly
+It is not a proof that the printed choice is admissible. The auxiliary choice
+is admitted for the construction under \ghissue{704}; it changes no verifier
+or source theorem. Proving the cited theorem and absorbing its explicitly
 quantified polynomial error in the complete source import remain separate
 steps. No soundness statement is assumed as a hypothesis.
 
@@ -642,10 +666,13 @@ There remains a theorem-level gap in the source proof route.  The classical
 low individual degree game invoked at dimension $2m+2$ is undefined for every
 admissible tuple with $m \ge 2$ (and for $(q,m)=(2,1)$), because its question
 distribution requires $2m+2 \mid q$ while admissibility supplies only
-$m \mid q$.  Independently, the source import still requires a reduction to
-the two-prover tensor-code test with a value bound and a valid choice of
-$K \ge 12m'(d+1)$; the printed choice $K=(m')^3d$ fails at the small
-dimensions listed in Section~\ref{sec:import-obligations}.
+$m \mid q$. Independently, the source-to-tensor strategy and its value bound
+are now established, and the auxiliary choice
+$K=\max((m')^3d,12m'(d+1))$ satisfies the numerical precondition. The import
+still requires the cited tensor-code soundness theorem, the representative
+identification, global-measurement transport, and quantitative error absorption.
+The printed choice $K=(m')^3d$ remains invalid at the small dimensions listed
+in Section~\ref{sec:import-obligations}.
 
 Soundness of the directly indexed game is now established at arbitrary
 dimension by a different proof through the low individual degree theorem and
