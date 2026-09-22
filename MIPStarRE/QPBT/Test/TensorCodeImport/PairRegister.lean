@@ -18,6 +18,7 @@ can therefore share the same register without being told the hidden subcube.
 namespace MIPStarRE.QPBT.TensorCodeImport
 
 open MIPStarRE.LDT
+open scoped BigOperators
 
 noncomputable section
 
@@ -43,7 +44,9 @@ instance (D : DirectLdParams) (pair : PairQuestion D) : Nonempty (PairSample D p
   ⟨fullCubePairSample D pair⟩
 
 noncomputable instance (D : DirectLdParams) (pair : PairQuestion D) :
-    Fintype (PairSample D pair) := Fintype.ofFinite _
+    Fintype (PairSample D pair) := by
+  classical
+  exact Subtype.fintype (fun sample : DirectLdSpace D => diagonalPair D sample = pair)
 
 noncomputable instance (D : DirectLdParams) (pair : PairQuestion D) :
     DecidableEq (PairSample D pair) := Classical.decEq _
@@ -67,6 +70,35 @@ theorem pairRegister_marginal (D : DirectLdParams) (pair : PairQuestion D) :
       uniformDistribution (PairSample D pair) := by
   exact uniformDistribution_map_fst_of_equiv
     (Equiv.piSplitAt pair (PairSample D)) (fun register => register pair) (fun _ => rfl)
+
+/-- Sampling a visible tensor-code pair and reading its shared-register
+entry recovers the original uniform diagonal sample. This exact identity
+allows any scalar branch loss depending on the chosen sample to be averaged
+under the original source distribution. -/
+theorem pairRegister_average (D : DirectLdParams) (f : DirectLdSpace D → ℝ) :
+    avgOver (tensorPairDistribution D) (fun pair =>
+      avgOver (uniformDistribution (PairRegister D)) (fun register => f (register pair).val)) =
+      avgOver (uniformDistribution (DirectLdSpace D)) f := by
+  have hread (pair : PairQuestion D) :
+      avgOver (uniformDistribution (PairRegister D)) (fun register => f (register pair).val) =
+        avgOver (uniformDistribution (PairSample D pair)) (fun sample => f sample.val) := by
+    rw [← Distribution.avgOver_map (uniformDistribution (PairRegister D))
+      (fun register => register pair) (fun sample => f sample.val), pairRegister_marginal]
+  rw [tensorPairDistribution_eq_diagonal, Distribution.avgOver_map]
+  simp_rw [hread]
+  simp only [avgOver_uniform_eq_inv_card_mul_sum]
+  congr 1
+  rw [← Fintype.sum_fiberwise' (diagonalPair D) (fun pair : PairQuestion D =>
+    (Fintype.card (PairSample D pair) : ℝ)⁻¹ * ∑ sample : PairSample D pair, f sample.val)]
+  simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  calc
+    _ = ∑ pair : PairQuestion D, ∑ sample : PairSample D pair, f sample.val := by
+      apply Finset.sum_congr rfl
+      intro pair _
+      have hc : (Fintype.card (PairSample D pair) : ℝ) ≠ 0 := by
+        exact_mod_cast Fintype.card_ne_zero
+      rw [← mul_assoc, mul_inv_cancel₀ hc, one_mul]
+    _ = _ := Fintype.sum_fiberwise (diagonalPair D) f
 
 end
 
