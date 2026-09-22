@@ -65,6 +65,34 @@ theorem exists_coefficients {u v : Fin m → K} (f : LinePolynomialFunction u v 
     Polynomial.ofFn_comp_toFn_eq_id_of_natDegree_lt (Nat.lt_succ_of_le hp)]
   exact hf t
 
+/-- Descend a coefficient answer to a geometric polynomial function when its
+evaluation is constant on parameter fibers. Mathlib's inverse of the
+surjective parameterization selects a parameter; the fiber condition makes
+the value independent of that selection. This adapter is separate from the
+source combining construction and changes no game or measurement. -/
+noncomputable def ofCoefficients (u v : Fin m → K) (p : Fin (c + 1) → K)
+    (h : Function.FactorsThrough (evalCoefficient p) (fun t : K => u + t • v)) :
+    LinePolynomialFunction u v c := by
+  let param : K → ↥(linePoints u v) := fun t => ⟨u + t • v, ⟨t, rfl⟩⟩
+  have hsurj : Function.Surjective param := by
+    rintro ⟨x, t, rfl⟩
+    exact ⟨t, rfl⟩
+  refine ⟨fun x => evalCoefficient p (Function.surjInv hsurj x),
+    linePolynomialOfCoefficients p, linePolynomialOfCoefficients_natDegree_le p, ?_⟩
+  intro t
+  rw [linePolynomialOfCoefficients_eval]
+  exact h (congrArg Subtype.val (Function.surjInv_eq hsurj (param t))).symm
+
+/-- The descent adapter preserves evaluation at every parameter, including
+every parameter of a singleton. -/
+theorem ofCoefficients_apply (u v : Fin m → K) (p : Fin (c + 1) → K)
+    (h : Function.FactorsThrough (evalCoefficient p) (fun t : K => u + t • v)) (t : K) :
+    (ofCoefficients u v p h).1 ⟨u + t • v, ⟨t, rfl⟩⟩ = evalCoefficient p t := by
+  change evalCoefficient p (Function.surjInv _ _) = evalCoefficient p t
+  apply h
+  exact congrArg Subtype.val (Function.surjInv_eq
+    (f := fun s : K => (⟨u + s • v, ⟨s, rfl⟩⟩ : ↥(linePoints u v))) _ _)
+
 end LinePolynomialFunction
 
 /-- The source combining function on geometric lines, with degree at most
