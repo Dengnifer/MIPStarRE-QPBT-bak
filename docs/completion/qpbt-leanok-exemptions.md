@@ -1,15 +1,18 @@
 # QPBT blueprint exemptions
 
-No permanent exemption is granted by the source-adoption audit of issue #667
+The source-adoption audit of issue #667 granted no permanent exemption
 at source snapshot `e947a49e14080b46642be21ce551d911032a05f4`.
-The table intentionally has no data rows.
+The following later exemption records the owner-authorized documentary
+disposition of the combined-lines intermediate assertion (2026-09-22,
+issue #713). It does not mark that assertion proved.
 
 | Blueprint label | Reason |
 |---|---|
+| `lem:qld-4-13` | Documented deviation: the source's `poly(m^2 epsilon, md/q)` assertion remains unproved and unrefuted. `PrintedExtendedLinesWitnessClaim` is an unasserted `Prop` in `MIPStarRE/QPBT/Combining/Apply.lean`, using `ExtendedLinesWitness` on directly indexed lines, the direct line-point law, and completed evaluations. The proved `exists_extendedLinesWitness_established` instead constructs a polynomially controlled point family and line POVMs with error `C m poly(epsilon, md/q)`; its separate node `lem:qld-4-13-established` states those replacements and carries the proof marks. The scalar obstruction refutes absorption of the displayed upper bound, not existence of better measurements; the quadratic counterexample concerns only the former unrestricted supplied-point helpers. The proved global-pair construction absorbs the actual auxiliary error without changing its source conclusion. See [the mathematical note](../paper-gaps/qpbt_combined-lines-error-term.tex), [the matching blueprint remark `rem:qld-4-13-source-defects`](../../blueprint/src/chapter/ch15_qpbt_combining.tex), and [DEVIATIONS a1](../DEVIATIONS.md#a1-the-error-form-of-the-combined-lines-lemma). This exemption certifies documentary disclosure only; it does not settle the separate source-law/evaluation or sum/product-convention deviations. |
 
-The following are unresolved matches, not exemptions. Their continued absence
-of a formalization mark must keep C4 failing. Construction targets and the
-row-by-row adoption evidence are in the
+The following other entries remain unresolved matches, not exemptions. Their
+continued absence of a formalization mark must keep C4 failing. Construction
+targets and the row-by-row adoption evidence are in the
 [gap register](../paper-gaps/qpbt-gap-register.md#source-adoption-audit-2026-09-22).
 
 1. `def:canonical-complement`: `canonicalComplement` uses prefix ranks;
@@ -37,11 +40,6 @@ row-by-row adoption evidence are in the
    carrier correspondence and representative independence remain required
    (`14_analysis_of_the_pauli_basis_test.tex:970-989`). See
    [the focused audit](../../audits/2026-09-22_combining-map-source-domain.md).
-4. `lem:qld-4-13`: `PrintedExtendedLinesWitnessClaim` is unasserted and uses
-   the directly indexed carrier and completed evaluations. Its error form is
-   not established by the proved `C m poly(epsilon,md/q)` auxiliary. See
-   [the error note](../paper-gaps/qpbt_combined-lines-error-term.tex) and
-   [the dimension note](../paper-gaps/qpbt_ld-dimension-divisibility.tex).
 
 `lem:canonical-complement` is now marked at both statement and proof level.
 `isCompl_span_rows_canonicalComplement` derives an RREF presentation and its

@@ -57,17 +57,39 @@ separately, under its own name, and is what the rest of the development uses.
 |---|---|
 | **Paper statement** | `lem:qld-4-13`, the combined-lines consistency lemma, with error `poly(m²ε, md/q)` |
 | **Locator** | `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex`, chapter 14 lines 1020–1034 |
-| **What differs** | The printed `poly(m²ε, md/q)` error form is not derived by the source's argument. What the argument gives is the weaker `m · poly(ε, md/q)`. Separately, the Lean carrier replaces the source's *seed-indexed* extended line space by a *directly indexed* one at dimension `2m+2` (see [c2](#c2-dimension-divisibility-in-the-classical-test-instantiation)), and compares `Option`-completed answers instead of summing over `a ∈ 𝔽_q`. |
-| **Why** | The printed error form does not follow from the cited estimates, and the seed-indexed space is not defined for every admissible parameter tuple — the printed instantiation would require `2m+2 ∣ q`, which is impossible for the parameters the test actually uses. |
+| **What differs** | The printed `poly(m²ε, md/q)` expression is not derived by either source calculation. The proved auxiliary has error `C m poly(ε, md/q)` on *directly indexed* extended lines at dimension `2m+2`, averaged over the corresponding direct line-point law (see [c2](#c2-dimension-divisibility-in-the-classical-test-instantiation)). It evaluates coefficient polynomials on the completed alphabet `F_q ∪ {⊥}`; the source uses functions on lines and field-valued answers. Both the proved auxiliary and the unasserted printed-rate proposition use the corrected sum convention, separately disclosed in [b4](#b4-the-product-form-error-in-the-pasting-lemma). |
+| **Why** | The displayed first-route bound contains `m ε^(1/4)`, which need not vanish when both printed arguments do. The direct carrier is defined on every admissible tuple without adding `2m+2 ∣ q`, a condition not implied by admissibility (for example at `(q,m,d)=(8,2,1)`). Completed evaluation retains undefined answers on zero-direction singleton lines without assigning an arbitrary field value. |
 | **Lean (printed form)** | `PrintedExtendedLinesWitnessClaim`, `MIPStarRE/QPBT/Combining/Apply.lean:108` — a `Prop`, not a theorem |
 | **Lean (what is proved)** | `exists_extendedLinesWitness_established`, `MIPStarRE/QPBT/Combining/Apply.lean:237`, with error `C·m·poly(ε, md/q)`; supplied-point companion `exists_extendedLinesWitness_established_ofPointsWitness`, `Apply.lean:158` |
-| **Blueprint** | `lem:qld-4-13` (source shape, carries **no** formalization mark), `rem:qld-4-13-source-defects`, and the support node `lem:qld-4-13-established`, all in `blueprint/src/chapter/ch15_qpbt_combining.tex` |
+| **Blueprint** | `lem:qld-4-13` retains the source carrier and printed error expression with its separate sum-convention qualification, and carries **no** formalization mark. The matching remark is `rem:qld-4-13-source-defects`; the proved support node is `lem:qld-4-13-established`, all in `blueprint/src/chapter/ch15_qpbt_combining.tex`. |
 | **Gap note** | [`qpbt_combined-lines-error-term.tex`](paper-gaps/qpbt_combined-lines-error-term.tex) |
 | **Printed-claim status** | **unproved** — stated, not asserted, not refuted. Tracked as issue #598. |
+| **Documentary disposition** | **documented-deviation**, under the owner's 2026-09-22 documentation instruction, issue #713. The proved global-pair construction absorbs the actual auxiliary error into its unchanged source conclusion. The [register row](paper-gaps/qpbt-gap-register.md) is terminal for this documentary task, and the [C4 exemption](completion/qpbt-leanok-exemptions.md) gives the reason for leaving `lem:qld-4-13` unmarked. This does not prove the printed claim or close the separate error-convention and source-law/evaluation deviations. |
 
 The earlier `sorry`-bearing theorem `exists_extendedLinesWitness` is **gone**; it
 was replaced by the unasserted `Prop` on 2026-09-19. `Apply.lean` now carries no
 proof debt.
+
+The quantified domain is all admissible `q=2^k` with positive odd `k`,
+`m,d >= 1`, `m` dividing `q`, and every finite-dimensional projective
+strategy with value at least `1-ε`. A setting forces `ε >= 0`; no restriction
+`ε <= 1` is imposed. The point-error function, line-error function, and their
+constants are chosen before all those parameters and strategies. The proved
+auxiliary constructs the polynomially controlled point family internally;
+its supplied-point companion fixes that control before choosing the line
+error. The unasserted proposition requests `g(m²ε,md/q)` on the same direct,
+completed-answer carrier, so it is not a transcription of the full source
+statement even before considering proof status.
+
+The scalar obstruction uses admissible `m=2^(2n+1)`, `q=m^3`, `d=1`, and
+`ε=m^(-4)`: both printed arguments tend to zero, while the capped term
+`min(1,m ε^(1/4))` is one. It refutes absorption of that upper bound, not
+existence of better line measurements. The quadratic point-family example
+refutes only the former helpers quantified over arbitrary supplied point
+errors; it is outside the repaired polynomially controlled domain. Neither
+example refutes the source existential assertion. This entry was rechecked
+against the unchanged Lean declarations at `0eb04963283b74964a2f718813e879e742217010`;
+the documentary disposition changes no theorem statement or proof.
 
 ### a2. Attainment in the symmetrization lemma
 

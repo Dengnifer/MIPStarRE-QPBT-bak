@@ -4569,48 +4569,59 @@ source-labelled claims is certified by these auxiliary entries.
 	Lemma~\ref{lem:qld-4-13}]
 	\label{rem:qld-4-13-source-defects}
 	The statement of Lemma~\ref{lem:qld-4-13} retains the source error
-	form $\delta_{\mathrm{combine}} = \poly(m^2\eps, md/q)$, which
-	remains unproved. The source proof in \cite{Ji2020MIPStar} asserts
+	expression $\poly(m^2\eps, md/q)$, with the separate sum-convention
+	qualification of \cite{gap:qpbt_pasting-product-error}. Its printed
+	assertion remains unproved and unrefuted. The source proof in
+	\cite{Ji2020MIPStar} asserts
 	two different bounds for the quantity
 	\eqref{eq:qld-combined-lines-consistency}: the bound
 	$O(m(\eps^{1/4} + \delta_P^{1/4} + \delta_Q^{1/4} +
-	\delta_{\mathrm{Line}}^{1/2}))$, obtained by chaining the three
-	claims (Lemmas~\ref{lem:claim-17-1}--\ref{lem:claim-17-3}), and the
-	bound $O(m^2 \delta_P)$, whose derivation decomposes
-	\eqref{eq:qld-combined-lines-consistency} into
-	restricted-distribution terms bounded by
-	\eqref{eq:qld-xz-lines-restricted}. The second derivation requires a
-	joint product law for the pair $((\ell_X, x), (\ell_Z, z))$ that
-	Property~2 of Lemma~\ref{lem:qld-sublines} does not provide, and
-	neither bound is dominated by a function of $m^2\eps$ and $md/q$
-	alone that vanishes as its arguments vanish. The proof above
-	therefore follows the first route only and establishes the bound
-	$m \cdot \poly(\eps, md/q)$, which is the form consumed by
-	Lemma~\ref{lem:qld-4-7}, whose error function absorbs the prefactor
-	$m$ into $(md)^a$. The full analysis --- the two routes, the scalings
-	showing that the claimed form follows from neither, the corrected
-	deficit assertion in the proof of Lemma~\ref{lem:claim-17-2}, and the
-	candidate repairs with their open obligations --- is given in
-	\cite{gap:qpbt_combined-lines-error-term}.
-	The printed error form is therefore an open source gap and not a Lean proof
-	obligation of any consumer: every formalized consumer uses the established
-	form of Lemma~\ref{lem:qld-4-13-established}, and the gap is tracked by
-	GitHub issue 598 after the obstruction pull requests of the earlier issues
-	closed those issues without proving the printed assertion.
-	Since 2026-09-19 the printed claim is carried in Lean by the definition
-	\path{MIPStarRE.QPBT.PrintedExtendedLinesWitnessClaim}, a proposition that is
-	stated but not asserted, which replaced a theorem of the same statement whose
-	proof was an open \path{sorry}. The statement the source prints is thus
-	neither proved nor dropped, and the Lean development carries no proof debt at
-	this site. What the source proof does establish is formalized by
-	\path{MIPStarRE.QPBT.exists_extendedLinesWitness_established} of
-	Lemma~\ref{lem:qld-4-13-established}; the scalar obstruction to the first
-	route is \path{MIPStarRE.QPBT.not_exists_combining_quarter_power_bound}.
-	No implication between the unasserted proposition and the established theorem
-	is recorded in either direction, because none follows by a short faithful
-	argument: the printed form applies an arbitrary polynomial error function to
-	$m^2\eps$, whose exponent may exceed the single prefactor $m$ that the
-	established form carries outside its error function.
+	\delta_{\mathrm{Line}}^{1/2}))$ from the three scalar claims, and
+	$O(m^2\delta_P)$ from a joint product law not supplied by the separate
+	marginals of Lemma~\ref{lem:qld-sublines}. Neither calculation establishes
+	the printed rate. In particular, at the admissible parameters
+	$m=2^{2n+1}$, $q=m^3$, $d=1$, and $\eps=m^{-4}$, both printed
+	arguments equal $m^{-2}$ and tend to zero, while
+	$\min\{1,m\eps^{1/4}\}=1$.
+	Lemma~\ref{lem:qld-combining-quarter-power-obstruction} rules out
+	absorption of that scalar upper bound. It does not construct a strategy
+	attaining the bound and does not refute the existential line assertion.
+
+	The proved alternative is Lemma~\ref{lem:qld-4-13-established}.
+	It chooses a polynomially controlled point-error function $\delta_Q$,
+	a constant $C>0$, and a function $g$ with
+	$0\leq g(x,y)\leq K(x^r+y^s)$ for all $x,y\geq0$, where
+	$K\geq1$ and $r,s>0$, before the admissible tuple or strategy is given.
+	For every such strategy it constructs the point family and extended-line
+	POVMs with error $C m\,g(\eps,md/q)$. The conditional companion
+	in Lemma~\ref{lem:qld-4-13-established-given-points} accepts only a
+	point family with error $\delta_Q(\eps)$. The quadratic point-family
+	counterexample in \cite{gap:qpbt_combined-lines-error-term} concerns
+	the former unrestricted supplied-point domain, not this auxiliary or
+	the source existential assertion.
+
+	The auxiliary samples the coordinate index directly in dimension
+	$2m+2$, uses the corresponding line-point law, and evaluates coefficient
+	polynomials on $\F_q\cup\{\bot\}$. At a zero direction, a polynomial
+	which is not constant as a function of the parameter has no value on
+	the singleton; its completed evaluation is $\bot$. The point measurement
+	has zero effect at $\bot$. These are not the source's seed-indexed
+	questions and field-valued line functions. The source-law comparison
+	remains separate, as explained in
+	\cite{gap:qpbt_ld-dimension-divisibility}.
+
+	The global-pair construction uses this proved auxiliary and absorbs its
+	dimension factor, together with the actual rounding error, into the
+	universal constants of $a(md)^a(\eps^b+q^{-b}+2^{-bmd})$.
+	This justifies the alternative for Lemma~\ref{lem:qld-4-7} without
+	proving the printed intermediate rate. The mathematical disposition is
+	a documented deviation, as detailed in
+	\cite{gap:qpbt_combined-lines-error-term}. The proposition linked from
+	Lemma~\ref{lem:qld-4-13} records only the printed error expression on
+	the direct, completed-answer carrier and is not asserted. That source
+	node consequently remains unmarked with a reasoned completion exemption;
+	the marks on the separate auxiliary certify only its stated domain and
+	bound. No headline statement is weakened by this disposition.
 \end{remark}
 
 \begin{example}[The paired-line construction given a joint point family]

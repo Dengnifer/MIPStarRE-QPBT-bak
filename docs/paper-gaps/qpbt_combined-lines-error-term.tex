@@ -15,62 +15,58 @@
 
 \title{The Error Term of the Combined-Lines Consistency Lemma}
 \author{}
-\date{2026-08-30}
+\date{2026-09-23}
 
 \begin{document}
 \maketitle
 
 \section{At a glance}
 
+The extended-line assertion of \cite{Ji2020MIPStar} prints the error
+$\poly(m^2\eps,md/q)$. The proved auxiliary has error
+$C m\,\poly(\eps,md/q)$ on directly indexed lines with completed evaluations.
+This auxiliary suffices for the subsequent global-pair theorem.
+The printed assertion remains unproved and unrefuted; its rate and the
+source-law and evaluation comparisons are not established by the auxiliary.
+The verdict is a \emph{documented deviation} in an
+intermediate assertion, not a proof or a refutation of the printed lemma.%
+\footnote{Documentary disposition: \ghissue{713}; mathematical provenance:
+\ghissue{173} and \ghissue{598}. The source node is
+\path{lem:qld-4-13}; its distinct proved auxiliary is
+\path{lem:qld-4-13-established}.}
+
 \begin{itemize}
-  \item \textbf{Difficulty: easy.}  No step of the retained proof route is
-  in doubt.  The obstruction is that the error function claimed in the
-  statement of the combined-lines lemma of the Pauli basis analysis,
-  $\poly(m^2\eps, md/q)$, is not delivered by either of the two
-  derivations printed in its source proof: one route establishes
-  $m \cdot \poly(\eps, md/q)$, the other would give
-  $m^2 \cdot \poly(\eps, md/q)$ and rests in addition on a distributional
-  decomposition that the stated sub-line lemma does not supply.  The
-  correction is to state the first route's established error form and confirm
-  that the sole consumer tolerates it.
-  The unrestricted supplied-point domain of the former extended-line helpers
-  had a separate obstruction: deterministic quadratic point answers force a
-  positive axis-line error even on a perfect strategy. This does not refute
-  the paper statement, which uses its previously constructed point family.
-  Section~\ref{sec:supplied-point-realignment} records the realignment of
-  those helpers to the polynomially controlled point family, which removes
-  that obstruction without touching the printed-error question.
-  \item \textbf{Key Mathlib inputs:} the
-  Cauchy--Schwarz inequality for state-dependent operator distances
-  (project-local, blueprint Chapter 12), mixture decompositions of
-  question distributions, and elementary averaging over restricted
-  line distributions; no new Mathlib surface beyond finite
-  expectations and inner-product estimates already used by the
-  low individual degree development.
-  \item \textbf{Estimated weight:} a \textbf{statement-level error-form
-  decision} plus about \textbf{one lemma interface} of checking that the
-  consumer absorbs an $m$ prefactor into its constants; the three chained
-  claims behind the retained route are ordinary Cauchy--Schwarz estimates,
-  on the order of \textbf{a few hundred lines} of formal proof in total
-  when that part of the development is reached.
-  \item \textbf{Mathlib/project split:} essentially \textbf{100\%
-  project-local}.  The estimates use only the project's state-dependent
-  distance calculus, the sub-line distribution, and elementary
-  probability on finite sets.
-  \item \textbf{Key inputs:} the combined point and line measurements and
-  the sub-line distribution of the Pauli basis analysis in
-  \cite{Ji2020MIPStar}, and the error function of the classical soundness
-  theorem imported from \cite{Ji2020LowIndividualDegree}, into which the
-  corrected error form must be absorbed.  The blueprint correction is tracked
-  in \ghissue{173}.
+  \item \textbf{Difficulty:} the error comparison is elementary; obtaining
+  the printed rate would require a new estimate, whose difficulty is unknown.
+  The directly indexed construction and its downstream absorption are already
+  proved.
+  \item \textbf{Estimated weight:} this disposition requires documentation
+  only and introduces no proof work. It does not estimate or authorize a
+  proof of the printed assertion.
+  \item \textbf{Key mathematical inputs:} finite-mixture bounds,
+  Cauchy--Schwarz, polynomial root counting, and the classical low-degree
+  soundness theorem from \cite{Ji2020LowIndividualDegree}.
+  \item \textbf{Mathlib/project split:} Mathlib supplies finite sums,
+  inner-product estimates, real powers, and root counts. The measurement,
+  sampling, completion, and error-absorption arguments are project-local.
 \end{itemize}
 
 \section{Key theorem forms}
 
-Throughout, $(q,m,d)$ is an admissible parameter tuple of the Pauli basis
-test, $\ket{\hat\psi}$ is the expanded state of the projective strategy
-under analysis, succeeding with probability at least $1-\eps$, and all
-approximations are with respect to $\ket{\hat\psi}$.  For lines
+Throughout, $m,d\geq1$ are integers, $q=2^k$ with $k$ a positive odd integer,
+and $m\mid q$. These are the admissible parameters of the Pauli basis test.
+The strategy is finite-dimensional and projective, with value at least
+$1-\eps$, and $\ket{\hat\psi}$ is its normalized expanded state. The Lean
+declarations quantify over every real $\eps$ and every such strategy; the
+value bound implies $\eps\geq0$, and no upper bound $\eps\leq1$ is assumed.
+All approximations below use $\ket{\hat\psi}$.%
+\footnote{Source domain: \path{def:admissible-size} in
+\path{references/qpbt-paper/04_preliminaries.tex}:662--667 and
+\path{def:admissible} in
+\path{references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex}:958--961.
+The corresponding Lean domains are \path{AdmissibleParams} and
+\path{ProjectiveSetting}.}
+For lines
 $\ell_X, \ell_Z$ in $\F_q^m$, the POVM $\{T^{\ell_X,\ell_Z}_{f_X,f_Z}\}$,
 with outcomes pairs of polynomials of degree at most $md$ on the two
 lines, is the two-basis combined line measurement, and
@@ -102,11 +98,13 @@ $\delta_{\mathrm{combine}}(\eps,m,d,q)$.
   \item \textbf{Source form.}
   $\delta_{\mathrm{combine}} = \poly(m^2\eps,\, md/q)$.  This is the form
   printed in the statement.  Neither printed derivation supports it.
-  \item \textbf{Established form (first route).}
+  \item \textbf{First-route estimate.}
   $\delta_{\mathrm{combine}}
   = O\big(m\,(\eps^{1/4} + \delta_P^{1/4} + \delta_Q^{1/4}
   + \delta_{\mathrm{Line}}^{1/2})\big)$, a function of the form
-  $m \cdot \poly(\eps,\, md/q)$.
+  $m \cdot \poly(\eps,\, md/q)$. The proved auxiliary has this form on
+  the direct carrier specified below; this does not certify all three
+  source-law scalar claims.
   \item \textbf{Second-route form (conditional).}
   $\delta_{\mathrm{combine}} = O(m^2 \delta_P)
   = m^2 \cdot \poly(\eps,\, md/q)$, conditional on a joint-law
@@ -119,6 +117,108 @@ $\delta_{\mathrm{combine}}(\eps,m,d,q)$.
   $m^{O(1)} \cdot \poly(\eps, md/q)$ is absorbed by enlarging $a$ and
   shrinking $b$, so forms~2 and~3 both suffice downstream.
 \end{enumerate}
+
+\subsection{Uniform quantifiers and the error convention}
+
+For the formal comparison, a one-variable polynomial error means a function
+$h:\mathbb R\to\mathbb R$ for which there are $K\geq1$ and $r>0$ such that
+$0\leq h(x)\leq Kx^r$ for every $x\geq0$. A two-variable polynomial error
+means a function $g:\mathbb R^2\to\mathbb R$ with
+\[
+ \exists K\geq1\ \exists r,s>0\ \forall x,y\geq0,\qquad
+ 0\leq g(x,y)\leq K(x^r+y^s).
+\]
+This is the corrected \emph{sum} convention on the closed nonnegative
+quadrant. The source shorthand instead bounds a power of the product on
+positive inputs. Its replacement, including the separate one-variable
+prefactor/exponent convention, is a distinct deviation; none of the
+conclusions of this note resolves that issue.%
+\footnote{The predicates are \path{IsPolyErr} and
+\path{IsPolyErr}\textsubscript{2} in
+\path{MIPStarRE/QPBT/Games/ErrorFunctions.lean}. The source shorthand is
+\path{references/qpbt-paper/04_preliminaries.tex}:19--29. Its separate notes
+are \path{docs/paper-gaps/qpbt_pasting-product-error.tex} and
+\path{docs/paper-gaps/qpbt_polynomial-error-square-root.tex}.}
+
+With that convention, the proved auxiliary first chooses a point-error
+function $\delta_Q$, a constant $C>0$, and a two-variable error function $g$.
+Uniformly for every admissible $(q,m,d)$, real $\eps$, and projective strategy
+of value at least $1-\eps$, it then constructs a complete projective joint
+point family satisfying the self-consistency and both ordered-product
+comparisons with error $\delta_Q(\eps)$. Relative to that same family it
+constructs complete line POVMs with zero effect for axis-line outcomes above
+degree $d$, and both opposite-placement consistency defects bounded by
+\[
+ C m\,g(\eps,md/q).
+\]
+The functions and all their constants precede the parameters and the strategy.
+In particular, they cannot depend on $m$ or on a subsequently supplied point
+family.%
+\footnote{The theorem is
+\path{exists_extendedLinesWitness_established} in
+\path{MIPStarRE/QPBT/Combining/Apply.lean}; its line data are
+\path{ExtendedLinesWitness} in
+\path{MIPStarRE/QPBT/Combining/Witnesses.lean}.}
+
+The unasserted proposition has the same existential point-family order, but
+asks instead for the bound $g(m^2\eps,md/q)$ on the \emph{same direct carrier}.
+It is not a theorem and does not state the original source carrier or
+field-valued evaluation semantics. The conditional proved auxiliary fixes
+$\delta_Q$ with its polynomial control first, then chooses $C,g$, and only
+then accepts a point family at error $\delta_Q(\eps)$. It does not quantify
+over arbitrary point errors independently of $\eps$.%
+\footnote{The unasserted definition is
+\path{PrintedExtendedLinesWitnessClaim}; the conditional theorem is
+\path{exists_extendedLinesWitness_established_ofPointsWitness}, both in
+\path{MIPStarRE/QPBT/Combining/Apply.lean}.}
+
+\subsection{The direct carrier, law, and completed evaluations}
+
+Put $M=2m+2$. A direct line description stores its kind, a canonical base
+$b\in\F_q^M$, and an index $i\in\{0,\ldots,M-1\}$. An axis description has
+direction $e_i$. A diagonal description additionally stores a direction $v$
+whose coordinates below $i$ vanish; $v=0$ is allowed. The line-point law
+chooses the kind with equal probabilities, and chooses a point $u$, an index
+$i$, and an unrestricted direction independently and uniformly. It
+canonicalizes the line through $u$, using $e_i$ in the axis case and zeroing
+the direction coordinates below $i$ in the diagonal case. The sampled point
+remains $u$.%
+\footnote{These are \path{DirectLineDesc}, \path{DirectLdSpace}, and
+\path{directLinePointDist} at \path{AdmissibleParams.extendedDirectLd}, in
+\path{MIPStarRE/QPBT/Combining/DirectLowDegree/Geometry.lean}.}
+This directly sampled index replaces the source's field seed $s$ and
+$\chi(s)$. The source seed construction at dimension $M$ requires $M\mid q$,
+which admissibility does not imply, for example at $(q,m,d)=(8,2,1)$.
+The direct construction is defined without that extra assumption. Its
+relation to the source law is a separate question, not an identification
+established by the error bound.%
+\footnote{See \path{eq:chi-func} and \path{def:line-point-dist} in
+\path{references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex}:207--286
+and \path{docs/paper-gaps/qpbt_ld-dimension-divisibility.tex}.}
+
+The line outcome is a coefficient list for a polynomial $p(T)$ of degree
+at most $md+1$. At a point $u$ of the line it has value $a$ only if
+$p(t)=a$ for \emph{every} parameter satisfying $u=b+tv$.
+If no such $a$ exists, evaluation returns the extra answer $\bot$.
+On a nonzero direction the parameter is unique. On a zero direction all
+parameters represent the same point, so a coefficient polynomial that is
+not constant as a function on $\F_q$ has no value there. For example,
+$p(T)=T$ on a singleton evaluates to $\bot$.
+Postprocessing to $\F_q\cup\{\bot\}$ retains completeness without assigning
+an arbitrary field value. The joint point answer $(a,b)$ is sent to
+$\alpha a+\beta b\in\F_q$, and its $\bot$ effect is zero. The two comparisons
+are line on $\mathsf{AA}'$ against point on $\mathsf{BA}''$, and line on
+$\mathsf{BB}'$ against point on $\mathsf{AB}''$.%
+\footnote{See \path{DirectDegPoly}, \path{DirectEvaluatesTo}, and
+\path{directEvalOpt} in
+\path{MIPStarRE/QPBT/Combining/DirectLowDegree/Game.lean}, and the two
+consistency fields of \path{ExtendedLinesWitness}. The fixed scalar-field
+equivalence is applied to field answers when these measurements are compared.}
+These are complete measurements on the enlarged alphabet. Removing $\bot$
+from the line measurement need not leave a field-valued POVM. Thus even a
+proof of the unasserted direct-carrier proposition would not by itself
+establish the source lemma, which uses polynomial functions on lines and
+sums over $a\in\F_q$.
 
 \section{The domain of the conditional Lean helper}
 
@@ -135,10 +235,12 @@ Before the repair tracked by \ghissue{389}, the Lean helper
 \path{exists_combinedLinesWitness_ofPointsWitness} instead had the quantifier
 order
 \[
+ \begin{gathered}
   \exists\delta_P=\poly(\eps,md/q)\quad
-  \forall\eps\ \forall\delta_Q\ \forall Q,
-  \qquad Q\text{ has point error at most }\delta_Q
+  \forall\eps\ \forall\delta_Q\ \forall Q,\\
+  Q\text{ has point error at most }\delta_Q\\
   \Longrightarrow T\text{ has line error at most }\delta_P(\eps,md/q).
+ \end{gathered}
 \]
 Thus the line-error function was chosen before an unrestricted scalar
 $\delta_Q$, and did not depend on it.  The fields of
@@ -166,10 +268,12 @@ counterexample theorem is asserted here.
 
 The repaired conditional helper has the form
 \[
+ \begin{gathered}
   \forall\delta_Q,\quad \delta_Q=\poly(\eps)\Longrightarrow
-  \exists\delta_P=\poly(\eps,md/q)\quad
-  \forall\eps\ \forall Q\text{ with error }\delta_Q(\eps),\quad
+  \exists\delta_P=\poly(\eps,md/q),\\
+  \forall\eps\ \forall Q\text{ with error }\delta_Q(\eps),\\
   \exists T\text{ with error }\delta_P(\eps,md/q).
+ \end{gathered}
 \]
 This is not a new hypothesis on the paper theorem.  The source-facing Lean
 declaration \path{exists_combinedLinesWitness} preserves its original statement:
@@ -184,8 +288,8 @@ of the explicit unconditioned measurement
  T^{\ell_X,\ell_Z}_{f_X,f_Z}
  =L^X_{f_X}(\ell_X)L^Z_{f_Z}(\ell_Z)L^X_{f_X}(\ell_X)
 \]
-under the original product of line-point distributions, with error
-$\delta_P(\eps,md/q)=\poly(\eps,md/q)$ and every directed opposite
+under the original product of line-point distributions, with polynomial error
+$\delta_P(\eps,md/q)$ and every directed opposite
 placement. The point-to-line comparisons at source lines 900--941 and the
 pasting argument at lines 942--961 supply the proof. The POVM,
 axis-degree properties, and X marginal of this same measurement are proved.
@@ -377,8 +481,9 @@ $O(m^2 \delta_{\mathrm{Line}})$ for a consistency term that is close to
 one, rather than for its deficit.  Read as a bound on the deficit ---
 which is what the surrounding Cauchy--Schwarz argument requires and what
 the invoked line--point consistency provides after the mixture
-inflation --- the claim and its use are correct, with the square root of
-the deficit giving the stated cost $m\,\delta_{\mathrm{Line}}^{1/2}$.
+inflation --- this scalar step gives the stated cost
+$m\,\delta_{\mathrm{Line}}^{1/2}$. This correction does not establish the
+comparison between the formal direct law and the source law.
 
 \paragraph{The second route.}
 After the chain, the source restarts: it asserts that, by Property~2 of
@@ -452,12 +557,13 @@ steps applied to already square-rooted quantities, and its
 $md/q$-dependence enters as $m\,\delta_P^{1/4}$, which the claimed form
 cannot absorb.
 
-\section{Correction and alternative repairs}
+\section{The established alternative and the remaining comparisons}
 
-The first direction below is the one the blueprint adopts; the remaining
-directions are alternatives, none of which is claimed as established.
+The blueprint uses the following direct auxiliary in the subsequent proof.
+The separate questions about the source statement are recorded for comparison;
+they are not assumptions of that auxiliary or of its consumer.
 
-\paragraph{Corrected error form (adopted in the proof).}
+\paragraph{Established error form (used in the proof).}
 The operative error form is
 $\delta_{\mathrm{combine}} = m \cdot \poly(\eps, md/q)$ --- concretely,
 the first-route bound.  Following the proof-gap protocol, the source-labelled
@@ -472,26 +578,59 @@ The direct-carrier estimates and the absorption into the global-pair error
 are now proved. Transport of the source scalar claims and the stronger
 printed error form remain separate obligations.
 
-\paragraph{Repairing the second route.}
-Strengthen Property~2 of the sub-line lemma to the joint product law: in
-each mixture component, the pairs $(\ell_X, x)$ and $(\ell_Z, z)$ are
-independent with the stated restricted-distribution laws.  The sampling
-procedure makes this plausible, since in each component the two pairs
-are built from disjoint collections of the independent ingredients (the
-two blocks of the uniform point, the direction blocks, and the fresh
-auxiliary choices).  Open obligations: (i)~state and prove the
-strengthened property for every component, including lines whose
-direction blocks vanish and degenerate to singletons; (ii)~re-derive the
-mixture decomposition of $\Lambda$ from the strengthened property;
-(iii)~note that even then the route delivers only
-$O(m^2\delta_P) = m^2 \cdot \poly(\eps, md/q)$, so this direction removes
-the unsupported step of the printed proof but still requires the
-error-form decision of the previous direction, with $m^2$ in place of
-$m$.
+More precisely, the formal construction uses the same internally constructed
+point family throughout. It obtains the X-Z-X paired-line POVM, averages
+its polynomial combinations conditionally on each direct extended line,
+and proves the axis-degree and both opposite-placement estimates. Its
+real-part overlap estimate has the form
+\[
+ K\left(\delta_Q^{1/2}+\sqrt m
+   \left(\delta_P^{1/4}+\delta_Q^{1/4}+\eps^{1/4}\right)\right)
+\]
+with a universal $K>0$. Together with the independent unit bound on the
+consistency defect and polynomial control of $\delta_Q,\delta_P$, this
+yields the stated $C m\,g(\eps,md/q)$ bound for every admissible tuple
+and every nonnegative strategy error. Thus the proved auxiliary has the
+first route's final error form; it is not a formal certification of the
+three printed scalar claims on the source law.%
+\footnote{See \path{subline_joint_overlap_near_one_at} in
+\path{MIPStarRE/QPBT/Combining/ExtendedLines/Estimates.lean} and
+\path{exists_combining_polynomial_bound} as used by
+\path{exists_extendedLinesWitness_established_ofPointsWitness}.}
+
+For the global-pair conclusion, the formal proof applies soundness of the
+directly indexed game and constructs projective measurements of pairs of
+global individual-degree-$d$ polynomials. The scalar absorption includes the
+actual point and line errors, the rounding loss, and the unit bound on each
+defect. It supplies universal constants $a>1$ and $0<b<1$, chosen before
+$(q,m,d)$ and $\eps$, for the final error
+\[
+ a(md)^a\bigl(\eps^b+q^{-b}+2^{-bmd}\bigr).
+\]
+The factor $m$ in the auxiliary estimate is therefore permitted by this
+consumer's polynomial prefactor. The consumer does not require a bound that
+vanishes solely as $m^2\eps$ and $md/q$ vanish. This proves sufficiency for
+that use without proving equality of error forms or importing the unasserted
+claim as a hypothesis.%
+\footnote{The construction is \path{ExtendedLineGame.exists_pairWitness_of_points_lines};
+the absorption is \path{exists_actual_rounded_global_pair_error_bound} in
+\path{MIPStarRE/QPBT/Combining/ActualErrorBounds.lean}. They are composed in
+\path{exists_globalPairWitness} in
+\path{MIPStarRE/QPBT/Combining/Apply.lean}, corresponding to source
+\path{lem:qld-4-7}, lines~1267--1274. The alternative soundness proof is
+documented separately in
+\path{docs/paper-gaps/qpbt_ld-dimension-divisibility.tex}.}
+
+\paragraph{The joint-law question in the second route.}
+The second route would require a joint product law, not just the separate
+point marginals. Such a statement must identify its sampling procedure and
+include zero-direction singleton lines. Even granting it, the estimate
+$O(m^2\delta_P)$ retains an outside dimension factor and does not establish
+the printed error form.
 
 \paragraph{The concrete directly indexed joint comparison.}
-For the concrete directly indexed sampler, the joint decomposition in
-items (i)--(ii) above is now proved. At a fixed kind and extended coordinate,
+For the concrete directly indexed sampler, the joint decomposition is
+proved. At a fixed kind and extended coordinate,
 replacement of the original uniform point by a uniform point on its line
 preserves both source-line representatives. The two retained point blocks,
 direction blocks, and seed choices can then be grouped into independent
@@ -519,17 +658,12 @@ polynomial error form. Blueprint entries
 \path{rem:qld-subline-joint-consistency} record precisely this auxiliary
 scope; issue \#510 remains open.
 
-\paragraph{Establishing the claimed form.}
-Re-derive the chain so that every factor of $m$ enters jointly with
-$\eps$ as $m^2\eps$, in the sense of the orientation identity above.
-Open obligations: (i)~find a chaining that avoids one of the two nested
-square-root losses, or prove restricted-distribution versions of the
-underlying consistency lemmas directly at their inflated errors;
-(ii)~handle the $md/q$-dependence, since a residual term
-$m (md/q)^{c}$ is incompatible with the claimed form for the current
-exponents.  No derivation along these lines is known here, and the
-direction may be infeasible; in that case the corrected error form of
-the first direction stands.
+\paragraph{The unestablished printed rate.}
+Adoption of the printed rate would require an estimate controlled uniformly
+by $m^2\eps$ and $md/q$, including both the nested square-root losses and
+the dimension factor multiplying the finite-field error. Neither the
+established auxiliary nor the direct joint-law theorem supplies that estimate.
+No such estimate or source-domain counterexample is asserted here.
 
 \section{The 2026-09-18 supplied-point realignment}
 \label{sec:supplied-point-realignment}
@@ -601,35 +735,32 @@ The correction replaces that theorem by a definition of type \path{Prop} with
 the same binders and the same body,
 \path{PrintedExtendedLinesWitnessClaim}.  Writing a proposition down is not
 asserting it, so the development carries no term-level proof hole at this site.
-The printed error form remains an open mathematical obligation for source
-adoption. The printed sentence remains
-readable in Lean, next to the theorem that states what the source proof
-actually gives, which is what this note asks for: the printed form must not be
-asserted, because no route to it is known, and it must not be silently dropped,
-because it is what the source prints.
+The printed error form remains mathematically unresolved. Its error expression
+remains readable in Lean on the direct, completed-answer carrier, next to the
+proved auxiliary. This preserves a record of the question without claiming
+that the Lean proposition reproduces the full source statement.
 
-No implication is recorded between \path{PrintedExtendedLinesWitnessClaim} and
-\path{exists_extendedLinesWitness_established}, in either direction.  The
-printed form applies an arbitrary error function of the corrected two-variable
-contract to $m^2\eps$; for exponent $r$ this contributes $m^{2r}$, which is not
-dominated by the single prefactor $m$ of the established form for $r > 1/2$,
-and the converse direction is the one obstructed by
-\path{not_exists_combining_quarter_power_bound} along the first route.  Forcing
-either direction would require an estimate that this note does not have.
+No implication between \path{PrintedExtendedLinesWitnessClaim} and
+\path{exists_extendedLinesWitness_established} is asserted here. In particular,
+the numerical obstruction concerns a proposed absorption of the displayed
+upper bound, not all possible measurements witnessing either existential
+assertion.
 
 The blueprint node \path{lem:qld-4-13} keeps the source statement, links the
 new definition in place of the old theorem, and still carries no formalization
 mark; the correction is recorded in \path{rem:qld-4-13-source-defects}.  The
-mathematical content of the gap is unchanged by this correction, and
-\ghissue{598} stays open.
+mathematical content of the gap is unchanged by this correction.
+The documentary disposition below preserves \ghissue{598} as its provenance;
+it does not assert a proof or mutate the issue's status.
 
 \section{Comparison with the blueprint}
 
-The blueprint \cite{MIPStarREBlueprint} keeps the combined-lines lemma in
-its source shape, error form $\poly(m^2\eps, md/q)$ included, and marks in
-the proof that this form remains unproved: the proof derives the first route
-only, records the established bound $m \cdot \poly(\eps, md/q)$, and uses
-that bound in the sequel.  The
+The blueprint \cite{MIPStarREBlueprint} keeps the combined-lines lemma's
+source carrier and error expression $\poly(m^2\eps, md/q)$, with the
+separate sum-convention qualification stated explicitly. It records that
+this form remains unproved. The source proof discussion explains the
+first-route calculation; the proved support node states the direct-carrier
+bound $C m \cdot \poly(\eps, md/q)$ used in the sequel. The
 three claims are stated as separate lemmas with the corrected deficit
 assertion for the second; the sub-line lemma states Property~2 at the
 level of the two marginal laws and expressly disclaims the joint
@@ -684,28 +815,24 @@ the two formulations remains the transport obligation of that note.
 
 \section{Conclusion}
 
-There is a proof-level gap in the cited lemma, together with an
-intermediate inconsistency: the printed proof asserts two different
-bounds for the same consistency defect, the first-route bound
-$O(m(\eps^{1/4} + \delta_P^{1/4} + \delta_Q^{1/4} +
-\delta_{\mathrm{Line}}^{1/2}))$ and the second-route bound
-$O(m^2\delta_P)$, the second resting on a joint-law decomposition that
-the sub-line lemma as stated does not supply; and the error form claimed
-in the lemma statement, $\poly(m^2\eps, md/q)$, follows from neither.
-The first route is sound after a harmless deficit correction in its
-second claim and establishes $m \cdot \poly(\eps, md/q)$.  The
-discrepancy is harmless downstream, since the sole consumer absorbs
-polynomial-in-$m$ prefactors into its constants.  The blueprint therefore
-retains the printed statement with the missing step explicitly tracked, uses
-the corrected first-route form in the proof and in the sequel, and cites this
-note; strengthening the sub-line lemma to license the second route is
-optional, and no route to the printed form is currently known.  We do not
-assert that the printed form is false.
-The unrestricted supplied-point auxiliaries were false for the independent
-quadratic-answer reason above; their quantifiers must not be substituted for
-those of the source statement.  Their domain has since been repaired or
-removed, as recorded in Section~\ref{sec:supplied-point-realignment}, which
-leaves the printed-error question exactly where this note found it.
+The disposition is a \emph{documented deviation}. The proved auxiliary has
+error $C m\,\poly(\eps,md/q)$ on its direct carrier, with its completed
+evaluations and uniform quantifiers, in the proved global-pair construction.
+The printed $\poly(m^2\eps,md/q)$ assertion remains unproved and unrefuted.
+The scalar obstruction refutes absorption of an upper bound; the quadratic
+example refutes only the former unrestricted supplied-point helpers.
+Neither refutes the source existential assertion. Its source-labelled
+blueprint node remains unmarked and receives a reasoned exemption; only the
+separately stated auxiliary carries proof marks.%
+\footnote{The terminal \path{documented-deviation} disposition applies only to
+this note's row in \path{docs/paper-gaps/qpbt-gap-register.md}; its disclosure
+is entry a1 of \path{docs/DEVIATIONS.md}. The reasoned exemption for
+\path{lem:qld-4-13} is in \path{docs/completion/qpbt-leanok-exemptions.md},
+with the matching remark \path{rem:qld-4-13-source-defects}.}
+This closes the documentary task, not the mathematical source claim.
+The separate sum/product convention, source-law and evaluation comparisons,
+and their histories retain their own dispositions. No theorem statement,
+proof, budget, or earlier counterexample evidence is changed.
 
 \bibliographystyle{alpha}
 \bibliography{references}
