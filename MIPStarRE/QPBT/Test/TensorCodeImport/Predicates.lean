@@ -37,7 +37,6 @@ theorem axis_readout_accepts (D : DirectLdParams) (r : Fin D.k)
     simp only [directLdWinPredicate, validDirectLdAnswer, Bool.and_self,
       Bool.true_and, Bool.false_and, Bool.false_eq_true, if_true, if_false,
       decide_eq_true_eq, or_self] at hwin
-  all_goals try contradiction
   rename_i f values
   have hs := directLineRepParameter_spec (coordinateDirection sample.index) sample.point
   have ht := congrFun hs sample.index
@@ -51,6 +50,38 @@ theorem axis_readout_accepts (D : DirectLdParams) (r : Fin D.k)
       lineRepMap (coordinateDirection sample.index) sample.point sample.index) = values r
   rw [hparameter]
   exact hwin _ hs r
+
+/-- The source sample whose point is the selected diagonal endpoint. -/
+def endpointSample (D : DirectLdParams) (second : Bool) (sample : DirectLdSpace D) :
+    DirectLdSpace D :=
+  if second then endpointShiftEquiv D sample else sample
+
+/-- Either endpoint check follows from the actual source diagonal predicate,
+in either role assignment. This includes zero directions, where the source
+universally checks all affine parameters at the same point. -/
+theorem pair_readout_accepts (D : DirectLdParams) (r : Fin D.k)
+    (sample : DirectLdSpace D) (second : Bool) (a b : DirectLdAnswer D)
+    (hwin : directLdWinPredicate D (.dline, directLdMap D .dline sample)
+        (.point, directLdMap D .point (endpointSample D second sample)) a b = true ∨
+      directLdWinPredicate D (.point, directLdMap D .point (endpointSample D second sample))
+        (.dline, directLdMap D .dline sample) b a = true) :
+    endpoint second (pairReadout D r sample a) = pointReadout D r b := by
+  cases a <;> cases b <;>
+    simp only [directLdWinPredicate, validDirectLdAnswer, Bool.and_self,
+      Bool.true_and, Bool.false_and, Bool.false_eq_true, if_true, if_false,
+      decide_eq_true_eq, or_self] at hwin
+  rename_i f values
+  let v := directPrefixProjection sample.index sample.direction
+  let t := directLineRepParameter v sample.point
+  have hs : sample.point = lineRepMap v sample.point + t • v :=
+    directLineRepParameter_spec v sample.point
+  have hs' : sample.point + v = lineRepMap v sample.point + (t + 1) • v := by
+    calc
+      _ = (lineRepMap v sample.point + t • v) + v := congrArg (fun u => u + v) hs
+      _ = _ := by module
+  cases second with
+  | false => exact hwin t hs r
+  | true => exact hwin (t + 1) hs' r
 
 end
 
