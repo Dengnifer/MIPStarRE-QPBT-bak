@@ -127,8 +127,8 @@ end LinearityPadding
 the complementary projection to the distinguished outcome. Their effects
 intertwine on the entire source space. Taking `J` to be the reservation above
 and the outcome to be zero gives the required measurement-extension step.
-This auxiliary constructs transport; it is not an assumed transport package
-or the complete source absorption at paper
+The construction proves the intertwining identities. The complete source
+absorption remains open at paper
 `14_analysis_of_the_pauli_basis_test.tex:825-832`. -/
 theorem linearity_padding_measurement_transport {ι κ α : Type}
     [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]

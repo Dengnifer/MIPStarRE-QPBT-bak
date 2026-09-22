@@ -1,11 +1,11 @@
 import MIPStarRE.QPBT.Combining.Linearity.Reservation
 
 /-!
-# Comparing the Option and Boolean projective strategies
+# Comparing the Naimark and Boolean-padded projective strategies
 
 The active-space inclusion intertwines the actual measurements of the two
-initial dilations and maps their states exactly. In particular, the existing
-arbitrary-strategy consumer `pauliNaimarkSetting` is retained.
+initial dilations and maps their states exactly. In particular, the projective
+reduction used in the soundness theorem for arbitrary strategies is retained.
 
 ## References
 
@@ -65,8 +65,8 @@ private theorem paddedMeasurement_intertwines (P : AdmissibleParams) (ι : Type)
       simp [paddedMeasurement, reindexMeasurement, reindexOp, e, blockMeasurement,
         MIPStarRE.LDT.ProjStrat.localDirectSumBlock, MIPStarRE.Quantum.Measurement.ofSumEqOne]
 
-/-- The Option-indexed strategy used by the arbitrary-strategy soundness
-consumer embeds into the actual Boolean-padded setup. Its state and both full
+/-- The projective reduction used in the soundness theorem for arbitrary
+strategies embeds into the initial Boolean-padded space. Its state and both full
 question-indexed measurement families intertwine exactly, not merely after
 compression. No strategy, answer postprocessing, or winning error is changed.
 This is a formalization-only comparison of the constructions implementing

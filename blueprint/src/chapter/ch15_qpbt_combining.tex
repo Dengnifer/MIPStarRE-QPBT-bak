@@ -347,27 +347,37 @@ assembled by Fourier averaging.
 	\lean{MIPStarRE.QPBT.linearity_padding_capacity}
 	\lean{MIPStarRE.QPBT.linearity_padding_ground_embedding}
 	\leanok
+	\uses{def:admissible, def:pauli-win-predicate}
 	This formalization-only auxiliary concerns the initial construction of
-	Remark~\ref{rem:linearity-import}. For admissible parameters, put
-	$N=|\mathrm{PauliAnswer}|$, $q=2^t$, and
-	$K=\F_2^{2t}\sqcup\{\bot\}$. There is an injection
+	Remark~\ref{rem:linearity-import}. For admissible parameters, let
+	$\mathcal A$ be the finite answer alphabet of the Pauli basis test in
+	Definition~\ref{def:pauli-win-predicate}. It contains all Pauli outcomes
+	$\F_q^{2^m}$. Put $N=|\mathcal A|$, $q=2^t$, and
+	$K=\F_2^{2t}\sqcup\{\bot\}$. The initial Naimark ancilla has an
+	orthonormal basis indexed by $\mathcal A\sqcup\{\bot\}$, with one
+	extra index $\bot$ for its initial state; the common linearity ancilla
+	has an orthonormal basis indexed by $K$. There is an injection
 	\[
-	 e:\operatorname{Option}(\mathrm{PauliAnswer})\times K
+	 e:(\mathcal A\sqcup\{\bot\})\times K
 	   \longrightarrow\{0,1\}^{N+1}
 	\]
-	whose restriction to the $\bot$ slice is the existing one-hot encoding
-	of the active Naimark coordinates. The injection depends only on the
-	parameters, before the state or the observable families are chosen.
+	whose restriction to the $\bot$ slice of $K$ is the initial encoding
+	of the Naimark basis: the extra index maps to the zero word and each
+	answer maps to its distinct coordinate unit vector. The injection
+	depends only on the parameters, before the state or the observable
+	families are chosen.
 \end{lemma}
 \begin{proof}
 	\leanok
-	The Pauli-outcome constructor and admissibility give
+	The inclusion of all Pauli outcomes and admissibility give
 	$N\geq q^{2^m}\geq q^2\geq4$. Hence
 	$(N+1)(q^2+1)\leq(N+1)^2\leq2^{N+1}$.
-	Choose an injection by this cardinality bound and compose it with a
-	permutation of the Boolean cube mapping its ground slice to the existing
-	one-hot encoding. Mathlib's extension of a bijection between finite
-	subsets supplies this permutation.
+	Choose an injection $f$ by this cardinality bound. Sending each
+	$f(a,\bot)$ to the prescribed encoding of $a$ defines a bijection
+	between two subsets of the Boolean cube of the same size. Their
+	complements also have the same size, so any bijection between the
+	complements extends this partial bijection to a permutation $\sigma$
+	of the cube. Then $e=\sigma\circ f$ has the required restriction.
 \end{proof}
 
 \begin{lemma}[Bipartite state and initial measurement transport]
@@ -375,6 +385,7 @@ assembled by Fourier averaging.
 	\lean{MIPStarRE.QPBT.linearity_padding_state_transport}
 	\lean{MIPStarRE.QPBT.linearity_padding_naimark_comparison}
 	\leanok
+	\uses{lem:linearity-padding-reservation}
 	Let $G_A,G_B$ include the active Naimark spaces in the Boolean-padded
 	spaces and let $J_A,J_B$ be the reservations from
 	Lemma~\ref{lem:linearity-padding-reservation}. For every active bipartite
@@ -384,8 +395,9 @@ assembled by Fourier averaging.
 	   =(G_A\ot G_B)\psi,
 	\]
 	with the ancillary factors placed next to their respective players.
-	For the actual Option-indexed projective dilation, $G_A\ot G_B$ maps
-	its state to the initial Boolean-padded state, and each local effect
+	For the projective dilation whose local ancillas have orthonormal bases
+	indexed by $\mathcal A\sqcup\{\bot\}$, $G_A\ot G_B$ maps its state
+	to the initial Boolean-padded state, and each local effect
 	satisfies $M_{\rm pad}G=GM_{\rm Naimark}$ for every question and answer.
 	These are bipartite identities. They do not assert the six-register
 	transport or completion of the source's binary-rounding construction.
@@ -404,7 +416,7 @@ assembled by Fourier averaging.
 	For any finite-dimensional isometry $J:H\longrightarrow K$, projective
 	measurement $\{P_a\}$ on $H$, and distinguished outcome $a_0$, the effects
 	\[
-	 \widetilde P_a=JP_aJ^\dagger+mathbf{1}_{a=a_0}(I-JJ^\dagger)
+	 \widetilde P_a=JP_aJ^\dagger+\mathbf{1}_{a=a_0}(I-JJ^\dagger)
 	\]
 	form a projective measurement on $K$ and satisfy
 	$\widetilde P_aJ=JP_a$. This auxiliary applies to the constructed
@@ -444,21 +456,62 @@ assembled by Fourier averaging.
 	taking either average.
 \end{proof}
 
+\begin{lemma}[Formalization support for weighted squared-error transport]
+	\label{lem:linearity-padding-weighted-error-transport}
+	\lean{MIPStarRE.QPBT.LinearityPadding.extendObservable_stateDepDistSq}
+	\leanok
+	This formalization-only auxiliary for the construction in
+	Remark~\ref{rem:linearity-import} records an algebraic identity.
+	Let $J:H\longrightarrow H^+$ be an isometry between finite-dimensional
+	complex Hilbert spaces. For arbitrary operators $A,B,\rho$ on $H$, put
+	$F_J(A)=JAJ^\dagger+(I-JJ^\dagger)$ and write
+	$d_\rho(A,B)^2=\Re\Tr((A-B)^\dagger(A-B)\rho)$. Then
+	\[
+	 d_{J\rho J^\dagger}(F_J(A),F_J(B))^2=d_\rho(A,B)^2.
+	\]
+	No Hermiticity, positivity, or normalization hypotheses are needed.
+\end{lemma}
+\begin{proof}
+	\leanok
+	The complementary terms cancel in $F_J(A)-F_J(B)=J(A-B)J^\dagger$.
+	Use $J^\dagger J=I$ in the product defining the squared-error expression,
+	then cyclicity of the trace to remove the remaining isometric conjugation.
+\end{proof}
+
 \begin{lemma}[Rounding on the reserved expanded subspace]
 	\label{lem:linearity-padding-reserved-rounding}
 	\lean{MIPStarRE.QPBT.linearity_padding_rounding_transport}
 	\leanok
-	Fix admissible parameters and the reservation $J$ from the active
-	expanded space tensored with the common ancilla into the allocated
-	expanded space. The Pauli register is unchanged. For any density $\rho$
-	on the active expanded space and any fibers $O_x^u$ satisfying the
-	correlation premise of Theorem~\ref{thm:linearity} with error $\delta_x$,
-	there are binary observables $\widetilde L_x^u$ on the allocated space
-	with exact linearity, $\widetilde L_x^0=I$, and
+	\uses{lem:linearity-padding-reservation,
+		lem:linearity-padding-weighted-error-transport}
+	Fix admissible parameters with $q=2^t$ and a finite local coordinate
+	set $\mathcal I$. Let $H$ be the active expanded space with orthonormal basis
+	indexed by $\mathcal I\times(\mathcal A\sqcup\{\bot\})\times\F_q^{2^m}$,
+	and let $H^+$ have orthonormal basis indexed by
+	$\mathcal I\times\{0,1\}^{N+1}\times\F_q^{2^m}$. The reservation
+	$J:H\otimes\C^K\longrightarrow H^+$ is induced by the injection in
+	Lemma~\ref{lem:linearity-padding-reservation}, leaving the Pauli
+	coordinate unchanged. It is fixed before the following data are chosen.
+	Let $X$ be any set, let $\mu$ be a finitely supported nonnegative
+	weighting on $X$, let $\delta:X\longrightarrow\mathbb R$, and let
+	$\rho$ be a positive semidefinite operator on $H$ with $\Tr\rho=1$.
+	Put $U=\F_2^{2t}$. Suppose that for every $x\in X$ and $u\in U$,
+	$O_x^u$ is a binary observable on $H$, that is,
+	$(O_x^u)^\dagger=O_x^u$ and $(O_x^u)^2=I$, and that for every $x\in X$,
 	\[
-	 \E_x\E_u d_{J(\rho\ot\ket{\bot}\bra{\bot})J^\dagger}
+	 \E_{u,v\in U}\Re\Tr(O_x^u O_x^v O_x^{u+v}\rho)\geq1-\delta_x.
+	\]
+	Here $u,v$ are independent and uniform on $U$. Write
+	$\E_{u\in U}f(u)=|U|^{-1}\sum_{u\in U}f(u)$ and
+	$\E_{x\sim\mu}g(x)=\sum_{x\in\operatorname{supp}\mu}\mu(x)g(x)$;
+	the total mass of $\mu$ need not be one. There are binary observables
+	$\widetilde L_x^u$ on $H^+$, for every $x\in X$ and $u\in U$, satisfying
+	$\widetilde L_x^u\widetilde L_x^v=\widetilde L_x^{u+v}$ for all $x,u,v$,
+	$\widetilde L_x^0=I$ for all $x$, and
+	\[
+	 \E_{x\sim\mu}\E_{u\in U} d_{J(\rho\ot\ket{\bot}\bra{\bot})J^\dagger}
 	   (\widetilde L_x^u,F_J(O_x^u\ot I))^2
-	   \leq 2\E_x\delta_x.
+	   \leq 2\E_{x\sim\mu}\delta_x.
 	\]
 	This auxiliary uses the explicitly transported density and comparator.
 	Their identification with the source binary construction on the four
@@ -466,10 +519,15 @@ assembled by Fourier averaging.
 \end{lemma}
 \begin{proof}
 	\leanok
-	Extend the concrete Fourier--Naimark rounded observables by the identity
-	on the complement. Multiplication and the identity are preserved.
-	The density-weighted squared errors are exactly preserved under
-	isometric conjugation, so the per-fiber estimate can be averaged.
+	\uses{lem:naimark-rounding, lem:boolean-representation-stability,
+		lem:blr-defect-identity, lem:linearity-padding-weighted-error-transport}
+	For each $x$, extend the Fourier--Naimark rounded observables of
+	Lemma~\ref{lem:naimark-rounding} by the identity on the complement.
+	Multiplication and the identity are preserved. Lemmas~\ref{lem:boolean-representation-stability}
+	and~\ref{lem:blr-defect-identity} bound the uniformly averaged squared
+	error by $2\delta_x$. Lemma~\ref{lem:linearity-padding-weighted-error-transport}
+	preserves that error under the extension. Taking the nonnegative
+	weighted sum over $x$ gives the stated bound.
 \end{proof}
 
 \begin{lemma}[Dimension obstruction for the full ancillary extension]
