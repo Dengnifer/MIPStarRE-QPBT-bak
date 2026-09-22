@@ -130,6 +130,27 @@ theorem ofCoefficients_evaluatesTo_iff {L : LdParams} (line : LineDesc L)
 
 end LinePolynomialFunction
 
+/-- Every coefficient answer descends on a nonzero-direction line. On a
+singleton, descent is exactly constancy of the polynomial function on the
+parameter field, not degree zero of a formal representative. -/
+theorem coefficients_factorsThrough_iff (u v : Fin m → K) (p : Fin (c + 1) → K) :
+    Function.FactorsThrough (evalCoefficient p) (fun t : K => u + t • v) ↔
+      v ≠ 0 ∨ ∀ t : K, evalCoefficient p t = evalCoefficient p 0 := by
+  constructor
+  · intro h
+    by_cases hv : v = 0
+    · right
+      intro t
+      apply h
+      simp [hv]
+    · exact Or.inl hv
+  · rintro (hv | h)
+    · intro s t hst
+      exact congrArg (evalCoefficient p)
+        (smul_left_injective K hv (add_left_cancel hst))
+    · intro s t _
+      exact (h s).trans (h t).symm
+
 /-- The source combining function on geometric lines, with degree at most
 `c + 1`. Its only geometric hypothesis is the projection inclusion preceding
 `eq:combine-lines`. Affine parameters and bounded polynomial representatives
