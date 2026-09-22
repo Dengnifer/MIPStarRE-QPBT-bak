@@ -98,6 +98,25 @@ theorem measurementRejection_correlated (D : DirectLdParams)
   · simp only [h, blockDiagonalMeasurement_effect]
     exact correlatedPairState_born D S _ _
 
+/-- Enlarging the accepted event can only decrease its Born rejection
+probability. Positivity comes from the measurement effects. -/
+theorem measurementRejection_mono {α β ι κ : Type*} [Fintype α] [Fintype β]
+    [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (ψ : EuclideanSpace ℂ (ι × κ)) (A : Measurement α ι) (B : Measurement β κ)
+    (accept accept' : α → β → Bool)
+    (h : ∀ a b, accept a b = true → accept' a b = true) :
+    measurementRejection ψ A B accept' ≤ measurementRejection ψ A B accept := by
+  apply Finset.sum_le_sum
+  intro a _
+  apply Finset.sum_le_sum
+  intro b _
+  by_cases hab : accept a b = true
+  · simp [hab, h a b hab]
+  · by_cases hab' : accept' a b = true
+    · simp only [hab, hab', ↓reduceIte]
+      exact stateQForm_nonneg ψ (kronecker_nonneg (A.pos a) (B.pos b))
+    · simp [hab, hab']
+
 end
 
 end MIPStarRE.QPBT.TensorCodeImport
