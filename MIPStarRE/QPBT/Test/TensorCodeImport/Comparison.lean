@@ -209,6 +209,32 @@ theorem tensorCodeStrategyOfDirectLd_branch_bounds (D : DirectLdParams)
             simp)
       _ = _ := pairRegister_average D F
 
+/-- The constructed source strategy has actual tensor-test rejection at most
+`3/2` times the source rejection. The same bound holds for Definition 4.6's
+error, which controls both endpoints separately rather than only their mean.
+This is a game reduction, not an application of tensor-code soundness. -/
+theorem tensorCodeStrategyOfLd_rejection_le (L : LdParams) (S : Strategy (ldGame L))
+    (r : Fin L.k) :
+    (tensorCodeStrategyOfLd L S r).rejection ≤ (3 / 2 : ℝ) * (1 - S.value) ∧
+    (tensorCodeStrategyOfLd L S r).goodnessError ≤ (3 / 2 : ℝ) * (1 - S.value) := by
+  obtain ⟨haxis, hend, hpoint, hline, hpair⟩ :=
+    tensorCodeStrategyOfDirectLd_branch_bounds L.toDirectLdParams (ldStrategyToDirect L S) r
+  have hfirst := hend false
+  have hsecond := hend true
+  have hmax := max_le hfirst hsecond
+  have hweight := weighted_source_rejection_le L S
+  dsimp only [weightedSourceRejection] at hweight
+  constructor
+  · change (tensorCodeStrategyOfDirectLd L.toDirectLdParams (ldStrategyToDirect L S) r).rejection
+      ≤ _
+    unfold TensorCodeStrategy.rejection
+    linarith
+  · change
+      (tensorCodeStrategyOfDirectLd L.toDirectLdParams (ldStrategyToDirect L S) r).goodnessError
+        ≤ _
+    unfold TensorCodeStrategy.goodnessError
+    linarith
+
 end
 
 end MIPStarRE.QPBT.TensorCodeImport
