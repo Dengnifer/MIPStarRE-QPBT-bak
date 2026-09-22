@@ -288,4 +288,45 @@ theorem combineLineFunction_pullback
   rw [← hX, ← hZ]
   rfl
 
+/-- Combining descending coefficient answers gives a descending answer, and
+its geometric function is the source combination of their geometric
+functions. Every compatible affine choice is allowed. This restricted
+coefficient comparison neither discards non-descending outcomes nor changes
+any measurement or game. -/
+theorem combineLinePoly_descends
+    (u v : Fin (2 * m + 2) → K) (uX vX uZ vZ : Fin m → K)
+    (hproj : ∀ p ∈ linePoints u v,
+      projX p ∈ linePoints uX vX ∧ projZ p ∈ linePoints uZ vZ)
+    (pf pg : Fin (c + 1) → K)
+    (hf : Function.FactorsThrough (evalCoefficient pf) (fun t : K => uX + t • vX))
+    (hg : Function.FactorsThrough (evalCoefficient pg) (fun t : K => uZ + t • vZ))
+    (aX bX aZ bZ : K)
+    (hcompat : IsCombineLineCompatible u v uX vX uZ vZ aX bX aZ bZ
+      (u (alphaVar m)) (v (alphaVar m)) (u (betaVar m)) (v (betaVar m))) :
+    let q := combineLinePoly aX bX aZ bZ
+      (u (alphaVar m)) (v (alphaVar m)) (u (betaVar m)) (v (betaVar m)) pf pg
+    ∃ hq : Function.FactorsThrough (evalCoefficient q) (fun t : K => u + t • v),
+      LinePolynomialFunction.ofCoefficients u v q hq =
+        combineLineFunction u v uX vX uZ vZ hproj
+          (LinePolynomialFunction.ofCoefficients uX vX pf hf)
+          (LinePolynomialFunction.ofCoefficients uZ vZ pg hg) := by
+  let f := LinePolynomialFunction.ofCoefficients uX vX pf hf
+  let g := LinePolynomialFunction.ofCoefficients uZ vZ pg hg
+  let F := combineLineFunction u v uX vX uZ vZ hproj f g
+  let q := combineLinePoly aX bX aZ bZ
+    (u (alphaVar m)) (v (alphaVar m)) (u (betaVar m)) (v (betaVar m)) pf pg
+  have hval (t : K) : evalCoefficient q t = F.1 ⟨u + t • v, ⟨t, rfl⟩⟩ :=
+    combineLineFunction_pullback u v uX vX uZ vZ hproj f g pf pg
+      (fun s => (LinePolynomialFunction.ofCoefficients_apply uX vX pf hf s).symm)
+      (fun s => (LinePolynomialFunction.ofCoefficients_apply uZ vZ pg hg s).symm)
+      aX bX aZ bZ hcompat t
+  have hq : Function.FactorsThrough (evalCoefficient q) (fun t : K => u + t • v) := by
+    intro s t hst
+    rw [hval, hval]
+    exact congrArg F.1 (Subtype.ext hst)
+  refine ⟨hq, ?_⟩
+  apply LinePolynomialFunction.ext
+  intro t
+  exact (LinePolynomialFunction.ofCoefficients_apply u v q hq t).trans (hval t)
+
 end MIPStarRE.QPBT
