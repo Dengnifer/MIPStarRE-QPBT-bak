@@ -52,6 +52,19 @@ even when the parameterization is not injective. -/
   rcases x with ⟨x, t, rfl⟩
   exact h t
 
+/-- Every bounded polynomial function has a bounded coefficient representative
+of its pullback. This permits reuse of the coefficient combining polynomial
+without choosing representatives as part of the function carrier. -/
+theorem exists_coefficients {u v : Fin m → K} (f : LinePolynomialFunction u v c) :
+    ∃ p : Fin (c + 1) → K,
+      ∀ t : K, evalCoefficient p t = f.1 ⟨u + t • v, ⟨t, rfl⟩⟩ := by
+  classical
+  obtain ⟨p, hp, hf⟩ := f.2
+  refine ⟨Polynomial.toFn (c + 1) p, fun t => ?_⟩
+  rw [← polynomial_ofFn_eval_eq_evalCoefficient,
+    Polynomial.ofFn_comp_toFn_eq_id_of_natDegree_lt (Nat.lt_succ_of_le hp)]
+  exact hf t
+
 end LinePolynomialFunction
 
 end MIPStarRE.QPBT
