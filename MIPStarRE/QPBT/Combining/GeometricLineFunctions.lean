@@ -115,4 +115,35 @@ theorem combineLineFunction_apply
       p.1 (alphaVar m) * f.1 ⟨projX p.1, (hproj p.1 p.2).1⟩ +
         p.1 (betaVar m) * g.1 ⟨projZ p.1, (hproj p.1 p.2).2⟩ := rfl
 
+/-- Every compatible affine choice and every pair of coefficient
+representatives of the input functions gives the same geometric combining
+function. In particular, neither affine choices nor formal representatives
+affect the source output. This is an algebraic comparison with the coefficient
+construction, not an additional premise of `combineLineFunction`. -/
+theorem combineLineFunction_pullback
+    (u v : Fin (2 * m + 2) → K) (uX vX uZ vZ : Fin m → K)
+    (hproj : ∀ p ∈ linePoints u v,
+      projX p ∈ linePoints uX vX ∧ projZ p ∈ linePoints uZ vZ)
+    (f : LinePolynomialFunction uX vX c) (g : LinePolynomialFunction uZ vZ c)
+    (pf pg : Fin (c + 1) → K)
+    (hf : ∀ t : K, evalCoefficient pf t = f.1 ⟨uX + t • vX, ⟨t, rfl⟩⟩)
+    (hg : ∀ t : K, evalCoefficient pg t = g.1 ⟨uZ + t • vZ, ⟨t, rfl⟩⟩)
+    (aX bX aZ bZ : K)
+    (hcompat : IsCombineLineCompatible u v uX vX uZ vZ aX bX aZ bZ
+      (u (alphaVar m)) (v (alphaVar m)) (u (betaVar m)) (v (betaVar m))) (t : K) :
+    evalCoefficient (combineLinePoly aX bX aZ bZ
+      (u (alphaVar m)) (v (alphaVar m)) (u (betaVar m)) (v (betaVar m)) pf pg) t =
+      (combineLineFunction u v uX vX uZ vZ hproj f g).1 ⟨u + t • v, ⟨t, rfl⟩⟩ := by
+  rw [(combineLinePoly_spec u v uX vX uZ vZ aX bX aZ bZ
+    (u (alphaVar m)) (v (alphaVar m)) (u (betaVar m)) (v (betaVar m))
+    pf pg hcompat t).2.2, hf, hg, combineLineFunction_apply]
+  have hX : f.1 ⟨projX (u + t • v), (hproj _ ⟨t, rfl⟩).1⟩ =
+      f.1 ⟨uX + (aX + bX * t) • vX, ⟨_, rfl⟩⟩ :=
+    congrArg f.1 (Subtype.ext (hcompat.2.2.2.2 t).1)
+  have hZ : g.1 ⟨projZ (u + t • v), (hproj _ ⟨t, rfl⟩).2⟩ =
+      g.1 ⟨uZ + (aZ + bZ * t) • vZ, ⟨_, rfl⟩⟩ :=
+    congrArg g.1 (Subtype.ext (hcompat.2.2.2.2 t).2)
+  rw [← hX, ← hZ]
+  rfl
+
 end MIPStarRE.QPBT
