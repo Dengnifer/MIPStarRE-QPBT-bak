@@ -77,6 +77,27 @@ theorem measurementRejection_postprocess {α β α' β' ι κ : Type*}
       simp_rw [Finset.sum_fiberwise Finset.univ g]
     _ = _ := Finset.sum_fiberwise Finset.univ f _
 
+/-- Rejection on the correlated register extension is the average rejection
+in matching source blocks, for the actual predicate on both outcomes. -/
+theorem measurementRejection_correlated (D : DirectLdParams)
+    (S : Strategy (directLdGame D)) {α β : Type*} [Fintype α] [Fintype β]
+    (A : PairRegister D → Measurement α S.ιA)
+    (B : PairRegister D → Measurement β S.ιB) (accept : α → β → Bool) :
+    measurementRejection (correlatedPairState D S)
+        (blockDiagonalMeasurement A) (blockDiagonalMeasurement B) accept =
+      avgOver (uniformDistribution (PairRegister D))
+        (fun register => measurementRejection S.ψ (A register) (B register) accept) := by
+  unfold measurementRejection
+  simp_rw [avgOver_sum]
+  apply Finset.sum_congr rfl
+  intro a _
+  apply Finset.sum_congr rfl
+  intro b _
+  by_cases h : accept a b = true
+  · simp [h, avgOver_uniform_const]
+  · simp only [h, blockDiagonalMeasurement_effect]
+    exact correlatedPairState_born D S _ _
+
 end
 
 end MIPStarRE.QPBT.TensorCodeImport
