@@ -118,6 +118,40 @@ theorem diagonal_endpoint_distribution (D : DirectLdParams) :
       rw [uniformDistribution_map_equiv]
       rfl
 
+/-- The hidden-subcube law is invariant under exchanging its two points.
+Hence the fair order bit in Figure 1 can equivalently select which ordered
+endpoint is checked, without assuming symmetry of the pair measurements. -/
+theorem tensorPairDistribution_swap (D : DirectLdParams) :
+    (tensorPairDistribution D).map Prod.swap = tensorPairDistribution D := by
+  have hneg (i : Fin D.m) (w : Fin D.m → DirectScalarQ D) :
+      directPrefixProjection i (-w) = -directPrefixProjection i w := by
+    funext j
+    dsimp [directPrefixProjection]
+    split_ifs <;> simp
+  let swapSample (sample : DirectLdSpace D) : DirectLdSpace D :=
+    ⟨sample.point + directPrefixProjection sample.index sample.direction,
+      sample.index, -sample.direction⟩
+  have hinv : Function.Involutive swapSample := by
+    intro sample
+    cases sample with
+    | mk u i w =>
+        change (⟨(u + directPrefixProjection i w) + directPrefixProjection i (-w),
+          i, - -w⟩ : DirectLdSpace D) = ⟨u, i, w⟩
+        simp [hneg]
+  let e : DirectLdSpace D ≃ DirectLdSpace D := ⟨swapSample, swapSample, hinv, hinv⟩
+  have hpair (sample : DirectLdSpace D) :
+      diagonalPair D (e sample) = (diagonalPair D sample).swap := by
+    apply Prod.ext <;> funext j <;>
+      simp [e, swapSample, diagonalPair, hneg]
+  rw [tensorPairDistribution_eq_diagonal, Distribution.map_map]
+  calc
+    _ = ((uniformDistribution (DirectLdSpace D)).map e).map (diagonalPair D) := by
+      rw [Distribution.map_map]
+      congr 1
+      funext sample
+      exact (hpair sample).symm
+    _ = _ := by rw [uniformDistribution_map_equiv]
+
 end
 
 end MIPStarRE.QPBT.TensorCodeImport
