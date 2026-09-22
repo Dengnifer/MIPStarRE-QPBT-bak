@@ -25,21 +25,26 @@ row-by-row adoption evidence are in the
    but its witness states consistency on completed evaluations. The source
    uses field-valued evaluations, including its unresolved zero-direction
    convention. See [the subline note](../paper-gaps/qpbt_subline-claims-line-marginal.tex).
-- **`def:combine-map`:** global polynomial combination and the coefficient formula
-   are proved. Issue #695 derives affine compatibility from projection inclusion,
-   including constant projections and zero directions, and proves the parameter
-   formula and degree bound in `exists_combineLinePoly_of_projection_mem`.
-   Field-valued evaluation on the full coefficient carrier is still unavailable:
-   `not_evaluatesTo_parameter_on_zero_direction` proves that the answer `T`
-   has no value on a singleton line. The source uses functions on lines, so
-   carrier correspondence and representative independence remain required
-   (`14_analysis_of_the_pauli_basis_test.tex:970-989`). See
-   [the focused audit](../../audits/2026-09-22_combining-map-source-domain.md).
 - **`lem:qld-4-13`:** `PrintedExtendedLinesWitnessClaim` is unasserted and uses
    the directly indexed carrier and completed evaluations. Its error form is
    not established by the proved `C m poly(epsilon,md/q)` auxiliary. See
    [the error note](../paper-gaps/qpbt_combined-lines-error-term.tex) and
    [the dimension note](../paper-gaps/qpbt_ld-dimension-divisibility.tex).
+
+Issue #698 matches **`def:combine-map`** on its source function domain
+(`14_analysis_of_the_pauli_basis_test.tex:970-989`). The new
+`LinePolynomialFunction` carrier consists of functions on geometric lines with
+bounded polynomial pullbacks. `combineLineFunction` constructs the function
+and degree bound from projection inclusion, including singleton lines and
+constant projections. The pointwise formula and independence of affine choices
+and coefficient representatives are proved. The existing global combining map
+is retained. See [the function audit](../../audits/2026-09-22_geometric-line-functions.md).
+This is a source construction, not a completion exemption. Its coefficient
+adapter applies only to answers that descend on parameter fibers. The existing
+coefficient-indexed games and measurements are unchanged, and `T` still has no
+value on a singleton under their universal evaluation relation. Transport of
+non-descending outcomes, completed-to-field evaluation, the source law, and
+the printed error bounds remain open; their entries remain unmarked.
 
 The four CL definition nodes audited in chapter 12 now carry marks for their
 faithful recursive predicates and shared-seed sampling laws. No theorem or

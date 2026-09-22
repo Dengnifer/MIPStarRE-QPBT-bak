@@ -2475,18 +2475,30 @@ obstruction is recorded in Remark~\ref{rem:qld-4-7-divisibility} and
 analyzed, together with candidate repairs, in
 \cite{gap:qpbt_ld-dimension-divisibility}.
 
-% Unmarked, tracked in issues #667 and #695. Projection inclusion now supplies
-% affine compatibility and the coefficient formula. The coefficient carrier
-% still does not identify all its answers with functions on singleton lines.
+\begin{definition}[Polynomial functions on a geometric line]
+	\label{def:geometric-line-functions}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction}
+	\leanok
+	\uses{def:line}
+	Let $K$ be a field and $\ell=\ell(u,v)\subseteq K^m$.
+	A polynomial function of degree at most $c$ on $\ell$ is a function
+	$F:\ell\to K$ for which there exists $p\in K[T]$ of degree at most
+	$c$ such that $p(t)=F(u+tv)$ for every $t\in K$.
+	The polynomial $p$ is a representative of the pullback, rather than
+	part of the function. Equality is equality at all geometric points.
+	When $v=0$, every such function is constant; no restriction on the
+	formal degree of its other representatives is imposed. This function
+	convention is separate from the coefficient answer convention in
+	Remark~\ref{rem:deg-line-representatives}.
+\end{definition}
+
 \begin{definition}[The combining map]
 	\label{def:combine-map}
 	\lean{MIPStarRE.QPBT.combinePoly, MIPStarRE.QPBT.combinePoly_eval}
 	\lean{MIPStarRE.QPBT.combinePoly_mem_polyFunc}
-	\lean{MIPStarRE.QPBT.combineLinePoly}
-	\lean{MIPStarRE.QPBT.combineLinePolynomial_natDegree_le}
-	\lean{MIPStarRE.QPBT.IsCombineLineCompatible, MIPStarRE.QPBT.combineLinePoly_spec}
-	\notready
-	\uses{def:polyfunc, def:line, def:ideg-deg-polynomials}
+	\lean{MIPStarRE.QPBT.combineLineFunction, MIPStarRE.QPBT.combineLineFunction_apply}
+	\leanok
+	\uses{def:polyfunc, def:line, def:ideg-deg-polynomials, def:geometric-line-functions}
 	For $f, g \in \mathrm{ideg}_{d,m}(\F_q)$, the polynomial
 	$\mathrm{combine}_{f,g} \in \mathrm{ideg}_{d,2m+2}(\F_q)$ is defined by
 	\[
@@ -2516,6 +2528,41 @@ analyzed, together with candidate repairs, in
 	multiplied by an affine factor of degree at most one.
 \end{definition}
 
+\begin{lemma}[Formalization support: bounded pullbacks and function equality]
+	\label{lem:geometric-line-function-representatives}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.ext}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.exists_coefficients}
+	\leanok
+	\uses{def:geometric-line-functions}
+	Two polynomial functions on $\ell(u,v)$ are equal if their values
+	at $u+tv$ agree for every $t\in K$. Every polynomial function of
+	degree at most $c$ has a pullback representative with a coefficient
+	list indexed by $0,\ldots,c$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:geometric-line-functions}
+	Every point has a parameter. For a representative of degree at most
+	$c$, its first $c+1$ coefficients reconstruct the polynomial.
+\end{proof}
+
+\begin{lemma}[Formalization support: reduced pullback representatives]
+	\label{lem:geometric-line-reduced-representative}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.exists_reduced_representative}
+	\leanok
+	\uses{def:geometric-line-functions}
+	Over $\F_q$, a degree-$c$ polynomial function on a geometric line
+	has a pullback representative whose degree is both at most $c$ and
+	strictly less than $q$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:geometric-line-functions}
+	Take the remainder of any bounded representative modulo $T^q-T$.
+	The degree does not increase and becomes strictly less than $q$.
+	Since $t^q-t=0$ for every $t\in\F_q$, all evaluation values are preserved.
+\end{proof}
+
 \begin{lemma}[Formalization support for the combining map: affine parameters]
 	\label{lem:combine-map-affine-parameters}
 	\lean{MIPStarRE.QPBT.exists_affine_parameters_of_linePoints_subset}
@@ -2541,9 +2588,31 @@ analyzed, together with candidate repairs, in
 	$v=(s-a)v'$. Take $b=s-a$. Apply this argument to each projected line.
 \end{proof}
 
+\begin{lemma}[Formalization support: restriction of polynomial functions]
+	\label{lem:geometric-line-function-restriction}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.restrictToLine}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.restrictToLine_apply}
+	\leanok
+	\uses{def:geometric-line-functions}
+	If $\ell(u,v)\subseteq\ell(u',v')$, restriction of a degree-$c$
+	polynomial function to $\ell(u,v)$ preserves its values and degree
+	bound. In particular, two presentations of the same geometric line
+	give the same polynomial functions with the same degree bounds.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:combine-map-affine-parameters, def:geometric-line-functions}
+	There are $a,b$ with $u=u'+av'$ and $v=bv'$. If $p$ represents the
+	old pullback, then $p(a+bT)$ represents the restricted pullback and
+	has degree at most $c$. The function itself is restricted at the
+	same geometric points.
+\end{proof}
+
 \begin{lemma}[Formalization support for the combining map: parameter polynomials]
 	\label{lem:combine-map-parameter-polynomial}
 	\lean{MIPStarRE.QPBT.exists_combineLinePoly_of_projection_mem}
+	\lean{MIPStarRE.QPBT.combineLinePoly, MIPStarRE.QPBT.combineLinePolynomial_natDegree_le}
+	\lean{MIPStarRE.QPBT.IsCombineLineCompatible, MIPStarRE.QPBT.combineLinePoly_spec}
 	\leanok
 	\uses{def:line, def:combine-map, def:ideg-deg-polynomials}
 	This auxiliary concerns coefficient polynomials in a line parameter.
@@ -2572,6 +2641,34 @@ analyzed, together with candidate repairs, in
 	substitution preserves the degree bound $c$; multiplication by an affine
 	factor raises it by at most one. The coefficient evaluation formula
 	follows by evaluation of the two compositions and their sum.
+\end{proof}
+
+\begin{lemma}[Formalization support: independence of combining representatives]
+	\label{lem:combine-map-function-pullback}
+	\lean{MIPStarRE.QPBT.combineLineFunction_pullback}
+	\lean{MIPStarRE.QPBT.combineLinePoly_descends}
+	\leanok
+	\uses{def:combine-map, lem:combine-map-parameter-polynomial,
+		def:geometric-line-coefficient-descent}
+	Let $F,G$ be polynomial functions on the two containing lines in
+	Definition~\ref{def:combine-map}. Choose any compatible affine
+	parameters and any bounded coefficient representatives $f,g$ of their
+	pullbacks. The coefficient combining polynomial $H$ satisfies
+	$H(t)=\mathrm{combine}_{F,G}(u+tv)$ for every $t\in K$.
+	Thus its function on the extended line is independent of both choices,
+	including when a projection or a containing line is a singleton.
+	If the inputs are given as descending coefficient polynomials, their
+	coefficient combination also descends, and its descended function
+	equals the combination of the two descended input functions.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:combine-map, lem:combine-map-parameter-polynomial,
+		lem:geometric-line-coefficient-descent}
+	Substitute the pullback identities for $f$ and $g$ into the coefficient
+	formula. Compatibility identifies the two projected geometric points.
+	Equality with a geometric function makes the resulting parameter
+	function constant on every fiber.
 \end{proof}
 
 \begin{lemma}[Formalization support for the combining map: singleton evaluation]
@@ -2608,10 +2705,63 @@ analyzed, together with candidate repairs, in
 	functions even on a nondegenerate line: over $\F_q$, the distinct
 	polynomials $0$ and $T^q-T$ induce the same function. Thus the condition
 	in the preceding lemma is constancy as a function, rather than formal
-	degree zero. The geometric parameter construction does not by itself
-	establish the identification of these carriers; see
+	degree zero. Definition~\ref{def:geometric-line-functions} represents
+	these functions directly. The coefficient-indexed measurements still
+	require a comparison that accounts for non-descending answers; the
+	function construction alone does not provide it. See
 	\cite{gap:qpbt_subline-claims-line-marginal}.
 \end{remark}
+
+\begin{definition}[Formalization support: descent of coefficient answers]
+	\label{def:geometric-line-coefficient-descent}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.ofCoefficients}
+	\leanok
+	\uses{def:geometric-line-functions}
+	Let $p$ be a coefficient polynomial of degree at most $c$ satisfying
+	$p(s)=p(t)$ whenever $u+sv=u+tv$. Its descended function on
+	$\ell(u,v)$ assigns to a point the value at any of its parameters.
+	This defines a polynomial function of degree at most $c$.
+	The fiber condition restricts this coefficient construction; it is
+	not an extra hypothesis in Definition~\ref{def:combine-map}.
+\end{definition}
+
+\begin{lemma}[Formalization support: evaluation and equality after descent]
+	\label{lem:geometric-line-coefficient-descent}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.ofCoefficients_apply}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.ofCoefficients_eq_iff}
+	\lean{MIPStarRE.QPBT.LinePolynomialFunction.ofCoefficients_evaluatesTo_iff}
+	\leanok
+	\uses{def:geometric-line-coefficient-descent, def:ideg-deg-polynomials}
+	The descended function takes the value $p(t)$ at $u+tv$ for every
+	$t\in K$. Two descending coefficient polynomials yield equal functions
+	if and only if they agree at every parameter. At any point of a line
+	description, the descended value equals $a$ if and only if every
+	parameter of that point evaluates to $a$ in the coefficient convention.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:geometric-line-coefficient-descent,
+		lem:geometric-line-function-representatives, def:ideg-deg-polynomials}
+	All parameters of a point give the same value by the fiber condition.
+	Every point has a parameter, so parameterwise equality is equivalent
+	to equality of the descended functions.
+\end{proof}
+
+\begin{lemma}[Formalization support: the exact coefficient descent condition]
+	\label{lem:geometric-line-descent-condition}
+	\lean{MIPStarRE.QPBT.coefficients_factorsThrough_iff}
+	\leanok
+	\uses{def:geometric-line-coefficient-descent}
+	A coefficient polynomial $p$ descends on $\ell(u,v)$ if and only if
+	$v\ne0$ or $p(t)=p(0)$ for every $t\in K$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{def:geometric-line-coefficient-descent}
+	A nonzero direction gives an injective parameterization. For a zero
+	direction all parameters represent the same point, so descent is
+	equivalent to constancy of the parameter function.
+\end{proof}
 
 \begin{definition}[Formalization support for Definition~\ref{def:combine-map}: the separated locus]
 	\label{def:combine-map-separated-locus}
