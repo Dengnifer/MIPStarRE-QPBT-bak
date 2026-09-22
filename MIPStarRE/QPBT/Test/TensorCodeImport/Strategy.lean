@@ -165,6 +165,14 @@ theorem tensorCodeStrategyOfDirectLd_isProjective (D : DirectLdParams)
   · exact pairMeasurement_isProjective D r S.A hS.1
   · exact pairMeasurement_isProjective D r S.B hS.2
 
+/-- The source-to-tensor construction preserves projectivity through both
+the seed-residue register and the compatible-pair register. -/
+theorem tensorCodeStrategyOfLd_isProjective (L : LdParams)
+    (S : Strategy (ldGame L)) (hS : S.IsProjective) (r : Fin L.k) :
+    (tensorCodeStrategyOfLd L S r).IsProjective :=
+  tensorCodeStrategyOfDirectLd_isProjective L.toDirectLdParams (ldStrategyToDirect L S)
+    (ldStrategyToDirect_isProjective L S hS) r
+
 end
 
 end MIPStarRE.QPBT.TensorCodeImport
