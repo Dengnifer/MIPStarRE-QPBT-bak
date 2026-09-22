@@ -43,4 +43,30 @@ theorem sampling_bounds (m d : ℕ) (hm : 1 ≤ m) (hd : 1 ≤ d) :
       _ = 24 * m * d := by ring
       _ ≤ 24 * m ^ 3 * d := Nat.mul_le_mul_right d (Nat.mul_le_mul_left 24 hm3)
 
+/-- The exponential error at the candidate parameter is bounded by the
+base-two error in the source statement, uniformly in the small-dimensional
+cases as well. This holds for any nonnegative error exponent. -/
+theorem sampling_exp_le (m d : ℕ) (hm : 1 ≤ m) (hd : 1 ≤ d)
+    (b : ℝ) (hb : 0 ≤ b) :
+    Real.exp (-b * ((samplingCount m d : ℝ) / (m : ℝ) ^ 2)) ≤
+      (2 : ℝ) ^ (-b * (m : ℝ) * (d : ℝ)) := by
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast (show 0 < m by omega)
+  have hK : (m : ℝ) ^ 3 * (d : ℝ) ≤ (samplingCount m d : ℝ) := by
+    exact_mod_cast (sampling_bounds m d hm hd).2.1
+  have hdiv : (m : ℝ) * (d : ℝ) ≤ (samplingCount m d : ℝ) / (m : ℝ) ^ 2 := by
+    apply (le_div_iff₀ (sq_pos_of_pos hmpos)).mpr
+    calc
+      (m : ℝ) * (d : ℝ) * (m : ℝ) ^ 2 = (m : ℝ) ^ 3 * (d : ℝ) := by ring
+      _ ≤ _ := hK
+  have hlog : Real.log 2 ≤ 1 := by
+    calc
+      Real.log 2 ≤ 2 - 1 := Real.log_le_sub_one_of_pos (by norm_num)
+      _ = 1 := by norm_num
+  rw [Real.rpow_def_of_pos (by norm_num)]
+  apply Real.exp_le_exp.mpr
+  have hmul := mul_le_mul_of_nonneg_left hdiv hb
+  have hlogmul := mul_le_mul_of_nonneg_right hlog
+    (show 0 ≤ b * (m : ℝ) * (d : ℝ) by positivity)
+  nlinarith
+
 end MIPStarRE.QPBT.TensorCodeImport
