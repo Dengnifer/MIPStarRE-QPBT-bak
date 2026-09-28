@@ -376,12 +376,20 @@
 	\uses{prop:main-formal-linear-triangle-complete-polynomial-construction,
 		lem:orthonormalization-main-lemma,
 		prop:completing-to-measurement,
+		prop:simeq-to-approx,
+		prop:simeq-data-processing,
 		lem:complete-measurement-consistency-triangle}
 	Apply orthogonalization to the two complete polynomial measurements and
-	complete the resulting projective submeasurements.  The consistency estimate
-	after completion gives the two $\eta$ terms and the $v/2$ polynomial term.
-	Two applications of the complete-measurement linear triangle give the final
-	point errors.
+	complete the resulting projective submeasurements.  The completion estimates
+	give squared-distance error $v$ between the two completed measurements and
+	polynomial-level consistency error $\eta$ between each completed measurement
+	and the opposite original measurement.  Since the completed measurements are
+	projective, the converse in Lemma~\ref{prop:simeq-to-approx} converts the
+	squared-distance error $v=2(v/2)$ into consistency error $v/2$.  Applying
+	Lemma~\ref{prop:simeq-data-processing} to evaluation at a point preserves this
+	$v/2$ error and each $\eta$ error.  Two applications of the
+	complete-measurement linear triangle then give the final point errors
+	$3(s+\eta+v/2)$.
 \end{proof}
 
 \begin{lemma}[Formalization support: absorption of the construction errors]
