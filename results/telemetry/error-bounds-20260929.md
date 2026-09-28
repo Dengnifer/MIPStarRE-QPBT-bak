@@ -142,3 +142,49 @@ Active handles:
 All Astra mathematical work is terminal:01=1347s,02=1415s,03=1255s,04=667s (linked to03, cumulative1922s),05=1178s,06=407s, all exit0. Original resume preflight1514843 failed before a model request and was replaced by04; do not restart it. Final two-scope selection is comment5877011471 on#727. First-target admission is comment5876891820 on#728. Latest#27 implementation-stage comment is5876982827. No improvement PR has yet been opened, CI-reviewed or merged.
 
 Next: observe active writers without duplicate admission. Adopt the LDT baseline check evidence when available, then complete its headline/CI/review/merge. QPBT baseline phase must finish before stronger claims; its later phase2 needs the published exact LDT parent plus final05 proof plan. Report draft must be finalized only after actual proof/PR evidence exists. New source statements remain unchanged until independently checked; primary main has only passive telemetry edits. Main is publishing a coordinated telemetry batch with normal hooks and checked push; inspect its handle/log before writing primary telemetry again.
+
+## 2026-09-28T19:41:26.305560+00:00 — QPBT phase2 successor prepared
+
+Prepared `/tmp/qpbt-error-qpbt-phase2-729.md` from the accepted final05 plan. It is NOT admitted: it requires the actual successful baseline commit/checks, published exact#728 theorem commit, sole writer and an explicit remaining cumulative budget. The running729 author remains baseline-only. The prepared target retains the sharper structured degree4 bound plus canonical a100 and qubit corollaries, all raw conclusions and original assumptions. This prevents a later continuation from shrinking the selected goal to a scalar helper or only a canonical packaging statement.
+
+Prior goal turn made progress through two-scope adoption, three active Sol assignments and checked telemetry publication. Publication completed at primary main2e4530f0d2c05efac33b2f57830131306b1bea06; log `/tmp/error-bounds-727-telemetry-publication.log`. Current source code on main still equals the original snapshot; only passive records changed.
+
+## 2026-09-28T19:43:27.525263+00:00 — LDT explicit baseline verified before improvement
+
+Main inspected the actual#728 diff and raw worker command receipts. `MIPStarRE.LDT.Test.main_formal_explicit_baseline` is an additive theorem in MainFormal.lean with the exact old hypotheses/witnesses/three conclusions and the old numerical error unfolded; proof is `simpa [mainFormalError] using mainFormal ...`. The old mainFormal statement/body are unchanged in the inspected diff. `lake env lean .../MainFormal.lean` returned0. The first AxiomAudit check saw a stale imported .olean and an unknown new name; a focused `lake build MIPStarRE.LDT.Test.MainTheorem.MainFormal` built the one changed module in11s, followed by `lake env lean .../AxiomAudit.lean`, returned0. The new audit assertion is present and all old assertions retained. This records the required baseline-before-improvement ordering. It is not final PR CI/review or a merged improvement.
+
+## 2026-09-28T19:47:19.142192+00:00 — implementation progress and verified wait
+
+All three current handles remain live after a45-second bounded wait (LDT1580756, QPBT baseline1591799, report1604655). Latest substantive output: LDT author is assembling the public new-T theorem and strict old-vs-new comparison; QPBT author kernel-checked the86-edge count and is exposing fixed interfaces; report draft exists and its author is checking completeness/links/proof-status language. These are live progress reports, not final acceptance. Main verified the LDT baseline directly earlier in this turn.
+
+No free worker slot and no finished implementation head exists yet, so no new proof/review admission is ready. Prepared QPBT phase2 remains unadmitted pending baseline and published LDT parent. This goal turn made progress by verifying baseline proof/audit evidence and preparing the complete phase2 contract, then verified the ongoing worker handles.
+
+## 2026-09-28T19:52:32.735362+00:00 — early statement-preservation check
+
+Using the existing source-header parser against7bdfa416, main checked all old declarations in currently edited tracked Lean files:6 LDT headers and65 QPBT headers, no changed headers and no missing declarations. This is a static, partial-worktree observation; it does not replace final section-context/type-level review. The LDT new construction module has also returned0 from a focused build in the author capture. All three author handles remained live through another45-second verified wait. No finished implementation/CI head or free slot is available yet.
+
+## 2026-09-28T19:54:35.879586+00:00 — selected LDT headline kernel-check milestone
+
+Main inspected the actual explicit theorem signature and definitions in#728 and the completed author command output. `MIPStarRE.LDT.Test.main_formal_linear_triangle_bound` (new LinearTriangle/MainFormal.lean:183) has exactly the original mainFormal hypotheses and all three relations at min(1,10000 k^(1/4)m^(1/2)[eps^(1/8192)+(d/q)^(1/8192)+exp(-k/(640000m^2))]). A focused build of `MIPStarRE.LDT.Test.MainTheorem.LinearTriangle.MainFormal` and the following LDT AxiomAudit check returned0. New audit entries include the complete-measurement triangle, shared-witness construction, explicit headline, non-strict comparison and strict comparison. No sorry/admit/new axiom/prohibited bypass matched the scanned new source modules. The old source statement is still intact in the inspected changes. Blueprint work, final commit, canonical full CI and independent review remain; this is not a merged improvement.
+
+## 2026-09-28T19:58:05.737632+00:00 — report draft finished; operator commit in progress
+
+`blueprint-730-20260929-01` completed/done/exit0 in1193s. Final receipt is in results/telemetry/sessions; draft docs/error-bounds.md contains both complete inventories, approved mathematical targets, explicit baselines, corrected benchmark comparison and an explicit final-evidence checklist. It truthfully marks selected results not implemented pending accepted proof/merge evidence. Only that file is changed in worktree730. The author could not commit through its restricted shared Git index; main initiated the actual normal-hook commit after the worker exited. Publication/CI/review for the final report remain dependent on728/729. Do not mistake this draft for the completed deliverable.
+
+There are now two active proof writers and one free model slot. No independent ready proof/review assignment is needed at this instant: phase2 depends on the unfinished QPBT baseline and published LDT parent; report finalization depends on both merges; canonical reviews require green exact-head CI. Avoid duplicate ownership or filler. Next admission is the first ready implementation review or a demonstrated mathematical/code blocker.
+
+## 2026-09-28T20:00:04.316410+00:00 — report draft committed with normal hooks
+
+Main committed the terminal report author's exact draft at `566b81bcc32fd419360a4bd797d9decd8e41228e` in worktree730; normal pre-commit passed, only docs/error-bounds.md changed (811 inserted lines), and the worktree is clean=True. It remains unpublished and explicitly provisional. Required finalization remains actual proved declarations/PRs/merge SHAs/validation for728 and729, final status/date, and the stated benchmark qualifications. The free model slot remains available for the first canonical review after CI, or a demonstrated proof obstacle; do not create redundant survey/review work merely to occupy it.
+
+## 2026-09-28T20:05:44.562315+00:00 — LDT aggregate validation passed
+
+The author's direct root-build/checkdecls command returned0:9338 jobs completed and all2179 blueprint declarations resolved. This was not the canonical locked CI wrapper, and no exact-head CI status has been posted. Main recorded the incident and backfilled a truthful unknown-duration build row; no concurrent main full build was launched. The author is preparing its mathematical brief, statement audit and PR body, and has recognized the same shared-Git-index sandbox restriction as the report worker. Wait for its terminal receipt, then main may stage/commit the authorized exact diff with normal hooks and publish/run canonical CI. The proof files and new headline axiom audit have already passed focused checks.
+
+### 2026-09-28T20:30:45.515625+00:00: LDT author complete; canonical publication begins
+
+`prover-728-20260929-01` terminated successfully after 3890 seconds. Main has sole branch ownership for staging/publication. Its baseline and stronger theorem are checked; the optional manual Python discovery was interrupted by the author (exit 130), not passed. Host diagnostics showed real-Lake train fixtures targeting the global lock from a read-only worker sandbox; sandbox-local `/proc` did not establish dispatcher death. Main sent no signals and made no lock or account changes. The diagnostic worker finished without mutation. Canonical `ci.sh` will run from the authorized host environment before review. Initial pre-commit caught one trailing blank line in the brief; main removed only that whitespace and reran normal hooks.
+
+## 2026-09-28T20:31:58.315931+00:00: bounded LDT metadata repair admitted
+
+Real pre-commit refused two missing paper-origin citations on new helper docstrings. A fresh Sol ultra successor owns only those comments, with600s work/720s timeout from the1510s remaining original author budget (3890s already charged). No proof edits or broadened tests; main will restage and retry normal hooks after terminal receipt. Handle `2615053`, contract `/tmp/qpbt-error-ldt-doc-repair-728.md`, log `/tmp/qpbt-error-ldt-doc-repair-728.dispatch.log`. QPBT baseline remains live; no new mathematical improvement scope admitted.
