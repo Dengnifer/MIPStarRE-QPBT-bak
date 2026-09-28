@@ -518,6 +518,19 @@ In particular, if $A^x_a \ot I \simeq_{\eps} I \ot C^x_a$, the question is what 
 	expectation in $\psi$ and sum over the outcomes.
 \end{proof}
 
+For complete measurements $A=\{A_a\}$ and $B=\{B_a\}$ with the same finite
+outcome set on a common Hilbert space, write
+\[
+	C_\psi(A,B)=\operatorname{Re}\sum_{a\ne b}\langle A_aB_b\rangle_\psi.
+\]
+The real part is essential on a common space: the products $A_aB_b$ need not
+be Hermitian, and their expectations need not be real.  The decomposition below
+shows that this expression is nonnegative for complete measurements.  When the
+two measurements are placed on separate tensor factors, each product is
+$A_a\otimes B_b$, which is positive, so its expectation is already real and
+nonnegative.  Thus the displayed formula specializes to the bipartite
+consistency convention of Definition~\ref{def:simeq}.
+
 \begin{lemma}[Formalization support: consistency--distance decomposition]
 \label{lem:complete-measurement-consistency-distance-decomposition}
 	\lean{MIPStarRE.LDT.Preliminaries.two_mul_qConsDefect_eq_qSDD_add_projectivity_defects}
