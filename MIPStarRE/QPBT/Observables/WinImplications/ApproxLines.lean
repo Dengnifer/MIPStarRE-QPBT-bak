@@ -242,18 +242,15 @@ theorem lowDegreeConsistency_eq_mismatch_interchanged {P : AdmissibleParams}
 /-- Factor-interchanged form of the low-degree winning implication. Paper
 `14_analysis_of_the_pauli_basis_test.tex:200-204,227`, blueprint
 `ch14_qpbt_observables.tex:699-701`. -/
-theorem win_low_degree_interchanged_proof :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_low_degree_interchanged_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (linePointDist P.toLdParams)
         (fun sample a => heteroKron
           ((S.pointMeasOption .alice W sample.2).effect a) 1)
         (fun sample a => heteroKron 1
           ((S.lineEvalMeas .bob W sample.1 sample.2).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨(Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+        S.toStrategy.ψ ≤ 86 * ε := by
   intro P ε S _ W
   rw [lowDegreeConsistency_eq_mismatch_interchanged]
   have ha : avgOver (aLinePointDist P.toLdParams)
@@ -281,7 +278,23 @@ theorem win_low_degree_interchanged_proof :
       _ ≤ (Fintype.card PauliEdge : ℝ) * ε :=
         fixedEdgeRejection_le_error S _
   rw [linePointDist, avgOver_mix]
+  rw [pauli_edge_card] at ha hd
+  norm_num at ha hd
   linarith
+
+/-- Existential packaging of the fixed factor-interchanged low-degree
+coefficient `86`. -/
+theorem win_low_degree_interchanged_proof :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (linePointDist P.toLdParams)
+        (fun sample a => heteroKron
+          ((S.pointMeasOption .alice W sample.2).effect a) 1)
+        (fun sample a => heteroKron 1
+          ((S.lineEvalMeas .bob W sample.1 sample.2).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  exact ⟨86, by norm_num, win_low_degree_interchanged_explicit⟩
 
 /-- Operator-distance and factor-interchanged companions to the low-degree
 item of `lem:qld-win-implications`. This is the trailing clause at paper
@@ -421,16 +434,13 @@ theorem pauliBasisConsistency_eq_mismatch_interchanged {P : AdmissibleParams}
 
 /-- Factor-interchanged form of the Pauli-basis consistency implication. Paper
 `14_analysis_of_the_pauli_basis_test.tex:205-209,227`. -/
-theorem win_pauli_basis_cons_interchanged_proof :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_pauli_basis_cons_interchanged_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
         (fun u a => heteroKron ((S.pauliEvalMeas .alice W u).effect a) 1)
         (fun u a => heteroKron 1 ((S.pointMeas .bob W u).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨(Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+        S.toStrategy.ψ ≤ 86 * ε := by
   intro P ε S _ W
   rw [pauliBasisConsistency_eq_mismatch_interchanged,
     avg_pauliBasisMismatch_eq_source_interchanged]
@@ -443,8 +453,19 @@ theorem win_pauli_basis_cons_interchanged_proof :
       rw [pauliCL_point_eq] at hs
       simpa only [pauliCL, ProjectiveSetting.pointQuestion, pauliQuestion]
         using hs
-    _ ≤ (Fintype.card PauliEdge : ℝ) * ε :=
-      fixedEdgeRejection_le_error S _
+    _ ≤ (Fintype.card PauliEdge : ℝ) * ε := fixedEdgeRejection_le_error S _
+    _ = 86 * ε := by rw [pauli_edge_card]; norm_num
+
+/-- Existential packaging of `win_pauli_basis_cons_interchanged_explicit`. -/
+theorem win_pauli_basis_cons_interchanged_proof :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
+        (fun u a => heteroKron ((S.pauliEvalMeas .alice W u).effect a) 1)
+        (fun u a => heteroKron 1 ((S.pointMeas .bob W u).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  exact ⟨86, by norm_num, win_pauli_basis_cons_interchanged_explicit⟩
 
 /-- Operator-distance and factor-interchanged companions to Pauli-basis
 consistency. This is the trailing clause of `lem:qld-win-implications`, paper

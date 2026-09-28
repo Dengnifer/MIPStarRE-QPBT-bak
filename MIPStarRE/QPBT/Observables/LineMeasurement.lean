@@ -312,6 +312,55 @@ inequality for projective sub-measurements, which costs a square root. Here the
 exact overlap identity of `LineMeasurement.LinePointOverlap` gives a bound
 linear in `ε` directly; as for item 2 it is combined with the universal bound
 `4` and weakened to the common square-root error of the lemma. -/
+theorem exp_line_point_cons_explicit' :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+      (p₁ p₂ : Placement), p₁.IsOpposite p₂ → ∀ W : PauliKind,
+      opFamilyDistSq (linePointDist P.toLdParams)
+        (fun sample a => S.place p₁
+          ((S.lineEvalMeasExp p₁.side W sample.1 sample.2).effect a))
+        (fun sample a => S.place p₂
+          ((S.pointMeasExpOption p₂.side W sample.2).effect a))
+        S.psiHat ≤ 348 * deltaLine ε := by
+  intro P ε S p₁ p₂ hopp W
+  have hε : 0 ≤ ε := S.eps_nonneg
+  have key : ∀ (x a : ℝ), 1 ≤ a → a ≤ 86 + 86 → 0 ≤ x → x ≤ 2 * (a * ε) →
+      x ≤ 4 → x ≤ 348 * deltaLine ε := by
+    intro x a ha haC hx0 hxa hx4
+    calc
+      x ≤ (2 * a + 4) * Real.sqrt ε :=
+        le_mul_sqrt_of_le_mul_of_le_four (by linarith) hx0
+          (by rw [mul_assoc]; exact hxa) hx4
+      _ ≤ 348 * Real.sqrt ε := by
+        apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg ε)
+        linarith
+  have htwo : (0 : ℝ) ≤ 2 := by norm_num
+  cases p₁ <;> cases p₂ <;> simp only [Placement.IsOpposite] at hopp
+  · have hb := (ProjectiveSetting.evalClassDist_aaBa_le S W).trans
+      (mul_le_mul_of_nonneg_left
+        (WinImplications.win_low_degree_explicit P ε S hε W) htwo)
+    simpa only [Placement.side] using key _ 86 (by norm_num) (by norm_num)
+      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
+      (ProjectiveSetting.evalClassDist_aaBa_le_four S W)
+  · have hb := (ProjectiveSetting.evalClassDist_baAa_le S W).trans
+      (mul_le_mul_of_nonneg_left
+        (WinImplications.win_low_degree_interchanged_explicit P ε S hε W) htwo)
+    simpa only [Placement.side] using key _ 86 (by norm_num) (by norm_num)
+      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
+      (ProjectiveSetting.evalClassDist_baAa_le_four S W)
+  · have hb := (ProjectiveSetting.evalClassDist_bbAb_le S W).trans
+      (mul_le_mul_of_nonneg_left
+        (WinImplications.win_low_degree_interchanged_explicit P ε S hε W) htwo)
+    simpa only [Placement.side] using key _ 86 (by norm_num) (by norm_num)
+      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
+      (ProjectiveSetting.evalClassDist_bbAb_le_four S W)
+  · have hb := (ProjectiveSetting.evalClassDist_abBb_le S W).trans
+      (mul_le_mul_of_nonneg_left
+        (WinImplications.win_low_degree_explicit P ε S hε W) htwo)
+    simpa only [Placement.side] using key _ 86 (by norm_num) (by norm_num)
+      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
+      (ProjectiveSetting.evalClassDist_abBb_le_four S W)
+
+/-- Existential packaging of the fixed completed line-point coefficient `348`. -/
 theorem expLine_point_cons' :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -322,43 +371,7 @@ theorem expLine_point_cons' :
           (fun sample a => S.place p₂
             ((S.pointMeasExpOption p₂.side W sample.2).effect a))
           S.psiHat ≤ C * deltaLine ε := by
-  obtain ⟨C₁, hC₁, h₁⟩ := win_low_degree
-  obtain ⟨C₂, hC₂, h₂⟩ := WinImplications.win_low_degree_interchanged_proof
-  refine ⟨2 * (C₁ + C₂) + 4, by linarith, ?_⟩
-  intro P ε S p₁ p₂ hopp W
-  have hε : 0 ≤ ε := S.eps_nonneg
-  have key : ∀ (x a : ℝ), 1 ≤ a → a ≤ C₁ + C₂ → 0 ≤ x → x ≤ 2 * (a * ε) →
-      x ≤ 4 → x ≤ (2 * (C₁ + C₂) + 4) * deltaLine ε := by
-    intro x a ha haC hx0 hxa hx4
-    calc
-      x ≤ (2 * a + 4) * Real.sqrt ε :=
-        le_mul_sqrt_of_le_mul_of_le_four (by linarith) hx0
-          (by rw [mul_assoc]; exact hxa) hx4
-      _ ≤ (2 * (C₁ + C₂) + 4) * Real.sqrt ε := by
-        apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg ε)
-        linarith
-  have htwo : (0 : ℝ) ≤ 2 := by norm_num
-  cases p₁ <;> cases p₂ <;> simp only [Placement.IsOpposite] at hopp
-  · have hb := (ProjectiveSetting.evalClassDist_aaBa_le S W).trans
-      (mul_le_mul_of_nonneg_left (h₁ P ε S hε W) htwo)
-    simpa only [Placement.side] using key _ C₁ hC₁ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
-      (ProjectiveSetting.evalClassDist_aaBa_le_four S W)
-  · have hb := (ProjectiveSetting.evalClassDist_baAa_le S W).trans
-      (mul_le_mul_of_nonneg_left (h₂ P ε S hε W) htwo)
-    simpa only [Placement.side] using key _ C₂ hC₂ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
-      (ProjectiveSetting.evalClassDist_baAa_le_four S W)
-  · have hb := (ProjectiveSetting.evalClassDist_bbAb_le S W).trans
-      (mul_le_mul_of_nonneg_left (h₂ P ε S hε W) htwo)
-    simpa only [Placement.side] using key _ C₂ hC₂ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
-      (ProjectiveSetting.evalClassDist_bbAb_le_four S W)
-  · have hb := (ProjectiveSetting.evalClassDist_abBb_le S W).trans
-      (mul_le_mul_of_nonneg_left (h₁ P ε S hε W) htwo)
-    simpa only [Placement.side] using key _ C₁ hC₁ (by linarith)
-      (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
-      (ProjectiveSetting.evalClassDist_abBb_le_four S W)
+  exact ⟨348, by norm_num, exp_line_point_cons_explicit'⟩
 
 /-- The source's existential polynomial-error form, derived from the concrete
 expanded-line witnesses and square-root error. This is

@@ -43,6 +43,9 @@ soundness statement down to the combining and extraction layers:
 
 * `pauli_soundness` — the main theorem (blueprint `thm:pauli`).
 * `pauli_soundness_qubit` — its qubit form (`cor:pauli-binary`).
+* `pauli_soundness_explicit_baseline` and
+  `pauli_soundness_qubit_explicit_baseline` — the Lean-only issue #729
+  quantitative specializations with fixed current-proof constants.
 * `exists_ld_soundness` — quantum low-degree soundness (`lem:ld-soundness`).
 * `exists_spcc_value_one` and `honestStrategy_isSPCC` — completeness, which is
   what keeps the soundness hypothesis non-vacuous.
@@ -101,6 +104,8 @@ elab "audit_standard_axioms " id:ident : command => do
 
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_explicit_baseline
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_explicit_baseline
 
 /-! ### Quantum low-degree soundness -/
 

@@ -154,6 +154,7 @@ private theorem placed_consistency_pairState {P : AdmissibleParams} {ε : ℝ}
       exact (stateQForm_pairState_eq_AB''_BB' S _ _ (hA x a) (hB x b)).symm
 
 set_option maxHeartbeats 800000 in
+-- The proof elaborates both ordered finite-sum estimates and their rounded witnesses.
 /-- Direct soundness and same-space rounding construct extended-polynomial
 projective measurements satisfying both ordered estimates on `AA'|BA''` and
 `BB'|AB''`. The actual passing error is
@@ -167,11 +168,10 @@ line witness with its completed-answer domain. It does not construct that line
 witness, prove polynomial separation, or certify source lemma `lem:qld-4-7`.
 The remaining source obligations are tracked by issues #515 and #598 and the
 module's paper-gap references. -/
-theorem exists_rounded_polynomial_ordered_estimates :
-    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+theorem rounded_polynomial_ordered_estimates_explicit :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
         (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
-      let delta := deltaLd a b
+      let delta := deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
         (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
         P.q (2 * P.m + 2) P.d 1
       let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
@@ -183,9 +183,12 @@ theorem exists_rounded_polynomial_ordered_estimates :
           extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
           extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
   classical
-  obtain ⟨a, b, ha, hb, hb1, hsound⟩ :=
-    exists_direct_ld_soundness_of_k_eq_one_any_strategy
-  refine ⟨a, b, ha, hb, hb1, ?_⟩
+  let a := pauliBaselineLowDegreeConstant
+  let b := pauliBaselineLowDegreePower
+  have ha : 1 ≤ a := by
+    dsimp only [a, pauliBaselineLowDegreeConstant]
+    norm_num
+  have hsound := direct_ld_soundness_of_k_eq_one_any_strategy_explicit
   intro P ε δQ δL S points lines delta eta
   have hm := P.one_le_m
   have hd := P.hd
@@ -263,6 +266,32 @@ theorem exists_rounded_polynomial_ordered_estimates :
   exact ⟨RA, RB, hRA, hRB, fun reverse =>
     ⟨ordered_error_le points .AA' .BA'' (by trivial) RA hRA eta hAplaced reverse,
       ordered_error_le points .BB' .AB'' (by trivial) RB hRB eta hBplaced reverse⟩⟩
+
+/-- Existential packaging of `rounded_polynomial_ordered_estimates_explicit`,
+preserving the established rounded-polynomial API. -/
+theorem exists_rounded_polynomial_ordered_estimates :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd a b
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        ∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
+  refine ⟨pauliBaselineLowDegreeConstant, pauliBaselineLowDegreePower, ?_, ?_, ?_,
+    rounded_polynomial_ordered_estimates_explicit⟩
+  · unfold pauliBaselineLowDegreeConstant
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
 
 end ExtendedLineGame
 

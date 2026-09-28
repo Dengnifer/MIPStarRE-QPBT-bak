@@ -145,6 +145,29 @@ register placement, on average over the point pair, with the error of
 `lem:qld-4-10`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:737-742`, with
 field-valued outcomes. -/
+theorem sandwich_point_ordered_dist_le_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+      (p : Placement),
+      opFamilyDistSq (uniformDistribution (PointPair P))
+        (fun xz (ab : PauliScalar P × PauliScalar P) => S.place p
+          ((S.sandwichPoint p.side xz.1 xz.2).effect ab))
+        (fun xz ab => S.place p
+          ((S.pointMeasExp p.side .Z xz.2).effect ab.2 *
+            (S.pointMeasExp p.side .X xz.1).effect ab.1))
+        S.psiHat ≤ pauliBaselineTwistedConstant * Real.sqrt ε := by
+  intro P ε S p
+  refine le_trans ?_ (exp_point_comm_explicit P ε S p)
+  unfold opFamilyDistSq
+  refine avgOver_mono _ _ _ fun xz => Finset.sum_le_sum fun ab _ => ?_
+  rw [← place_sub, sandwichPoint_effect_sub_ordered, place_mul,
+    DistanceCalculus.applyOperatorToState_mul, ← place_sub]
+  exact pow_le_pow_left₀ (norm_nonneg _)
+    (MagicSquareRigidity.norm_applyOperatorToState_le
+      (S.place_conjTranspose_mul_self_le_one p
+        (S.pointMeasExp_isProjective p.side .Z xz.2 ab.2)) _) 2
+
+/-- Existential packaging of the fixed sandwich-to-ordered-product
+coefficient. -/
 theorem sandwichPoint_ordered_dist_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -156,16 +179,9 @@ theorem sandwichPoint_ordered_dist_le :
             ((S.pointMeasExp p.side .Z xz.2).effect ab.2 *
               (S.pointMeasExp p.side .X xz.1).effect ab.1))
           S.psiHat ≤ C * Real.sqrt ε := by
-  obtain ⟨C, hC, h⟩ := expPoint_comm
-  refine ⟨C, hC, fun P ε S p => le_trans ?_ (h P ε S p)⟩
-  unfold opFamilyDistSq
-  refine avgOver_mono _ _ _ fun xz => Finset.sum_le_sum fun ab _ => ?_
-  rw [← place_sub, sandwichPoint_effect_sub_ordered, place_mul,
-    DistanceCalculus.applyOperatorToState_mul, ← place_sub]
-  exact pow_le_pow_left₀ (norm_nonneg _)
-    (MagicSquareRigidity.norm_applyOperatorToState_le
-      (S.place_conjTranspose_mul_self_le_one p
-        (S.pointMeasExp_isProjective p.side .Z xz.2 ab.2)) _) 2
+  refine ⟨pauliBaselineTwistedConstant, ?_, sandwich_point_ordered_dist_le_explicit⟩
+  simp only [pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant]
+  nlinarith [Real.sqrt_nonneg (344 : ℝ)]
 
 /-- The ordered product `M^Z_b M^X_a` on one placement is close to the
 reversed ordered product `M^X_a M^Z_b` on the opposite placement, on average
@@ -175,23 +191,20 @@ self-consistency of that factor by `fact:add-a-proj`.  Paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:743-770`
 (displays `eq:qld-rw-self-cons-2` and `eq:qld-rw-self-cons-3`), blueprint
 `blueprint/src/chapter/ch15_qpbt_combining.tex:851-870`. -/
-theorem ordered_cross_dist_le :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
-        (p₁ p₂ : Placement), p₁.IsOpposite p₂ →
-        opFamilyDistSq (uniformDistribution (PointPair P))
-          (fun xz (ab : PauliScalar P × PauliScalar P) => S.place p₁
-            ((S.pointMeasExp p₁.side .Z xz.2).effect ab.2 *
-              (S.pointMeasExp p₁.side .X xz.1).effect ab.1))
-          (fun xz ab => S.place p₂
-            ((S.pointMeasExp p₂.side .X xz.1).effect ab.1 *
-              (S.pointMeasExp p₂.side .Z xz.2).effect ab.2))
-          S.psiHat ≤ C * ε := by
-  obtain ⟨C, hC, h⟩ := expPoint_self_cons
-  refine ⟨4 * C, by linarith, ?_⟩
+theorem ordered_cross_dist_le_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+      (p₁ p₂ : Placement), p₁.IsOpposite p₂ →
+      opFamilyDistSq (uniformDistribution (PointPair P))
+        (fun xz (ab : PauliScalar P × PauliScalar P) => S.place p₁
+          ((S.pointMeasExp p₁.side .Z xz.2).effect ab.2 *
+            (S.pointMeasExp p₁.side .X xz.1).effect ab.1))
+        (fun xz ab => S.place p₂
+          ((S.pointMeasExp p₂.side .X xz.1).effect ab.1 *
+            (S.pointMeasExp p₂.side .Z xz.2).effect ab.2))
+        S.psiHat ≤ 688 * ε := by
   intro P ε S p₁ p₂ hopp
-  have hX := h P ε S p₁ p₂ hopp .X
-  have hZ := h P ε S p₁ p₂ hopp .Z
+  have hX := exp_point_self_cons_explicit P ε S p₁ p₂ hopp .X
+  have hZ := exp_point_self_cons_explicit P ε S p₁ p₂ hopp .Z
   -- the middle family is `M^Z_b` on the first placement times `M^X_a` on the
   -- second; each factor is transported by the self-consistency of that factor
   have h₁ : opFamilyDistSq (uniformDistribution (PointPair P))
@@ -200,7 +213,7 @@ theorem ordered_cross_dist_le :
           (S.pointMeasExp p₁.side .X xz.1).effect ab.1))
       (fun xz ab => S.place p₁ ((S.pointMeasExp p₁.side .Z xz.2).effect ab.2) *
         S.place p₂ ((S.pointMeasExp p₂.side .X xz.1).effect ab.1))
-      S.psiHat ≤ C * ε := by
+      S.psiHat ≤ 172 * ε := by
     refine le_trans ?_ (le_of_eq_of_le (avgOver_uniform_fst
       (β := Fin P.m → PauliScalar P)
       (fun x => ∑ a : PauliScalar P, ‖applyOperatorToState
@@ -234,7 +247,7 @@ theorem ordered_cross_dist_le :
       (fun xz ab => S.place p₂
         ((S.pointMeasExp p₂.side .X xz.1).effect ab.1 *
           (S.pointMeasExp p₂.side .Z xz.2).effect ab.2))
-      S.psiHat ≤ C * ε := by
+      S.psiHat ≤ 172 * ε := by
     refine le_trans ?_ (le_of_eq_of_le (avgOver_uniform_snd
       (α := Fin P.m → PauliScalar P)
       (fun z => ∑ b : PauliScalar P, ‖applyOperatorToState
@@ -264,8 +277,24 @@ theorem ordered_cross_dist_le :
       (measurement_sum_adjoint_mul_le_one
         (S.placedMeasurement p₂ (S.pointMeasExp p₂.side .X xz.1)))
   have htri := opFamilyDistSq_le_of_le_of_le (uniformDistribution (PointPair P))
-    _ _ _ S.psiHat (C * ε) (C * ε) h₁ h₂
+    _ _ _ S.psiHat (172 * ε) (172 * ε) h₁ h₂
   linarith
+
+/-- Existential packaging of the fixed opposite-placement ordered-product
+coefficient. -/
+theorem ordered_cross_dist_le :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+        (p₁ p₂ : Placement), p₁.IsOpposite p₂ →
+        opFamilyDistSq (uniformDistribution (PointPair P))
+          (fun xz (ab : PauliScalar P × PauliScalar P) => S.place p₁
+            ((S.pointMeasExp p₁.side .Z xz.2).effect ab.2 *
+              (S.pointMeasExp p₁.side .X xz.1).effect ab.1))
+          (fun xz ab => S.place p₂
+            ((S.pointMeasExp p₂.side .X xz.1).effect ab.1 *
+              (S.pointMeasExp p₂.side .Z xz.2).effect ab.2))
+          S.psiHat ≤ C * ε := by
+  exact ⟨688, by norm_num, ordered_cross_dist_le_explicit⟩
 
 end ProjectiveSetting
 

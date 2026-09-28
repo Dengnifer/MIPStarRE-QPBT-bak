@@ -1,4 +1,5 @@
 import MIPStarRE.QPBT.Combining.Points.Placement
+import MIPStarRE.QPBT.ExplicitConstants
 import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Consistency
 
 /-!
@@ -359,20 +360,17 @@ of the source by the Parseval identity, without loss in the field size.  Paper
 blueprint `blueprint/src/chapter/ch14_qpbt_observables.tex:1139-1210`; the
 role of this form in the proof of `lem:qld-4-10` is explained in
 `docs/paper-gaps/qpbt_combined-points-field-valued.tex`. -/
-theorem expPoint_comm :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
-        (p : Placement),
-        opFamilyDistSq (uniformDistribution (PointPair P))
-          (fun xz (ab : PauliScalar P × PauliScalar P) => S.place p
-            ((S.pointMeasExp p.side .X xz.1).effect ab.1 *
-              (S.pointMeasExp p.side .Z xz.2).effect ab.2))
-          (fun xz ab => S.place p
-            ((S.pointMeasExp p.side .Z xz.2).effect ab.2 *
-              (S.pointMeasExp p.side .X xz.1).effect ab.1))
-          S.psiHat ≤ C * Real.sqrt ε := by
-  obtain ⟨C, hC, h⟩ := exists_twistedCommutator_avg_le
-  refine ⟨C, hC, ?_⟩
+theorem exp_point_comm_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+      (p : Placement),
+      opFamilyDistSq (uniformDistribution (PointPair P))
+        (fun xz (ab : PauliScalar P × PauliScalar P) => S.place p
+          ((S.pointMeasExp p.side .X xz.1).effect ab.1 *
+            (S.pointMeasExp p.side .Z xz.2).effect ab.2))
+        (fun xz ab => S.place p
+          ((S.pointMeasExp p.side .Z xz.2).effect ab.2 *
+            (S.pointMeasExp p.side .X xz.1).effect ab.1))
+        S.psiHat ≤ pauliBaselineTwistedConstant * Real.sqrt ε := by
   intro P ε S p
   have hε : (0 : ℝ) ≤ ε := by
     have hv := WinImplications.strategy_value_le_one S.toStrategy
@@ -440,7 +438,29 @@ theorem expPoint_comm :
             (Fin P.m → PauliScalar P) (PauliScalar P × PauliScalar P))]
           rfl
   rw [hfamily]
-  exact h P ε S p.side hε
+  have h := twisted_commutator_avg_le_explicit P ε S p.side hε
+  rw [pauli_edge_card] at h
+  convert h using 1 <;>
+    simp only [pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant,
+      Nat.cast_ofNat] <;> ring
+
+/-- Existential packaging of the fixed field-valued expanded-point
+commutation coefficient. -/
+theorem expPoint_comm :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+        (p : Placement),
+        opFamilyDistSq (uniformDistribution (PointPair P))
+          (fun xz (ab : PauliScalar P × PauliScalar P) => S.place p
+            ((S.pointMeasExp p.side .X xz.1).effect ab.1 *
+              (S.pointMeasExp p.side .Z xz.2).effect ab.2))
+          (fun xz ab => S.place p
+            ((S.pointMeasExp p.side .Z xz.2).effect ab.2 *
+              (S.pointMeasExp p.side .X xz.1).effect ab.1))
+          S.psiHat ≤ C * Real.sqrt ε := by
+  refine ⟨pauliBaselineTwistedConstant, ?_, exp_point_comm_explicit⟩
+  simp only [pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant]
+  nlinarith [Real.sqrt_nonneg (344 : ℝ)]
 
 end ProjectiveSetting
 

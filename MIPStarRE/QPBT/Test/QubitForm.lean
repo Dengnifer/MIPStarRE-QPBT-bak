@@ -408,6 +408,44 @@ theorem qubit_operator_distance_b_to_qubit
     BinaryWitnessTransport.ideal_state_reindex] at hnorm
   exact congrArg (fun error : ℝ => error ^ 2) hnorm
 
+/-- Explicit current-proof baseline for the qubit form of Pauli basis test
+soundness. It uses the same fixed coefficient and power as
+`pauli_soundness_explicit_baseline`, and exact coordinate reindexing preserves
+the state norm and both raw prescribed-answer operator-family distances.
+
+This is a Lean-only quantitative specialization of blueprint
+`cor:pauli-binary` and the source statement at
+`references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1450-1491`.
+It introduces no hypothesis or loss beyond the issue #729 raw-effect baseline.
+-/
+theorem pauli_soundness_qubit_explicit_baseline :
+    1 ≤ pauliSoundnessBaselineConstant ∧
+    0 < pauliSoundnessBaselinePower ∧
+    pauliSoundnessBaselinePower < 1 ∧
+      ∀ (P : AdmissibleParams) (epsilon : ℝ), 0 ≤ epsilon →
+        ∀ S : Strategy (pauliBasisTest P), 1 - epsilon ≤ S.value →
+          ∃ w : QubitSoundnessWitness P S,
+            ‖isometryTensor w.φA w.φB S.ψ - idealQubitState P w.aux‖ ≤
+                deltaQld pauliSoundnessBaselineConstant pauliSoundnessBaselinePower
+                  epsilon P.m P.d P.q ∧
+            (∀ W : PauliKind, qubitOperatorDistanceA P S w W ≤
+              deltaQld pauliSoundnessBaselineConstant pauliSoundnessBaselinePower
+                epsilon P.m P.d P.q) ∧
+            (∀ W : PauliKind, qubitOperatorDistanceB P S w W ≤
+              deltaQld pauliSoundnessBaselineConstant pauliSoundnessBaselinePower
+                epsilon P.m P.d P.q) := by
+  obtain ⟨hconstant, hpower, hpower1, hsound⟩ :=
+    pauli_soundness_explicit_baseline
+  refine ⟨hconstant, hpower, hpower1, ?_⟩
+  intro P epsilon hepsilon S hwin
+  obtain ⟨w, hstate, hA, hB⟩ := hsound P epsilon hepsilon S hwin
+  refine ⟨w.toQubit, ?_, ?_, ?_⟩
+  · exact (qubit_state_error_to_qubit P S w).trans_le hstate
+  · intro W
+    exact (qubit_operator_distance_a_to_qubit P S w W).trans_le (hA W)
+  · intro W
+    exact (qubit_operator_distance_b_to_qubit P S w W).trans_le (hB W)
+
 /-- `cor:pauli-binary`: soundness of the Pauli basis test in qubit
 coordinates. Blueprint `cor:pauli-binary`, paper
 `08_classical_and_quantum_low_degree_tests.tex:1450-1491`.

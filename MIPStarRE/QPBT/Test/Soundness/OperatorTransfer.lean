@@ -237,6 +237,70 @@ private theorem four_mul_deltaQld_le {a b epsilon : ℝ}
       (add_nonneg (add_nonneg (Real.rpow_nonneg hepsilon _)
         (Real.rpow_nonneg (Nat.cast_nonneg _) _)) (Real.rpow_nonneg (by norm_num) _))
 
+/-- Exact coefficient form of the supplied-extraction transfer used by the
+issue #729 explicit baseline. If extraction is performed with coefficient
+`C` over a global-pair error `deltaQld a b`, then the unsquared state distance
+and both squared operator-family distances are bounded by
+`deltaQld (16 * C ^ 2 * a) (b / 16)`.
+
+This is a Lean-only quantitative refinement of the final isometry passage at
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1862-1876`.
+It changes neither the hypotheses nor the conclusions of paper `thm:pauli`;
+the global-pair and extraction witnesses are still supplied explicitly at this
+intermediate layer. -/
+theorem pauli_soundness_delta_qld_of_extraction_witness_explicit
+    (C a b : ℝ) (hC : 1 ≤ C) (ha : 1 < a) (hb : 0 < b) (hb1 : b < 1)
+    (P : AdmissibleParams) (epsilon : ℝ) (hepsilon : 0 ≤ epsilon)
+    (hepsilon1 : epsilon ≤ 1) (S : ProjectiveSetting P epsilon)
+    (w : GlobalPairWitness S (deltaQld a b epsilon P.m P.d P.q))
+    (v : ExtractionWitness S w
+      (deltaExtract C (deltaConstructPaulis C epsilon
+        (deltaQld a b epsilon P.m P.d P.q) P.m P.d P.q) P.m P.d P.q)) :
+    ∃ t : PauliSoundnessWitness P S.toStrategy,
+      ‖isometryTensor t.φA t.φB S.toStrategy.ψ - idealState P t.aux‖ ≤
+        deltaQld (16 * C ^ 2 * a) (b / 16) epsilon P.m P.d P.q ∧
+      (∀ W : PauliKind, pauliOperatorDistanceA P S.toStrategy t W ≤
+        deltaQld (16 * C ^ 2 * a) (b / 16) epsilon P.m P.d P.q) ∧
+      (∀ W : PauliKind, pauliOperatorDistanceB P S.toStrategy t W ≤
+        deltaQld (16 * C ^ 2 * a) (b / 16) epsilon P.m P.d P.q) := by
+  let A : ℝ := 4 * C ^ 2 * a
+  let B : ℝ := b / 8
+  have hCsq : 1 ≤ C ^ 2 := by nlinarith
+  have hA : 1 ≤ A := by
+    have hprod : 1 ≤ C ^ 2 * a :=
+      one_le_mul_of_one_le_of_one_le hCsq ha.le
+    dsimp only [A]
+    nlinarith
+  have hB : 0 < B := by dsimp only [B]; positivity
+  have herror :
+      deltaExtract C (deltaConstructPaulis C epsilon
+          (deltaQld a b epsilon P.m P.d P.q) P.m P.d P.q) P.m P.d P.q ≤
+        deltaQld A B epsilon P.m P.d P.q := by
+    dsimp only [A, B]
+    exact delta_extract_le_delta_qld_explicit C a b hC ha hb hb1
+      P epsilon hepsilon hepsilon1
+  obtain ⟨t, ht, htA, htB⟩ := v.isometry_transfer_bounds
+  have hmono : deltaQld A B epsilon P.m P.d P.q ≤
+      deltaQld A (B / 2) epsilon P.m P.d P.q :=
+    deltaQld_mono hA le_rfl (by linarith) (by positivity) hepsilon hepsilon1
+  have hfour := four_mul_deltaQld_le (P := P) (a := A) (b := B / 2)
+    hA hepsilon
+  have hnonneg : 0 ≤ deltaQld A (B / 2) epsilon P.m P.d P.q := by
+    have hA0 := zero_le_one.trans hA
+    simp only [deltaQld, Real.rpow_eq_pow]
+    positivity
+  have hcommon : max (Real.sqrt _) (4 * _) ≤
+      deltaQld (4 * A) (B / 2) epsilon P.m P.d P.q := max_le
+    (((Real.sqrt_le_sqrt herror).trans (sqrt_deltaQld_le hA hepsilon)).trans
+      ((show deltaQld A (B / 2) epsilon P.m P.d P.q ≤
+        4 * deltaQld A (B / 2) epsilon P.m P.d P.q by linarith).trans hfour))
+    ((mul_le_mul_of_nonneg_left (herror.trans hmono) (by norm_num)).trans hfour)
+  have hAeq : 4 * A = 16 * C ^ 2 * a := by dsimp only [A]; ring
+  have hBeq : B / 2 = b / 16 := by dsimp only [B]; ring
+  rw [hAeq, hBeq] at hcommon
+  exact ⟨t, ht.trans hcommon, fun W => (htA W).trans hcommon,
+    fun W => (htB W).trans hcommon⟩
+
 /-- All three conditional soundness bounds have the source error form after
 enlarging the universal prefactor and halving the extraction exponent. This
 theorem assumes the actual extraction data in a projective setting; it does

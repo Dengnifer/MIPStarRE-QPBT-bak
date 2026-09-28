@@ -64,21 +64,36 @@ binary-refinement and quantum-linearity argument is explained in
 ancillary space and does not require the common-extension construction of
 `rem:linearity-import`.  The error is
 `K ε^{1/8}` for a universal constant `K`. -/
-theorem exists_combinedPointsWitness :
-    ∃ deltaQ : ℝ -> ℝ, IsPolyErr deltaQ ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
-        Nonempty (CombinedPointsWitness S (deltaQ ε)) := by
-  obtain ⟨C₀, hC₀, h₀⟩ := ProjectiveSetting.avg_sandwichDefectBound_le
-  obtain ⟨C₁, hC₁, h₁⟩ := ProjectiveSetting.sandwichPoint_ordered_dist_le
-  obtain ⟨C₂, hC₂, h₂⟩ := ProjectiveSetting.expPoint_comm
-  obtain ⟨C₃, hC₃, h₃⟩ := ProjectiveSetting.ordered_cross_dist_le
-  -- the universal constant of the final error `K ε^{1/8}`
-  set K : ℝ := 12 * (440 * (2 * C₀)) + 20 * C₁ + 16 * C₃ + 4 * C₂ with hK
-  have hK4 : (4 : ℝ) ≤ K := by rw [hK]; nlinarith
-  refine ⟨fun ε => K * Real.rpow ε (1 / 8 : ℝ),
-    ⟨K, 1 / 8, by linarith, by norm_num, fun x hx =>
-      ⟨mul_nonneg (by linarith) (Real.rpow_nonneg hx _), le_rfl⟩⟩, ?_⟩
+theorem exists_combined_points_witness_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      Nonempty (CombinedPointsWitness S
+        (pauliBaselinePointConstant * Real.rpow ε (1 / 8 : ℝ))) := by
   intro P ε S
+  let C₀ : ℝ := 344 + 3 * pauliBaselineTwistedConstant
+  let C₁ : ℝ := pauliBaselineTwistedConstant
+  let C₂ : ℝ := pauliBaselineTwistedConstant
+  let C₃ : ℝ := 688
+  have hC₀ : (1 : ℝ) ≤ C₀ := by
+    dsimp [C₀, pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant]
+    nlinarith [Real.sqrt_nonneg (344 : ℝ)]
+  have hC₁ : (1 : ℝ) ≤ C₁ := by
+    dsimp [C₁, pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant]
+    nlinarith [Real.sqrt_nonneg (344 : ℝ)]
+  have hC₂ : (1 : ℝ) ≤ C₂ := by simpa only [C₂] using hC₁
+  have hC₃ : (1 : ℝ) ≤ C₃ := by norm_num [C₃]
+  have h₀ := ProjectiveSetting.avg_sandwich_defect_bound_le_explicit
+  have h₁ := ProjectiveSetting.sandwich_point_ordered_dist_le_explicit
+  have h₂ := ProjectiveSetting.exp_point_comm_explicit
+  have h₃ := ProjectiveSetting.ordered_cross_dist_le_explicit
+  -- the universal constant of the final error `K ε^{1/8}`
+  set K : ℝ := pauliBaselinePointConstant with hK
+  have hKformula : K =
+      12 * (440 * (2 * C₀)) + 20 * C₁ + 16 * C₃ + 4 * C₂ := by
+    rw [hK]
+    dsimp [C₀, C₁, C₂, C₃]
+    unfold pauliBaselinePointConstant
+    ring
+  have hK4 : (4 : ℝ) ≤ K := by rw [hKformula]; nlinarith
   have hε : (0 : ℝ) ≤ ε := by
     have hv := WinImplications.strategy_value_le_one S.toStrategy
     have hw := S.win
@@ -108,7 +123,8 @@ theorem exists_combinedPointsWitness :
     have hr : Real.rpow (avgOver (uniformDistribution (PointPair P))
         (S.sandwichDefectBound p₁ p₂)) (1 / 4 : ℝ) ≤
         Real.rpow (C₀ * (ε + Real.sqrt ε)) (1 / 4 : ℝ) :=
-      Real.rpow_le_rpow hnn (h₀ P ε S p₁ p₂ hopp) (by norm_num)
+      Real.rpow_le_rpow hnn (by simpa only [C₀] using h₀ P ε S p₁ p₂ hopp)
+        (by norm_num)
     have hr0 : 0 ≤ Real.rpow (C₀ * (ε + Real.sqrt ε)) (1 / 4 : ℝ) :=
       Real.rpow_nonneg (by positivity) _
     rw [hη]
@@ -127,7 +143,10 @@ theorem exists_combinedPointsWitness :
     · rw [ProjectiveSetting.opFamilyDistSq_place_AB''_eq_AA']
       exact le_trans hQaR (hbound .AA' .BA'' trivial)
   have hchain := fun (p₁ p₂ : Placement) (hopp : p₁.IsOpposite p₂) =>
-    S.chain_bounds Q η C₁ C₂ C₃ hQR (h₁ P ε S) (h₂ P ε S) (h₃ P ε S) p₁ p₂ hopp
+    S.chain_bounds Q η C₁ C₂ C₃ hQR
+      (by simpa only [C₁] using h₁ P ε S)
+      (by simpa only [C₂] using h₂ P ε S)
+      (by simpa only [C₃] using h₃ P ε S) p₁ p₂ hopp
   -- the numeric bound on the longest chain, in the two regimes of `ε`
   have hηnn : 0 ≤ η := by
     rw [hη]
@@ -139,7 +158,7 @@ theorem exists_combinedPointsWitness :
     by_cases hε1 : ε ≤ 1
     · left
       obtain ⟨hε8, hs8, hq8⟩ := error_terms_le_rpow_eighth hε hε1 hC₀
-      rw [hη, hK]
+      rw [hη, hKformula]
       nlinarith [mul_le_mul_of_nonneg_left hq8 (by norm_num : (0 : ℝ) ≤ 440),
         mul_le_mul_of_nonneg_left hs8 (by linarith : (0 : ℝ) ≤ C₁),
         mul_le_mul_of_nonneg_left hs8 (by linarith : (0 : ℝ) ≤ C₂),
@@ -212,6 +231,21 @@ theorem exists_combinedPointsWitness :
     · exact le_trans (opFamilyDistSq_uniform_le_four _ _ S.psiHat S.psiHat_norm
         (fun xz => hsqQ p₁ xz) (fun xz => hsqZX p₂ xz)) (hK8 hε1)
 
+/-- Existential packaging of the fixed combined-point error
+`pauliBaselinePointConstant * ε^(1/8)`. -/
+theorem exists_combinedPointsWitness :
+    ∃ deltaQ : ℝ -> ℝ, IsPolyErr deltaQ ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+        Nonempty (CombinedPointsWitness S (deltaQ ε)) := by
+  have hQ : (1 : ℝ) ≤ pauliBaselinePointConstant := by
+    simp only [pauliBaselinePointConstant, pauliBaselineTwistedConstant,
+      pauliBaselineCommutatorConstant]
+    nlinarith [Real.sqrt_nonneg (344 : ℝ)]
+  refine ⟨fun ε => pauliBaselinePointConstant * Real.rpow ε (1 / 8 : ℝ),
+    ⟨pauliBaselinePointConstant, 1 / 8, hQ, by norm_num, fun ε hε =>
+      ⟨mul_nonneg (by linarith) (Real.rpow_nonneg hε _), le_rfl⟩⟩,
+    exists_combined_points_witness_explicit⟩
+
 /-- Register placement distributes over a filtered outcome sum. -/
 private theorem place_finset_sum {P : AdmissibleParams} {ε : ℝ}
     (S : ProjectiveSetting P ε) (p : Placement) {α : Type*}
@@ -223,6 +257,7 @@ private theorem place_finset_sum {P : AdmissibleParams} {ε : ℝ}
     Finset.sum_mul, Finset.mul_sum]
 
 set_option maxHeartbeats 1600000 in
+-- Coarse-graining the joint point POVM expands three large finite consistency sums.
 /-- Projectivity and the three data-processed consistency guarantees for
 `CombinedPointsWitness.extendedQ`, given a joint point measurement. This is
 the coarse-graining specification used by `exists_extendedQ` to prove

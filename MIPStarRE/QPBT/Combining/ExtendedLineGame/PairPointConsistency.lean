@@ -223,19 +223,19 @@ The direct-domain and line-error discrepancies remain documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` and
 `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 -/
-theorem exists_pairWitness_of_points_lines :
-    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+theorem pair_witness_of_points_lines_explicit :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
         (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
-      let delta := deltaLd a b
+      let delta := deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
         (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
         P.q (2 * P.m + 2) P.d 1
       let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
         2 * Real.sqrt (2 * delta)
       Nonempty (GlobalPairWitness S (8 * (4 * eta + 8 * δQ) +
         (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q))) := by
-  obtain ⟨a, b, ha, hb, hb1, h⟩ := exists_rounded_polynomial_separated_mass
-  refine ⟨a, b, ha, hb, hb1, ?_⟩
+  let a := pauliBaselineLowDegreeConstant
+  let b := pauliBaselineLowDegreePower
+  have h := rounded_polynomial_separated_mass_explicit
   intro P ε δQ δL S points lines delta eta
   obtain ⟨RA, RB, hRA, hRB, horder, hmassA, hmassB⟩ := h P ε δQ δL S points lines
   let pair₀ : PolyPair P := (0, 0)
@@ -276,6 +276,28 @@ theorem exists_pairWitness_of_points_lines :
     · exact (hB true).trans ((add_le_add
         (add_le_add hmassB (mul_le_mul_of_nonneg_left (horder true).2 (by norm_num)))
         le_rfl).trans_eq hbound)
+
+/-- Existential packaging of `pair_witness_of_points_lines_explicit`, preserving
+the established global-pair constructor API. -/
+theorem exists_pairWitness_of_points_lines :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd a b
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      Nonempty (GlobalPairWitness S (8 * (4 * eta + 8 * δQ) +
+        (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q))) := by
+  refine ⟨pauliBaselineLowDegreeConstant, pauliBaselineLowDegreePower, ?_, ?_, ?_,
+    pair_witness_of_points_lines_explicit⟩
+  · unfold pauliBaselineLowDegreeConstant
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
 
 end
 

@@ -26,47 +26,44 @@ open scoped BigOperators Matrix MatrixOrder ComplexOrder
 
 noncomputable section
 
-/-- Removing the X factor for arbitrary opposite register placements, including
-Bob's $BB'$ registers and Alice's $AB''$ registers. The proof uses only the
-one-point X mixture from paper `lem:qld-sublines`, lines 1168--1201. -/
-theorem subline_remove_X_factor_at :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (P : AdmissibleParams) (ε δQ δP : ℝ)
-        (S : ProjectiveSetting P ε) (points : CombinedPointsWitness S δQ)
-        (lines : CombinedLinesWitness S points δP) (sublines : SubLineWitness P)
-        (first second : Placement) (_hopposite : first.IsOpposite second),
-        |avgOver sublines.D (fun sample =>
-            avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
-              let u := directPointToPauli P
-                (sample.1.base + t • sample.1.direction)
-              let x := projX u
-              let z := projZ u
-              ∑ fX, ∑ fZ,
-                (inner ℂ S.psiHat ((EuclideanSpace.equiv
-                  (SixReg P S.toStrategy.ιA S.toStrategy.ιB) ℂ).symm
-                    ((S.place first
-                        ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
-                      S.place second
-                        (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ *
-                          S.expPointEffectAtLineAnswer second.side .X sample.2.1 x fX)).mulVec
-                            S.psiHat))).re)) -
-          avgOver sublines.D (fun sample =>
-            avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
-              let u := directPointToPauli P
-                (sample.1.base + t • sample.1.direction)
-              let z := projZ u
-              ∑ fX, ∑ fZ,
-                (inner ℂ S.psiHat ((EuclideanSpace.equiv
-                  (SixReg P S.toStrategy.ιA S.toStrategy.ιB) ℂ).symm
-                    ((S.place first
-                        ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
-                      S.place second
-                        (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ)).mulVec
-                          S.psiHat))).re))| ≤
-          C * Real.sqrt (P.m : ℝ) *
-            (Real.rpow δP (1 / 4 : ℝ) + Real.rpow δQ (1 / 4 : ℝ)) := by
-  refine ⟨2, by norm_num, ?_⟩
-  intro P ε δQ δP S points lines sublines first second hopposite
+/-- Removing the X factor costs exactly the coefficient `2` in the current
+proof. This Lean-only quantitative form exposes the witness used for paper
+`lem:qld-sublines`, lines 1168--1201, for issue #729. -/
+theorem subline_remove_x_factor_at_explicit
+    (P : AdmissibleParams) (ε δQ δP : ℝ)
+    (S : ProjectiveSetting P ε) (points : CombinedPointsWitness S δQ)
+    (lines : CombinedLinesWitness S points δP) (sublines : SubLineWitness P)
+    (first second : Placement) (hopposite : first.IsOpposite second) :
+    |avgOver sublines.D (fun sample =>
+        avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
+          let u := directPointToPauli P
+            (sample.1.base + t • sample.1.direction)
+          let x := projX u
+          let z := projZ u
+          ∑ fX, ∑ fZ,
+            (inner ℂ S.psiHat ((EuclideanSpace.equiv
+              (SixReg P S.toStrategy.ιA S.toStrategy.ιB) ℂ).symm
+                ((S.place first
+                    ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
+                  S.place second
+                    (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ *
+                      S.expPointEffectAtLineAnswer second.side .X sample.2.1 x fX)).mulVec
+                        S.psiHat))).re)) -
+      avgOver sublines.D (fun sample =>
+        avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
+          let u := directPointToPauli P
+            (sample.1.base + t • sample.1.direction)
+          let z := projZ u
+          ∑ fX, ∑ fZ,
+            (inner ℂ S.psiHat ((EuclideanSpace.equiv
+              (SixReg P S.toStrategy.ιA S.toStrategy.ιB) ℂ).symm
+                ((S.place first
+                    ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
+                  S.place second
+                    (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ)).mulVec
+                      S.psiHat))).re))| ≤
+      2 * Real.sqrt (P.m : ℝ) *
+        (Real.rpow δP (1 / 4 : ℝ) + Real.rpow δQ (1 / 4 : ℝ)) := by
   classical
   have hside := sublines.avgOver_regrouped_eq_at lines first second
   have hprob : (Distribution.prod sublines.D
@@ -150,16 +147,29 @@ theorem subline_remove_X_factor_at :
   rw [← hrew] at hX
   exact hX
 
-/-- The remaining Z overlap for arbitrary opposite register placements.
-The one-point Z mixture and positivity prove this counterpart of paper
-`claim:17-3`, lines 1204--1239, without a joint restricted-product law. -/
-theorem subline_Z_term_near_one_at :
+/-- Existential packaging of `subline_remove_x_factor_at_explicit`. -/
+theorem subline_remove_X_factor_at :
     ∃ C : ℝ, 0 < C ∧
       ∀ (P : AdmissibleParams) (ε δQ δP : ℝ)
         (S : ProjectiveSetting P ε) (points : CombinedPointsWitness S δQ)
         (lines : CombinedLinesWitness S points δP) (sublines : SubLineWitness P)
         (first second : Placement) (_hopposite : first.IsOpposite second),
         |avgOver sublines.D (fun sample =>
+            avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
+              let u := directPointToPauli P
+                (sample.1.base + t • sample.1.direction)
+              let x := projX u
+              let z := projZ u
+              ∑ fX, ∑ fZ,
+                (inner ℂ S.psiHat ((EuclideanSpace.equiv
+                  (SixReg P S.toStrategy.ιA S.toStrategy.ιB) ℂ).symm
+                    ((S.place first
+                        ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
+                      S.place second
+                        (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ *
+                          S.expPointEffectAtLineAnswer second.side .X sample.2.1 x fX)).mulVec
+                            S.psiHat))).re)) -
+          avgOver sublines.D (fun sample =>
             avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
               let u := directPointToPauli P
                 (sample.1.base + t • sample.1.direction)
@@ -171,12 +181,35 @@ theorem subline_Z_term_near_one_at :
                         ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
                       S.place second
                         (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ)).mulVec
-                          S.psiHat))).re)) - 1| ≤
+                          S.psiHat))).re))| ≤
           C * Real.sqrt (P.m : ℝ) *
-            (Real.rpow δP (1 / 4 : ℝ) + Real.rpow δQ (1 / 4 : ℝ) +
-              Real.rpow ε (1 / 4 : ℝ)) := by
-  refine ⟨2, by norm_num, ?_⟩
-  intro P ε δQ δP S points lines sublines first second hopposite
+            (Real.rpow δP (1 / 4 : ℝ) + Real.rpow δQ (1 / 4 : ℝ)) := by
+  exact ⟨2, by norm_num, subline_remove_x_factor_at_explicit⟩
+
+/-- The remaining Z overlap costs exactly the coefficient `2` in the current
+proof. This Lean-only quantitative form exposes the witness used for paper
+`claim:17-3`, lines 1204--1239, for issue #729. -/
+theorem subline_z_term_near_one_at_explicit
+    (P : AdmissibleParams) (ε δQ δP : ℝ)
+    (S : ProjectiveSetting P ε) (points : CombinedPointsWitness S δQ)
+    (lines : CombinedLinesWitness S points δP) (sublines : SubLineWitness P)
+    (first second : Placement) (hopposite : first.IsOpposite second) :
+    |avgOver sublines.D (fun sample =>
+        avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
+          let u := directPointToPauli P
+            (sample.1.base + t • sample.1.direction)
+          let z := projZ u
+          ∑ fX, ∑ fZ,
+            (inner ℂ S.psiHat ((EuclideanSpace.equiv
+              (SixReg P S.toStrategy.ιA S.toStrategy.ιB) ℂ).symm
+                ((S.place first
+                    ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
+                  S.place second
+                    (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ)).mulVec
+                      S.psiHat))).re)) - 1| ≤
+      2 * Real.sqrt (P.m : ℝ) *
+        (Real.rpow δP (1 / 4 : ℝ) + Real.rpow δQ (1 / 4 : ℝ) +
+          Real.rpow ε (1 / 4 : ℝ)) := by
   classical
   have hδP : 0 ≤ δP := by
     refine le_trans ?_ (lines.consistent first second hopposite)
@@ -236,6 +269,31 @@ theorem subline_Z_term_near_one_at :
         mul_nonneg (by norm_num) (Real.sqrt_nonneg _)
       nlinarith [mul_nonneg hsm hε]
 
+/-- Existential packaging of `subline_z_term_near_one_at_explicit`. -/
+theorem subline_Z_term_near_one_at :
+    ∃ C : ℝ, 0 < C ∧
+      ∀ (P : AdmissibleParams) (ε δQ δP : ℝ)
+        (S : ProjectiveSetting P ε) (points : CombinedPointsWitness S δQ)
+        (lines : CombinedLinesWitness S points δP) (sublines : SubLineWitness P)
+        (first second : Placement) (_hopposite : first.IsOpposite second),
+        |avgOver sublines.D (fun sample =>
+            avgOver (uniformDistribution (DirectScalarQ P.extendedDirectLd)) (fun t =>
+              let u := directPointToPauli P
+                (sample.1.base + t • sample.1.direction)
+              let z := projZ u
+              ∑ fX, ∑ fZ,
+                (inner ℂ S.psiHat ((EuclideanSpace.equiv
+                  (SixReg P S.toStrategy.ιA S.toStrategy.ιB) ℂ).symm
+                    ((S.place first
+                        ((lines.T first.side sample.2.1 sample.2.2).effect (fX, fZ)) *
+                      S.place second
+                        (S.expPointEffectAtLineAnswer second.side .Z sample.2.2 z fZ)).mulVec
+                          S.psiHat))).re)) - 1| ≤
+          C * Real.sqrt (P.m : ℝ) *
+            (Real.rpow δP (1 / 4 : ℝ) + Real.rpow δQ (1 / 4 : ℝ) +
+              Real.rpow ε (1 / 4 : ℝ)) := by
+  exact ⟨2, by norm_num, subline_z_term_near_one_at_explicit⟩
+
 /-- Expand the state quadratic form before specializing the register carrier. -/
 private theorem stateQForm_eq_inner_mulVec {Carrier : Type*}
     [Fintype Carrier] [DecidableEq Carrier]
@@ -244,24 +302,20 @@ private theorem stateQForm_eq_inner_mulVec {Carrier : Type*}
       ((EuclideanSpace.equiv Carrier ℂ).symm (operator.mulVec state))).re := rfl
 
 set_option maxHeartbeats 800000 in
-/-- The first-route paired overlap estimate holds for every opposite placement.
-This includes the second relation of paper `lem:qld-4-13` at lines 1020--1034,
-with the established first-route error, not the stronger printed polynomial. -/
-theorem subline_joint_overlap_near_one_at :
-    ∃ constant : ℝ, 0 < constant ∧
-      ∀ (params : AdmissibleParams) (error pointError lineError : ℝ)
-        (setting : ProjectiveSetting params error)
-        (points : CombinedPointsWitness setting pointError)
-        (lines : CombinedLinesWitness setting points lineError) (sublines : SubLineWitness params)
-        (first second : Placement), first.IsOpposite second →
-        |avgOver sublines.D (pairedSublineOverlap setting points lines first second) - 1| ≤
-          constant * (pointError ^ (1 / 2 : ℝ) + Real.sqrt (params.m : ℝ) *
-            (lineError ^ (1 / 4 : ℝ) + pointError ^ (1 / 4 : ℝ) +
-              error ^ (1 / 4 : ℝ))) := by
-  obtain ⟨removeConstant, hremoveConstant, hremove⟩ := subline_remove_X_factor_at
-  obtain ⟨nearConstant, hnearConstant, hnear⟩ := subline_Z_term_near_one_at
-  refine ⟨2 + removeConstant + nearConstant, by positivity, ?_⟩
-  intro params error pointError lineError setting points lines sublines first second hopposite
+-- Expanding the nested averages and matrix quadratic forms is elaboration-intensive.
+/-- The first-route paired overlap estimate with its exact coefficient `6`.
+This Lean-only quantitative specialization supports paper `lem:qld-4-13`,
+lines 1020--1034, and exposes the current proof's witness for issue #729. -/
+theorem subline_joint_overlap_near_one_at_explicit
+    (params : AdmissibleParams) (error pointError lineError : ℝ)
+    (setting : ProjectiveSetting params error)
+    (points : CombinedPointsWitness setting pointError)
+    (lines : CombinedLinesWitness setting points lineError) (sublines : SubLineWitness params)
+    (first second : Placement) (hopposite : first.IsOpposite second) :
+    |avgOver sublines.D (pairedSublineOverlap setting points lines first second) - 1| ≤
+      6 * (pointError ^ (1 / 2 : ℝ) + Real.sqrt (params.m : ℝ) *
+        (lineError ^ (1 / 4 : ℝ) + pointError ^ (1 / 4 : ℝ) +
+          error ^ (1 / 4 : ℝ))) := by
   let zOverlap := avgOver sublines.D (fun sample =>
     avgOver (uniformDistribution (DirectScalarQ params.extendedDirectLd)) (fun parameter =>
       zPointOverlapAt lines first second (sample.2, projZ (directPointToPauli params
@@ -276,18 +330,18 @@ theorem subline_joint_overlap_near_one_at :
     exact (sublines.paired_ordered_overlap_gap_le lines first second).trans_eq heq
   have hsecond : |avgOver sublines.D
       (orderedSublineOverlap setting points lines first second) - zOverlap| ≤
-      removeConstant * Real.sqrt (params.m : ℝ) *
+      2 * Real.sqrt (params.m : ℝ) *
         (lineError ^ (1 / 4 : ℝ) + pointError ^ (1 / 4 : ℝ)) := by
-    have hbound := hremove params error pointError lineError setting points lines sublines
-      first second hopposite
+    have hbound := subline_remove_x_factor_at_explicit params error pointError lineError
+      setting points lines sublines first second hopposite
     simp only [← ProjectiveSetting.pointMeasExpOption_effect_evalOpt] at hbound
     unfold orderedSublineOverlap zOverlap zPointOverlapAt
     simp only [Fintype.sum_prod_type, stateQForm_eq_inner_mulVec]
     with_unfolding_all exact hbound
-  have hthird : |zOverlap - 1| ≤ nearConstant * Real.sqrt (params.m : ℝ) *
+  have hthird : |zOverlap - 1| ≤ 2 * Real.sqrt (params.m : ℝ) *
       (lineError ^ (1 / 4 : ℝ) + pointError ^ (1 / 4 : ℝ) + error ^ (1 / 4 : ℝ)) := by
-    have hbound := hnear params error pointError lineError setting points lines sublines
-      first second hopposite
+    have hbound := subline_z_term_near_one_at_explicit params error pointError lineError
+      setting points lines sublines first second hopposite
     simp only [← ProjectiveSetting.pointMeasExpOption_effect_evalOpt] at hbound
     unfold zOverlap zPointOverlapAt
     simp only [stateQForm_eq_inner_mulVec]
@@ -303,9 +357,21 @@ theorem subline_joint_overlap_near_one_at :
   simp only [Real.rpow_eq_pow] at hquarter
   have hdimension := Real.sqrt_nonneg (params.m : ℝ)
   refine hchain.trans ?_
-  nlinarith [mul_nonneg hremoveConstant.le hhalf, mul_nonneg hnearConstant.le hhalf,
-    mul_nonneg hdimension hsum, mul_nonneg hdimension hquarter,
-    mul_nonneg (mul_nonneg hremoveConstant.le hdimension) hquarter]
+  nlinarith [mul_nonneg hdimension hsum, mul_nonneg hdimension hquarter]
+
+/-- Existential packaging of `subline_joint_overlap_near_one_at_explicit`. -/
+theorem subline_joint_overlap_near_one_at :
+    ∃ constant : ℝ, 0 < constant ∧
+      ∀ (params : AdmissibleParams) (error pointError lineError : ℝ)
+        (setting : ProjectiveSetting params error)
+        (points : CombinedPointsWitness setting pointError)
+        (lines : CombinedLinesWitness setting points lineError) (sublines : SubLineWitness params)
+        (first second : Placement), first.IsOpposite second →
+        |avgOver sublines.D (pairedSublineOverlap setting points lines first second) - 1| ≤
+          constant * (pointError ^ (1 / 2 : ℝ) + Real.sqrt (params.m : ℝ) *
+            (lineError ^ (1 / 4 : ℝ) + pointError ^ (1 / 4 : ℝ) +
+              error ^ (1 / 4 : ℝ))) := by
+  exact ⟨6, by norm_num, subline_joint_overlap_near_one_at_explicit⟩
 
 
 end

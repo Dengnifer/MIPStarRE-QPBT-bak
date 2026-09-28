@@ -111,9 +111,8 @@ This theorem is formalization-only support for the Naimark step in the proof of 
 Its separate blueprint entry is `thm:qld-direct-soundness-any-strategy`.
 It does not assert projectivity of the compressed POVMs and does not add a
 hypothesis to any paper-labelled theorem. -/
-theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
-    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-      ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+theorem direct_ld_soundness_of_k_eq_one_any_strategy_explicit :
+    ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
         ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
           ∃ GA : DirectPolyMeasTuple D S.ιA,
             ∃ GB : DirectPolyMeasTuple D S.ιB,
@@ -126,7 +125,8 @@ theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
                   (fun u outcome =>
                     heteroKron 1
                       ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
-                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
+                  S.ψ ≤ deltaLd pauliBaselineLowDegreeConstant
+                    pauliBaselineLowDegreePower ε D.q D.m D.d D.k ∧
               consistencyDefect
                   (uniformDistribution (Fin D.m → DirectScalarQ D))
                   (fun u outcome =>
@@ -136,13 +136,16 @@ theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
                     heteroKron 1
                       (((S.B (directLdPointQuestionOf D u)).postprocess
                         (directLdPointValuesOrZero D)).effect outcome))
-                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
+                  S.ψ ≤ deltaLd pauliBaselineLowDegreeConstant
+                    pauliBaselineLowDegreePower ε D.q D.m D.d D.k ∧
               consistencyDefect (uniformDistribution Unit)
                   (fun _ g => heteroKron (GA.effect g) 1)
                   (fun _ g => heteroKron 1 (GB.effect g))
-                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k := by
-  obtain ⟨a, b, ha, hb, hb1, hsound⟩ := exists_direct_ld_soundness_of_k_eq_one
-  refine ⟨a, b, ha, hb, hb1, ?_⟩
+                  S.ψ ≤ deltaLd pauliBaselineLowDegreeConstant
+                    pauliBaselineLowDegreePower ε D.q D.m D.d D.k := by
+  let a := pauliBaselineLowDegreeConstant
+  let b := pauliBaselineLowDegreePower
+  have hsound := direct_ld_soundness_of_k_eq_one_explicit
   intro D ε hk hε S hwin
   have hwin' : 1 - ε ≤ (directLdNaimarkStrategy D S).value := by
     rw [directLdNaimarkStrategy_value]
@@ -303,6 +306,48 @@ theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
           (fun _ g => heteroKron 1 (GB.effect g))
           (directLdNaimarkStrategy D S).ψ := htransport.symm
       _ ≤ deltaLd a b ε D.q D.m D.d D.k := h3
+
+/-- Existential packaging of
+`direct_ld_soundness_of_k_eq_one_any_strategy_explicit`, preserving the
+established arbitrary-strategy auxiliary API. -/
+theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k := by
+  refine ⟨pauliBaselineLowDegreeConstant, pauliBaselineLowDegreePower, ?_, ?_, ?_,
+    direct_ld_soundness_of_k_eq_one_any_strategy_explicit⟩
+  · unfold pauliBaselineLowDegreeConstant
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
 
 end
 

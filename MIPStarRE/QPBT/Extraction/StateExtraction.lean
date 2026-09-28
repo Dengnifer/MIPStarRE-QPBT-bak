@@ -106,30 +106,30 @@ open under issue #123 in `docs/paper-gaps/qpbt_extraction-transfer.tex`.
 
 **Local fix:** The projection and normalization estimates replace the numerical
 steps at paper lines 1743-1783 as documented in the same gap note. -/
-theorem exists_extraction_aux_ofGlobalPairWitness :
-    ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
-      0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
-      ∀ (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG),
-        ∃ aux : EuclideanSpace ℂ
-            (ExtractionAuxRegisters P S.toStrategy.ιA S.toStrategy.ιB),
-          ‖aux‖ = 1 ∧
-            ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
-              S.idealExpState aux‖ ^ 2 ≤
-                16 * deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
-  obtain ⟨C, hC, hbound⟩ := extracted_obs_selfConsistent_ofGlobalPairWitness
-  refine ⟨C, hC, ?_⟩
-  intro P epsilon deltaG hepsilon hepsilon_one hdeltaG S w
+theorem exists_extraction_aux_of_global_pair_witness_explicit
+    (P : AdmissibleParams) (epsilon deltaG : ℝ)
+    (hepsilon : 0 ≤ epsilon) (hepsilon_one : epsilon ≤ 1) (hdeltaG : 0 ≤ deltaG)
+    (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG) :
+    ∃ aux : EuclideanSpace ℂ
+        (ExtractionAuxRegisters P S.toStrategy.ιA S.toStrategy.ιB),
+      ‖aux‖ = 1 ∧
+        ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
+          S.idealExpState aux‖ ^ 2 ≤
+            16 * deltaConstructPaulis pauliBaselineExtractionConstant
+              epsilon deltaG P.m P.d P.q := by
   let theta := S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat
   let e := (extractionIdealShuffle P S.toStrategy.ιA S.toStrategy.ιB).symm
-  let delta := deltaConstructPaulis C epsilon deltaG P.m P.d P.q
+  let delta := deltaConstructPaulis pauliBaselineExtractionConstant
+    epsilon deltaG P.m P.d P.q
   have hdelta : 0 ≤ delta := by
-    dsimp [delta, deltaConstructPaulis]
+    dsimp [delta, deltaConstructPaulis, pauliBaselineExtractionConstant]
     positivity
   let j : Fin P.model.basisDim := ⟨0, P.model.basisDimOdd.pos⟩
   have hdist := Extraction.norm_sub_eprProjection_le_of_pauli_dist
     (reindexState e theta) delta hdelta (fun W => by
       exact (S.pauli_dist_reindex_extraction theta W j).trans_le
-        (hbound P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j))
+        (extracted_obs_self_consistent_of_global_pair_witness_explicit
+          P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j))
   have htransport :
       ‖reindexState e theta - applyOperatorToState
         (heteroKron (1 : Op (ExtractionAuxRegisters P S.toStrategy.ιA S.toStrategy.ιB))
@@ -157,6 +157,23 @@ theorem exists_extraction_aux_ofGlobalPairWitness :
   have hsquare := Real.sq_sqrt hdelta
   change ‖theta - S.idealExpState aux‖ ^ 2 ≤ 16 * delta
   nlinarith
+
+/-- Existential packaging of
+`exists_extraction_aux_of_global_pair_witness_explicit`. -/
+theorem exists_extraction_aux_ofGlobalPairWitness :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+      0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
+      ∀ (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG),
+        ∃ aux : EuclideanSpace ℂ
+            (ExtractionAuxRegisters P S.toStrategy.ιA S.toStrategy.ιB),
+          ‖aux‖ = 1 ∧
+            ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
+              S.idealExpState aux‖ ^ 2 ≤
+                16 * deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
+  refine ⟨pauliBaselineExtractionConstant, ?_, ?_⟩
+  · unfold pauliBaselineExtractionConstant
+    norm_num
+  · exact exists_extraction_aux_of_global_pair_witness_explicit
 
 end
 

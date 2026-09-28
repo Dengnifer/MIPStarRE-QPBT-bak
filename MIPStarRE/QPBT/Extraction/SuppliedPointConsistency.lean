@@ -104,6 +104,48 @@ The theorem `exists_pulled_apart_consistency` now obtains the witness from
 together with the other two supplied-witness estimates to the same witness.
 The completed composition and the remaining extraction obligations are recorded
 in `docs/paper-gaps/qpbt_extraction-transfer.tex` under issue #123. -/
+theorem tilde_m_consistent_point_meas_of_global_pair_witness_explicit :
+    ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+        0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
+          ∀ (S : ProjectiveSetting P epsilon)
+            (w : GlobalPairWitness S deltaG) (W : PauliKind),
+            consistencyDefect
+              (uniformDistribution (Fin P.m → PauliScalar P))
+              (fun u a =>
+                S.placePlayer .alice ((S.pointMeas .alice W u).effect a))
+              (fun u a => S.placeSide .bob
+                (tildeM w .bob W (indicatorVec u) a))
+              S.psiHat ≤
+                deltaConstructPaulis (2 + 2 * Real.sqrt 172)
+                  epsilon deltaG P.m P.d P.q := by
+  classical
+  intro P epsilon deltaG hepsilon _ hdeltaG S w W
+  have hdefect := tildeM_consistencyDefect_le_deltaG_add_nonencoding w W
+  have href :=
+    (global_marginal_encoding_consistency_explicit P epsilon deltaG hepsilon S w W).2
+  have hmass := right_mass_outside_encoding_le_evaluated_defect
+    (S.encodingPauliMeas .alice W) (w.marginalPoly .bob W)
+    (ExtendedLineGame.pairState S) (ExtendedLineGame.pairState_norm S)
+    (S.encodingPauliMeas_effect_eq_zero_of_not_isEncoding .alice W)
+  have hm : nonencodingMarginalMass w .bob W ≤
+      deltaG + (1 + 2 * Real.sqrt 172) * Real.sqrt epsilon +
+        (P.m * P.d : ℝ) / P.q := by
+    unfold nonencodingMarginalMass
+    change (∑ g ∈ Finset.univ.filter (fun g : Poly P => ¬ IsEncoding g),
+      stateQForm S.psiHat (S.placeSide .bob
+        (heteroKron ((w.marginalPoly .bob W).effect g) (1 : Op (PauliRegister P))))) ≤ _
+    simp_rw [stateQForm_placeSide_bob_tensor_one S _
+      (Matrix.nonneg_iff_posSemidef.mp ((w.marginalPoly .bob W).pos _)).isHermitian]
+    exact hmass.trans (add_le_add href le_rfl)
+  unfold deltaConstructPaulis
+  rw [Nat.cast_mul]
+  have hratio : 0 ≤ (P.m * P.d : ℝ) / P.q := by positivity
+  have hsqrt : 0 ≤ Real.sqrt epsilon := Real.sqrt_nonneg epsilon
+  have hroot : 0 ≤ Real.sqrt (172 : ℝ) := Real.sqrt_nonneg _
+  nlinarith
+
+/-- Existential packaging of
+`tilde_m_consistent_point_meas_of_global_pair_witness_explicit`. -/
 theorem tildeM_consistent_pointMeas_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
@@ -118,30 +160,9 @@ theorem tildeM_consistent_pointMeas_ofGlobalPairWitness :
                 (tildeM w .bob W (indicatorVec u) a))
               S.psiHat ≤
                 deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
-  classical
-  obtain ⟨C, hC, hreference⟩ := global_marginal_encoding_consistency
-  refine ⟨C + 1, by linarith, ?_⟩
-  intro P epsilon deltaG hepsilon _ hdeltaG S w W
-  have hdefect := tildeM_consistencyDefect_le_deltaG_add_nonencoding w W
-  have href := (hreference P epsilon deltaG hepsilon S w W).2
-  have hmass := right_mass_outside_encoding_le_evaluated_defect
-    (S.encodingPauliMeas .alice W) (w.marginalPoly .bob W)
-    (ExtendedLineGame.pairState S) (ExtendedLineGame.pairState_norm S)
-    (S.encodingPauliMeas_effect_eq_zero_of_not_isEncoding .alice W)
-  have hm : nonencodingMarginalMass w .bob W ≤
-      deltaG + C * Real.sqrt epsilon + (P.m * P.d : ℝ) / P.q := by
-    unfold nonencodingMarginalMass
-    change (∑ g ∈ Finset.univ.filter (fun g : Poly P => ¬ IsEncoding g),
-      stateQForm S.psiHat (S.placeSide .bob
-        (heteroKron ((w.marginalPoly .bob W).effect g) (1 : Op (PauliRegister P))))) ≤ _
-    simp_rw [stateQForm_placeSide_bob_tensor_one S _
-      (Matrix.nonneg_iff_posSemidef.mp ((w.marginalPoly .bob W).pos _)).isHermitian]
-    exact hmass.trans (add_le_add href le_rfl)
-  unfold deltaConstructPaulis
-  rw [Nat.cast_mul]
-  have hratio : 0 ≤ (P.m * P.d : ℝ) / P.q := by positivity
-  have hsqrt : 0 ≤ Real.sqrt epsilon := Real.sqrt_nonneg epsilon
-  nlinarith
+  refine ⟨2 + 2 * Real.sqrt 172, ?_,
+    tilde_m_consistent_point_meas_of_global_pair_witness_explicit⟩
+  nlinarith [Real.sqrt_nonneg (172 : ℝ)]
 
 
 /-- For a supplied global polynomial-pair witness, the Alice-pulled/Bob-point
@@ -223,6 +244,48 @@ The theorem `exists_pulled_apart_consistency` now obtains the witness from
 together with the other two supplied-witness estimates to the same witness.
 The completed composition and the remaining extraction obligations are recorded
 in `docs/paper-gaps/qpbt_extraction-transfer.tex` under issue #123. -/
+theorem tilde_m_consistent_point_meas'_of_global_pair_witness_explicit :
+    ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+        0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
+          ∀ (S : ProjectiveSetting P epsilon)
+            (w : GlobalPairWitness S deltaG) (W : PauliKind),
+            consistencyDefect
+              (uniformDistribution (Fin P.m → PauliScalar P))
+              (fun u a => S.placeSide .alice
+                (tildeM w .alice W (indicatorVec u) a))
+              (fun u a =>
+                S.placePlayer .bob ((S.pointMeas .bob W u).effect a))
+              S.psiHat ≤
+                deltaConstructPaulis (2 + 2 * Real.sqrt 172)
+                  epsilon deltaG P.m P.d P.q := by
+  classical
+  intro P epsilon deltaG hepsilon _ hdeltaG S w W
+  have hdefect := tildeM_consistencyDefect_le_deltaG_add_nonencoding' w W
+  have href :=
+    (global_marginal_encoding_consistency_explicit P epsilon deltaG hepsilon S w W).1
+  have hmass := mass_outside_encoding_le_evaluated_defect
+    (w.marginalPoly .alice W) (S.encodingPauliMeas .bob W)
+    (ExtendedLineGame.pairState S) (ExtendedLineGame.pairState_norm S)
+    (S.encodingPauliMeas_effect_eq_zero_of_not_isEncoding .bob W)
+  have hm : nonencodingMarginalMass w .alice W ≤
+      deltaG + (1 + 2 * Real.sqrt 172) * Real.sqrt epsilon +
+        (P.m * P.d : ℝ) / P.q := by
+    unfold nonencodingMarginalMass
+    change (∑ g ∈ Finset.univ.filter (fun g : Poly P => ¬ IsEncoding g),
+      stateQForm S.psiHat (S.placeSide .alice
+        (heteroKron ((w.marginalPoly .alice W).effect g) (1 : Op (PauliRegister P))))) ≤ _
+    simp_rw [stateQForm_placeSide_alice_tensor_one S _
+      (Matrix.nonneg_iff_posSemidef.mp ((w.marginalPoly .alice W).pos _)).isHermitian]
+    exact hmass.trans (add_le_add href le_rfl)
+  unfold deltaConstructPaulis
+  rw [Nat.cast_mul]
+  have hratio : 0 ≤ (P.m * P.d : ℝ) / P.q := by positivity
+  have hsqrt : 0 ≤ Real.sqrt epsilon := Real.sqrt_nonneg epsilon
+  have hroot : 0 ≤ Real.sqrt (172 : ℝ) := Real.sqrt_nonneg _
+  nlinarith
+
+/-- Existential packaging of
+`tilde_m_consistent_point_meas'_of_global_pair_witness_explicit`. -/
 theorem tildeM_consistent_pointMeas'_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
@@ -237,30 +300,9 @@ theorem tildeM_consistent_pointMeas'_ofGlobalPairWitness :
                 S.placePlayer .bob ((S.pointMeas .bob W u).effect a))
               S.psiHat ≤
                 deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
-  classical
-  obtain ⟨C, hC, hreference⟩ := global_marginal_encoding_consistency
-  refine ⟨C + 1, by linarith, ?_⟩
-  intro P epsilon deltaG hepsilon _ hdeltaG S w W
-  have hdefect := tildeM_consistencyDefect_le_deltaG_add_nonencoding' w W
-  have href := (hreference P epsilon deltaG hepsilon S w W).1
-  have hmass := mass_outside_encoding_le_evaluated_defect
-    (w.marginalPoly .alice W) (S.encodingPauliMeas .bob W)
-    (ExtendedLineGame.pairState S) (ExtendedLineGame.pairState_norm S)
-    (S.encodingPauliMeas_effect_eq_zero_of_not_isEncoding .bob W)
-  have hm : nonencodingMarginalMass w .alice W ≤
-      deltaG + C * Real.sqrt epsilon + (P.m * P.d : ℝ) / P.q := by
-    unfold nonencodingMarginalMass
-    change (∑ g ∈ Finset.univ.filter (fun g : Poly P => ¬ IsEncoding g),
-      stateQForm S.psiHat (S.placeSide .alice
-        (heteroKron ((w.marginalPoly .alice W).effect g) (1 : Op (PauliRegister P))))) ≤ _
-    simp_rw [stateQForm_placeSide_alice_tensor_one S _
-      (Matrix.nonneg_iff_posSemidef.mp ((w.marginalPoly .alice W).pos _)).isHermitian]
-    exact hmass.trans (add_le_add href le_rfl)
-  unfold deltaConstructPaulis
-  rw [Nat.cast_mul]
-  have hratio : 0 ≤ (P.m * P.d : ℝ) / P.q := by positivity
-  have hsqrt : 0 ≤ Real.sqrt epsilon := Real.sqrt_nonneg epsilon
-  nlinarith
+  refine ⟨2 + 2 * Real.sqrt 172, ?_,
+    tilde_m_consistent_point_meas'_of_global_pair_witness_explicit⟩
+  nlinarith [Real.sqrt_nonneg (172 : ℝ)]
 
 
 end

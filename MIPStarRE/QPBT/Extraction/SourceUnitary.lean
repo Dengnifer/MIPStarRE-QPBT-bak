@@ -19,6 +19,39 @@ namespace MIPStarRE.QPBT
 
 noncomputable section
 
+/-- Extraction data at the closed global-pair and extraction constants. This
+is the quantitative specialization used by the explicit soundness baseline. -/
+theorem exists_extraction_witness_explicit
+    (P : AdmissibleParams) (epsilon : ℝ) (hepsilon0 : 0 ≤ epsilon)
+    (hepsilon1 : epsilon ≤ 1) (S : ProjectiveSetting P epsilon) :
+    ∃ w : GlobalPairWitness S
+        (deltaQld pauliBaselineGlobalPairConstant pauliBaselineGlobalPairPower
+          epsilon P.m P.d P.q),
+      Nonempty (ExtractionWitness S w
+        (deltaExtract pauliBaselineExtractionConstant
+          (deltaConstructPaulis pauliBaselineExtractionConstant epsilon
+            (deltaQld pauliBaselineGlobalPairConstant pauliBaselineGlobalPairPower
+              epsilon P.m P.d P.q) P.m P.d P.q) P.m P.d P.q)) := by
+  obtain ⟨w⟩ := exists_global_pair_witness_explicit P epsilon S
+  obtain ⟨hA, -, -, -⟩ := pauli_baseline_global_absorption_bound
+  have hconstant : 0 ≤ pauliBaselineGlobalPairConstant := by
+    unfold pauliBaselineGlobalPairConstant
+    positivity
+  have hdeltaG : 0 ≤ deltaQld pauliBaselineGlobalPairConstant
+      pauliBaselineGlobalPairPower epsilon P.m P.d P.q := by
+    have hdegree0 : (0 : ℝ) ≤ ((P.m * P.d : ℕ) : ℝ) := Nat.cast_nonneg _
+    have h1 := Real.rpow_nonneg hepsilon0 pauliBaselineGlobalPairPower
+    have h2 := Real.rpow_nonneg (Nat.cast_nonneg P.q) (-pauliBaselineGlobalPairPower)
+    have h3 := Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 2)
+      (-(pauliBaselineGlobalPairPower * ((P.m * P.d : ℕ) : ℝ)))
+    unfold deltaQld
+    simp only [Real.rpow_eq_pow]
+    exact mul_nonneg
+      (mul_nonneg hconstant
+        (Real.rpow_nonneg hdegree0 pauliBaselineGlobalPairConstant)) (by linarith)
+  exact ⟨w, exists_extraction_witness_of_global_pair_witness_explicit
+    P epsilon _ hepsilon0 hepsilon1 hdeltaG S w⟩
+
 /-- **Source statement:** The projective strategy supplies the global
 polynomial-pair measurements internally, and their concrete swap unitaries
 extract a normalized auxiliary state and both Pauli measurement families at

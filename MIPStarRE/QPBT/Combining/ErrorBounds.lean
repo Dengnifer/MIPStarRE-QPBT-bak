@@ -342,21 +342,50 @@ theorem exists_combining_polynomial_bound (pointError : ℝ → ℝ)
     nlinarith [mul_nonneg (show 0 ≤ dimension - 1 by linarith)
       (show 0 ≤ finalConstant * (error ^ finalPower + ratio ^ (ratioPower / 4)) by linarith)]
 
+/-- The exponent produced by the scalar global-pair absorption calculation. -/
+noncomputable def globalPairBoundPower
+    (pointPower errorPower ratioPower soundnessPower : ℝ) : ℝ :=
+  min (1 / 2 : ℝ) (min soundnessPower
+    (min (errorPower * soundnessPower)
+      (min (ratioPower * soundnessPower) (pointPower / 2))))
+
+/-- The coefficient produced by the scalar global-pair absorption calculation. -/
+noncomputable def globalPairBoundConstant (pointConstant lineConstant combineConstant
+    soundnessConstant soundnessPower ratioPower finalScale : ℝ) : ℝ :=
+  let lineGrowth := soundnessPower + ratioPower * soundnessPower
+  let growth := soundnessConstant + lineGrowth + 1
+  let lineCoefficient := soundnessConstant * (4 : ℝ) ^ soundnessConstant *
+    ((combineConstant * lineConstant) ^ soundnessPower + 2)
+  let coefficient := finalScale * (lineCoefficient + Real.sqrt pointConstant + 1)
+  coefficient + growth + 2
+
 set_option maxHeartbeats 800000 in
+-- Normalizing the nested real-power envelope leaves a large nonlinear scalar goal.
 /-- Scalar sufficiency of the established first route for the global-pair error.
 The input of low-degree soundness includes `error` as a positive slack when
 `error > 0`. The cap uses the independent unit bound on a consistency defect.
 This is the numerical substitution at paper `lem:qld-4-7`, lines 1278--1288
 and 1402, not a construction of its measurements or a game transport theorem.
 See `docs/paper-gaps/qpbt_combined-lines-error-term.tex`. -/
-theorem exists_global_pair_error_bound (pointError : ℝ → ℝ)
-    (hpoint : IsPolyErr pointError) (combinedError : ℝ → ℝ → ℝ)
-    (hcombined : IsPolyErr₂ combinedError)
+theorem global_pair_error_bound_explicit (pointError : ℝ → ℝ)
+    (pointConstant pointPower : ℝ) (hpointConstant : 1 ≤ pointConstant)
+    (hpointPower : 0 < pointPower)
+    (hpointBound : ∀ error : ℝ, 0 ≤ error →
+      0 ≤ pointError error ∧ pointError error ≤ pointConstant * error ^ pointPower)
+    (combinedError : ℝ → ℝ → ℝ) (lineConstant errorPower ratioPower : ℝ)
+    (hlineConstant : 1 ≤ lineConstant) (herrorPower : 0 < errorPower)
+    (hratioPower : 0 < ratioPower)
+    (hlineBound : ∀ error ratio : ℝ, 0 ≤ error → 0 ≤ ratio →
+      0 ≤ combinedError error ratio ∧ combinedError error ratio ≤
+        lineConstant * (error ^ errorPower + ratio ^ ratioPower))
     (combineConstant soundnessConstant soundnessPower finalScale : ℝ)
     (hcombineConstant : 0 ≤ combineConstant) (hsoundnessConstant : 1 ≤ soundnessConstant)
     (hsoundnessPower : 0 < soundnessPower) (hsoundnessPowerOne : soundnessPower ≤ 1)
     (hfinalScale : 0 ≤ finalScale) :
-    ∃ finalConstant finalPower : ℝ, 1 < finalConstant ∧ 0 < finalPower ∧ finalPower < 1 ∧
+    1 < globalPairBoundConstant pointConstant lineConstant combineConstant
+          soundnessConstant soundnessPower ratioPower finalScale ∧
+      0 < globalPairBoundPower pointPower errorPower ratioPower soundnessPower ∧
+      globalPairBoundPower pointPower errorPower ratioPower soundnessPower < 1 ∧
       ∀ (params : AdmissibleParams) (error : ℝ), 0 ≤ error →
         min 1 (finalScale *
           (deltaLd soundnessConstant soundnessPower
@@ -364,26 +393,31 @@ theorem exists_global_pair_error_bound (pointError : ℝ → ℝ)
                 combinedError error ((params.m * params.d : ℕ) / (params.q : ℝ)) + error)
               params.q (2 * params.m + 2) params.d 1 +
             Real.sqrt (pointError error) + ((params.m * params.d : ℕ) / (params.q : ℝ)))) ≤
-          deltaQld finalConstant finalPower error params.m params.d params.q := by
-  obtain ⟨pointConstant, pointPower, hpointConstant, hpointPower, hpointBound⟩ := hpoint
-  obtain ⟨lineConstant, errorPower, ratioPower, hlineConstant,
-    herrorPower, hratioPower, hlineBound⟩ := hcombined
-  let finalPower := min (1 / 2 : ℝ) (min soundnessPower
-    (min (errorPower * soundnessPower)
-      (min (ratioPower * soundnessPower) (pointPower / 2))))
+          deltaQld
+            (globalPairBoundConstant pointConstant lineConstant combineConstant
+              soundnessConstant soundnessPower ratioPower finalScale)
+            (globalPairBoundPower pointPower errorPower ratioPower soundnessPower)
+            error params.m params.d params.q := by
+  let finalPower := globalPairBoundPower pointPower errorPower ratioPower soundnessPower
   have hfinalPower : 0 < finalPower := by
-    dsimp [finalPower]
+    dsimp [finalPower, globalPairBoundPower]
     positivity
-  have hhalf : finalPower ≤ 1 / 2 := min_le_left _ _
-  have hpower : finalPower ≤ soundnessPower :=
-    (min_le_right _ _).trans (min_le_left _ _)
-  have herrorExponent : finalPower ≤ errorPower * soundnessPower :=
-    (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
-  have hratioExponent : finalPower ≤ ratioPower * soundnessPower :=
-    (min_le_right _ _).trans ((min_le_right _ _).trans
+  have hhalf : finalPower ≤ 1 / 2 := by
+    dsimp [finalPower, globalPairBoundPower]
+    exact min_le_left _ _
+  have hpower : finalPower ≤ soundnessPower := by
+    dsimp [finalPower, globalPairBoundPower]
+    exact (min_le_right _ _).trans (min_le_left _ _)
+  have herrorExponent : finalPower ≤ errorPower * soundnessPower := by
+    dsimp [finalPower, globalPairBoundPower]
+    exact (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
+  have hratioExponent : finalPower ≤ ratioPower * soundnessPower := by
+    dsimp [finalPower, globalPairBoundPower]
+    exact (min_le_right _ _).trans ((min_le_right _ _).trans
       ((min_le_right _ _).trans (min_le_left _ _)))
-  have hpointExponent : finalPower ≤ pointPower / 2 :=
-    (min_le_right _ _).trans ((min_le_right _ _).trans
+  have hpointExponent : finalPower ≤ pointPower / 2 := by
+    dsimp [finalPower, globalPairBoundPower]
+    exact (min_le_right _ _).trans ((min_le_right _ _).trans
       ((min_le_right _ _).trans (min_le_right _ _)))
   let lineGrowth := soundnessPower + ratioPower * soundnessPower
   let growth := soundnessConstant + lineGrowth + 1
@@ -391,6 +425,15 @@ theorem exists_global_pair_error_bound (pointError : ℝ → ℝ)
     ((combineConstant * lineConstant) ^ soundnessPower + 2)
   let coefficient := finalScale * (lineCoefficient + Real.sqrt pointConstant + 1)
   let finalConstant := coefficient + growth + 2
+  change 1 < finalConstant ∧ 0 < finalPower ∧ finalPower < 1 ∧
+    ∀ (params : AdmissibleParams) (error : ℝ), 0 ≤ error →
+      min 1 (finalScale *
+        (deltaLd soundnessConstant soundnessPower
+            (combineConstant * (params.m : ℝ) *
+              combinedError error ((params.m * params.d : ℕ) / (params.q : ℝ)) + error)
+            params.q (2 * params.m + 2) params.d 1 +
+          Real.sqrt (pointError error) + ((params.m * params.d : ℕ) / (params.q : ℝ)))) ≤
+        deltaQld finalConstant finalPower error params.m params.d params.q
   have hlineGrowth : 0 ≤ lineGrowth := by dsimp [lineGrowth]; positivity
   have hgrowth : 1 ≤ growth := by dsimp [growth]; linarith
   have hlineCoefficient : 0 ≤ lineCoefficient := by dsimp [lineCoefficient]; positivity
@@ -398,7 +441,7 @@ theorem exists_global_pair_error_bound (pointError : ℝ → ℝ)
   have hfinalConstant : 1 < finalConstant := by dsimp [finalConstant]; linarith
   have hcoefficient_le : coefficient ≤ finalConstant := by dsimp [finalConstant]; linarith
   have hgrowth_le : growth ≤ finalConstant := by dsimp [finalConstant]; linarith
-  refine ⟨finalConstant, finalPower, hfinalConstant, hfinalPower, by linarith, ?_⟩
+  refine ⟨hfinalConstant, hfinalPower, by linarith, ?_⟩
   intro params error herror
   let size : ℝ := ((params.m * params.d : ℕ) : ℝ)
   let extendedSize : ℝ := (((2 * params.m + 2) * params.d : ℕ) : ℝ)
@@ -606,5 +649,36 @@ theorem exists_global_pair_error_bound (pointError : ℝ → ℝ)
     refine (min_le_left _ _).trans ?_
     simpa only [one_mul] using mul_le_mul hprefactorOne henvOne
       (by norm_num : (0 : ℝ) ≤ 1) (zero_le_one.trans hprefactorOne)
+
+/-- Existential packaging of `global_pair_error_bound_explicit`, preserving the
+established scalar API. -/
+theorem exists_global_pair_error_bound (pointError : ℝ → ℝ)
+    (hpoint : IsPolyErr pointError) (combinedError : ℝ → ℝ → ℝ)
+    (hcombined : IsPolyErr₂ combinedError)
+    (combineConstant soundnessConstant soundnessPower finalScale : ℝ)
+    (hcombineConstant : 0 ≤ combineConstant) (hsoundnessConstant : 1 ≤ soundnessConstant)
+    (hsoundnessPower : 0 < soundnessPower) (hsoundnessPowerOne : soundnessPower ≤ 1)
+    (hfinalScale : 0 ≤ finalScale) :
+    ∃ finalConstant finalPower : ℝ, 1 < finalConstant ∧ 0 < finalPower ∧ finalPower < 1 ∧
+      ∀ (params : AdmissibleParams) (error : ℝ), 0 ≤ error →
+        min 1 (finalScale *
+          (deltaLd soundnessConstant soundnessPower
+              (combineConstant * (params.m : ℝ) *
+                combinedError error ((params.m * params.d : ℕ) / (params.q : ℝ)) + error)
+              params.q (2 * params.m + 2) params.d 1 +
+            Real.sqrt (pointError error) + ((params.m * params.d : ℕ) / (params.q : ℝ)))) ≤
+          deltaQld finalConstant finalPower error params.m params.d params.q := by
+  obtain ⟨pointConstant, pointPower, hpointConstant, hpointPower, hpointBound⟩ := hpoint
+  obtain ⟨lineConstant, errorPower, ratioPower, hlineConstant,
+    herrorPower, hratioPower, hlineBound⟩ := hcombined
+  obtain ⟨hA, hB, hBOne, hbound⟩ := global_pair_error_bound_explicit pointError
+    pointConstant pointPower hpointConstant hpointPower hpointBound combinedError
+    lineConstant errorPower ratioPower hlineConstant herrorPower hratioPower hlineBound
+    combineConstant soundnessConstant soundnessPower finalScale hcombineConstant
+    hsoundnessConstant hsoundnessPower hsoundnessPowerOne hfinalScale
+  exact ⟨globalPairBoundConstant pointConstant lineConstant combineConstant
+      soundnessConstant soundnessPower ratioPower finalScale,
+    globalPairBoundPower pointPower errorPower ratioPower soundnessPower,
+    hA, hB, hBOne, hbound⟩
 
 end MIPStarRE.QPBT

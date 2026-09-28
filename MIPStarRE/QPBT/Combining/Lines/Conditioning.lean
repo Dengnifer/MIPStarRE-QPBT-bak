@@ -57,11 +57,70 @@ theorem consistencyDefect_nondegenerateLinePastingDist_le {P : AdmissibleParams}
 
 /-- The supplied completed point marginals, with answers ordered Z then X,
 satisfy both conditioned line comparisons with error
-`(8 * δQ + C * (ε + deltaLine ε)) / r`. The line families depend only on the
-common line-pair question. This proves the marginal inputs in the source order
-for the X-outer sandwich, rather than assuming them or omitting the point error.
-Source: `eq:pasting-q1`, paper `14_analysis_of_the_pauli_basis_test.tex:936-963`.
-Tensor-register transport to the bipartite pasting theorem remains separate. -/
+`(8 * δQ + 2080 * (ε + deltaLine ε)) / r`. The line families depend only on
+the common line-pair question. This proves the marginal inputs in the source
+order for the X-outer sandwich, rather than assuming them or omitting the point
+error. Source: `eq:pasting-q1`, paper
+`14_analysis_of_the_pauli_basis_test.tex:936-963`. Tensor-register transport
+to the bipartite pasting theorem remains separate. -/
+theorem combined_points_conditioned_line_marginal_defect_le_explicit
+    (P : AdmissibleParams) (ε δQ : ℝ) (S : ProjectiveSetting P ε)
+    (points : CombinedPointsWitness S δQ)
+    (p1 p2 : Placement) (hopp : p1.IsOpposite p2) :
+        consistencyDefect (nondegenerateLinePastingDist P.toLdParams)
+          (fun question answer => S.place p1
+            ((((points.Q p1.side question.2.2 question.1.2.2).postprocess
+              (fun pair => (some pair.2, some pair.1))).postprocess Prod.fst).effect answer))
+          (fun question answer => S.place p2
+            ((S.lineEvalMeasExp p2.side .Z question.1.1.2 question.1.2.2).effect answer))
+          S.psiHat ≤ (8 * δQ + 2080 * (ε + deltaLine ε)) /
+            nondegenerateLinePastingMass P.toLdParams ∧
+        consistencyDefect (nondegenerateLinePastingDist P.toLdParams)
+          (fun question answer => S.place p1
+            ((((points.Q p1.side question.2.2 question.1.2.2).postprocess
+              (fun pair => (some pair.2, some pair.1))).postprocess Prod.snd).effect answer))
+          (fun question answer => S.place p2
+            ((S.lineEvalMeasExp p2.side .X question.1.1.1 question.2.2).effect answer))
+          S.psiHat ≤ (8 * δQ + 2080 * (ε + deltaLine ε)) /
+            nondegenerateLinePastingMass P.toLdParams := by
+  classical
+  have hswap (side : PlayerSide) (pointX pointZ : Fin P.m → PauliScalar P)
+      (answer : Option (PauliScalar P)) :
+      (((points.Q side pointX pointZ).postprocess
+        (fun pair => (some pair.2, some pair.1))).postprocess Prod.fst).effect answer =
+        (((points.Q side pointX pointZ).postprocess
+          (fun pair => (some pair.1, some pair.2))).postprocess Prod.snd).effect answer ∧
+      (((points.Q side pointX pointZ).postprocess
+        (fun pair => (some pair.2, some pair.1))).postprocess Prod.snd).effect answer =
+        (((points.Q side pointX pointZ).postprocess
+          (fun pair => (some pair.1, some pair.2))).postprocess Prod.fst).effect answer := by
+    simp only [MIPStarRE.Quantum.Measurement.postprocess_comp, and_self]
+  simp_rw [(hswap _ _ _ _).1, (hswap _ _ _ _).2]
+  have hmass := (prod_linePointDist_nondegenerate_mass_pos P.toLdParams).le
+  constructor
+  · have h := (consistencyDefect_nondegenerateLinePastingDist_le S p1 p2 hopp
+      (fun sample => ((points.Q p1.side sample.1.2 sample.2.2).postprocess
+        (fun pair => (some pair.1, some pair.2))).postprocess Prod.snd)
+      (fun sample => S.lineEvalMeasExp p2.side .Z sample.2.1 sample.2.2)).trans
+      (div_le_div_of_nonneg_right
+        (combined_points_line_marginal_defect_le_explicit P ε δQ S points p1 p2 hopp).2
+        hmass)
+    unfold consistencyDefect nondegenerateLinePastingDist at h ⊢
+    simp only [Distribution.avgOver_map] at h ⊢
+    exact h
+  · have h := (consistencyDefect_nondegenerateLinePastingDist_le S p1 p2 hopp
+      (fun sample => ((points.Q p1.side sample.1.2 sample.2.2).postprocess
+        (fun pair => (some pair.1, some pair.2))).postprocess Prod.fst)
+      (fun sample => S.lineEvalMeasExp p2.side .X sample.1.1 sample.1.2)).trans
+      (div_le_div_of_nonneg_right
+        (combined_points_line_marginal_defect_le_explicit P ε δQ S points p1 p2 hopp).1
+        hmass)
+    unfold consistencyDefect nondegenerateLinePastingDist at h ⊢
+    simp only [Distribution.avgOver_map] at h ⊢
+    exact h
+
+/-- Existential packaging of the fixed conditioned line-marginal coefficient
+`2080`. -/
 theorem exists_combinedPoints_conditioned_line_marginal_defect_le :
     ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ (P : AdmissibleParams) (ε δQ : ℝ) (S : ProjectiveSetting P ε)
@@ -83,42 +142,11 @@ theorem exists_combinedPoints_conditioned_line_marginal_defect_le :
             ((S.lineEvalMeasExp p2.side .X question.1.1.1 question.2.2).effect answer))
           S.psiHat ≤ (8 * δQ + constant * (ε + deltaLine ε)) /
             nondegenerateLinePastingMass P.toLdParams := by
-  obtain ⟨constant, hconstant, hbound⟩ := exists_combinedPoints_line_marginal_defect_le
-  refine ⟨constant, hconstant, ?_⟩
-  intro P ε δQ S points p1 p2 hopp
-  classical
-  have hswap (side : PlayerSide) (pointX pointZ : Fin P.m → PauliScalar P)
-      (answer : Option (PauliScalar P)) :
-      (((points.Q side pointX pointZ).postprocess
-        (fun pair => (some pair.2, some pair.1))).postprocess Prod.fst).effect answer =
-        (((points.Q side pointX pointZ).postprocess
-          (fun pair => (some pair.1, some pair.2))).postprocess Prod.snd).effect answer ∧
-      (((points.Q side pointX pointZ).postprocess
-        (fun pair => (some pair.2, some pair.1))).postprocess Prod.snd).effect answer =
-        (((points.Q side pointX pointZ).postprocess
-          (fun pair => (some pair.1, some pair.2))).postprocess Prod.fst).effect answer := by
-    simp only [MIPStarRE.Quantum.Measurement.postprocess_comp, and_self]
-  simp_rw [(hswap _ _ _ _).1, (hswap _ _ _ _).2]
-  have hmass := (prod_linePointDist_nondegenerate_mass_pos P.toLdParams).le
-  constructor
-  · have h := (consistencyDefect_nondegenerateLinePastingDist_le S p1 p2 hopp
-      (fun sample => ((points.Q p1.side sample.1.2 sample.2.2).postprocess
-        (fun pair => (some pair.1, some pair.2))).postprocess Prod.snd)
-      (fun sample => S.lineEvalMeasExp p2.side .Z sample.2.1 sample.2.2)).trans
-      (div_le_div_of_nonneg_right (hbound P ε δQ S points p1 p2 hopp).2 hmass)
-    unfold consistencyDefect nondegenerateLinePastingDist at h ⊢
-    simp only [Distribution.avgOver_map] at h ⊢
-    exact h
-  · have h := (consistencyDefect_nondegenerateLinePastingDist_le S p1 p2 hopp
-      (fun sample => ((points.Q p1.side sample.1.2 sample.2.2).postprocess
-        (fun pair => (some pair.1, some pair.2))).postprocess Prod.fst)
-      (fun sample => S.lineEvalMeasExp p2.side .X sample.1.1 sample.1.2)).trans
-      (div_le_div_of_nonneg_right (hbound P ε δQ S points p1 p2 hopp).1 hmass)
-    unfold consistencyDefect nondegenerateLinePastingDist at h ⊢
-    simp only [Distribution.avgOver_map] at h ⊢
-    exact h
+  exact ⟨2080, by norm_num,
+    combined_points_conditioned_line_marginal_defect_le_explicit⟩
 
 set_option maxHeartbeats 800000 in
+-- Transport through the mapped product distribution expands two postprocessed families.
 /-- Restore the unconditioned consistency defect with its retained-mass factor
 and additive cost at most `1/(2q)`. This holds for the supplied measurement
 families on every directed opposite placement, without a defect hypothesis.
