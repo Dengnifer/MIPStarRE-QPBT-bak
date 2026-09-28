@@ -37,7 +37,7 @@ gives
   (eps^(1/1024) + (d/q)^(1/1024) + exp(-k/(80000m^2)))`.
 
 The certificates `120010 <= (9/2)^8` and `2221*(9/2) <= 10000`, together with
-three square-root envelope steps, yield the raw error
+three square-root envelope steps, yield the uncapped error
 
 `T = 10000 k^(1/4) m^(1/2)
   (eps^(1/8192) + (d/q)^(1/8192) + exp(-k/(640000m^2)))`.

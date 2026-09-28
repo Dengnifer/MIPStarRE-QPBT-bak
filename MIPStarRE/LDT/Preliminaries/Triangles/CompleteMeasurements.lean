@@ -45,7 +45,7 @@ theorem measurementProjectivityDefect_nonneg
 
 /-- For complete measurements, twice the consistency defect is the squared
 distance plus the two nonnegative projectivity defects. -/
-theorem two_mul_qConsDefect_eq_qSDD_add_projectivityDefects
+theorem two_mul_qConsDefect_eq_qSDD_add_projectivity_defects
     {Outcome ι : Type*} [Fintype Outcome] [Fintype ι] [DecidableEq ι]
     (ψ : QuantumState ι) (A B : Measurement Outcome ι) :
     2 * qConsDefect ψ A.toSubMeas B.toSubMeas =
@@ -155,10 +155,10 @@ theorem qConsDefect_triangle_three_of_measurements
     C.toSubMeas D.toSubMeas
   have hBCsym := qSDD_symm ψ B.toSubMeas C.toSubMeas
   rw [hBCsym] at htri
-  have hAB := two_mul_qConsDefect_eq_qSDD_add_projectivityDefects ψ A B
-  have hCB := two_mul_qConsDefect_eq_qSDD_add_projectivityDefects ψ C B
-  have hCD := two_mul_qConsDefect_eq_qSDD_add_projectivityDefects ψ C D
-  have hAD := two_mul_qConsDefect_eq_qSDD_add_projectivityDefects ψ A D
+  have hAB := two_mul_qConsDefect_eq_qSDD_add_projectivity_defects ψ A B
+  have hCB := two_mul_qConsDefect_eq_qSDD_add_projectivity_defects ψ C B
+  have hCD := two_mul_qConsDefect_eq_qSDD_add_projectivity_defects ψ C D
+  have hAD := two_mul_qConsDefect_eq_qSDD_add_projectivity_defects ψ A D
   have hA0 := measurementProjectivityDefect_nonneg ψ A
   have hB0 := measurementProjectivityDefect_nonneg ψ B
   have hC0 := measurementProjectivityDefect_nonneg ψ C
@@ -188,8 +188,8 @@ theorem qBipartiteConsDefect_triangle_three_of_measurements
 
 If `A` is consistent with `B`, `C` is consistent with `B`, and `C` is
 consistent with `D`, then `A` is consistent with `D` at three times the sum of
-the input errors.  Unlike `prop:simeq-triangle-inequality`, this sharper bound
-uses completeness of all four families. -/
+the input errors.  This alternative linear bound also requires completeness of
+all four families. -/
 theorem consistency_triangle_three_heterogeneous
     {Question Outcome ιA ιB : Type*} [Fintype Outcome]
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]

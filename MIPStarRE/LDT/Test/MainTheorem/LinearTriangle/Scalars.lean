@@ -5,7 +5,7 @@ import MIPStarRE.LDT.Test.MainTheorem.SourceScalars
 # Scalar bounds for the complete-measurement linear triangle
 
 This module bounds the literal errors returned by the linear-triangle source
-construction.  The small-error argument is organized around the new raw error
+construction.  The small-error argument is organized around the new uncapped error
 `mainFormalLinearTriangleRawError`; it does not assume that the older
 `mainFormalError` is below one.
 
@@ -41,7 +41,7 @@ noncomputable def mainFormalLinearTriangleError
     (params : Parameters) (k : ℕ) (eps : Error) : Error :=
   min 1 (mainFormalLinearTriangleRawError params k eps)
 
-/-- The raw linear-triangle error is nonnegative when `eps` is nonnegative. -/
+/-- The uncapped linear-triangle error is nonnegative when `eps` is nonnegative. -/
 theorem mainFormalLinearTriangleRawError_nonneg
     (params : Parameters) (k : ℕ) {eps : Error} (heps : 0 ≤ eps) :
     0 ≤ mainFormalLinearTriangleRawError params k eps := by
@@ -61,7 +61,7 @@ theorem mainFormalLinearTriangleRawError_nonneg
 for the main-induction estimate follows from the theorem's boundary data.
 
 If either `eps > 1` or `d/q > 1`, one summand of the new envelope is at least
-one, while the prefactor is at least `10000`; hence the raw error cannot be
+one, while the prefactor is at least `10000`; hence the uncapped error cannot be
 below one.
 
 **Lean-only:** This scalar domain reduction supports the alternative error
@@ -69,8 +69,8 @@ cascade derived from the final construction in
 `references/ldt-paper/inductive_step.tex:68-234`; it is not asserted as a
 separate paper lemma and adds no hypothesis to `thm:main-formal`. Issue #728.
 Discharge: proved here from the small-error assumption, since `eps > 1` or
-`d/q > 1` would force the raw error to be at least one. -/
-theorem cascadeHypotheses_of_mainFormalLinearTriangleRawError_lt_one
+`d/q > 1` would force the uncapped error to be at least one. -/
+theorem cascade_hypotheses_of_mainFormalLinearTriangleRawError_lt_one
     {params : Parameters} {k : ℕ} {eps : Error}
     (hepsNN : 0 ≤ eps) (hk0 : 0 < k)
     (hsmall : mainFormalLinearTriangleRawError params k eps < 1) :
@@ -194,7 +194,7 @@ theorem stepEnvelope1024_rpow_eighth_le
 /-- Eighth-root extraction for the intermediate linear-triangle error.
 
 The numerical certificate is `120010 ≤ (9/2)^8`. -/
-theorem rpow_linearTriangleScale_eighth_le
+theorem rpow_linear_triangle_scale_eighth_le
     {params : Parameters} {k : ℕ} {eps z : Error}
     (h : CascadeHypotheses params k eps)
     (hz0 : 0 ≤ z)
@@ -307,9 +307,9 @@ theorem rpow_linearTriangleScale_eighth_le
           stepEnvelope params k eps (8192 : Error) (640000 : Error) := by rfl
 
 /-- The literal point and full-polynomial errors from the linear-triangle
-construction are both bounded by the new raw error in its non-saturated
+construction are both bounded by the new uncapped error in its non-saturated
 branch. -/
-theorem linearTriangleSourceErrors_le_rawError
+theorem linear_triangle_source_errors_le_uncapped_error
     {params : Parameters} {k : ℕ} {eps : Error}
     (hepsNN : 0 ≤ eps) (hk0 : 0 < k)
     (hsmall : mainFormalLinearTriangleRawError params k eps < 1) :
@@ -330,7 +330,7 @@ theorem linearTriangleSourceErrors_le_rawError
   change 3 * (s + eta + v / 2) ≤ mainFormalLinearTriangleRawError params k eps ∧
     v / 2 ≤ mainFormalLinearTriangleRawError params k eps
   let h : CascadeHypotheses params k eps :=
-    cascadeHypotheses_of_mainFormalLinearTriangleRawError_lt_one hepsNN hk0 hsmall
+    cascade_hypotheses_of_mainFormalLinearTriangleRawError_lt_one hepsNN hk0 hsmall
   let E : Error := stepEnvelope params k eps (1024 : Error) (80000 : Error)
   let K : Error := ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ))
   have hE0 : 0 ≤ E := by simpa [E] using stepEnvelope_nonneg (h := h)
@@ -415,7 +415,7 @@ theorem linearTriangleSourceErrors_le_rawError
       (9 / 2 : Error) * Real.rpow (k : Error) (1 / (4 : Error)) *
         Real.rpow (params.m : Error) (1 / (2 : Error)) *
         stepEnvelope params k eps (8192 : Error) (640000 : Error) := by
-    apply rpow_linearTriangleScale_eighth_le h hz0
+    apply rpow_linear_triangle_scale_eighth_le h hz0
     calc
       z ≤ 120010 * K * E := hz
       _ = 120010 * ((k : Error) ^ (2 : ℕ)) *

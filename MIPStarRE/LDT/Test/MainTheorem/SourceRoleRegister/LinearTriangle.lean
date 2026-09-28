@@ -32,7 +32,7 @@ The unsymmetrized point-consistency error is
 `s = 2 * mainInductionError`.  The linear triangle gives evaluated polynomial
 consistency at `6 * s + 9 * eps`; the existing Schwartz--Zippel step then adds
 `m*d/q`. -/
-theorem sourceRoleRegisterCompletePolynomialSelfConsistency_linearTriangle
+theorem source_role_register_complete_polynomial_self_consistency_linear_triangle
     (params : Parameters)
     [FieldModel params.q]
     {ιA ιB : Type*}
@@ -125,12 +125,13 @@ theorem sourceRoleRegisterCompletePolynomialSelfConsistency_linearTriangle
 route, before the scalar envelope is imposed.
 
 Writing `s = 2I`, the first complete-measurement triangle and
-Schwartz--Zippel step give `z = 6s + 9eps + md/q`.  The existing completion and
-repaired line-169 construction supplies
-`c = orthonormalizeAndCompleteError z`, `eta = z + sqrt(orthonormalizationError z)`,
-and `v = 6z + 6c`.  Both final point conclusions then have error
-`3 * (s + eta + v/2)`, while full-polynomial consistency has error `v/2`. -/
-theorem sourceRoleRegisterFinalPointConsistency_linearTriangle
+Schwartz--Zippel step give `z = 6s + 9eps + md/q`.  Orthogonalization,
+completion to projective measurements, and the consistency estimate after
+completion supply `c = orthonormalizeAndCompleteError z`,
+`eta = z + sqrt(orthonormalizationError z)`, and `v = 6z + 6c`.  Both final
+point conclusions then have error `3 * (s + eta + v/2)`, while full-polynomial
+consistency has error `v/2`. -/
+theorem source_role_register_final_point_consistency_linear_triangle
     (params : Parameters)
     [FieldModel params.q]
     {ιA ιB : Type*}
@@ -187,7 +188,7 @@ theorem sourceRoleRegisterFinalPointConsistency_linearTriangle
           ConsRel strategy.state (uniformDistribution Unit)
             (constSubMeasFamily Q_A.toSubMeas)
             (constSubMeasFamily Q_B.toSubMeas) (v / 2)
-  rcases sourceRoleRegisterCompletePolynomialSelfConsistency_linearTriangle
+  rcases source_role_register_complete_polynomial_self_consistency_linear_triangle
       params strategy eps hpass k hk with ⟨G_A, G_B, hpointAGB, hGApointB, hfull⟩
   have hfullz : ConsRel strategy.state (uniformDistribution Unit)
       (constSubMeasFamily G_A.toSubMeas)

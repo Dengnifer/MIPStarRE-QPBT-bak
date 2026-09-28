@@ -319,7 +319,7 @@ assert_standard_axioms MIPStarRE.LDT.Test.main_formal_explicit_baseline
 assert_standard_axioms
   MIPStarRE.LDT.Preliminaries.consistency_triangle_three_heterogeneous
 assert_standard_axioms
-  MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency_linearTriangle
+  MIPStarRE.LDT.ProjStrat.source_role_register_final_point_consistency_linear_triangle
 assert_standard_axioms MIPStarRE.LDT.Test.main_formal_linear_triangle_bound
 assert_standard_axioms
   MIPStarRE.LDT.Test.mainFormalLinearTriangleError_le_min_mainFormalError

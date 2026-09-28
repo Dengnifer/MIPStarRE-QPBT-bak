@@ -194,3 +194,61 @@ attempted baseline checkpoint commit failed while creating the worktree
 `index.lock`; no commit could be created in this session.  The implementation
 and validation artifacts remain in the worktree for the integration
 coordinator to commit and run through canonical PR CI and independent review.
+
+## 2026-09-29 exact-head review repair
+
+The adopted review findings for PR #731 were resolved without changing any
+theorem hypothesis, conclusion, error function, or numerical constant.
+
+- F1: the newly introduced theorem names now follow snake case.  Camel-case
+  substrings remain only where they are the exact names of definitions such as
+  `mainFormalLinearTriangleError`, `qConsDefect`, or `stepEnvelope`.
+- F2: the blueprint now states the indexed triangle for finitely supported
+  nonnegative weights, without a normalization hypothesis; finitely supported
+  probability distributions are identified as a special case.
+- F3: the quantitative proof first assumes `T < 1`, derives `eps <= 1` and
+  `d <= q`, proves `2221 * z^(1/8) <= T < 1`, derives `z <= 1`, and only then
+  applies the orthogonalization and completion estimates.
+- F4: all 23 declarations added by issue #728 now have blueprint links.  The
+  auxiliary nodes state the projectivity defect, its decomposition identity,
+  the pointwise triangles, both error functions, both measurement
+  constructions, the branch theorems, and the scalar estimates.
+- F5: statement dependencies now record only the objects needed to state each
+  result, while proof dependencies record the construction, scalar estimate,
+  and branch theorems actually used.
+- F6: the explicit-baseline proof is expressed as a mathematical specialization
+  of the displayed value in `thm:main-formal`.
+- F7: current prose uses orthogonalization, completion to projective
+  measurements, the consistency estimate after completion, and uncapped error.
+  These terms supersede the process-shaped wording in the earlier audit entry.
+- F8: the complete-measurement linear triangle is an alternative bound, not a
+  uniform improvement over the paper's mixed bound
+  `eps + 2 * sqrt (delta + gamma)`.  Both require complete measurements.  The
+  proved strict comparison applies to the final capped quantitative error when
+  `mainFormalError < 1`.
+
+Focused validation after the repair:
+
+- `lake env lean` passed for the complete-measurement triangle, the role-register
+  construction, the scalar estimates, the final linear-triangle theorem, and
+  `MIPStarRE/LDT/Test/AxiomAudit.lean`.
+- Focused `lake build` targets for the three renamed dependencies and the final
+  linear-triangle module passed.  A full unlocked build was not run; the
+  integration coordinator retains exact-head CI ownership.
+- `leanblueprint web` passed.
+- `python3 scripts/blueprint_lean_sync.py --root . --ci` passed; the remaining
+  orphan and missing-proof warnings are in unchanged QPBT chapters.
+- `python3 scripts/blueprint_leanok_axioms.py --ci` checked 1932 declarations
+  with zero failures and no proof-level `sorryAx` dependency.
+- `lake exe checkdecls blueprint/lean_decls` resolved all 2197 generated
+  declaration entries.
+- `git diff --check`, the hook installation check, the changed-file proof-hole
+  scan, and the added-token proof-integrity scan passed.
+
+The remaining new theorem stem was subsequently corrected to
+`cascade_hypotheses_of_mainFormalLinearTriangleRawError_lt_one`, with its two
+Lean occurrences and blueprint link updated. Its focused Lean check and module
+build passed. After the web build regenerated the declaration inventory, the
+inventory was regenerated from the active blueprint references and the global
+synchronization check passed. The four orphan tags and two missing proof-level
+tags reported by that check are in unchanged QPBT chapters.

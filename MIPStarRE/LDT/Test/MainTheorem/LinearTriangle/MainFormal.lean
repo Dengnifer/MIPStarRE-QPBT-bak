@@ -30,7 +30,7 @@ namespace Test
 
 /-- Saturated branch for the linear-triangle error.
 
-When the raw error is at least one, arbitrary projective polynomial
+When the uncapped error is at least one, arbitrary projective polynomial
 measurements satisfy all three conclusions because normalized bipartite
 consistency defects are bounded by one.
 
@@ -40,7 +40,7 @@ stated in `references/ldt-paper/test_definition.tex:180-202`. It is not an
 additional source hypothesis. Issue #728. Discharge: proved here from the
 universal normalized-consistency bound, using arbitrary projective polynomial
 measurements once the capped error is `1`. -/
-theorem mainFormalLinearTriangle_trivial_witness
+theorem main_formal_linear_triangle_trivial_witness
     (params : Parameters)
     [FieldModel params.q]
     {ιA ιB : Type*}
@@ -83,10 +83,10 @@ theorem mainFormalLinearTriangle_trivial_witness
 /-- Small-error branch for the linear-triangle construction.
 
 The witnesses are exactly those built by
-`ProjStrat.sourceRoleRegisterFinalPointConsistency_linearTriangle`; the scalar
-theorem `linearTriangleSourceErrors_le_rawError` absorbs its literal point and
-full-polynomial errors into the new raw error. -/
-theorem mainFormalLinearTriangle_smallErrorConclusion
+`ProjStrat.source_role_register_final_point_consistency_linear_triangle`; the
+scalar theorem `linear_triangle_source_errors_le_uncapped_error` absorbs its
+literal point and full-polynomial errors into the new uncapped error. -/
+theorem main_formal_linear_triangle_small_error_conclusion
     (params : Parameters)
     [FieldModel params.q]
     {ιA ιB : Type*}
@@ -124,12 +124,12 @@ theorem mainFormalLinearTriangle_smallErrorConclusion
       3 * (s + eta + v / 2) ≤ mainFormalLinearTriangleRawError params k eps ∧
         v / 2 ≤ mainFormalLinearTriangleRawError params k eps := by
     simpa [s, z, c, eta, v] using
-      linearTriangleSourceErrors_le_rawError hepsNN hk0 hsmall
+      linear_triangle_source_errors_le_uncapped_error hepsNN hk0 hsmall
   have herror : mainFormalLinearTriangleError params k eps =
       mainFormalLinearTriangleRawError params k eps := by
     unfold mainFormalLinearTriangleError
     exact min_eq_right hsmall.le
-  rcases ProjStrat.sourceRoleRegisterFinalPointConsistency_linearTriangle
+  rcases ProjStrat.source_role_register_final_point_consistency_linear_triangle
       params strategy eps hpass k hk with ⟨Q_A, Q_B, hA, hB, _hEval, hFull⟩
   refine ⟨Q_A, Q_B, ?_, ?_, ?_⟩
   · rw [herror]
@@ -144,7 +144,7 @@ using the named capped error `mainFormalLinearTriangleError`.
 
 This theorem has exactly the strategy, test-passing, large-`k`, and nonzero-`k`
 hypotheses of `mainFormal`; it adds no bridge or construction input. -/
-theorem mainFormalLinearTriangle
+theorem main_formal_linear_triangle
     (params : Parameters)
     [FieldModel params.q]
     {ιA ιB : Type*}
@@ -172,8 +172,9 @@ theorem mainFormalLinearTriangle
             (mainFormalLinearTriangleError params k eps) := by
   let hpasses : strategy.PassesLowIndividualDegreeTest eps := ⟨hpass⟩
   by_cases hlarge : 1 ≤ mainFormalLinearTriangleRawError params k eps
-  · exact mainFormalLinearTriangle_trivial_witness params strategy eps k hlarge
-  · exact mainFormalLinearTriangle_smallErrorConclusion params strategy eps hpasses k hk hk0
+  · exact main_formal_linear_triangle_trivial_witness params strategy eps k hlarge
+  · exact main_formal_linear_triangle_small_error_conclusion
+      params strategy eps hpasses k hk hk0
       (lt_of_not_ge hlarge)
 
 /-- Explicit numerical form of the complete-measurement linear-triangle
@@ -232,11 +233,11 @@ theorem main_formal_linear_triangle_bound
                 Real.exp (-((k : Error) /
                   (640000 * ((params.m : Error) ^ (2 : ℕ)))))))) := by
   simpa [mainFormalLinearTriangleError, mainFormalLinearTriangleRawError,
-    stepEnvelope] using mainFormalLinearTriangle params strategy eps hpass k hk hk0
+    stepEnvelope] using main_formal_linear_triangle params strategy eps hpass k hk hk0
 
-/-! ### Comparison with the previous headline -/
+/-! ### Comparison with the previous explicit error bound -/
 
-/-- In the scalar unit regime, ten times the new raw error is bounded by the
+/-- In the scalar unit regime, ten times the new uncapped error is bounded by the
 previous `mainFormalError`.
 
 The comparison uses `8192 ≤ 40000`, `640000 ≤ 2560000`,
@@ -296,7 +297,7 @@ theorem ten_mul_mainFormalLinearTriangleRawError_le_mainFormalError
           ((params.m : Error) ^ (4 : ℕ)) * mainFormalEnvelope params k eps := by ring
 
 /-- On the nonnegative-error domain of the theorem, the new capped error is no
-larger than the capped previous headline error. -/
+larger than the capped previous explicit error bound. -/
 theorem mainFormalLinearTriangleError_le_min_mainFormalError
     {params : Parameters} {k : ℕ} {eps : Error}
     (hepsNN : 0 ≤ eps) (hk0 : 0 < k) :
@@ -313,12 +314,12 @@ theorem mainFormalLinearTriangleError_le_min_mainFormalError
     rw [min_eq_right (le_of_not_ge hOldLarge)]
     exact (min_le_right _ _).trans hraw
 
-/-- Strict improvement whenever the previous headline is nontrivial.
+/-- Strict improvement whenever the previous explicit error bound is nontrivial.
 
 If `mainFormalError < 1`, the scalar unit regime holds and
-`10 * newRaw ≤ mainFormalError`.  The exponential summand makes `newRaw`
-strictly positive, so the capped new error is strictly smaller than
-`min 1 mainFormalError`. -/
+ten times the uncapped new error is at most `mainFormalError`.  The exponential
+summand makes the uncapped new error strictly positive, so the capped new error
+is smaller than `min 1 mainFormalError`. -/
 theorem mainFormalLinearTriangleError_lt_min_mainFormalError
     {params : Parameters} {k : ℕ} {eps : Error}
     (hepsNN : 0 ≤ eps) (hk0 : 0 < k)
