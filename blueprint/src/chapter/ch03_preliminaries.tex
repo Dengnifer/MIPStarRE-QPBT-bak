@@ -490,6 +490,37 @@ In particular, if $A^x_a \ot I \simeq_{\eps} I \ot C^x_a$, the question is what 
 	Convert the two consistencies involving $C$ to state-dependent distance, compose them by the triangle inequality, and transfer the result back to consistency by Lemma~\ref{prop:triangle-sub}.
 \end{proof}
 
+\begin{lemma}[Linear triangle for complete measurements]
+\label{lem:complete-measurement-consistency-triangle}
+	\lean{MIPStarRE.LDT.Preliminaries.consistency_triangle_three_heterogeneous}
+	\leanok
+	\uses{prop:triangle-inequality-for-approx_delta, def:simeq}
+	Let $A^x,C^x$ be complete measurements on Alice's space and let
+	$B^x,D^x$ be complete measurements on Bob's space, indexed by a common
+	question $x$ with an arbitrary probability distribution.  For a bipartite
+	state $\psi$, suppose
+	\[
+		A^x\ot I\simeq_\eps I\ot B^x,
+		\qquad C^x\ot I\simeq_\delta I\ot B^x,
+		\qquad C^x\ot I\simeq_\gamma I\ot D^x.
+	\]
+	Then
+	\[
+		A^x\ot I\simeq_{3(\eps+\delta+\gamma)} I\ot D^x.
+	\]
+	This is a Lean-only sharpening for complete measurements.  It is not a
+	triangle inequality for arbitrary submeasurements.
+\end{lemma}
+\begin{proof}
+	\leanok
+	For a complete measurement $A$, let
+	$u_A=\langle\sum_a(A_a-A_a^2)\rangle_\psi\ge 0$.  The consistency defect
+	$C(A,B)$ and squared state-dependent distance $D(A,B)$ satisfy
+	$2C(A,B)=D(A,B)+u_A+u_B$.  Apply the three-link squared-distance triangle
+	and discard the nonnegative endpoint projectivity defects.  Averaging over
+	the question distribution preserves the inequality.
+\end{proof}
+
 \begin{lemma}[Data processing for consistency]\label{prop:simeq-data-processing}
 	\lean{MIPStarRE.LDT.Preliminaries.simeqDataProcessing_heterogeneous}
 	\leanok

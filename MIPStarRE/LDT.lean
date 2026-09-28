@@ -26,6 +26,7 @@ import MIPStarRE.LDT.Test.StrategyPolynomialFamilies
 import MIPStarRE.LDT.Test.Classical
 import MIPStarRE.LDT.Test.SurfaceVsPoint
 import MIPStarRE.LDT.Test.MainTheorem.MainFormal
+import MIPStarRE.LDT.Test.MainTheorem.LinearTriangle.MainFormal
 import MIPStarRE.LDT.Preliminaries.FiniteFields
 import MIPStarRE.LDT.Preliminaries.Defs
 import MIPStarRE.LDT.Preliminaries.ComparisonCore

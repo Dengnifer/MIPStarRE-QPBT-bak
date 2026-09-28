@@ -326,6 +326,63 @@ theorem mainFormal
   let hpasses : strategy.PassesLowIndividualDegreeTest eps := ⟨hpass⟩
   exact mainFormalConclusion params strategy eps hpasses k hk hk0
 
+/-- Explicit numerical baseline for the corrected source statement
+`thm:main-formal`.
+
+Paper origin: `references/ldt-paper/test_definition.tex:180-202`, with the
+large-`k` and nonzero-sampling corrections documented in
+`docs/paper-gaps/issue-906-main-formal-k-bound.tex` and
+`docs/paper-gaps/issue-422-main-formal-zero-k-boundary.tex`.
+
+This Lean-only sibling unfolds `mainFormalError` and otherwise has exactly the
+hypotheses, witnesses, and three consistency conclusions of `mainFormal`.  It
+records the pre-improvement numerical baseline used in issue #728. -/
+theorem main_formal_explicit_baseline
+    (params : Parameters)
+    [FieldModel params.q]
+    {ιA ιB : Type*}
+    [Fintype ιA] [DecidableEq ιA]
+    [Fintype ιB] [DecidableEq ιB]
+    (strategy : ProjStrat params ιA ιB)
+    (eps : Error)
+    (hpass : strategy.lowIndividualDegreeFailureProbability ≤ eps)
+    (k : ℕ)
+    (hk : 400 * params.m * params.d ≤ k)
+    (hk0 : 0 < k) :
+    ∃ G_A : ProjMeas (Polynomial params) ιA,
+      ∃ G_B : ProjMeas (Polynomial params) ιB,
+        ConsRel strategy.state (uniformDistribution (Point params))
+            (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementA)
+            (polynomialEvaluationFamily params G_B.toSubMeas)
+            (100000 * ((k : Error) ^ (2 : ℕ)) *
+              ((params.m : Error) ^ (4 : ℕ)) *
+              (Real.rpow eps (1 / (40000 : Error)) +
+                Real.rpow ((params.d : Error) / (params.q : Error))
+                  (1 / (40000 : Error)) +
+                Real.exp (-((k : Error) /
+                  (2560000 * ((params.m : Error) ^ (2 : ℕ))))))) ∧
+          ConsRel strategy.state (uniformDistribution (Point params))
+            (polynomialEvaluationFamily params G_A.toSubMeas)
+            (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementB)
+            (100000 * ((k : Error) ^ (2 : ℕ)) *
+              ((params.m : Error) ^ (4 : ℕ)) *
+              (Real.rpow eps (1 / (40000 : Error)) +
+                Real.rpow ((params.d : Error) / (params.q : Error))
+                  (1 / (40000 : Error)) +
+                Real.exp (-((k : Error) /
+                  (2560000 * ((params.m : Error) ^ (2 : ℕ))))))) ∧
+          ConsRel strategy.state (uniformDistribution Unit)
+            (constSubMeasFamily G_A.toSubMeas)
+            (constSubMeasFamily G_B.toSubMeas)
+            (100000 * ((k : Error) ^ (2 : ℕ)) *
+              ((params.m : Error) ^ (4 : ℕ)) *
+              (Real.rpow eps (1 / (40000 : Error)) +
+                Real.rpow ((params.d : Error) / (params.q : Error))
+                  (1 / (40000 : Error)) +
+                Real.exp (-((k : Error) /
+                  (2560000 * ((params.m : Error) ^ (2 : ℕ))))))) := by
+  simpa [mainFormalError] using mainFormal params strategy eps hpass k hk hk0
+
 end Test
 
 end MIPStarRE.LDT

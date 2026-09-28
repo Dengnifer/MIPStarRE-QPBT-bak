@@ -12,6 +12,7 @@ import MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Bracket
 import MIPStarRE.LDT.Test.Classical
 import MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.Core
 import MIPStarRE.LDT.Test.MainTheorem.MainFormal
+import MIPStarRE.LDT.Test.MainTheorem.LinearTriangle.MainFormal
 import MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final
 import MIPStarRE.LDT.Test.StrategyBiProjUnsymmetrization
 
@@ -314,6 +315,16 @@ assert_standard_axioms
 assert_standard_axioms MIPStarRE.LDT.Test.mainFormal_smallErrorConclusion
 assert_standard_axioms MIPStarRE.LDT.Test.mainFormalConclusion
 assert_standard_axioms MIPStarRE.LDT.Test.mainFormal
+assert_standard_axioms MIPStarRE.LDT.Test.main_formal_explicit_baseline
+assert_standard_axioms
+  MIPStarRE.LDT.Preliminaries.consistency_triangle_three_heterogeneous
+assert_standard_axioms
+  MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency_linearTriangle
+assert_standard_axioms MIPStarRE.LDT.Test.main_formal_linear_triangle_bound
+assert_standard_axioms
+  MIPStarRE.LDT.Test.mainFormalLinearTriangleError_le_min_mainFormalError
+assert_standard_axioms
+  MIPStarRE.LDT.Test.mainFormalLinearTriangleError_lt_min_mainFormalError
 
 /-! Chapter 2 interfaces used by the final-theorem route.  These are
 foundational definitions and elementary API statements; the regression check is

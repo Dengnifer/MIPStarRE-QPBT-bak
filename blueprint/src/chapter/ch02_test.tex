@@ -214,6 +214,102 @@
 	\cite{gap:issue-422-main-formal-zero-k-boundary}.
 \end{proof}
 
+\begin{proposition}[Explicit Lean baseline for the final theorem]
+\label{prop:main-formal-explicit-baseline}
+	\lean{MIPStarRE.LDT.Test.main_formal_explicit_baseline}
+	\leanok
+	\uses{thm:main-formal}
+	Under exactly the hypotheses of Theorem~\ref{thm:main-formal}, the same two
+	projective polynomial measurements satisfy all three conclusions with the
+	explicit error
+	\[
+		\nu_{\mathrm{base}}=
+		100000 k^2m^4\left(
+			\eps^{1/40000}+(d/q)^{1/40000}
+			+e^{-k/(2560000m^2)}\right).
+	\]
+	This proposition is a Lean-only explicit restatement of the corrected
+	source theorem, not a second source claim.
+\end{proposition}
+\begin{proof}
+	\leanok
+	Unfold \texttt{mainFormalError} in Theorem~\ref{thm:main-formal}.
+\end{proof}
+
+\begin{theorem}[Complete-measurement linear-triangle bound]
+\label{thm:main-formal-linear-triangle}
+	\lean{MIPStarRE.LDT.Test.main_formal_linear_triangle_bound}
+	\leanok
+	\uses{thm:main-formal, lem:complete-measurement-consistency-triangle}
+	Let $(\psi,A^{\mathrm A},B^{\mathrm A},L^{\mathrm A},
+	A^{\mathrm B},B^{\mathrm B},L^{\mathrm B})$ be a projective strategy that
+	passes the $(m,q,d)$ low individual degree test with probability at least
+	$1-\eps$.  Let $k>0$ be an integer with $k\ge 400md$, and set
+	\[
+		T=10000 k^{1/4}m^{1/2}\left(
+			\eps^{1/8192}+(d/q)^{1/8192}
+			+e^{-k/(640000m^2)}\right),
+		\qquad \nu_{\mathrm{lin}}=\min\{1,T\}.
+	\]
+	Then there are projective measurements
+	$Q^{\mathrm A},Q^{\mathrm B}\in\polymeas{m}{q}{d}$ such that, on average
+	over $u\sim\F_q^m$,
+	\[
+		A_a^{\mathrm A,u}\ot I\simeq_{\nu_{\mathrm{lin}}}
+			I\ot Q^{\mathrm B}_{[g(u)=a]},
+		\qquad
+		I\ot A_a^{\mathrm B,u}\simeq_{\nu_{\mathrm{lin}}}
+			Q^{\mathrm A}_{[g(u)=a]}\ot I,
+	\]
+	and
+	\[
+		Q_g^{\mathrm A}\ot I\simeq_{\nu_{\mathrm{lin}}}
+			I\ot Q_g^{\mathrm B}.
+	\]
+	This is a Lean-only quantitative improvement obtained from the source proof.
+	It does not replace or relabel Theorem~\ref{thm:main-formal}.
+\end{theorem}
+\begin{proof}
+	\leanok
+	Write $I$ for the main-induction error, $s=2I$, and
+	$z=6s+9\eps+md/q$.  Lemma~\ref{lem:complete-measurement-consistency-triangle}
+	gives this linear $z$ in place of the square-root triangle loss.  The existing
+	projectivization, completion, and repaired line-169 construction has point
+	error at most $2221z^{1/8}$ and full-polynomial error at most the same
+	quantity when $z\le 1$.  The induction estimate gives
+	\[
+		z\le 120010k^2m^4\left(
+			\eps^{1/1024}+(d/q)^{1/1024}+e^{-k/(80000m^2)}\right).
+	\]
+	The certificates $120010\le(9/2)^8$ and
+	$2221(9/2)\le10000$, followed by three square-root envelope steps, give
+	$2221z^{1/8}\le T$.  If $T\ge1$, normalized consistency defects are at most
+	one, giving the capped branch independently of the old error.
+\end{proof}
+
+\begin{proposition}[Comparison of the two capped final errors]
+\label{prop:main-formal-linear-triangle-comparison}
+	\lean{MIPStarRE.LDT.Test.mainFormalLinearTriangleError_le_min_mainFormalError}
+	\lean{MIPStarRE.LDT.Test.mainFormalLinearTriangleError_lt_min_mainFormalError}
+	\leanok
+	Assume $\eps\ge0$ and $k>0$.  With $\nu_{\mathrm{lin}}$ as above and
+	$\nu_{\mathrm{base}}$ from
+	Proposition~\ref{prop:main-formal-explicit-baseline},
+	\[
+		\nu_{\mathrm{lin}}\le\min\{1,\nu_{\mathrm{base}}\}.
+	\]
+	If $\nu_{\mathrm{base}}<1$, then the inequality is strict.  More precisely,
+	in that branch the formal scalar proof establishes
+	$10T\le\nu_{\mathrm{base}}$; the exponential summand makes $T>0$.
+\end{proposition}
+\begin{proof}
+	\leanok
+	When the old error is at least one, both sides are capped by one.  Otherwise
+	$0\le\eps\le1$ and $d/q\le1$.  Monotonicity of real powers and the exponential
+	tail, together with $k^{1/4}\le k^2$ and $m^{1/2}\le m^4$, gives the stated
+	factor-ten comparison.
+\end{proof}
+
 \begin{proposition}[Source-boundary reduction for the final theorem]\label{prop:main-formal-source-reduction}
 	\lean{MIPStarRE.LDT.Test.mainFormalConclusion}
 	\leanok
