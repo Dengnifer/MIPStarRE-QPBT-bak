@@ -214,6 +214,354 @@
 	\cite{gap:issue-422-main-formal-zero-k-boundary}.
 \end{proof}
 
+\begin{proposition}[Explicit Lean baseline for the final theorem]
+\label{prop:main-formal-explicit-baseline}
+	\lean{MIPStarRE.LDT.Test.main_formal_explicit_baseline}
+	\leanok
+	\uses{thm:main-formal}
+	Under exactly the hypotheses of Theorem~\ref{thm:main-formal}, the same two
+	projective polynomial measurements satisfy all three conclusions with the
+	explicit error
+	\[
+		\nu_{\mathrm{base}}=
+		100000 k^2m^4\left(
+			\eps^{1/40000}+(d/q)^{1/40000}
+			+e^{-k/(2560000m^2)}\right).
+	\]
+	This proposition is a Lean-only explicit restatement of the corrected
+	source theorem, not a second source claim.
+\end{proposition}
+\begin{proof}
+	\leanok
+	\uses{thm:main-formal}
+	The assertion follows from Theorem~\ref{thm:main-formal} with its displayed
+	value of $\nu$.
+\end{proof}
+
+\begin{definition}[Formalization support: linear-triangle final errors]
+\label{def:main-formal-linear-triangle-errors}
+	\lean{MIPStarRE.LDT.Test.mainFormalLinearTriangleRawError}
+	\lean{MIPStarRE.LDT.Test.mainFormalLinearTriangleError}
+	\leanok
+	For $r,R>0$, write
+	\[
+		E_{r,R}=\eps^{1/r}+(d/q)^{1/r}+e^{-k/(Rm^2)}.
+	\]
+	Define the uncapped and capped linear-triangle errors by
+	\[
+		T=10000k^{1/4}m^{1/2}E_{8192,640000},
+		\qquad \nu_{\mathrm{lin}}=\min\{1,T\}.
+	\]
+	These are formalization-only error functions for the alternative quantitative
+	proof of Theorem~\ref{thm:main-formal}.
+\end{definition}
+
+\begin{lemma}[Formalization support: nonnegativity of the uncapped error]
+\label{lem:main-formal-linear-triangle-error-nonnegative}
+	\lean{MIPStarRE.LDT.Test.mainFormalLinearTriangleRawError_nonneg}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors}
+	If $\eps\ge0$, then $T\ge0$.
+\end{lemma}
+\begin{proof}
+	\leanok
+	Every factor and every summand in the definition of $T$ is nonnegative.
+\end{proof}
+
+\begin{lemma}[Formalization support: scalar regime in the small-error branch]
+\label{lem:main-formal-linear-triangle-small-error-domain}
+	\lean{MIPStarRE.LDT.Test.cascade_hypotheses_of_mainFormalLinearTriangleRawError_lt_one}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors}
+	Assume $\eps\ge0$, $k>0$, and $T<1$.  Then
+	\[
+		k\ge1,\qquad m\ge1,\qquad 0\le\eps\le1,
+		\qquad d\le q,\qquad q>0.
+	\]
+\end{lemma}
+\begin{proof}
+	\leanok
+	The positivity of $k,m,q$ gives the three boundary inequalities.  If
+	$\eps>1$ or $d>q$, the corresponding summand of $E_{8192,640000}$ is at
+	least one, while the prefactor in $T$ is at least $10000$, contradicting
+	$T<1$.
+\end{proof}
+
+\begin{lemma}[Formalization support: three square-root envelope steps]
+\label{lem:main-formal-linear-triangle-envelope-eighth-root}
+	\lean{MIPStarRE.LDT.Test.stepEnvelope1024_rpow_eighth_le}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors}
+	Assume $q>0$, $k\ge1$, $m\ge1$, $0\le\eps\le1$, and $d\le q$.  Then
+	\[
+		E_{1024,80000}^{1/8}\le E_{8192,640000}.
+	\]
+\end{lemma}
+\begin{proof}
+	\leanok
+	Apply the square-root envelope estimate successively with denominator pairs
+	$(1024,80000)$, $(2048,160000)$, and $(4096,320000)$.
+\end{proof}
+
+\begin{lemma}[Formalization support: scaled eighth-root estimate]
+\label{lem:main-formal-linear-triangle-scaled-eighth-root}
+	\lean{MIPStarRE.LDT.Test.rpow_linear_triangle_scale_eighth_le}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors}
+	Under the same scalar hypotheses, suppose $z\ge0$ and
+	\[
+		z\le120010k^2m^4E_{1024,80000}.
+	\]
+	Then
+	\[
+		z^{1/8}\le\frac92 k^{1/4}m^{1/2}E_{8192,640000}.
+	\]
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:main-formal-linear-triangle-envelope-eighth-root}
+	Take eighth roots, use $120010\le(9/2)^8$, and apply the preceding envelope
+	estimate.
+\end{proof}
+
+\begin{proposition}[Formalization support: complete polynomial measurements]
+\label{prop:main-formal-linear-triangle-complete-polynomial-construction}
+	\lean{MIPStarRE.LDT.ProjStrat.source_role_register_complete_polynomial_self_consistency_linear_triangle}
+	\leanok
+	\uses{def:low-individual-degree-test, def:projective-strategy,
+		def:polymeasurements, def:simeq}
+	Let the projective strategy pass the low individual degree test with failure
+	at most $\eps$, and assume $k\ge400md$.  Set
+	\[
+		s=2I,\qquad z=6s+9\eps+md/q,
+	\]
+	where $I$ is the main-induction error at $(3\eps,3\eps,3\eps)$.  Then there
+	are complete polynomial measurements $G^{\mathrm A},G^{\mathrm B}$ such that
+	the two point-evaluation consistencies have error $s$ and their global
+	polynomial consistency has error $z$.
+\end{proposition}
+\begin{proof}
+	\leanok
+	\uses{thm:main-induction,
+		lem:heterogeneous-role-register-unsymmetrization,
+		lem:complete-measurement-consistency-triangle,
+		lem:polynomial-agreement-mdq}
+	Unsymmetrize the polynomial measurement supplied by the main-induction
+	theorem.  Apply the complete-measurement linear triangle to the two resulting
+	point-consistency estimates and the players' point agreement, then apply the
+	Schwartz--Zippel estimate to pass from evaluated to global polynomial
+	consistency.
+\end{proof}
+
+\begin{proposition}[Formalization support: final projective polynomial measurements]
+\label{prop:main-formal-linear-triangle-projective-construction}
+	\lean{MIPStarRE.LDT.ProjStrat.source_role_register_final_point_consistency_linear_triangle}
+	\leanok
+	\uses{def:low-individual-degree-test, def:projective-strategy,
+		def:polymeasurements, def:simeq}
+	Under the hypotheses of the preceding proposition, let
+	\[
+		a=100z^{1/4},
+		\qquad c=2a+4\sqrt a+2z,
+		\qquad \eta=z+\sqrt a,
+		\qquad v=6z+6c.
+	\]
+	There are projective polynomial measurements $Q^{\mathrm A},Q^{\mathrm B}$
+	for which both final point-evaluation consistencies have error
+	$3(s+\eta+v/2)$, while evaluated and global polynomial consistency have
+	error $v/2$.
+\end{proposition}
+\begin{proof}
+	\leanok
+	\uses{prop:main-formal-linear-triangle-complete-polynomial-construction,
+		lem:orthonormalization-main-lemma,
+		prop:completing-to-measurement,
+		prop:simeq-to-approx,
+		prop:simeq-data-processing,
+		lem:complete-measurement-consistency-triangle}
+	Apply orthogonalization to the two complete polynomial measurements and
+	complete the resulting projective submeasurements.  The completion estimates
+	give squared-distance error $v$ between the two completed measurements and
+	polynomial-level consistency error $\eta$ between each completed measurement
+	and the opposite original measurement.  Since the completed measurements are
+	projective, the converse in Lemma~\ref{prop:simeq-to-approx} converts the
+	squared-distance error $v=2(v/2)$ into consistency error $v/2$.  Applying
+	Lemma~\ref{prop:simeq-data-processing} to evaluation at a point preserves this
+	$v/2$ error and each $\eta$ error.  Two applications of the
+	complete-measurement linear triangle then give the final point errors
+	$3(s+\eta+v/2)$.
+\end{proof}
+
+\begin{lemma}[Formalization support: absorption of the construction errors]
+\label{lem:main-formal-linear-triangle-source-error-absorption}
+	\lean{MIPStarRE.LDT.Test.linear_triangle_source_errors_le_uncapped_error}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors}
+	Assume $\eps\ge0$, $k>0$, and $T<1$, and define $s,z,c,\eta,v$ as above.
+	Then
+	\[
+		3(s+\eta+v/2)\le T,
+		\qquad v/2\le T.
+	\]
+\end{lemma}
+\begin{proof}
+	\leanok
+	\uses{lem:main-formal-linear-triangle-small-error-domain,
+		lem:main-formal-linear-triangle-scaled-eighth-root}
+	The small-error hypothesis gives $\eps\le1$ and $d\le q$.  The
+	main-induction estimate yields
+	\[
+		z\le120010k^2m^4E_{1024,80000}.
+	\]
+	The scaled eighth-root estimate and $2221(9/2)\le10000$ imply
+	$2221z^{1/8}\le T<1$, and hence $z\le1$.  The orthogonalization and
+	completion estimates then bound both displayed construction errors by
+	$2221z^{1/8}$.
+\end{proof}
+
+\begin{proposition}[Formalization support: saturated linear-triangle branch]
+\label{prop:main-formal-linear-triangle-saturated}
+	\lean{MIPStarRE.LDT.Test.main_formal_linear_triangle_trivial_witness}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors, def:projective-strategy,
+		def:polymeasurements, def:simeq}
+	For a projective strategy on finite local Hilbert spaces, if $T\ge1$, then
+	there are projective polynomial measurements satisfying all three final
+	consistency conclusions with error $\nu_{\mathrm{lin}}$.
+\end{proposition}
+\begin{proof}
+	\leanok
+	Since $\nu_{\mathrm{lin}}=1$ in this branch, choose arbitrary projective
+	polynomial measurements and use the universal upper bound one for normalized
+	bipartite consistency defects.
+\end{proof}
+
+\begin{proposition}[Formalization support: small-error linear-triangle branch]
+\label{prop:main-formal-linear-triangle-small-error}
+	\lean{MIPStarRE.LDT.Test.main_formal_linear_triangle_small_error_conclusion}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors, def:low-individual-degree-test,
+		def:projective-strategy, def:polymeasurements, def:simeq}
+	Let the projective strategy pass the low individual degree test with failure
+	at most $\eps$.  If $k\ge400md$, $k>0$, and $T<1$, then there are projective
+	polynomial measurements satisfying all three final consistency conclusions
+	with error $\nu_{\mathrm{lin}}$.
+\end{proposition}
+\begin{proof}
+	\leanok
+	\uses{prop:main-formal-linear-triangle-projective-construction,
+		lem:main-formal-linear-triangle-source-error-absorption}
+	Use the projective measurements from the construction proposition and weaken
+	their two explicit errors using the scalar absorption lemma.  Since $T<1$,
+	the capped error equals $T$.
+\end{proof}
+
+\begin{theorem}[Formalization support: final theorem with the named capped error]
+\label{thm:main-formal-linear-triangle-named-error}
+	\lean{MIPStarRE.LDT.Test.main_formal_linear_triangle}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors, def:low-individual-degree-test,
+		def:projective-strategy, def:polymeasurements, def:simeq}
+	Under exactly the corrected hypotheses of Theorem~\ref{thm:main-formal},
+	there are projective polynomial measurements satisfying its three
+	consistency conclusions with error $\nu_{\mathrm{lin}}$.
+\end{theorem}
+\begin{proof}
+	\leanok
+	\uses{prop:main-formal-linear-triangle-saturated,
+		prop:main-formal-linear-triangle-small-error}
+	Split according to whether $T\ge1$.  Apply the saturated proposition in the
+	first case and the small-error proposition in the second.
+\end{proof}
+
+\begin{theorem}[Complete-measurement linear-triangle bound]
+\label{thm:main-formal-linear-triangle}
+	\lean{MIPStarRE.LDT.Test.main_formal_linear_triangle_bound}
+	\leanok
+	\uses{def:low-individual-degree-test, def:projective-strategy,
+		def:polymeasurements, def:simeq}
+	Let $(\psi,A^{\mathrm A},B^{\mathrm A},L^{\mathrm A},
+	A^{\mathrm B},B^{\mathrm B},L^{\mathrm B})$ be a projective strategy that
+	passes the $(m,q,d)$ low individual degree test with probability at least
+	$1-\eps$.  Let $k>0$ be an integer with $k\ge 400md$, and set
+	\[
+		T=10000 k^{1/4}m^{1/2}\left(
+			\eps^{1/8192}+(d/q)^{1/8192}
+			+e^{-k/(640000m^2)}\right),
+		\qquad \nu_{\mathrm{lin}}=\min\{1,T\}.
+	\]
+	Then there are projective measurements
+	$Q^{\mathrm A},Q^{\mathrm B}\in\polymeas{m}{q}{d}$ such that, on average
+	over $u\sim\F_q^m$,
+	\[
+		A_a^{\mathrm A,u}\ot I\simeq_{\nu_{\mathrm{lin}}}
+			I\ot Q^{\mathrm B}_{[g(u)=a]},
+		\qquad
+		I\ot A_a^{\mathrm B,u}\simeq_{\nu_{\mathrm{lin}}}
+			Q^{\mathrm A}_{[g(u)=a]}\ot I,
+	\]
+	and
+	\[
+		Q_g^{\mathrm A}\ot I\simeq_{\nu_{\mathrm{lin}}}
+			I\ot Q_g^{\mathrm B}.
+	\]
+	This is a Lean-only quantitative improvement obtained from the source proof.
+	It does not replace or relabel Theorem~\ref{thm:main-formal}.
+\end{theorem}
+\begin{proof}
+	\leanok
+	\uses{thm:main-formal-linear-triangle-named-error,
+		def:main-formal-linear-triangle-errors}
+	Apply Theorem~\ref{thm:main-formal-linear-triangle-named-error} and substitute
+	the displayed formulas for $T$ and $\nu_{\mathrm{lin}}$.
+\end{proof}
+
+\begin{lemma}[Formalization support: factor-ten comparison]
+\label{lem:main-formal-linear-triangle-factor-ten}
+	\lean{MIPStarRE.LDT.Test.ten_mul_mainFormalLinearTriangleRawError_le_mainFormalError}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors,
+		prop:main-formal-explicit-baseline}
+	Assume $q>0$, $k\ge1$, $m\ge1$, $0\le\eps\le1$, and $d\le q$.  Then
+	\[
+		10T\le \nu_{\mathrm{base}}.
+	\]
+\end{lemma}
+\begin{proof}
+	\leanok
+	Use $8192\le40000$, $640000\le2560000$,
+	$k^{1/4}\le k^2$, and $m^{1/2}\le m^4$ to compare the corresponding
+	envelopes and prefactors.
+\end{proof}
+
+\begin{proposition}[Comparison of the two capped final errors]
+\label{prop:main-formal-linear-triangle-comparison}
+	\lean{MIPStarRE.LDT.Test.mainFormalLinearTriangleError_le_min_mainFormalError}
+	\lean{MIPStarRE.LDT.Test.mainFormalLinearTriangleError_lt_min_mainFormalError}
+	\leanok
+	\uses{def:main-formal-linear-triangle-errors,
+		prop:main-formal-explicit-baseline}
+	Assume $\eps\ge0$ and $k>0$.  With $\nu_{\mathrm{lin}}$ as above and
+	$\nu_{\mathrm{base}}$ from
+	Proposition~\ref{prop:main-formal-explicit-baseline},
+	\[
+		\nu_{\mathrm{lin}}\le\min\{1,\nu_{\mathrm{base}}\}.
+	\]
+	If $\nu_{\mathrm{base}}<1$, then the inequality is strict.  More precisely,
+	in that branch the formal scalar proof establishes
+	$10T\le\nu_{\mathrm{base}}$; the exponential summand makes $T>0$.
+\end{proposition}
+\begin{proof}
+	\leanok
+	\uses{lem:main-formal-linear-triangle-factor-ten,
+		lem:main-formal-linear-triangle-error-nonnegative}
+	When the previous explicit error bound is at least one, both sides are capped
+	by one.  Otherwise
+	$0\le\eps\le1$ and $d/q\le1$.  Monotonicity of real powers and the exponential
+	tail, together with $k^{1/4}\le k^2$ and $m^{1/2}\le m^4$, gives the stated
+	factor-ten comparison.
+\end{proof}
+
 \begin{proposition}[Source-boundary reduction for the final theorem]\label{prop:main-formal-source-reduction}
 	\lean{MIPStarRE.LDT.Test.mainFormalConclusion}
 	\leanok
