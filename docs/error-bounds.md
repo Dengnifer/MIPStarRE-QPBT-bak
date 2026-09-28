@@ -1,13 +1,18 @@
 # Error bounds in the low individual degree and Pauli basis tests
 
-> **Draft status, 2026-09-28.** This report records approved mathematical
-> calculations at repository commit
-> [`7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9`][baseline-commit]. The two
-> selected improvements are **not implemented** in this draft: the LDT proof is
-> in progress under issue [#728][issue-728], and the QPBT quantitative proof is
-> in progress under issue [#729][issue-729]. No declaration name, pull request,
-> validation result, or claim of a proved improved headline is inferred from
-> those issues.
+> **Interim implementation status, 2026-09-29 (Asia/Tokyo).** The survey and
+> source-baseline references remain pinned to repository commit
+> [`7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9`][baseline-commit]. The selected
+> LDT improvement is proved and merged by [PR #731][pr-731]: canonical evidence
+> was collected on exact head
+> [`df8f6bc9255e7aa524ceebff3bffc0087dfc1ee2`][ldt-tested-head], which was
+> merged as [`fac99fdf22bbdbb83a2376ca48cd679dc7d13750`][ldt-merge], and issue
+> [#728][issue-728] is closed. The QPBT explicit baseline and selected
+> quantitative headline remain **NOT IMPLEMENTED (selected; proof in
+> progress)** under issue [#729][issue-729]. This is not the final report: no
+> theorem establishing the selected improved quantitative QPBT propagation has
+> been proved, and neither the QPBT track nor the whole project is claimed
+> complete.
 
 The main gains below concern powers and scaling, not only numerical
 coefficients. For a small number `x`, replacing `x^(1/40000)` by
@@ -51,11 +56,16 @@ and
 The report uses the following status terms.
 
 - **Baseline calculation** means that the number was reconstructed from the
-  checked-in proof at the pinned commit, but the dedicated fixed-constant
-  baseline theorem required for this project has not yet been verified.
+  checked-in proof at the pinned commit, but no dedicated fixed-constant theorem
+  has yet been verified. This status now applies to the QPBT baseline only.
+- **Proved explicit baseline** means that a dedicated declaration with the
+  displayed constants has passed exact-head validation and has been merged.
+- **IMPLEMENTED (selected; proved and merged)** means that the selected stronger
+  declaration, its baseline, and its comparison evidence are present on the
+  merged branch.
 - **NOT IMPLEMENTED (selected; proof in progress)** means that the calculation
-  was selected for issues #728 or #729, but no completed declaration or merged
-  pull request is evidence for it yet.
+  is selected for issue [#729][issue-729], but no completed and merged QPBT
+  declaration is evidence for it yet.
 - **NOT IMPLEMENTED (deferred)** means that the idea remains outside the two
   selected scopes.
 - **REJECTED** means that the proposed inference is unsupported or false for the
@@ -63,7 +73,7 @@ The report uses the following status terms.
 
 ## Part I: low individual degree test
 
-### Current baseline calculation
+### Proved explicit baseline
 
 The [source theorem `thm:main-formal`][ldt-paper-main] states the final quantum
 soundness result for the low individual degree test. The paper prints the error
@@ -78,10 +88,14 @@ soundness result for the low individual degree test. The paper prints the error
 \]
 
 The same expression is the definition of `mainFormalError` in the pinned Lean
-tree, and `mainFormal` uses it for all three final consistency conclusions.
-Nevertheless, this report treats the unfolded expression as a **baseline
-calculation** until issue #728 supplies and verifies the assigned explicit
-baseline theorem.
+tree, and `mainFormal` uses it for all three final consistency conclusions. The
+merged theorem
+[`MIPStarRE.LDT.Test.main_formal_explicit_baseline`][ldt-baseline-proved]
+unfolds this expression and proves the same three conclusions for the same
+witness pair under exactly the corrected hypotheses of `mainFormal`. Thus the
+displayed expression is now a **proved explicit baseline**, not only a
+reconstructed calculation. The source-labelled theorem and its named error
+remain unchanged.
 
 The upstream [definition `mainInductionError`][ldt-induction-error] makes the
 current induction-level baseline explicit:
@@ -100,24 +114,28 @@ This is the input whose specialization at
 \((3\varepsilon,3\varepsilon,3\varepsilon)\) is propagated through the final
 consistency argument. It is not itself one of the selected headline changes.
 
-The current Lean domain must be kept unchanged. It assumes a projective
-two-space strategy passing with failure at most \(\varepsilon\), a field model,
-and
+Both merged before/after declarations keep the current Lean domain unchanged.
+They assume a heterogeneous projective strategy on two finite local spaces, a
+field model, failure probability at most \(\varepsilon\), and
 
 \[
  k\ge 400md,\qquad k>0.
 \]
 
-It does not assume \(\varepsilon\le1\), \(d\le q\), or \(k\le q\), and it
-includes \(d=0\). The paper prints only \(k\ge md\). The stronger Lean sampling
-condition and the nonzero boundary are documented in the
+Each declaration produces one pair of projective polynomial measurements that
+satisfies all three final consistency conclusions simultaneously. Neither adds
+an assumption \(\varepsilon\le1\), \(d\le q\), or \(k\le q\); the cases
+\(d=0\) and \(k>q\) remain included. The paper prints only \(k\ge md\). The
+stronger Lean sampling condition and the nonzero boundary are documented in the
 [large-sampling correction][gap-k] and [zero-sampling correction][gap-zero].
-The selected theorem strengthens the conclusion on this current Lean domain; it
+The merged theorem strengthens the conclusion on this current Lean domain; it
 does not restore the wider printed domain.
 
-### Selected target
+### Implemented selected result
 
-The selected calculation is
+The merged theorem
+[`MIPStarRE.LDT.Test.main_formal_linear_triangle_bound`][ldt-improved-proved]
+proves
 
 \[
  \boxed{
@@ -129,25 +147,45 @@ The selected calculation is
  \right)\right\}.}
 \]
 
-Relative to the baseline calculation, the error and field exponent improves
+Relative to the proved baseline, the error and field exponent improves
 from \(1/40000\) to \(1/8192\), the external powers improve from
 \(k^2m^4\) to \(k^{1/4}m^{1/2}\), and the final exponential tail has a
 four-times smaller denominator. This is a mathematical change to the final
 consistency argument, not merely sharper coefficient bookkeeping.
 
+The proved comparison is precise about saturation. On
+\(\varepsilon\ge0\) and \(k>0\),
+[`mainFormalLinearTriangleError_le_min_mainFormalError`][ldt-comparison-le]
+shows
+
+\[
+ B_{\triangle}\le \min\{1,B_{\mathrm{LDT}}\}.
+\]
+
+If \(B_{\mathrm{LDT}}<1\),
+[`mainFormalLinearTriangleError_lt_min_mainFormalError`][ldt-comparison-lt]
+proves the inequality is strict; its proof derives the scalar unit regime and
+establishes that ten times the uncapped new error is at most the old error. No
+uniform strictness is claimed when the old error is at least one, because the
+new bound may also saturate at one.
+
 #### The complete-measurement triangle
 
-Let \(C_{AB}\) be the bipartite consistency defect of complete measurements
-\(A,B\), and let \(D_{AB}\) be the squared state-dependent distance between
-their placed operator families. Define the nonnegative projectivity defect
+For complete measurements on a common Hilbert space, let \(C_{AB}\) be the
+consistency defect formed from the real part of the off-diagonal expectation,
+and let \(D_{AB}\) be their squared state-dependent distance. The real part is
+essential because products of effects on a common space need not be Hermitian.
+After placing the two measurements on opposite tensor factors, those products
+are positive and their expectations are already real. Define the nonnegative
+projectivity defect
 
 \[
  u_A=\mathbb E_x\sum_a
  \operatorname{ev}_\psi\!\left(\widehat A_a^x-(\widehat A_a^x)^2\right),
 \]
 
-and similarly for the other families. Completeness and opposite-factor
-commutation give the exact identity
+and similarly for the other families. Completeness and this real-expectation
+convention give the exact identity
 
 \[
  2C_{AB}=D_{AB}+u_A+u_B.
@@ -164,6 +202,12 @@ gives
  C_{AD}&\le3(C_{AB}+C_{CB}+C_{CD}).
  \end{aligned}
 \]
+
+This is an alternative to the paper's mixed bound
+\(\varepsilon+2\sqrt{\delta+\gamma}\), not a uniformly sharper form of that
+bound. Both statements require complete measurements. The linear alternative
+is useful in the three applications below because it avoids the square-root
+loss along this particular final consistency argument.
 
 Completeness is essential. The statement is false for arbitrary
 submeasurements: if both intermediate submeasurements are zero, all three input
@@ -301,8 +345,8 @@ improvement.
 
 | Candidate and source | Baseline to calculated target | Headline effect | Cost and risk | Status and decision |
 |---|---|---|---|---|
-| Explicit current headline, [`mainFormalError`][ldt-error] and [`mainFormal`][ldt-main] | Named error to the unfolded formula \(B_{\mathrm{LDT}}\) above | Establishes the numerical point of comparison without changing the theorem | Low mathematical cost; dedicated theorem and audit evidence still required | **Baseline calculation; explicit baseline theorem NOT IMPLEMENTED** |
-| **Complete-measurement consistency triangle**, using [`questionSDD_triangle_three`][ldt-distance], [`qBipartiteConsDefect_of_measurements`][ldt-algebra], and the common completion witnesses in [`Completion.lean`][ldt-completion] | \(B_{\mathrm{LDT}}\to B_\triangle\) | Error/field exponent \(1/40000\to1/8192\); \(k^2m^4\to k^{1/4}m^{1/2}\); tail denominator divided by four | Medium implementation; preserve one witness pair and apply the identity only to complete measurements | **NOT IMPLEMENTED (selected; proof in progress in #728)**. Strongest settled native-LDT target and pointwise dominates the scalar-only proposal after capping |
+| Explicit current headline, [`mainFormalError`][ldt-error] and [`mainFormal`][ldt-main] | Named error to the unfolded formula \(B_{\mathrm{LDT}}\) above | Establishes the numerical point of comparison without changing the theorem | Low mathematical cost; preserve every hypothesis, witness, and conclusion | **IMPLEMENTED as the proved baseline in [PR #731][pr-731]** by [`main_formal_explicit_baseline`][ldt-baseline-proved] |
+| **Complete-measurement consistency triangle**, using [`questionSDD_triangle_three`][ldt-distance], [`qBipartiteConsDefect_of_measurements`][ldt-algebra], the common completion witnesses in [`Completion.lean`][ldt-completion], and the [merged complete-measurement triangle][ldt-triangle-proved] | \(B_{\mathrm{LDT}}\to B_\triangle\) | Error/field exponent \(1/40000\to1/8192\); \(k^2m^4\to k^{1/4}m^{1/2}\); tail denominator divided by four | Medium implementation; preserve one witness pair and apply the identity only to complete measurements | **IMPLEMENTED (selected; proved and merged in [PR #731][pr-731])** by [`main_formal_linear_triangle_bound`][ldt-improved-proved]. On \(\varepsilon\ge0\) and \(k>0\), the capped result is no larger than the capped baseline and is proved strict when \(B_{\mathrm{LDT}}<1\); it also pointwise dominates the scalar-only proposal after capping |
 | Multiplicative Bernoulli tail in [`Scalar.lean`][ldt-bernoulli], source `lem:chernoff-bernoulli-matrix` | \(e^{-k/(80000m^2)}\to e^{-k/(1600m)}\) in induction; combined with the triangle would give final tail \(e^{-k/(12800m)}\) | Major improvement to exponential dependence on dimension, but not to the error/field exponent | Medium/high; must change the answer-valued induction and all boundary branches | **NOT IMPLEMENTED (deferred)**. Significant follow-up, but broader than the selected final-triangle proof |
 | Preserve fractional prefactors in [`Final.lean`][ldt-final] | \(B_{\mathrm{LDT}}\to B_{\mathrm{frac}}\) | Better coefficient, polynomial powers, and exponent than the current LDT envelope | Low/medium scalar proof | **NOT IMPLEMENTED (deferred and dominated)**. The selected capped triangle bound is no larger everywhere |
 | Linear accumulation over dimensions in [`PastingAssembly/ErrorBounds.lean`][ldt-dimension] | \(m^2(\nu+E_m)\to(2m-1)(\nu+E_m)\) | Would reduce the leading induction dependence from order \(k^2m^4\) to order \(k^2m^3\) | Medium/high; requires a new answer-valued induction recurrence | **NOT IMPLEMENTED (deferred)**. Useful scaling gain, but separate from the two final triangles |
@@ -367,7 +411,8 @@ baseline is
 
 This exceeds \(a_0\), but it is not the exact reconstructed witness. Both
 \((a_0,b_0)\) and \((a_{\mathrm{base}},b_0)\) remain **baseline calculations**
-until issue #729 verifies an explicit fixed-witness theorem. The existing
+and are **NOT IMPLEMENTED (selected; proof in progress)** under issue
+[#729][issue-729] until it verifies an explicit fixed-witness theorem. The existing
 `pauli_soundness` theorem remains existential.
 
 ### Selected target
@@ -380,6 +425,11 @@ The selected quantitative calculation is
  =\min\{4,10^{14}(md)^4E_b\},
  \qquad b=\frac1{67108864}.}
 \]
+
+This headline remains **NOT IMPLEMENTED (selected; proof in progress)** under
+issue [#729][issue-729]. The merged native-LDT result is only one proposed input to this route;
+it does not by itself prove any QPBT propagation, fixed-witness baseline, or
+improved Pauli soundness declaration.
 
 It is intended to yield the canonical corollary
 
@@ -515,8 +565,8 @@ arguments.
 
 | Candidate and source | Baseline to calculated target | Headline effect | Cost and risk | Status and decision |
 |---|---|---|---|---|
-| Explicit current existential witnesses, from [`deltaQld`][delta-qld] and [`pauli_soundness`][pauli-soundness] | Existential \((a,b)\) to reconstructed \((a_0,1/5242880000)\), optionally padded by \(a_{\mathrm{base}}\) | Establishes the true numerical baseline, including the enormous polynomial degree | High formal plumbing through opaque existential interfaces | **Baseline calculation; explicit baseline theorem NOT IMPLEMENTED** |
-| **Selected quantitative composition**, using the improved one-coordinate LDT import, separate coefficient/degree bounds, and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransfer.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\); sharp quantitative degree becomes four; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **NOT IMPLEMENTED (selected; proof in progress in #729)** |
+| Explicit current existential witnesses, from [`deltaQld`][delta-qld] and [`pauli_soundness`][pauli-soundness] | Existential \((a,b)\) to reconstructed \((a_0,1/5242880000)\), optionally padded by \(a_{\mathrm{base}}\) | Establishes the true numerical baseline, including the enormous polynomial degree | High formal plumbing through opaque existential interfaces | **NOT IMPLEMENTED (selected; proof in progress)** under [#729][issue-729]. This remains a calculation until a fixed-witness theorem is merged |
+| **Selected quantitative composition**, using the improved one-coordinate LDT import, separate coefficient/degree bounds, and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransfer.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\); sharp quantitative degree becomes four; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **NOT IMPLEMENTED (selected; proof in progress)** under [#729][issue-729] |
 | Superseded pre-selection quantitative envelopes from the same mechanisms | Earlier calculations included \(\Delta_{100,1/2621440000}\), then \(\Delta_{100,1/327680000}\); extraction alone gave exponent \(1/655360000\), and an earlier joint LDT/extraction estimate gave \((a,b)=(10^{740},1/268435456)\) | Each improved the traced baseline, but all are weaker than the final selected calculation | Similar or greater plumbing, with worse retained constants | **NOT IMPLEMENTED (superseded)**. Recorded to preserve the survey history; not separate scopes |
 | Linear consistency calculus in commutation, starting from [`consistencyDefect_trans_le`][consistency-calculus] and [`CommutingObs.lean`][point-commutation] | Square-root transport to a linear combination for complete POVMs | Could make expanded commutation \(O(\varepsilon)\) and double the downstream exponent | Medium/broad; completeness is load-bearing and propagation is substantial | **NOT IMPLEMENTED (deferred)** |
 | Retain the Schmidt-mirror estimate in [`Pasting/Assembly.lean`][qpbt-pasting] | Pasting \(115(\eta^{1/4}+\delta^{1/8})\to12(\eta^{1/4}+\delta^{1/4})\) | Potential twofold headline exponent gain | Medium; localized proof needs a sharper parameterization | **NOT IMPLEMENTED (deferred)** |
@@ -673,7 +723,7 @@ The most useful scalar comparison is therefore:
 
 | Bound | Polynomial parameter | Error exponent | Qualification |
 |---|---:|---:|---|
-| Selected local canonical target | \(100\) | \(1/67108864\) | **NOT IMPLEMENTED**; raw prescribed-answer effects and fixed odd-extension field model |
+| Selected local canonical target | \(100\) | \(1/67108864\) | **NOT IMPLEMENTED (selected; proof in progress)** under [#729][issue-729]; raw prescribed-answer effects and fixed odd-extension field model |
 | Public reconstructed proof witness | \(a_V\) above | \(1/2560000\) | Witness used by the public existential error-shape proof |
 | Public sharper calculated envelope | \(10^{12}\) | \(1/1280000\) | Unformalized scalar calculation from the public definitions |
 
@@ -699,56 +749,91 @@ parameter recommendations. At fixed \(md\), reducing \(\varepsilon\) and
 increasing \(q\) cannot remove the positive tail term \(2^{-bmd}\). Every
 finite-\(md\) envelope therefore has a nonzero floor.
 
-## Implementation pending
+## Implementation evidence and remaining work
 
-As of this draft, there are no proved before/after declaration pairs, merged
-pull requests, or validation records for the two selected targets. The rows for
-issues #728 and #729 must remain **NOT IMPLEMENTED (selected; proof in
-progress)** until exact evidence exists.
+### Merged LDT evidence
 
-Final integration must perform all of the following.
+The proved before/after pair is now public in the local formalization.
 
-1. Record the actual fixed-constant LDT baseline declaration and the actual
-   improved declaration merged for #728. Verify that both retain the full
-   `mainFormal` hypotheses, including \(k\ge400md\), \(k>0\), \(d=0\), and
-   the three conclusions for one common pair of projective polynomial
-   measurements.
-2. Replace the LDT calculation status by the **proved** before/after formulas
-   only if the merged theorem has exactly those constants. Record the pull
-   request, merge commit, axiom-audit entry, and focused and full validation
-   actually run.
-3. Record the actual fixed-witness QPBT baseline declaration merged for #729,
-   including whether it uses \(a_0\) or the padded \(a_{\mathrm{base}}\). Do not
-   conflate the two.
-4. Record the actual improved QPBT declaration, canonical `deltaQld` corollary,
-   and any qubit corollary. Verify that they retain arbitrary strategies, the
-   nonnegative error domain, the raw prescribed-answer effects, the isometry
-   range projections, and one common auxiliary state.
-5. Replace the QPBT calculation status by the **proved** target only if the
-   merged theorem establishes \(\min(4,10^{14}(md)^4E_{1/67108864})\), the
-   canonical \(a=100\) form, or a precisely documented stronger bound. Record
-   the exact declarations and pull request rather than suggested names from the
-   analysis.
-6. Add every new headline to the appropriate LDT or QPBT axiom audit, and record
-   the exact audit commands, file checks, project build, local CI, and
-   independent review results from the merged heads. This draft supplies none
-   of that proof evidence.
-7. Update both candidate tables from **NOT IMPLEMENTED** to **IMPLEMENTED** only
-   for results present on the merged main branch. All deferred and rejected rows
-   remain unchanged.
-8. Keep the benchmark qualifications: no cross-repository raw-answer transport
-   has been proved, the public calculated \((10^{12},1/1280000)\) envelope is
-   not the same as its reconstructed existential witness, and no benchmark
-   build was run here.
+1. [`MIPStarRE.LDT.Test.main_formal_explicit_baseline`][ldt-baseline-proved]
+   proves the three final consistency conclusions at
+   \(B_{\mathrm{LDT}}\).
+2. [`MIPStarRE.LDT.Test.main_formal_linear_triangle_bound`][ldt-improved-proved]
+   proves the same three conclusions at \(B_\triangle\).
 
-The principal remaining implementation risk is not an unresolved mathematical
-selection. It is extracting fixed numerical witnesses from existential
-interfaces and preserving the same measurements, auxiliary state, isometries,
-and range projections through the stronger estimates.
+Both declarations retain the heterogeneous projective strategy, passing
+hypothesis, field model, \(k\ge400md\), \(k>0\), one common witness pair, and
+all three conclusions. They add no \(\varepsilon\le1\), \(d\le q\), or
+\(k\le q\) hypothesis, so \(d=0\) and \(k>q\) remain in scope. The merged
+[axiom-audit entries][ldt-axiom-audit] cover both headlines and the non-strict
+and strict comparison theorems.
+
+The implementation is [PR #731][pr-731] for issue [#728][issue-728]. Canonical
+CI tested exact head [`df8f6bc9255e7aa524ceebff3bffc0087dfc1ee2`][ldt-tested-head]
+for 475 seconds and passed the summary plus all eight steps. Its build passed
+both `MIPStarRE.LDT.Test.AxiomAudit` and
+`MIPStarRE.QPBT.Test.AxiomAudit`; Python discovery passed 876 tests with 9
+skipped. The [supplementary proof-closure check][ldt-supplementary-evidence]
+audited 1,932 tagged declarations across 381 modules with zero failures and no
+proof-level `sorryAx` dependency. Independent review
+[#5345643236][ldt-independent-review] approved both code and prose with no
+findings. The normal merge gate was verified without an override, producing
+merge commit [`fac99fdf22bbdbb83a2376ca48cd679dc7d13750`][ldt-merge]. The CI
+and review receipts are dated September 28 in UTC; this report uses the local
+Asia/Tokyo date September 29. The
+[merged implementation audit][ldt-implementation-audit] records the
+corresponding statement-integrity and construction details.
+
+### Final-report checklist
+
+- [x] Record the proved LDT baseline, improved headline, comparison regimes,
+  declaration names, PR, tested head, merge commit, axiom audits, CI, and
+  independent review.
+- [x] Keep the LDT source theorem unchanged and describe the stronger result as
+  a separate Lean-only quantitative theorem on the existing corrected domain.
+- [ ] Merge and record the actual fixed-witness QPBT baseline for issue #729,
+  including whether it uses \(a_0\) or the padded \(a_{\mathrm{base}}\). The two
+  calculations must not be conflated.
+- [ ] Merge and record both the structured QPBT declaration proving
+  \(\min(4,10^{14}(md)^4E_{1/67108864})\) and the canonical `deltaQld`
+  corollary with \(a=100\) and \(b=1/67108864\), together with the exact qubit
+  counterpart of each. Verify arbitrary strategies, the nonnegative error
+  domain, raw prescribed-answer effects, isometry range projections, and one
+  common auxiliary state.
+- [ ] Change the QPBT selected status to **IMPLEMENTED** only after merged
+  theorems establish all four required forms: the structured bound, the
+  canonical \(a=100\) form, and their exact qubit counterparts. A precisely
+  documented stronger result is acceptable only if it implies all four forms.
+  The native LDT merge alone is not evidence of QPBT propagation.
+- [ ] Record exact-head QPBT axiom-audit, focused-check, full-CI, review, and
+  merge evidence before finalizing this report.
+- [ ] Preserve the benchmark qualifications: commit
+  `286b3ca44f811fa6e37517c04981bc2f164ee6b5` was source-inspected but not
+  built; the public \((10^{12},1/1280000)\) envelope and the factor-104 raw
+  conversion are unformalized calculations; no cross-repository transport
+  theorem has been proved.
+
+The remaining report blocker is the QPBT implementation and its exact evidence,
+especially extracting fixed numerical witnesses from existential interfaces and
+preserving the same measurements, auxiliary state, isometries, and range
+projections through the stronger estimates. The merged native-LDT theorem does
+not discharge those obligations.
 
 [baseline-commit]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9
 [issue-728]: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/728
 [issue-729]: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/729
+[pr-731]: https://github.com/Dengnifer/MIPStarRE-QPBT/pull/731
+[ldt-tested-head]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/df8f6bc9255e7aa524ceebff3bffc0087dfc1ee2
+[ldt-merge]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/fac99fdf22bbdbb83a2376ca48cd679dc7d13750
+[ldt-baseline-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/fac99fdf22bbdbb83a2376ca48cd679dc7d13750/MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean#L329-L384
+[ldt-improved-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/fac99fdf22bbdbb83a2376ca48cd679dc7d13750/MIPStarRE/LDT/Test/MainTheorem/LinearTriangle/MainFormal.lean#L180-L236
+[ldt-comparison-le]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/fac99fdf22bbdbb83a2376ca48cd679dc7d13750/MIPStarRE/LDT/Test/MainTheorem/LinearTriangle/MainFormal.lean#L299-L315
+[ldt-comparison-lt]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/fac99fdf22bbdbb83a2376ca48cd679dc7d13750/MIPStarRE/LDT/Test/MainTheorem/LinearTriangle/MainFormal.lean#L317-L358
+[ldt-triangle-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/fac99fdf22bbdbb83a2376ca48cd679dc7d13750/MIPStarRE/LDT/Preliminaries/Triangles/CompleteMeasurements.lean#L28-L203
+[ldt-axiom-audit]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/fac99fdf22bbdbb83a2376ca48cd679dc7d13750/MIPStarRE/LDT/Test/AxiomAudit.lean#L313-L327
+[ldt-implementation-audit]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/fac99fdf22bbdbb83a2376ca48cd679dc7d13750/audits/issue-728-ldt-linear-error-bounds.md
+[ldt-supplementary-evidence]: https://github.com/Dengnifer/MIPStarRE-QPBT/pull/731#issuecomment-5880259798
+[ldt-independent-review]: https://github.com/Dengnifer/MIPStarRE-QPBT/pull/731#pullrequestreview-5345643236
 [ldt-paper-main]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/ldt-paper/test_definition.tex#L177-L202
 [ldt-paper-final]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/ldt-paper/inductive_step.tex#L108-L234
 [ldt-error]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/Definitions.lean#L28-L61
