@@ -9955,3 +9955,7 @@ historical entry above is rewritten.
 ### 2026-09-28T20:30:45.515625+00:00: LDT author complete; canonical publication begins
 
 `prover-728-20260929-01` terminated successfully after 3890 seconds. Main has sole branch ownership for staging/publication. Its baseline and stronger theorem are checked; the optional manual Python discovery was interrupted by the author (exit 130), not passed. Host diagnostics showed real-Lake train fixtures targeting the global lock from a read-only worker sandbox; sandbox-local `/proc` did not establish dispatcher death. Main sent no signals and made no lock or account changes. The diagnostic worker finished without mutation. Canonical `ci.sh` will run from the authorized host environment before review. Initial pre-commit caught one trailing blank line in the brief; main removed only that whitespace and reran normal hooks.
+
+### 2026-09-28T20:51:54.083066+00:00: receipt Markdown whitespace normalization
+
+Telemetry publication pre-commit rejected two Markdown hard-break trailing spaces in the generated last-message view for prover-728-20260929-02. Main normalized trailing whitespace in that .last.md projection; the verbatim JSONL capture is unchanged. Checked push also refused the dirty tree, so no failed-gate content was published. Normal hooks and checked push are rerun; no bypass used.
