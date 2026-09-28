@@ -1735,3 +1735,4 @@
 {"ts": "2026-09-29T05:50:24+0900", "kind": "ci-build", "trigger": "ci.sh pr=731", "seconds": 49, "outcome": "success", "sha": "1b24e479946885e5758f47249363be8653a9f5ef", "note": "branch issue-728-ldt-linear-error-bounds"}
 {"ts": "2026-09-29T06:45:06+0900", "kind": "ci-build", "trigger": "ci.sh pr=731", "seconds": 51, "outcome": "success", "sha": "ecb94e76279d7de41a2a19eb3ace917c5e2f044d", "note": "branch issue-728-ldt-linear-error-bounds"}
 {"ts": "2026-09-29T07:26:32+0900", "kind": "ci-build", "trigger": "ci.sh pr=731", "seconds": 43, "outcome": "success", "sha": "57e3e164063484bbfbf79a5ba12f0062ae5b9997", "note": "branch issue-728-ldt-linear-error-bounds"}
+{"ts": "2026-09-29T07:57:39+0900", "kind": "ci-build", "trigger": "ci.sh pr=731", "seconds": 41, "outcome": "success", "sha": "df8f6bc9255e7aa524ceebff3bffc0087dfc1ee2", "note": "branch issue-728-ldt-linear-error-bounds"}
