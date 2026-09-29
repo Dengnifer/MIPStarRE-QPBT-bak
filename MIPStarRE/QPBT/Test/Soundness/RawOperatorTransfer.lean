@@ -259,6 +259,183 @@ private theorem raw_transfer_liftedBEffect_add {P : AdmissibleParams} {G : Game}
   congr 1
   simp [conjIsometry, Matrix.mul_add, Matrix.add_mul]
 
+/-- The prescribed raw Pauli-answer effects form a square-summable subfamily
+of the full answer POVM. This is the family hypothesis needed for the universal
+raw-distance cap in paper `thm:pauli`,
+`references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1431-1445`. -/
+theorem raw_pauli_effects_sum_adjoint_mul_le_one {P : AdmissibleParams} {ι : Type*}
+    [Fintype ι] [DecidableEq ι] (M : Measurement (PauliAnswer P) ι) :
+    ∑ u : PauliRegister P,
+        (M.effect (.pauliOutcome u))ᴴ * M.effect (.pauliOutcome u) ≤ 1 := by
+  classical
+  let f : PauliRegister P → PauliAnswer P := fun u => .pauliOutcome u
+  have hf : Set.InjOn f (Finset.univ : Finset (PauliRegister P)) := by
+    intro u _ v _ huv
+    exact PauliAnswer.pauliOutcome.inj huv
+  calc
+    ∑ u : PauliRegister P,
+        (M.effect (.pauliOutcome u))ᴴ * M.effect (.pauliOutcome u) =
+        ∑ a ∈ Finset.image f (Finset.univ : Finset (PauliRegister P)),
+          (M.effect a)ᴴ * M.effect a := by
+            symm
+            rw [Finset.sum_image hf]
+    _ ≤ ∑ a : PauliAnswer P, (M.effect a)ᴴ * M.effect a := by
+      exact Finset.sum_le_sum_of_subset_of_nonneg (by simp)
+        (fun a _ _ => star_mul_self_nonneg (M.effect a))
+    _ ≤ 1 := measurement_sum_adjoint_mul_le_one M
+
+private theorem raw_sum_conj_isometry_adjoint_mul_le_one {α ι κ : Type}
+    [Fintype α] [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (φ : EuclideanSpace ℂ ι →ₗᵢ[ℂ] EuclideanSpace ℂ κ)
+    (N : α → Op ι) (hN : ∑ a, (N a)ᴴ * N a ≤ 1) :
+    ∑ a, (conjIsometry φ (N a))ᴴ * conjIsometry φ (N a) ≤ 1 := by
+  have heq (a : α) : (conjIsometry φ (N a))ᴴ * conjIsometry φ (N a) =
+      MagicSquareRigidity.isometryMatrix φ * ((N a)ᴴ * N a) *
+        (MagicSquareRigidity.isometryMatrix φ)ᴴ := by
+    simp only [MagicSquareRigidity.conjIsometry_eq, Matrix.conjTranspose_mul,
+      Matrix.conjTranspose_conjTranspose, Matrix.mul_assoc]
+    rw [← Matrix.mul_assoc (MagicSquareRigidity.isometryMatrix φ)ᴴ
+      (MagicSquareRigidity.isometryMatrix φ),
+      MagicSquareRigidity.isometryMatrix_conjTranspose_mul, Matrix.one_mul]
+  simp_rw [heq]
+  have hsum : (∑ a, MagicSquareRigidity.isometryMatrix φ * ((N a)ᴴ * N a) *
+      (MagicSquareRigidity.isometryMatrix φ)ᴴ) =
+      MagicSquareRigidity.isometryMatrix φ * (∑ a, (N a)ᴴ * N a) *
+        (MagicSquareRigidity.isometryMatrix φ)ᴴ := by
+    rw [Matrix.mul_sum, Matrix.sum_mul]
+  rw [hsum]
+  calc
+    _ ≤ MagicSquareRigidity.isometryMatrix φ * (1 : Op ι) *
+        (MagicSquareRigidity.isometryMatrix φ)ᴴ := by
+      rw [Matrix.le_iff]
+      convert (Matrix.le_iff.mp hN).mul_mul_conjTranspose_same
+        (MagicSquareRigidity.isometryMatrix φ) using 1
+      all_goals simp [Matrix.mul_sub, Matrix.sub_mul]
+    _ ≤ 1 := by
+      rw [Matrix.mul_one]
+      exact MagicSquareRigidity.isometryMatrix_mul_conjTranspose_le_one φ
+
+private theorem raw_left_sum_adjoint_mul_le_one {α ι κ : Type*}
+    [Fintype α] [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (N : α → Op ι) (hN : ∑ a, (N a)ᴴ * N a ≤ 1) :
+    ∑ a, (heteroKron (N a) (1 : Op κ))ᴴ * heteroKron (N a) 1 ≤ 1 := by
+  change ∑ a, (MIPStarRE.LDT.leftTensor (ι₂ := κ) (N a))ᴴ *
+    MIPStarRE.LDT.leftTensor (N a) ≤ 1
+  have h := MIPStarRE.LDT.leftTensor_mono (ι₂ := κ) hN
+  simpa only [← MIPStarRE.LDT.leftTensor_finset_sum,
+    MIPStarRE.LDT.leftTensor_one, MIPStarRE.LDT.leftTensor_conjTranspose,
+    MIPStarRE.LDT.leftTensor_mul_leftTensor] using h
+
+private theorem raw_right_sum_adjoint_mul_le_one {α ι κ : Type*}
+    [Fintype α] [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    (N : α → Op κ) (hN : ∑ a, (N a)ᴴ * N a ≤ 1) :
+    ∑ a, (heteroKron (1 : Op ι) (N a))ᴴ * heteroKron 1 (N a) ≤ 1 := by
+  change ∑ a, (MIPStarRE.LDT.rightTensor (ι₁ := ι) (N a))ᴴ *
+    MIPStarRE.LDT.rightTensor (N a) ≤ 1
+  have h := MIPStarRE.LDT.rightTensor_mono (ι₁ := ι) hN
+  simpa only [← MIPStarRE.LDT.rightTensor_finset_sum,
+    MIPStarRE.LDT.rightTensor_one, MIPStarRE.LDT.rightTensor_conjTranspose,
+    MIPStarRE.LDT.rightTensor_mul_rightTensor] using h
+
+/-- The canonical Pauli projectors packaged as a complete measurement for the
+universal raw-distance estimate. -/
+private def raw_ideal_pauli_measurement (P : AdmissibleParams) (W : PauliKind) :
+    Measurement (PauliRegister P) (PauliRegister P) :=
+  Measurement.ofSumEqOne (pauliProj W) (fun h => (posSemidef_pauliProj W h).nonneg)
+    (sum_pauliProj_eq_one W)
+
+private theorem raw_pauli_proj_on_a_eq_tensor (P : AdmissibleParams)
+    {ιA' ιB' : Type} [Fintype ιA'] [DecidableEq ιA']
+    [Fintype ιB'] [DecidableEq ιB'] (W : PauliKind) (h : PauliRegister P) :
+    pauliProjOnA'' P (ιA' := ιA') (ιB' := ιB') W h =
+      heteroKron (heteroKron 1 (pauliProj W h)) 1 := by
+  ext i j
+  simp [pauliProjOnA'', heteroKron, Matrix.kronecker, Matrix.one_apply, ite_and]
+  split_ifs <;> simp_all
+
+private theorem raw_pauli_proj_on_b_eq_tensor (P : AdmissibleParams)
+    {ιA' ιB' : Type} [Fintype ιA'] [DecidableEq ιA']
+    [Fintype ιB'] [DecidableEq ιB'] (W : PauliKind) (h : PauliRegister P) :
+    pauliProjOnB'' P (ιA' := ιA') (ιB' := ιB') W h =
+      heteroKron 1 (heteroKron 1 (pauliProj W h)) := by
+  ext i j
+  simp [pauliProjOnB'', heteroKron, Matrix.kronecker, Matrix.one_apply, ite_and]
+  split_ifs <;> simp_all
+
+private theorem raw_pauli_proj_on_a_sum_adjoint_mul_le_one (P : AdmissibleParams)
+    {ιA' ιB' : Type} [Fintype ιA'] [DecidableEq ιA']
+    [Fintype ιB'] [DecidableEq ιB'] (W : PauliKind) :
+    ∑ h, (pauliProjOnA'' P (ιA' := ιA') (ιB' := ιB') W h)ᴴ *
+      pauliProjOnA'' P W h ≤ 1 := by
+  simp only [raw_pauli_proj_on_a_eq_tensor]
+  exact measurement_sum_adjoint_mul_le_one
+    (leftPlacedMeasurement (rightPlacedMeasurement (raw_ideal_pauli_measurement P W)))
+
+private theorem raw_pauli_proj_on_b_sum_adjoint_mul_le_one (P : AdmissibleParams)
+    {ιA' ιB' : Type} [Fintype ιA'] [DecidableEq ιA']
+    [Fintype ιB'] [DecidableEq ιB'] (W : PauliKind) :
+    ∑ h, (pauliProjOnB'' P (ιA' := ιA') (ιB' := ιB') W h)ᴴ *
+      pauliProjOnB'' P W h ≤ 1 := by
+  simp only [raw_pauli_proj_on_b_eq_tensor]
+  exact measurement_sum_adjoint_mul_le_one
+    (rightPlacedMeasurement (rightPlacedMeasurement (raw_ideal_pauli_measurement P W)))
+
+private theorem ideal_state_norm_one {P : AdmissibleParams}
+    {S : Strategy (pauliBasisTest P)} (w : PauliSoundnessWitness P S) :
+    ‖idealState P w.aux‖ = 1 := by
+  change ‖reindexState prodShuffle (vecTensor w.aux (eprState (PauliRegister P)))‖ = 1
+  rw [reindexState_norm_eq, vecTensor_norm_eq, w.aux_norm, eprState_norm, mul_one]
+
+/-- Any Pauli soundness witness compares two unit vectors, so its state distance
+is at most two. This is the assumption-free saturation bound used for the large
+error branch of paper `thm:pauli`. -/
+theorem pauli_soundness_state_distance_le_two (P : AdmissibleParams)
+    (S : Strategy (pauliBasisTest P)) (w : PauliSoundnessWitness P S) :
+    ‖isometryTensor w.φA w.φB S.ψ - idealState P w.aux‖ ≤ 2 := by
+  calc
+    ‖isometryTensor w.φA w.φB S.ψ - idealState P w.aux‖ ≤
+        ‖isometryTensor w.φA w.φB S.ψ‖ + ‖idealState P w.aux‖ := norm_sub_le _ _
+    _ = 1 + 1 := by
+      rw [MagicSquareRigidity.norm_isometryTensor, S.ψ_norm, ideal_state_norm_one]
+    _ = 2 := by norm_num
+
+/-- Alice's raw prescribed-answer family has squared distance at most four from
+the ideal Pauli family for every strategy and every soundness witness. No
+winning or projectivity assumption is used. -/
+theorem raw_pauli_operator_distance_a_le_four (P : AdmissibleParams)
+    (S : Strategy (pauliBasisTest P)) (w : PauliSoundnessWitness P S)
+    (W : PauliKind) : rawPauliOperatorDistanceA P S w W ≤ 4 := by
+  have hraw := raw_pauli_effects_sum_adjoint_mul_le_one (S.A (pauliQuestion P W))
+  have hA : ∑ u : PauliRegister P,
+      (liftedAEffect S (ιB' := w.ιB') w.φA
+        ((S.A (pauliQuestion P W)).effect (.pauliOutcome u)))ᴴ *
+      liftedAEffect S w.φA
+        ((S.A (pauliQuestion P W)).effect (.pauliOutcome u)) ≤ 1 := by
+    simp only [raw_transfer_liftedAEffect_eq_tensor]
+    exact raw_left_sum_adjoint_mul_le_one _
+      (raw_sum_conj_isometry_adjoint_mul_le_one w.φA _ hraw)
+  unfold rawPauliOperatorDistanceA
+  exact sum_norm_sub_apply_sq_le_four _ _ _ (ideal_state_norm_one w) hA
+    (raw_pauli_proj_on_a_sum_adjoint_mul_le_one P W)
+
+/-- Bob's raw prescribed-answer family satisfies the same universal squared
+distance cap as Alice's, on the same normalized ideal state. -/
+theorem raw_pauli_operator_distance_b_le_four (P : AdmissibleParams)
+    (S : Strategy (pauliBasisTest P)) (w : PauliSoundnessWitness P S)
+    (W : PauliKind) : rawPauliOperatorDistanceB P S w W ≤ 4 := by
+  have hraw := raw_pauli_effects_sum_adjoint_mul_le_one (S.B (pauliQuestion P W))
+  have hB : ∑ u : PauliRegister P,
+      (liftedBEffect S (ιA' := w.ιA') w.φB
+        ((S.B (pauliQuestion P W)).effect (.pauliOutcome u)))ᴴ *
+      liftedBEffect S w.φB
+        ((S.B (pauliQuestion P W)).effect (.pauliOutcome u)) ≤ 1 := by
+    simp only [raw_transfer_liftedBEffect_eq_tensor]
+    exact raw_right_sum_adjoint_mul_le_one _
+      (raw_sum_conj_isometry_adjoint_mul_le_one w.φB _ hraw)
+  unfold rawPauliOperatorDistanceB
+  exact sum_norm_sub_apply_sq_le_four _ _ _ (ideal_state_norm_one w) hB
+    (raw_pauli_proj_on_b_sum_adjoint_mul_le_one P W)
+
 private theorem wrongFormEffect_eq_validity_effect {P : AdmissibleParams} {ι : Type*}
     [Fintype ι] [DecidableEq ι] (M : Measurement (PauliAnswer P) ι)
     (W : PauliKind) :

@@ -21,6 +21,7 @@ open scoped BigOperators Matrix MatrixOrder ComplexOrder
 namespace MIPStarRE.QPBT
 
 open MIPStarRE.Quantum MagicSquareRigidity DistanceCalculus
+open MIPStarRE.LDT hiding Measurement
 
 noncomputable section
 
@@ -73,15 +74,50 @@ private theorem conjugated_bob_eq (_v : ExtractionWitness S w delta)
         (heteroKron 1 ((S.swappedPauliMeas w .bob W).effect h)) := by
   exact (S.placeSide_swappedPauliMeas w .bob W h).symm
 
+private theorem full_pauli_distance_alice_of_le (v : ExtractionWitness S w delta)
+    (W : PauliKind) (D : ℝ)
+    (hclose : opFamilyDistSq (uniformDistribution Unit)
+      (fun (_ : Unit) (h : PauliRegister P) =>
+        conjBy (S.placeSide .alice (swapUnitary w .alice))
+          (S.placePlayer .alice ((S.pauliMeas .alice W).effect h)))
+      (fun (_ : Unit) (h : PauliRegister P) =>
+        S.placeExtractedRegister .alice (pauliProj W h))
+      (S.idealExpState v.aux) ≤ D) :
+    ∑ h : PauliRegister P, ‖applyOperatorToState
+      (heteroKron ((S.swappedPauliMeas w .alice W).effect h) 1 -
+        pauliProjOnA'' P W h) (idealState P v.toPauliSoundnessWitness.aux)‖ ^ 2 ≤ D := by
+  classical
+  have hc := hclose
+  rw [opFamilyDistSq_uniform_unit] at hc
+  simp_rw [conjugated_alice_eq v, extracted_alice_eq,
+    ← WinImplications.reindexOp_sub,
+    ← WinImplications.norm_applyOperatorToState_reindexState] at hc
+  rw [v.idealState_eq]
+  exact hc
+
 private theorem full_pauli_distance_alice (v : ExtractionWitness S w delta)
     (W : PauliKind) :
     ∑ h : PauliRegister P, ‖applyOperatorToState
       (heteroKron ((S.swappedPauliMeas w .alice W).effect h) 1 -
         pauliProjOnA'' P W h) (idealState P v.toPauliSoundnessWitness.aux)‖ ^ 2 ≤ delta := by
+  exact full_pauli_distance_alice_of_le v W delta (v.pauli_close .alice W)
+
+private theorem full_pauli_distance_bob_of_le (v : ExtractionWitness S w delta)
+    (W : PauliKind) (D : ℝ)
+    (hclose : opFamilyDistSq (uniformDistribution Unit)
+      (fun (_ : Unit) (h : PauliRegister P) =>
+        conjBy (S.placeSide .bob (swapUnitary w .bob))
+          (S.placePlayer .bob ((S.pauliMeas .bob W).effect h)))
+      (fun (_ : Unit) (h : PauliRegister P) =>
+        S.placeExtractedRegister .bob (pauliProj W h))
+      (S.idealExpState v.aux) ≤ D) :
+    ∑ h : PauliRegister P, ‖applyOperatorToState
+      (heteroKron 1 ((S.swappedPauliMeas w .bob W).effect h) -
+        pauliProjOnB'' P W h) (idealState P v.toPauliSoundnessWitness.aux)‖ ^ 2 ≤ D := by
   classical
-  have hc := v.pauli_close .alice W
+  have hc := hclose
   rw [opFamilyDistSq_uniform_unit] at hc
-  simp_rw [conjugated_alice_eq v, extracted_alice_eq,
+  simp_rw [conjugated_bob_eq v, extracted_bob_eq,
     ← WinImplications.reindexOp_sub,
     ← WinImplications.norm_applyOperatorToState_reindexState] at hc
   rw [v.idealState_eq]
@@ -92,22 +128,25 @@ private theorem full_pauli_distance_bob (v : ExtractionWitness S w delta)
     ∑ h : PauliRegister P, ‖applyOperatorToState
       (heteroKron 1 ((S.swappedPauliMeas w .bob W).effect h) -
         pauliProjOnB'' P W h) (idealState P v.toPauliSoundnessWitness.aux)‖ ^ 2 ≤ delta := by
-  classical
-  have hc := v.pauli_close .bob W
-  rw [opFamilyDistSq_uniform_unit] at hc
-  simp_rw [conjugated_bob_eq v, extracted_bob_eq,
-    ← WinImplications.reindexOp_sub,
-    ← WinImplications.norm_applyOperatorToState_reindexState] at hc
-  rw [v.idealState_eq]
-  exact hc
+  exact full_pauli_distance_bob_of_le v W delta (v.pauli_close .bob W)
 
-/-- Alice's isometry-conjugated Pauli family has squared distance at most
-`4 * delta` on the ideal state. Both the full-unitary comparison and the
-squared state error are read from the supplied extraction witness.
-This is blueprint `thm:pauli-extraction-alice-distance-support`. -/
-theorem ExtractionWitness.pauli_distance_alice_le (v : ExtractionWitness S w delta)
-    (W : PauliKind) :
-    pauliOperatorDistanceA P S.toStrategy v.toPauliSoundnessWitness W ≤ 4 * delta := by
+/-- Alice's isometry-conjugated Pauli distance is bounded by twice the concrete
+swap-family distance plus twice the actual squared state error. This retains the
+two quantitative components used in the final argument of paper `thm:pauli`,
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1862-1876`,
+without replacing either component by the common extraction-witness scale. -/
+theorem ExtractionWitness.pauli_distance_alice_le_components
+    (v : ExtractionWitness S w delta) (W : PauliKind) :
+    pauliOperatorDistanceA P S.toStrategy v.toPauliSoundnessWitness W ≤
+      2 * opFamilyDistSq (uniformDistribution Unit)
+        (fun (_ : Unit) (h : PauliRegister P) =>
+          conjBy (S.placeSide .alice (swapUnitary w .alice))
+            (S.placePlayer .alice ((S.pauliMeas .alice W).effect h)))
+        (fun (_ : Unit) (h : PauliRegister P) =>
+          S.placeExtractedRegister .alice (pauliProj W h))
+        (S.idealExpState v.aux) +
+      2 * ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
+        S.idealExpState v.aux‖ ^ 2 := by
   have h := sum_norm_leftTensor_conjIsometry_sub_sq_le
     v.toPauliSoundnessWitness.φA v.toPauliSoundnessWitness.φB
     (S.pauliMeas .alice W).effect (S.swappedPauliMeas w .alice W)
@@ -123,13 +162,12 @@ theorem ExtractionWitness.pauli_distance_alice_le (v : ExtractionWitness S w del
           (1 : Op (v.toPauliSoundnessWitness.ιB' × PauliRegister P)) := by
     ext i j
     simp [liftedAEffect, heteroKron, Matrix.kronecker, Matrix.one_apply]
-  have hstate := v.state_close_ofExtractionWitness
+  have hfull := full_pauli_distance_alice_of_le v W _ (le_refl _)
+  have hstate := v.state_error_eq
   rw [norm_sub_rev] at hstate
-  have hfull := full_pauli_distance_alice v W
-  have hbound := h.trans ((add_le_add
+  have hbound := h.trans (add_le_add
     (mul_le_mul_of_nonneg_left hfull (by norm_num : (0 : ℝ) ≤ 2))
-    (mul_le_mul_of_nonneg_left hstate (by norm_num : (0 : ℝ) ≤ 2))).trans_eq
-      (show 2 * delta + 2 * delta = 4 * delta by ring))
+    (mul_le_mul_of_nonneg_left (le_of_eq hstate) (by norm_num : (0 : ℝ) ≤ 2)))
   apply le_of_eq_of_le ?_ hbound
   unfold pauliOperatorDistanceA
   apply Finset.sum_congr rfl
@@ -137,12 +175,22 @@ theorem ExtractionWitness.pauli_distance_alice_le (v : ExtractionWitness S w del
   exact congrArg (fun O => ‖applyOperatorToState (O - pauliProjOnA'' P W a)
     (idealState P v.toPauliSoundnessWitness.aux)‖ ^ 2) (hlift _)
 
-/-- Bob's isometry-conjugated Pauli family satisfies the same bound on the
-same ideal state, without identifying the two original local spaces.
-This is blueprint `thm:pauli-extraction-bob-distance-support`. -/
-theorem ExtractionWitness.pauli_distance_bob_le (v : ExtractionWitness S w delta)
-    (W : PauliKind) :
-    pauliOperatorDistanceB P S.toStrategy v.toPauliSoundnessWitness W ≤ 4 * delta := by
+/-- Bob's isometry-conjugated Pauli distance satisfies the same separate
+component estimate as Alice's, on the same ideal state. The estimate is the
+Bob-side range-projection calculation supporting paper `thm:pauli` at
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1862-1876`. -/
+theorem ExtractionWitness.pauli_distance_bob_le_components
+    (v : ExtractionWitness S w delta) (W : PauliKind) :
+    pauliOperatorDistanceB P S.toStrategy v.toPauliSoundnessWitness W ≤
+      2 * opFamilyDistSq (uniformDistribution Unit)
+        (fun (_ : Unit) (h : PauliRegister P) =>
+          conjBy (S.placeSide .bob (swapUnitary w .bob))
+            (S.placePlayer .bob ((S.pauliMeas .bob W).effect h)))
+        (fun (_ : Unit) (h : PauliRegister P) =>
+          S.placeExtractedRegister .bob (pauliProj W h))
+        (S.idealExpState v.aux) +
+      2 * ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
+        S.idealExpState v.aux‖ ^ 2 := by
   have h := sum_norm_rightTensor_conjIsometry_sub_sq_le
     v.toPauliSoundnessWitness.φA v.toPauliSoundnessWitness.φB
     (S.pauliMeas .bob W).effect (S.swappedPauliMeas w .bob W)
@@ -158,19 +206,63 @@ theorem ExtractionWitness.pauli_distance_bob_le (v : ExtractionWitness S w delta
           (conjIsometry v.toPauliSoundnessWitness.φB M) := by
     ext i j
     simp [liftedBEffect, heteroKron, Matrix.kronecker, Matrix.one_apply]
-  have hstate := v.state_close_ofExtractionWitness
+  have hfull := full_pauli_distance_bob_of_le v W _ (le_refl _)
+  have hstate := v.state_error_eq
   rw [norm_sub_rev] at hstate
-  have hfull := full_pauli_distance_bob v W
-  have hbound := h.trans ((add_le_add
+  have hbound := h.trans (add_le_add
     (mul_le_mul_of_nonneg_left hfull (by norm_num : (0 : ℝ) ≤ 2))
-    (mul_le_mul_of_nonneg_left hstate (by norm_num : (0 : ℝ) ≤ 2))).trans_eq
-      (show 2 * delta + 2 * delta = 4 * delta by ring))
+    (mul_le_mul_of_nonneg_left (le_of_eq hstate) (by norm_num : (0 : ℝ) ≤ 2)))
   apply le_of_eq_of_le ?_ hbound
   unfold pauliOperatorDistanceB
   apply Finset.sum_congr rfl
   intro a _
   exact congrArg (fun O => ‖applyOperatorToState (O - pauliProjOnB'' P W a)
     (idealState P v.toPauliSoundnessWitness.aux)‖ ^ 2) (hlift _)
+
+/-- Alice's isometry-conjugated Pauli family has squared distance at most
+`4 * delta` on the ideal state. Both the full-unitary comparison and the
+squared state error are read from the supplied extraction witness.
+This is blueprint `thm:pauli-extraction-alice-distance-support`. -/
+theorem ExtractionWitness.pauli_distance_alice_le (v : ExtractionWitness S w delta)
+    (W : PauliKind) :
+    pauliOperatorDistanceA P S.toStrategy v.toPauliSoundnessWitness W ≤ 4 * delta := by
+  calc
+    pauliOperatorDistanceA P S.toStrategy v.toPauliSoundnessWitness W ≤
+        2 * opFamilyDistSq (uniformDistribution Unit)
+          (fun (_ : Unit) (h : PauliRegister P) =>
+            conjBy (S.placeSide .alice (swapUnitary w .alice))
+              (S.placePlayer .alice ((S.pauliMeas .alice W).effect h)))
+          (fun (_ : Unit) (h : PauliRegister P) =>
+            S.placeExtractedRegister .alice (pauliProj W h))
+          (S.idealExpState v.aux) +
+        2 * ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
+          S.idealExpState v.aux‖ ^ 2 := v.pauli_distance_alice_le_components W
+    _ ≤ 2 * delta + 2 * delta := add_le_add
+      (mul_le_mul_of_nonneg_left (v.pauli_close .alice W) (by norm_num))
+      (mul_le_mul_of_nonneg_left v.state_close (by norm_num))
+    _ = 4 * delta := by ring
+
+/-- Bob's isometry-conjugated Pauli family satisfies the same bound on the
+same ideal state, without identifying the two original local spaces.
+This is blueprint `thm:pauli-extraction-bob-distance-support`. -/
+theorem ExtractionWitness.pauli_distance_bob_le (v : ExtractionWitness S w delta)
+    (W : PauliKind) :
+    pauliOperatorDistanceB P S.toStrategy v.toPauliSoundnessWitness W ≤ 4 * delta := by
+  calc
+    pauliOperatorDistanceB P S.toStrategy v.toPauliSoundnessWitness W ≤
+        2 * opFamilyDistSq (uniformDistribution Unit)
+          (fun (_ : Unit) (h : PauliRegister P) =>
+            conjBy (S.placeSide .bob (swapUnitary w .bob))
+              (S.placePlayer .bob ((S.pauliMeas .bob W).effect h)))
+          (fun (_ : Unit) (h : PauliRegister P) =>
+            S.placeExtractedRegister .bob (pauliProj W h))
+          (S.idealExpState v.aux) +
+        2 * ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
+          S.idealExpState v.aux‖ ^ 2 := v.pauli_distance_bob_le_components W
+    _ ≤ 2 * delta + 2 * delta := add_le_add
+      (mul_le_mul_of_nonneg_left (v.pauli_close .bob W) (by norm_num))
+      (mul_le_mul_of_nonneg_left v.state_close (by norm_num))
+    _ = 4 * delta := by ring
 
 /-- Isometry transfer bounds for supplied extraction data in a projective
 setting. The common bound is `max (sqrt delta) (4 * delta)`: the state norm
