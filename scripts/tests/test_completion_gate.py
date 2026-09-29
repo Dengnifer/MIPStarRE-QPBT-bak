@@ -916,14 +916,13 @@ class BoundLedgerTests(GateFixture):
         )
 
     def test_a_table_under_a_later_heading_does_not_count(self) -> None:
-        crit = self.check(
-            "# Error bounds\n\n## Stage ledger\n\nTo be written.\n\n## Appendix\n\n"
-            "| Stage | Disposition |\n|---|---|\n| `Fixture.good` | sharp |\n"
-        )
-        self.assertEqual(crit.status, gate.FAIL)
-        self.assertEqual(
-            crit.evidence, [f"{self.LEDGER}:3: no markdown table in this section"]
-        )
+        table = "\n".join(GOOD_LEDGER.splitlines()[6:9])
+        for heading in ("## Appendix", "Appendix\n--------"):
+            crit = self.check("# Error bounds\n\n## Stage ledger\n\nTo be written.\n\n"
+                              + heading + "\n\n" + table)
+            self.assertEqual(crit.status, gate.FAIL)
+            self.assertEqual(crit.evidence,
+                             [f"{self.LEDGER}:3: no markdown table in this section"])
 
     def test_a_table_under_a_subheading_of_the_section_is_checked(self) -> None:
         text = GOOD_LEDGER.replace(
@@ -953,6 +952,17 @@ class BoundLedgerTests(GateFixture):
         self.assertEqual(
             crit.evidence, [f"{self.LEDGER}:1: no markdown table in this section"]
         )
+
+    def test_html_comments_do_not_expose_ledger_markup(self) -> None:
+        table = "\n".join(GOOD_LEDGER.splitlines()[6:9])
+        for text in (
+            "## Stage ledger\n\n<!--\n" + table + "\n-->\n",
+            "<!--\n" + GOOD_LEDGER + "-->\n",
+            "<!--\n" + GOOD_LEDGER,
+        ):
+            self.assertEqual(self.check(text).status, gate.FAIL)
+        visible = GOOD_LEDGER.replace("## Stage ledger", "## Stage ledger <!-- note -->")
+        self.assertEqual(self.check(visible).status, gate.DELEGATED)
 
     def test_nested_short_fence_exposes_neither_heading_nor_table(self) -> None:
         table = "\n".join(GOOD_LEDGER.splitlines()[6:11]) + "\n"

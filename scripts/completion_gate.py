@@ -816,6 +816,7 @@ LEDGER_HEADING = "Stage ledger"
 HEADING_RE = re.compile(
     r"^ {0,3}(?P<hashes>#{1,6})(?:[ \t]+(?P<text>.*?))?(?:[ \t]+#+)?[ \t]*$"
 )
+SETEXT_RE = re.compile(r"^ {0,3}(?P<marker>=+|-+)[ \t]*$")
 FENCE_RE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<tail>.*)$")
 # A table delimiter cell, and a pipe that separates two cells. A pipe preceded
 # by a backslash is text in its cell, so `\|x\|` is a norm.
@@ -870,6 +871,12 @@ def _ledger_section(lines: list[str]) -> tuple[int, int] | None:
             continue
         match = HEADING_RE.match(line)
         if match is None:
+            prior = lines[index - 1] if index else ""
+            setext = SETEXT_RE.match(line)
+            if (start is not None and setext and prior.strip()
+                    and HEADING_RE.match(prior) is None and not _code_indented(prior)
+                    and (setext.group("marker")[0] == "=" or level >= 2)):
+                return start, index - 1
             continue
         if start is None:
             if (match.group("text") or "") == LEDGER_HEADING:
@@ -879,19 +886,28 @@ def _ledger_section(lines: list[str]) -> tuple[int, int] | None:
     return None if start is None else (start, len(lines))
 
 
-def _blank_fences(lines: list[str]) -> list[str]:
-    """``lines`` with every fenced code block, fences included, blanked.
-
-    A table shown in a code block is not a table. Blanking rather than dropping
-    keeps every index a file line, so evidence still names the right line.
-    """
-
+def _blank_invisible(lines: list[str]) -> list[str]:
+    """Blank fenced blocks and HTML comments while preserving line positions."""
     visible: list[str] = []
     fence: tuple[str, int] | None = None
+    comment = False
     for line in lines:
         previous = fence
-        fence = _fence_state(line, fence)
-        visible.append("" if previous is not None or fence is not None else line)
+        if not comment:
+            fence = _fence_state(line, fence)
+        if previous is not None or fence is not None:
+            visible.append("")
+            continue
+        parts, offset = [], 0
+        while comment or (start := line.find("<!--", offset)) >= 0:
+            start = offset if comment else start
+            end = line.find("-->", start)
+            stop = len(line) if end < 0 else end + 3
+            parts.extend((line[offset:start], " " * (stop - start)))
+            offset, comment = stop, end < 0
+            if comment:
+                break
+        visible.append("".join(parts) + line[offset:])
     return visible
 
 
@@ -986,7 +1002,7 @@ def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
         )
         return crit
 
-    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    lines = _blank_invisible(path.read_text(encoding="utf-8", errors="replace").splitlines())
     section = _ledger_section(lines)
     if section is None:
         crit.status = FAIL
@@ -994,7 +1010,7 @@ def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
         crit.evidence.append(f"{ledger}:1: no markdown heading `{LEDGER_HEADING}`")
         return crit
     start, end = section
-    tables = _ledger_tables(_blank_fences(lines), start, end)
+    tables = _ledger_tables(lines, start, end)
     if not tables:
         crit.status = FAIL
         crit.summary = f"no table under the `{LEDGER_HEADING}` heading"
