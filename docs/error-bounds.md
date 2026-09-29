@@ -17,17 +17,20 @@
 >  \min\{4,10^{14}(md)^4E_{1/67108864}\}
 > \]
 >
-> together with its canonical-100 and two qubit forms is still **IN PROGRESS**.
-> The local A/B component and global-pair proof layers are complete at the
-> recorded checkpoints `dee02c251105` and `88436c45`, while the integrated C
-> checkpoint is `388bfa7c`; none of these checkpoints is a merged final
-> headline. Survey [#733][issue-733] is closed after the independently checked
-> plan was adopted in [comment 5882105555][issue-733-adoption]. The selected
-> follow-up [#735][issue-735] is open and records dependencies on #729 and the
-> adopted #733 survey. The owner-facing overview [#734][issue-734] is pinned
-> and records mathematical acceptance. The final report now depends on both
-> #729 and #735 being proved and merged. Neither the QPBT track nor the whole
-> project is claimed complete.
+> together with its canonical-100 form and both exact qubit counterparts is
+> still **IN PROGRESS**. The local A/B component and global-pair proof layers
+> are complete at the recorded checkpoints `dee02c251105` and `88436c45`, and
+> the integrated C checkpoint is `388bfa7c`. The final structured, canonical,
+> and two qubit proofs have since passed focused compilation, but final
+> validation is still live: no source commit, canonical CI, independent review,
+> or merge has been adopted. Survey [#733][issue-733] is closed after the
+> independently checked plan was adopted in
+> [comment 5882105555][issue-733-adoption]. The selected follow-up
+> [#735][issue-735] is open and records dependencies on #729 and the adopted
+> #733 survey. The owner-facing overview [#734][issue-734] is pinned and records
+> mathematical acceptance. The final report now depends on both #729 and #735
+> being proved and merged. Neither the QPBT track nor the whole project is
+> claimed complete.
 
 The main gains below concern powers and scaling, not only numerical
 coefficients. For a small number `x`, replacing `x^(1/40000)` by
@@ -513,7 +516,10 @@ The selected quantitative calculation is
 This headline remains **IN PROGRESS (selected)** under issue
 [#729][issue-729]. The local A/B component and global-pair proof layers are
 complete at `dee02c251105` and `88436c45`, and C has an integrated checkpoint at
-`388bfa7c`. The unconditional final headline is not yet complete or merged.
+`388bfa7c`. The final structured and canonical proofs and both exact qubit
+counterparts have passed focused compilation, but final validation is still
+live. No source commit, canonical CI, independent review, or merge has been
+adopted, so these focused checks are not a completed implementation receipt.
 The merged native-LDT result is one input to this route; it does not by itself
 prove the QPBT propagation or the improved Pauli soundness declaration.
 
@@ -669,11 +675,12 @@ The accepted target is
 \]
 
 It implies the simpler
-\(\min\{4,10^{10}n^4E_{1/1048576}\}\) bound, the canonical
-\(\Delta_{100,1/1048576}\) form, and exact qubit counterparts. This target is
+\(\min\{4,10^{10}n^4E_{1/1048576}\}\) bound and the canonical
+\(\Delta_{100,1/1048576}\) form. The complete #735 scope consists of these
+three statements and the exact qubit counterpart of each. This target is
 **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED**. Issue [#735][issue-735]
-tracks its implementation after #729; neither the theorem names nor the final
-code links should be fixed before that implementation exists.
+tracks its implementation after #729; neither theorem names nor final code
+links should be fixed before that implementation exists.
 
 Both sides of the comparison use exactly the same native-LDT theorem, constants,
 dimension, and sample:
@@ -769,9 +776,9 @@ same estimate.
 | Candidate and source | Baseline to calculated target | Headline effect | Cost and risk | Status and decision |
 |---|---|---|---|---|
 | Explicit fixed witnesses, from [`deltaQld`][delta-qld] and [`pauli_soundness`][pauli-soundness] | Existential \((a,b)\) to exact \((a_0,1/5242880000)\), with \(a_0=346\cdot21^3\operatorname{pauliBaselineProjectiveConstant}^4\); \(a_{\mathrm{base}}\) remains a padded scalar comparison | Establishes the numerical raw/qubit baseline, including the enormous polynomial degree | High formal plumbing through opaque existential interfaces | **PROVED LOCALLY, NOT MERGED** by `pauli_soundness_explicit_baseline` and `pauli_soundness_qubit_explicit_baseline` at `35ad17dcd89de235373d5c1c5b10050f631144c9`; see the [receipt][qpbt-baseline-receipt] |
-| **Current #729 quantitative composition**, using the improved one-coordinate LDT import, separate coefficient/degree bounds, and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransfer.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\); sharp quantitative degree becomes four; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **IN PROGRESS (selected)** under [#729][issue-729]. A/B local layers are complete and C is integrated, but the unconditional headline and all four required forms are not yet merged |
+| **Current #729 quantitative composition**, using the improved one-coordinate LDT import, separate coefficient/degree bounds, and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransfer.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\); sharp quantitative degree becomes four; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **IN PROGRESS (selected)** under [#729][issue-729]. The structured and canonical proofs and both exact qubit counterparts have focused-compiled, but no source commit, final validation, CI, review, or merge is adopted |
 | Superseded pre-selection quantitative envelopes from the same mechanisms | Earlier calculations included \(\Delta_{100,1/2621440000}\), then \(\Delta_{100,1/327680000}\); extraction alone gave exponent \(1/655360000\), and an earlier joint LDT/extraction estimate gave \((a,b)=(10^{740},1/268435456)\) | Each improved the traced baseline, but all are weaker than the final selected calculation | Similar or greater plumbing, with worse retained constants | **NOT IMPLEMENTED (superseded)**. Recorded to preserve the survey history; not separate scopes |
-| **Selected complete-measurement and squared-failure calculus** | #729 target to \(\min(4,10^{10}n^{15/4+5/262144}E_{1/1048576})\), then \(n^4\), canonical-100, and qubit consequences | Additional 64-fold exponent gain with the same LDT function and sample | Medium/high end-to-end QPBT work; preserve completeness hypotheses, placements, collision terms, witnesses, range projections, and raw effects | **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED** under [#735][issue-735]; accepted by the [author][survey-733-author] and [referee][survey-733-referee] reports |
+| **Selected complete-measurement and squared-failure calculus** | #729 target to \(\min(4,10^{10}n^{15/4+5/262144}E_{1/1048576})\), then the \(n^4\) bound, canonical-100 form, and the exact qubit counterpart of each | Additional 64-fold exponent gain with the same LDT function and sample | Medium/high end-to-end QPBT work; preserve completeness hypotheses, placements, collision terms, witnesses, range projections, and raw effects | **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED** under [#735][issue-735]; accepted by the [author][survey-733-author] and [referee][survey-733-referee] reports |
 | Linear consistency calculus in commutation, starting from [`consistencyDefect_trans_le`][consistency-calculus] and [`CommutingObs.lean`][point-commutation] | Squared twisted-commutator error \(O(\sqrt e)\to O(e)\); joint-point error \(O(e^{1/8})\to O(e^{1/4})\) | Twofold final exponent gain by itself | Medium/broad; completeness is load-bearing and every directed comparison must survive | **Selected as one component of #735; mathematically checked, not Lean-implemented** |
 | Retain the Schmidt-mirror estimate in [`Pasting/Assembly.lean`][qpbt-pasting] | Pasting \(115(\eta^{1/4}+\delta^{1/8})\to12(\eta^{1/4}+\delta^{1/4})\) | Twofold headline exponent gain by itself | Medium; localized proof needs a sharper parameterization | **NOT IMPLEMENTED (comparison only)**. This is weaker than the selected projective squared-failure estimate |
 | Projective pasting by squared failure amplitudes | Same sandwich bound improves to \(307\delta+16\eta\) when both codeword measurements are projective | Eightfold headline exponent gain by itself; improves field-error power as well | Medium/high; finite-sum identities, post-measurement collision weights, and heterogeneous placements are load-bearing | **Selected as the central new #735 estimate; mathematically checked, not Lean-implemented**. Both actual QPBT codeword families are projective; the general pasting theorem remains unchanged |
@@ -809,71 +816,119 @@ fixed-input gain.
 
 ## Comparison with the pinned public `qldErr`
 
-### Source and domain
+### Source, domain, and conclusion metric
 
 The benchmark is Thomas Vidick's public `MIPRE-formalization` at exact commit
 [`286b3ca44f811fa6e37517c04981bc2f164ee6b5`][public-commit]. The inspected
 mirror contained 398 manifested source files, all of whose hashes matched its
 provenance record. The pinned repository license is
-[Apache-2.0][public-license]. This is a public-only, source-inspected
-comparison. No benchmark code was copied, and no benchmark build was run for
-this report.
+[Apache-2.0][public-license]. The accepted exact-function analysis and its
+certificates are recorded in the [published comparison report][benchmark-report].
+This remains a public-only, source-inspected comparison: no benchmark code was
+copied, and no benchmark build was run for this report.
 
-The public theorem [`qld_soundness`][public-soundness] covers arbitrary POVM
-strategies. The construction of the mirror witness is present in
-[`MirrorExists.lean`][public-mirror], and the divisibility \(4m\mid q\) needed
-inside the small-error regime is derived in [`Regime.lean`][public-regime]. An
-earlier preliminary concern that either piece was missing is therefore
-superseded. Likewise, a suspected square-root mismatch in `deltaLegs_comp` was a
-parsing error; the proof and definition agree. Neither concern is a defect of
-the public repository.
+The mathematical source is [Theorem `thm:pauli`][qpbt-paper-pauli-metric]. One
+extraction witness controls an unsquared state norm and both summed squared
+operator-action errors. The public theorem [`qld_soundness`][public-soundness]
+covers arbitrary POVM strategies. The mirror witness is constructed in
+[`MirrorExists.lean`][public-mirror], and [`Regime.lean`][public-regime] derives
+the divisibility \(4m\mid q\) used inside the small-error regime. An earlier
+concern that either ingredient was missing is superseded. A suspected
+square-root mismatch in `deltaLegs_comp` was also a parsing error; the proof and
+definition agree.
 
-The public theorem ranges over arbitrary finite fields of characteristic two.
-The local theorem uses the fixed admissible field model with \(q=2^\ell\) for
-odd \(\ell\), \(d\ge1\), and \(m\mid q\). Numerical comparisons below are on
-the shared domain.
+The common admissible domain used below is
+
+\[
+ \varepsilon\ge0,\qquad m,d\ge1,\qquad m\mid q,\qquad
+ q=2^k\text{ with }k\text{ positive and odd}.
+\]
+
+The public theorem additionally permits general finite fields of characteristic
+two. The local theorem uses its fixed field model and odd extension degree.
+
+Both conclusions use an unsquared state norm and, for each party and basis, a
+sum of squared operator-action norms on the ideal extracted state. Neither uses
+answer averaging or a factor \(1/2\). Comparing the encodings also requires the
+correspondence between their register orders and the equivalent placement of an
+ideal Pauli projector on either half of an EPR pair.
 
 ### The actual capped composition
 
-The public error is a composed function, not merely an existential slogan. With
-the notation \(e,n,r\) above, define
+The public error is an explicit composed function, not either of the
+existential envelopes discussed below. Set
+
+\[
+ A=2\cdot10^{11},\qquad \beta=\frac1{40000},\qquad
+ z=\frac{n+1}{q}.
+\]
+
+Direct expansion of the pinned definitions gives
 
 \[
  \begin{aligned}
  Q_V&=2\sqrt{57676416e}+\sqrt{86e}+86e,\\
  D_V&=80Q_V+9228227936e,\\
- P_V&=D_V/2+\sqrt{D_V/2}
-  +\sqrt{32D_V+4\sqrt{172e}+2(n+1)/q},\\
- T_V&=5m^2P_V+4Q_V+(n+1)/q,\\
- A_V^{\mathrm{CL}}&=2\cdot10^{11},
- \qquad B_V^{\mathrm{CL}}=1/40000,\\
- L_V&=A_V^{\mathrm{CL}}(4n)^{A_V^{\mathrm{CL}}}
- \left(T_V^{B_V^{\mathrm{CL}}}+q^{-B_V^{\mathrm{CL}}}
- +2^{-4B_V^{\mathrm{CL}}n}\right),\\
+ P_V&=D_V/2+\sqrt{D_V/2}+\sqrt{32D_V+4\sqrt{172e}+2z},\\
+ T_V&=5m^2P_V+4Q_V+z,\\
+ L_V&=A(4n)^A\left(T_V^\beta+q^{-\beta}+2^{-4\beta n}\right),\\
  U_V&=2L_V+115352832e,\\
  S_V&=2\sqrt{U_V}+2/q+8U_V,\\
  X_V&=72(10S_V+860e+2\sqrt{172e}+r),\\
- H_V&=2\sqrt{X_V}+2X_V,
- \qquad \eta_V=2-2\sqrt{1-H_V},\\
- F_V&=66S_V+44\sqrt{688e}+46r+1892e+13\sqrt{\eta_V}.
+ H_V&=2\sqrt{X_V}+2X_V,\\
+ \eta_V&=2-2\sqrt{1-H_V},\\
+ J_V&=66S_V+44\sqrt{688e}+46r+1892e+13\sqrt{\eta_V}.
  \end{aligned}
 \]
 
-The definition in [`QLDError.lean`][public-qlderr] is
+Here \(\eta_V\) is used only in the indicated small-error regime. The actual
+definition is
 
 \[
- \operatorname{qldErr}(e,m,d,q)=
+ \boxed{
+ f:=\operatorname{qldErr}(e,m,d,q)=
  \begin{cases}
- \min(F_V,4),&48n\le q\text{ and }H_V<1,\\
+ \min(J_V,4),&48n\le q\text{ and }H_V<1,\\
  4,&\text{otherwise}.
- \end{cases}
+ \end{cases}}
 \]
 
-The component definitions occur in the public files
-[`Combined.lean`][public-combined], [`Lines.lean`][public-lines],
-[`PaddedLIDT.lean`][public-padded], the classical LDT
-[`Parameters.lean`][public-lidt-parameters], [`SwapItemOne.lean`][public-swap-one],
-and [`SwapItemTwo.lean`][public-swap-two].
+The exact source locators are as follows; every path is relative to the pinned
+public commit.
+
+| Quantity | Public declaration | Exact locator |
+|---|---|---|
+| \(Q_V\) | [`MIPRE.QLD.deltaQ`][public-deltaq] | `MIPRE/Background/QLD/Combined.lean:350` |
+| \(D_V,P_V\) | [`MIPRE.QLD.deltaPairsD`, `MIPRE.QLD.deltaPairs`][public-pairs] | `MIPRE/Background/QLD/Lines.lean:1027,1033` |
+| \(T_V,L_V\) | [`MIPRE.QLD.deltaGS`, `MIPRE.QLD.deltaLD`][public-gs-ld] | `MIPRE/Background/QLD/PaddedLIDT.lean:168,174` |
+| \(A,\beta\) and the LDT formula | [`MIPRE.LIDT.clA`, `MIPRE.LIDT.clB`, `MIPRE.LIDT.deltaCL`][public-lidt-constants] | `MIPRE/Background/LIDT/Adapter/Parameters.lean:48,45,54` |
+| \(U_V,S_V\) | [`MIPRE.QLD.deltaProd`, `MIPRE.QLD.deltaS`][public-prod-s] | `MIPRE/Background/QLD/PaddedLIDT.lean:552,560` |
+| \(X_V\) | [`MIPRE.QLD.deltaSelfCons`][public-self-cons] | `MIPRE/Background/QLD/SwapItemOne.lean:146` |
+| \(H_V,J_V,\eta_V\) | [`MIPRE.QLD.deltaLegs`, `MIPRE.QLD.deltaItemTwo`, `MIPRE.QLD.etaItemOne`][public-final-expansion] | `MIPRE/Background/QLD/SwapItemTwo.lean:300,305,309` |
+| Regime and cap | [`MIPRE.QLD.qldHlt`, `MIPRE.QLD.qldBound`, `MIPRE.QLD.qldErr`][public-qlderr] | `MIPRE/Background/QLD/QLDError.lean:84,93,99` |
+
+The public named-error theorem
+[`MIPRE.QLD.exists_le_qldErr`][public-named-error] supplies its witness at this
+actual function.
+
+### Answer normalization
+
+The public operators use [`MIPRE.QLD.rdPauliVec`][public-rd-pauli-vec], which
+sends malformed answers to zero. The local headline uses raw
+prescribed-answer effects. These families coincide on legally supported
+strategies, but they are not definitionally equal for arbitrary strategies.
+
+On a common encoding, if the state norm and completed-family operator distance
+are both at most \(f\), the local raw-transfer calculation gives
+
+\[
+ D_{\mathrm{raw}}\le2f+4f^2+344e\le104f,
+ \qquad f_{\mathrm{raw}}:=\min(4,104f),
+\]
+
+using \(4e\le f\le4\). The function \(f_{\mathrm{raw}}\) is a conservative
+scalar normalization for this report. It is not a proved transport theorem
+between the two repositories.
 
 ### Existential witness and sharper calculated envelope
 
@@ -912,76 +967,172 @@ A separate calculation from the definitions avoids the initial weakening
 \]
 
 This envelope is not the witness proved by `exists_qldErr_le`; it is a distinct
-calculation that still requires a dedicated formal theorem if it is to be
-advertised as proved.
+calculation. Neither existential envelope replaces the actual function \(f\)
+for numerical comparison.
 
-### Normalization and conclusion differences
+### Local bounds and their uniform ordering
 
-Both comparisons use an **unsquared state norm** and, for each party and basis,
-a **sum of squared operator-action norms**. There is no answer averaging and no
-factor \(1/2\).
-
-The answer maps differ. The public theorem uses `map rdPauliVec`, which sends
-malformed answers to zero and thereby produces a completed answer family. The
-local headline compares the raw effect of each prescribed Pauli answer directly
-with the ideal projector. The two families agree on legally supported
-strategies, but they are not definitionally the same for arbitrary strategies.
-
-On a common encoding, if the state norm and completed-family operator distance
-are both at most \(f=\operatorname{qldErr}\), the local raw-transfer calculation
-gives
+For this comparison, write \(C=B_{\mathrm{QPBT}}\) for the #729 structured
+bound and \(F=B_{\mathrm{QPBT}}^{\mathrm{struct}}\) for the accepted #735
+fractional-power bound already displayed above, and set
 
 \[
- D_{\mathrm{raw}}\le2f+4f^2+344e\le104f,
+ F_4=\min\!\left\{4,10^{10}n^4E_{1/1048576}\right\}.
 \]
 
-using \(4e\le f\le4\). This is a mathematical normalization calculation, not a
-proved transport theorem between the two repositories.
-
-The most useful scalar comparison is therefore:
-
-| Bound | Polynomial parameter | Error exponent | Qualification |
-|---|---:|---:|---|
-| Current #729 canonical target | \(100\) | \(1/67108864\) | **IN PROGRESS (selected)** under [#729][issue-729]; raw prescribed-answer effects and fixed odd-extension field model |
-| Proposed #735 canonical consequence | \(100\) | \(1/1048576\) | **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED**; same frozen LDT input, raw prescribed-answer effects, and fixed odd-extension field model |
-| Public reconstructed proof witness | \(a_V\) above | \(1/2560000\) | Witness used by the public existential error-shape proof |
-| Public sharper calculated envelope | \(10^{12}\) | \(1/1280000\) | Unformalized scalar calculation from the public definitions |
-
-For the current #729 target, the public calculated exponent is \(52.4288\)
-times the local exponent, while the local polynomial dependence is far smaller.
-That comparison does not carry over to the proposed #735 exponent:
+On the entire common domain,
 
 \[
- \frac{1/1048576}{1/1280000}=1.220703125.
+ \boxed{F\le F_4\le C.}
 \]
 
-Thus the proposed numerical exponent is larger than the public calculated
-exponent, and its canonical polynomial parameter is smaller. This arithmetic
-does not prove cross-repository dominance. The domains, answer normalization,
-raw/completed conversion, coefficients, caps, and actual composed functions
-still differ, and no transport theorem connects them. The exact comparison and
-regimes must be recomputed after the #735 Lean proofs establish their final
-constants.
+Indeed, \(n\ge1\), the exponent
+\(p=15/4+5/262144\) is smaller than four, and every base in \(E_b\) lies in
+\([0,1]\). Increasing the common exponent therefore decreases each summand,
+and the coefficient also decreases from \(10^{14}\) to \(10^{10}\). Both
+local calculations use the same fixed LDT input: constants \(30,1/8192\),
+dimension \(2m+2\), and sample \(2560000(2m+2)^3d\).
 
-### Current-#729 regimes in which each side is smaller
+The status and role of the quantities are distinct.
 
-Take \(m=1\), \(d=n\), \(e=0\), and \(q=2^{n+1}\), with \(n\) an even power
-of two. These parameters lie in the shared field domain.
+| Object | Mathematical role | Evidence and qualification |
+|---|---|---|
+| \(C\) and its canonical-100 and two exact qubit forms | Current #729 local target | **IN PROGRESS (selected)**. All four proofs have focused-compiled, but no source commit, final validation, CI, review, or merge is adopted |
+| \(F,F_4\), canonical \(\Delta_{100,1/1048576}\), and the exact qubit counterpart of each | Complete future #735 target | **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED** with the same frozen LDT input |
+| \(f\) | Actual public named error | Defined and used by the pinned public theorem; source-inspected, not built here |
+| \(f_{\mathrm{raw}}\) | Conservative completed-to-raw scalar conversion | Unformalized common-encoding calculation; no cross-repository transport theorem |
+| \((a_V,1/2560000)\) | Public existential error-shape witness | Reconstructed witness arithmetic; not the actual composed function |
+| \((10^{12},1/1280000)\) | Sharper public scalar envelope | Unformalized calculation; not the actual composed function |
 
-- At \(n=2^{50}\), the selected local canonical expression is below
-  \(2^{-16772208}\), while the actual public `qldErr` equals \(4\). The
-  public quantity \(L_V\) already forces \(H_V\ge1\).
-- At \(n=2^{80}\), the public calculated envelope is below
-  \(2^{-9.44\cdot10^{17}}\), while the selected local canonical expression has
-  base-two logarithmic size about \(-1.80\cdot10^{16}\). In this regime the
-  public calculated envelope is the smaller displayed bound.
+The larger common exponent of \(F\) does not imply that \(F\) uniformly
+dominates \(f\): the actual public composition retains faster field and tail
+rates than its common-envelope exponent records.
 
-These are extreme regimes used to compare asymptotic behavior, not practical
-parameter recommendations. They compare the current #729 expression with the
-public expressions; they are not claims about the proposed #735 target. At
-fixed \(md\), reducing \(\varepsilon\) and increasing \(q\) cannot remove the
-positive tail term \(2^{-bmd}\). Every finite-\(md\) envelope therefore has a
-nonzero floor.
+### No uniform ordering with the actual public function
+
+Take
+
+\[
+ e=0,\qquad m=1,\qquad d=n,\qquad q=2^{n+1}.
+\]
+
+For \(n=2^{50}\) or \(n=2^{80}\), the extension degree \(n+1\) is odd, so
+these parameters are admissible on both sides. Exact inequalities give
+
+| Parameters | Verified inequalities |
+|---|---|
+| \(n=2^{50}\) | \(f=f_{\mathrm{raw}}=4\), while \(C<2^{-16776968}\) and \(F\le F_4<2^{-1073741589}\) |
+| \(n=2^{80}\) | \(f\le f_{\mathrm{raw}}<2^{-2^{60}}<F\le F_4\le C\) |
+
+Thus neither \(C\), \(F\), nor \(F_4\) is uniformly ordered with \(f\), and
+the same counterexamples apply to \(f_{\mathrm{raw}}\). These are analytic
+comparisons of scalar guarantees, not an ordering of errors attained by actual
+strategies.
+
+The estimates can be certified without expanding the field cardinalities or
+evaluating underflow-prone floating-point expressions. When \(e=0\),
+
+\[
+ T_V=5m^2\sqrt{2z}+z.
+\]
+
+If \(48n\le q\) and \(L_V\le2^{-40}\), then
+
+\[
+ r,q^{-1}\le\sqrt{L_V},\qquad
+ S_V\le21\sqrt{L_V},\qquad X_V<2^{14}\sqrt{L_V}.
+\]
+
+It follows that \(H_V<9/32<1\),
+\(\sqrt{\eta_V}\le32L_V^{1/8}\), and
+
+\[
+ \boxed{f\le2^{11}L_V^{1/8}},
+\]
+
+where the final coefficient is
+\(66\cdot21+46+13\cdot32=1848<2^{11}\).
+
+For \(n=2^k\), \(m=1\), and \(q=2^{n+1}\), one has
+
+\[
+ T_V\le16\sqrt z,\qquad z\le2^{k-n},\qquad
+ L_V<2^{\ell_k},
+\]
+
+where
+
+\[
+ \ell_k=40+A(k+2)+\frac{4+k/2-n/2}{40000}.
+\]
+
+At \(k=80\), exact rational arithmetic gives
+
+\[
+ \ell_{80}<-40,
+ \qquad 18+\ell_{80}/8<-2^{60}.
+\]
+
+Together with \(104<2^7\), this proves the second row of the table. At
+\(k=50\), the retained public tail instead gives
+
+\[
+ L_V>A(4n)^A2^{-n/10000}
+ >2^{52A-2^{50}/10000}>1.
+\]
+
+Hence \(H_V>1\) and the public definition returns four. The local inequalities
+in the first row follow from \(E_b<2\cdot2^{-bn}\).
+
+The mechanism by which the public function wins at \(n=2^{80}\) is its
+retained field and tail decay, not its common existential exponent. In the
+preceding small-\(L_V\), zero-error regime, root subadditivity gives
+
+\[
+ f\le2^{11}[A(4n)^A]^{1/8}
+ \left(
+ 9^{\beta/8}m^{\beta/4}z^{\beta/16}
+ +q^{-\beta/8}+2^{-\beta n/2}
+ \right).
+\]
+
+The surviving field and tail powers include
+
+\[
+ z^{1/640000},\qquad 2^{-n/80000},
+\]
+
+both faster than the common power \(1/1048576\) in \(F\). A separate example
+isolates the tail advantage: for
+\(e=0\), \(m=1\), \(d=n=2^{60}\), and \(q=2^{16n+1}\),
+
+\[
+ L_V<2^{40+62A-n/10000},
+ \qquad f_{\mathrm{raw}}<2^{-2^{40}}<F.
+\]
+
+The larger local error exponent also has a genuine effect in the opposite
+direction. The actual public composition satisfies
+
+\[
+ f\ge e^{1/1280000}
+\]
+
+throughout the common domain. Inside the small-error regime this follows from
+\(T_V\ge e^{1/4}\), \(L_V\ge e^{\beta/4}\), \(\eta_V\ge H_V\), and
+\(J_V\ge L_V^{1/8}\); outside it, \(f=4\). At the same
+\(m=1,d=n=2^{80},q=2^{n+1}\) as above, changing only the error to
+\(e=2^{-n}\) reverses the zero-error ordering:
+
+\[
+ F\le F_4<2^{355-2^{60}}<2^{-n/1280000}\le f.
+\]
+
+These examples are asymptotic certificates, not practical parameter
+recommendations. At every fixed finite \(n\), each displayed common envelope
+also retains a positive tail floor. No part of this comparison is a benchmark
+build, a cross-repository theorem, a proof of actual strategy-error ordering,
+or evidence that #735 has been implemented or merged.
 
 ## Implementation evidence and remaining work
 
@@ -1047,12 +1198,14 @@ commit, and merge remain part of issue #729's integration work.
 - [ ] Merge and record that fixed-witness baseline for issue #729. The exact
   theorem constant \(a_0\) and padded scalar bound \(a_{\mathrm{base}}\) must
   not be conflated.
-- [ ] Merge and record both the structured QPBT declaration proving
+- [ ] Adopt a source commit, complete final validation, and merge both the
+  structured QPBT declaration proving
   \(\min(4,10^{14}(md)^4E_{1/67108864})\) and the canonical `deltaQld`
   corollary with \(a=100\) and \(b=1/67108864\), together with the exact qubit
-  counterpart of each. Verify arbitrary strategies, the nonnegative error
-  domain, raw prescribed-answer effects, isometry range projections, and one
-  common auxiliary state.
+  counterpart of each. The four proofs have focused-compiled, but no final
+  source or validation receipt is adopted. Verify arbitrary strategies, the
+  nonnegative error domain, raw prescribed-answer effects, isometry range
+  projections, and one common auxiliary state.
 - [ ] Change the QPBT selected status to **IMPLEMENTED** only after merged
   theorems establish all four required forms: the structured bound, the
   canonical \(a=100\) form, and their exact qubit counterparts. A precisely
@@ -1061,25 +1214,29 @@ commit, and merge remain part of issue #729's integration work.
 - [x] Record the adopted issue #733 mathematical survey and independent check,
   its closure after comment 5882105555, and the pinned issue #734 overview.
 - [ ] After #729, implement and merge issue #735's fractional-power structured
-  bound, its \(n^4\) consequence, canonical \(a=100\) form, and both exact qubit
-  counterparts. Keep \(\delta_{\mathrm{LD}}(30,1/8192)\), dimension \(2m+2\),
-  and sample \(2560000(2m+2)^3d\) fixed, and leave the general pasting theorem
-  unchanged.
+  bound, its \(n^4\) consequence, canonical \(a=100\) form, and the exact qubit
+  counterpart of each. Keep \(\delta_{\mathrm{LD}}(30,1/8192)\), dimension
+  \(2m+2\), and sample \(2560000(2m+2)^3d\) fixed, and leave the general
+  pasting theorem unchanged.
 - [ ] Record exact-head QPBT axiom-audit, focused-check, full-CI, review, and
   merge evidence for both #729 and #735 before finalizing this report.
-- [ ] Preserve the benchmark qualifications: commit
+- [x] Record the accepted actual-function comparison, including the pinned
+  source report, exact public locators, \(F\le F_4\le C\), retained field and
+  tail rates, and analytic examples in both directions.
+- [x] Preserve the benchmark qualifications: commit
   `286b3ca44f811fa6e37517c04981bc2f164ee6b5` was source-inspected but not
-  built; the public \((10^{12},1/1280000)\) envelope and the factor-104 raw
-  conversion are unformalized calculations; the existing regime examples apply
-  to #729, not automatically to #735; no cross-repository transport theorem has
-  been proved.
+  built; the public \((10^{12},1/1280000)\) envelope and
+  \(f_{\mathrm{raw}}=\min(4,104f)\) are unformalized calculations; the examples
+  compare scalar functions rather than actual strategy errors; no
+  cross-repository transport theorem has been proved.
 
-The remaining report blockers are completion and merge of the #729 headline,
-followed by implementation and merge of #735 with exact evidence. The final
-report must preserve the same measurements, auxiliary state, isometries, range
-projections, raw effects, and full-domain fallbacks through both results. The
-merged native-LDT theorem and the accepted issue #733 mathematics do not by
-themselves discharge those Lean obligations or complete the QPBT track.
+The remaining report blockers are adoption of a #729 source commit, completion
+of its final validation, CI, review, and merge, followed by implementation and
+merge of all six #735 forms with exact evidence. The final report must preserve
+the same measurements, auxiliary state, isometries, range projections, raw
+effects, and full-domain fallbacks through both results. The merged native-LDT
+theorem and the accepted issue #733 mathematics do not by themselves discharge
+those Lean obligations or complete the QPBT track.
 
 [baseline-commit]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9
 [issue-728]: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/728
@@ -1091,6 +1248,7 @@ themselves discharge those Lean obligations or complete the QPBT track.
 [qpbt-baseline-receipt]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/8da61804dc034d3f7bd4d1e701891bb54eb9bce6/results/telemetry/sessions/prover-729-20260929-03.last.md
 [survey-733-author]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2814d000e9c6127bc4d5d30a2ee3f5fe4eb6edc9/results/telemetry/sessions/scout-733-20260929-01.last.md
 [survey-733-referee]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/ac0e8ed88fb5400acee65d0a1eaa8a73bf862a8b/results/telemetry/sessions/scout-733-20260929-02.last.md
+[benchmark-report]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2a3db5b923e240d1a54c50ae25ab54108ac2e2c4/results/telemetry/sessions/scout-730-20260929-01.last.md
 [pr-731]: https://github.com/Dengnifer/MIPStarRE-QPBT/pull/731
 [ldt-tested-head]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/df8f6bc9255e7aa524ceebff3bffc0087dfc1ee2
 [ldt-merge]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/fac99fdf22bbdbb83a2376ca48cd679dc7d13750
@@ -1126,6 +1284,7 @@ themselves discharge those Lean obligations or complete the QPBT track.
 [ldt-from-h-to-g]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/MIPStarRE/LDT/Pasting/Statements.lean#L110-L145
 [qpbt-paper-ld]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex#L410-L458
 [qpbt-paper-pauli]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex#L1426-L1447
+[qpbt-paper-pauli-metric]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex#L1431-L1444
 [qpbt-paper-composition]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex#L1267-L1404
 [qpbt-paper-unitary]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex#L1666-L1876
 [delta-qld]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/MIPStarRE/QPBT/Test/SoundnessDefs.lean#L30-L38
@@ -1152,14 +1311,17 @@ themselves discharge those Lean obligations or complete the QPBT track.
 [pasting-product-gap]: paper-gaps/qpbt_pasting-product-error.tex
 [public-commit]: https://github.com/vidick/MIPRE-formalization/tree/286b3ca44f811fa6e37517c04981bc2f164ee6b5
 [public-license]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/LICENSE
-[public-qlderr]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/QLDError.lean#L78-L100
+[public-deltaq]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/Combined.lean#L350
+[public-pairs]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/Lines.lean#L1027-L1033
+[public-gs-ld]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/PaddedLIDT.lean#L168-L174
+[public-lidt-constants]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/LIDT/Adapter/Parameters.lean#L45-L54
+[public-prod-s]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/PaddedLIDT.lean#L552-L560
+[public-self-cons]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/SwapItemOne.lean#L146
+[public-final-expansion]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/SwapItemTwo.lean#L300-L309
+[public-qlderr]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/QLDError.lean#L84-L99
 [public-qlderr-witness]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/QLDError.lean#L297-L305
+[public-named-error]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/Soundness.lean#L470
 [public-soundness]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/Soundness.lean#L525-L574
 [public-mirror]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/MirrorExists.lean#L180-L207
 [public-regime]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/Regime.lean#L45-L72
-[public-combined]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/Combined.lean#L340-L360
-[public-lines]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/Lines.lean#L1015-L1040
-[public-padded]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/PaddedLIDT.lean#L160-L180
-[public-lidt-parameters]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/LIDT/Adapter/Parameters.lean#L40-L60
-[public-swap-one]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/SwapItemOne.lean#L138-L155
-[public-swap-two]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/SwapItemTwo.lean#L295-L315
+[public-rd-pauli-vec]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/MIPRE/Background/QLD/PauliBasis.lean#L190
