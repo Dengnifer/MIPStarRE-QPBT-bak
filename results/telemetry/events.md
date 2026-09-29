@@ -10009,3 +10009,7 @@ CI737passed, but reviewer01 exited75beforeanymodelrequest because the owner-bin 
 ## 2026-09-29T23:08:33.338862+00:00 — C8 round-two disposition
 
 R2of737resolvedallfirst-roundfindingsbutdemonstratedtwoadditionalfalseacceptancesunderthesameC8shapecontract: HTML-commentedledgersandtablesafterSetextsectionboundaries. Mainacceptsbothandassignsoneboundedrepair. review.md9 explicitlypermitsanotherreviewwhenheadchangeswithinfourroundceiling; thisisthe recordedexceptionto normaltwo-roundworkflowdisposition, withnocapreset, noadjudicatedmerge andnoothermechanismadded. Acleannormalexact-headreviewisrequiredbytheowner; donotwaiveafailinggate. Preserve974-linecompletePRbudgetduringtherepair.
+
+## 2026-09-29T23:38:23.029972+00:00 — C8 third-review table-boundary regression
+
+Review 5359790580 at `5a903c7c633558e6c6f44b1e62429187b8ff8ee6` resolves the earlier findings but shows that the new Setext check can treat the final table row before a thematic break as heading text, hiding an invalid disposition. Main accepts the finding and admits one 600-second Sol repair (900-second hard timeout), followed by the fourth and final full review under review.md §9/§12. The owner requires normal clean gates; no override or fifth review is authorized. Prior author cost is 2,095 seconds, and prior CI cost is 1,232 seconds. The owner-authorized 5,000-line budget supersedes the old line ceiling; the separate budget amendment remains queued after #737. This is a regression repair within the existing C8 contract, not a new mechanism.
