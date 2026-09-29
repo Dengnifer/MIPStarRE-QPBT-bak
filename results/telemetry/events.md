@@ -9977,3 +9977,18 @@ Repair03 is terminal exit124/1261s, usage unknown, no pending command handles. S
 ## 2026-09-29T00:10:33.708688+00:00 — telemetry publication remote-name correction
 
 Checked publication refused before network access because main supplied the absent remote `origin`. Read-only inspection confirmed the configured publication remote is `github`, as used by primary `github-sync.sh`. Retry uses that existing remote with the same normal checked-push gate. No remote, credential, model key, or hook was changed; an `origin/main` tracking ref does not imply a configured `origin` remote.
+
+## 2026-09-29T00:20:33Z — Protocol blind spot: bound strength
+
+The error-bound surveys on #727 (comments `error-bounds-survey-qpbt`, `error-bounds-survey-ldt`,
+`error-bounds-survey-comparison`, `error-bounds-final-selection`) found the QPBT and LDT chains faithful and sorry-free, yet
+weaker than their own proofs: the extraction step states one merged bound for a squared state error of order `x` and a
+squared operator error of order `√x`; coefficients are absorbed into the degree of `a(md)^a`; consistency triangles take a
+square root the complete-measurement case does not need; the `k = 1` case goes through a general √-helper; the internal
+envelope `mainFormalError` is pinned to the printed constants; pasting uses an additive Hoeffding tail. The QPBT witness
+exponent is `1/5,242,880,000` where the same proofs support `1/327,680,000`. Diagnosis: every protocol rule measures
+"weakened" against the paper, whose `poly(ε)`/`O(·)` statements admit any polynomial loss; nothing compared a statement with
+its own proof; the skeleton briefs fixed a one-parameter `a(md)^a` class with `∃ a b` at every interface; `mathfix.md`
+selected the weakest sufficient statement; review item 7 rewarded lossy reuse. Owner, 2026-09-29: fix the protocol kit and
+workflow design so this does not recur. Fix: issue #732, `local/protocols/EVOLUTION.md` 2026-09-29. Lesson: a gate that
+compares only with the source cannot see losses the source's qualitative wording permits; compare with the proof too.

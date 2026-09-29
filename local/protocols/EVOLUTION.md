@@ -1791,3 +1791,31 @@ protocol history, telemetry, paper mirrors, or accepted comparator evidence.
 repository, historical and current identifying URLs remain anonymized, and
 the scope instructions distinguish the library from actual external
 repositories. No CI, review, merge, completion, or dependency-pin gate changes.
+
+## 2026-09-29 - Keep the bound strength each proof establishes (#732)
+
+**Trigger:** the owner's 2026-09-29 instruction to fix the protocol kit and workflow design so that proofs stop
+weakening their bounds, after the error-bound surveys on #727, recorded in `results/telemetry/events.md`, "Protocol
+blind spot: bound strength". The QPBT witness exponent is `1/5,242,880,000` where the same proofs support
+`1/327,680,000`; the LDT headline loses in the same ways. Every existing rule measured "weakened" against the paper.
+
+**Change:** `AGENTS.md` gains *Bound strength*: state what the proof gives; keep separate errors separate; keep
+coefficients out of exponents; no free loss; weakening only as a named `Weakening:` corollary; a stage
+ledger per track (QPBT: `docs/bound-ledger-qpbt.md`); explicit-constant siblings of existential headlines;
+paper-labelled declarations keep the paper's form with the sharp bound as a separate sibling; interfaces fixed by
+skeletons and briefs carry explicit, separate error terms. It also gains an audit-list
+bullet, review item 13 and a reuse caveat on item 7. The review prompt that `review.sh` reads gains item 11 and a
+caveat on item 7: only a loss the PR introduces, in an exponent or degree on a headline's dependency path and not
+recorded as `necessary` or `deferred #N`, is a finding; coefficient-only losses go in the review prose. `review.md` §6 states the same severities. `completion.md` adds
+C8 (explicit siblings, the stage ledger with `sharp` / `necessary: <reason>` / `deferred #N` dispositions, one
+quantitative survey before the first completion statement), and `scripts/completion_gate.py` checks its static half
+with tests. Personas: prover (rule and output section), mathfix (minimality no longer weakens a bound), blueprint
+(proof rates for `poly` steps, *Loose bounds* output), splitter, reviewer (A7, S3), simplifier, orchestrator, scout
+and main (ledger and survey duty); the prover role line in `dispatch.sh`; minimality in `issues-prs.md` §6.
+`docs/anti_patterns.md` A7, `docs/formalization-patterns.md` Pattern 7, `docs/PROOF_INTEGRITY.md`,
+`docs/project_conventions.md` and `docs/CONTRIBUTING.md` §5. The same amendment is applied to the kit branch `kit/formalize-any-paper`.
+
+**Expected effect:** new and changed estimate lemmas state the bounds their proofs give, lossy restatements become
+review findings, and no track is declared finished without its ledger. Losses already in the tree are the ledger's
+backlog, not findings against unrelated PRs. No Lean statement or proof changes. C8 fails the QPBT completion gate
+until `docs/bound-ledger-qpbt.md` exists with its *Stage ledger*; that is main's to-do list, not an owner blocker.
