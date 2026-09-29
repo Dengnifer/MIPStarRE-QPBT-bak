@@ -2,12 +2,22 @@
 
 Date: 2026-09-29
 
-Source commit: `88436c45b51ebf485ed31ebfdfd0414aa2c59a74`
+Public-interface source commit: `88436c45b51ebf485ed31ebfdfd0414aa2c59a74`
 
-This ledger records the issue #729 B-interface additions to the quantitative
-QPBT blueprint. It is a delta from the preserved 114-declaration baseline in
+Documentation and import normalization commit:
+`b912107c82ee0ff3ae098215eb55bd57ce7e1f4e`
+
+This ledger records the issue #729 separate state- and operator-component
+bounds in the quantitative QPBT blueprint. It is a delta from the preserved
+114-declaration baseline in
 `audits/issue-729-baseline-blueprint-coverage.md`; none of those earlier links
 or source-labelled statements was removed or redirected.
+
+Commit `88436c45b51ebf485ed31ebfdfd0414aa2c59a74` is the frozen source of the
+eight public mathematical declarations below. Commit
+`b912107c82ee0ff3ae098215eb55bd57ce7e1f4e` subsequently normalized a private
+helper spelling and the aggregate QPBT import; it did not change this public
+component interface.
 
 The source delta contains eight public mathematical declarations and eleven
 private proof helpers. Every public declaration is linked exactly once in

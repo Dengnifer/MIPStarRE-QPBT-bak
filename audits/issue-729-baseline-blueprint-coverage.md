@@ -16,8 +16,9 @@ All 114 names elaborate against the frozen source. The 90 theorems were also
 checked with `#print axioms`; none depends on `sorryAx`, and their closures use
 only the standard axioms `propext`, `Classical.choice`, and `Quot.sound` as
 applicable. The supplied-global-witness results remain explicitly conditional in
-`thm:qld-supplied-global-consistency-explicit`; no future A/B/C declaration is
-listed or marked proved. There are no unresolved declarations in this inventory.
+`thm:qld-supplied-global-consistency-explicit`; no later quantitative
+global-pair, component-bound, or final-soundness declaration is listed or
+marked proved. There are no unresolved declarations in this inventory.
 
 | Kind | Lean declaration | Frozen source | Blueprint label |
 |---|---|---|---|
