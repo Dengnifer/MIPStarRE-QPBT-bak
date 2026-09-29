@@ -2341,3 +2341,291 @@ this last quantity, four times the actual squared state error, and
 $4\lvert\mathcal E_{\mathrm{Pauli}}\rvert\eps$; using
 $\lvert\mathcal E_{\mathrm{Pauli}}\rvert=86$ yields the stated coefficient.
 \end{proof}
+
+
+\section{Final explicit quantitative soundness}
+\label{sec:pauli-final-quantitative-soundness}
+
+The statements in this section are Lean-only quantitative specializations of
+Theorem~\ref{thm:pauli} and Corollary~\ref{cor:pauli-binary}.  They do not
+replace either source-labelled statement.  All operator errors below are sums
+of squared action norms over the prescribed answers $u\in\F_q^M$, whereas the
+state error is an unsquared norm.
+
+\begin{definition}[Final quantitative Pauli error]
+\label{def:pauli-final-quantitative-error}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativePower}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeEnvelope}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeRawError}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeError}
+\leanok
+\uses{def:qld-coefficient-thirty-scales}
+For admissible $P=(q,m,d)$, put $n=md$ and
+\[
+ b=\frac1{67108864},\qquad
+ E_b(P,e)=e^b+q^{-b}+2^{-bn}.
+\]
+Define the uncapped structured error and the final error by
+\[
+ B(P,e)=10^{14}n^4E_b(P,e),\qquad
+ \Delta_{\mathrm{new}}(P,\eps)
+   =\min\{4,B(P,\min\{\eps,1\})\}.
+\]
+All powers are real powers.  Thus the source error is clipped before entering
+the envelope, while the outer cap is the common universal bound for the state
+and prescribed operator families.
+\end{definition}
+
+\begin{theorem}[Exponent and envelope comparisons]
+\label{thm:pauli-final-envelope-support}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_half_global_pair}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_pos}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_lt_one}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_gain_mul_baseline}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_nonneg}
+\lean{MIPStarRE.QPBT.quantitative_global_pair_envelope_le_pauli_soundness}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_global_pair_envelope_le_pauli_soundness}
+\lean{MIPStarRE.QPBT.sqrt_error_le_quantitative_global_pair_envelope}
+\lean{MIPStarRE.QPBT.quantitative_ratio_le_global_pair_envelope}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+def:qld-coefficient-thirty-scales,
+def:qld-extraction-baseline-constants}
+Let $b_{\mathrm{pair}}=1/33554432$ be the rounded global-pair exponent and
+let $b_{\mathrm{sound}}=1/5242880000$ be the fixed explicit-baseline
+exponent.  Then
+\[
+ b=\frac{b_{\mathrm{pair}}}{2},\qquad
+ 0<b<1,\qquad
+ b=\frac{625}{8}b_{\mathrm{sound}}.
+\]
+In particular the exponent improves by the exact factor $625/8=78.125$.
+For every $e\geq0$, the envelope $E_b(P,e)$ is nonnegative and
+\[
+ \sqrt{E_{\mathrm{pair}}(P,e)}\leq E_b(P,e),\qquad
+ \frac{n}{q}\leq nE_{\mathrm{pair}}(P,e).
+\]
+If also $e\leq1$, then
+\[
+ E_{\mathrm{pair}}(P,e)\leq E_b(P,e),\qquad
+ \sqrt e\leq E_{\mathrm{pair}}(P,e).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+def:qld-coefficient-thirty-scales,
+def:qld-extraction-baseline-constants}
+The identities between exponents are numerical.  Monotonicity of real powers
+on $[0,1]$ compares the error terms, while monotonicity at bases at least one
+compares the field and exponential tails.  Subadditivity of the square root
+gives the square-root estimate term by term, and the field term absorbs
+$n/q$ after multiplication by $n$.
+\end{proof}
+
+\begin{theorem}[Absorption of the extraction components]
+\label{thm:pauli-final-component-absorption}
+\lean{MIPStarRE.QPBT.quantitative_extraction_scale_le}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le}
+\lean{MIPStarRE.QPBT.quantitative_state_component_le_raw_error}
+\lean{MIPStarRE.QPBT.quantitative_operator_component_le_raw_error}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-envelope-support}
+Let $0\leq e\leq1$, put $r=n/q$, and suppose
+\[
+ g\leq10^7n^4E_{\mathrm{pair}}(P,e),\qquad
+ x=2800(g+\sqrt e+r).
+\]
+Then
+\[
+ x\leq10^{11}n^4E_{\mathrm{pair}}(P,e),\qquad
+ \sqrt{x}\leq10^6n^4E_b(P,e).
+\]
+More generally, the second inequality holds for every $e\geq0$ and $x\geq0$
+that satisfies the displayed $10^{11}$ bound.  Under that same bound,
+\[
+ 4\sqrt{x}\leq B(P,e).
+\]
+If $e\leq1$, the prescribed-family component bound is also absorbed:
+\[
+ 472x+24r+192\sqrt{x}+344e\leq B(P,e).
+\]
+The first quantity is the unsquared state estimate obtained from a squared
+state error $16x$; the second is the sum-of-squares operator estimate for the
+same auxiliary state.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-envelope-support}
+Use the bounds for $g$, $\sqrt e$, and $r$ to obtain
+$x\leq10^{11}n^4E_{\mathrm{pair}}$.  Taking a square root halves the envelope
+exponent, and $n\geq1$ permits the resulting $n^2$ factor to be enlarged to
+$n^4$.  The numerical inequalities
+$4\cdot10^6<10^{14}$ and
+$472\cdot10^{11}+24+192\cdot10^6+344<10^{14}$ absorb the state and operator
+components into the common structured error.
+\end{proof}
+
+\begin{theorem}[Full-domain and canonical scalar bounds]
+\label{thm:pauli-final-full-domain-support}
+\lean{MIPStarRE.QPBT.four_le_pauli_soundness_quantitative_raw_error_of_md_eq_one}
+\lean{MIPStarRE.QPBT.four_le_pauli_soundness_quantitative_raw_error_of_one_le_ratio}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_mono_error}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_error_le_deltaQld}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-envelope-support}
+For $e\geq0$, either of the conditions $md=1$ or $1\leq md/q$ implies
+\[
+ 4\leq B(P,e).
+\]
+The envelope is monotone in its nonnegative error argument: if
+$0\leq e\leq e'$, then $E_b(P,e)\leq E_b(P,e')$.  Consequently, for every
+$\eps\geq0$,
+\[
+ \Delta_{\mathrm{new}}(P,\eps)
+ \leq\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q).
+\]
+No small-regime hypothesis is present in this canonical consequence.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-envelope-support}
+When $md=1$, the base-two tail already makes the uncapped error exceed four;
+when $md/q\geq1$, the field term does so.  Otherwise $md\geq2$, and
+$10^{14}(md)^4\leq100(md)^{100}$ follows from
+$10^{14}\leq100\cdot2^{96}$.  Monotonicity from the clipped error to $\eps$
+then gives the canonical bound.
+\end{proof}
+
+\begin{theorem}[Strict comparison with the fixed explicit baseline]
+\label{thm:pauli-final-baseline-comparison}
+\lean{MIPStarRE.QPBT.one_hundred_lt_pauli_soundness_baseline_constant}
+\lean{MIPStarRE.QPBT.deltaQld_quantitative_lt_explicit_baseline}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_error_lt_explicit_baseline_of_le_one}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_error_lt_explicit_baseline_clipped}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-full-domain-support,
+def:qld-extraction-baseline-constants,
+lem:delta-qld-mono-support}
+Let $C_{\mathrm{sound}}$ and $b_{\mathrm{sound}}=1/5242880000$ be the
+coefficient and exponent of the fixed explicit baseline.  Then
+$100<C_{\mathrm{sound}}$.  For every admissible $P$ and every
+$0\leq e\leq1$,
+\[
+ \delta_{\mathrm{qld}}^{100,b}(e,m,d,q)
+ <\delta_{\mathrm{qld}}^{C_{\mathrm{sound}},b_{\mathrm{sound}}}
+    (e,m,d,q)
+\]
+and
+\[
+ \Delta_{\mathrm{new}}(P,e)
+ <\delta_{\mathrm{qld}}^{C_{\mathrm{sound}},b_{\mathrm{sound}}}
+    (e,m,d,q).
+\]
+For an arbitrary $\eps\geq0$, the exact full-domain comparison is
+\[
+ \Delta_{\mathrm{new}}(P,\eps)
+ <\delta_{\mathrm{qld}}^{C_{\mathrm{sound}},b_{\mathrm{sound}}}
+    (\min\{\eps,1\},m,d,q).
+\]
+Thus strictness is asserted on the actual clipped domain; it is not inferred
+by comparing two universally saturated caps.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-full-domain-support,
+def:qld-extraction-baseline-constants,
+lem:delta-qld-mono-support}
+First enlarge the improved exponent down to the baseline exponent by
+monotonicity.  The baseline coefficient is strictly larger than $100$, and
+the three-term bracket is positive, so the resulting prefactor comparison is
+strict.  Compose this with the canonical upper bound and then substitute
+$e=\min\{\eps,1\}$.
+\end{proof}
+
+\begin{theorem}[Unconditional structured and canonical Pauli soundness]
+\label{thm:pauli-final-quantitative-soundness}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_canonical}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-component-absorption,
+thm:pauli-final-full-domain-support,
+thm:qld-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Let $P=(q,m,d)$ be admissible, let $\eps\geq0$, and let an arbitrary strategy
+for the Pauli basis test have value at least $1-\eps$.  There are local
+isometries and one normalized auxiliary state such that
+\[
+ \left\|(\phi_{\mathrm A}\otimes\phi_{\mathrm B})\ket\psi
+   -\ket{\mathrm{aux}}\otimes\ket{\mathrm{EPR}_q}^{\otimes M}\right\|
+ \leq\Delta_{\mathrm{new}}(P,\eps),
+\]
+and, for each $W\in\{X,Z\}$, both players' distances between the conjugated
+raw effects attached to the prescribed answers and the ideal Pauli projectors
+are at most $\Delta_{\mathrm{new}}(P,\eps)$.  Each operator distance is
+\[
+ \sum_{u\in\F_q^M}
+ \left\|\bigl(\phi M^{(\mathsf{Pauli},W)}_{\mathsf{Pauli}(u)}
+       \phi^\dagger-\tau_u^W\bigr)
+       \bigl(\ket{\mathrm{aux}}\otimes
+         \ket{\mathrm{EPR}_q}^{\otimes M}\bigr)\right\|^2,
+\]
+with the appropriate player placement.  The conjugated effects retain their
+isometry range projections; no range condition is imposed on the ideal state.
+
+The same witness satisfies all three conclusions with the larger canonical
+bound $\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  In particular
+$1\leq100$ and $0<b<1$, and neither form assumes a supplied global witness or
+a small-regime premise.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-soundness-explicit-baseline,
+thm:pauli-universal-distance-caps-support,
+thm:qld-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-final-component-absorption,
+thm:pauli-final-full-domain-support}
+Put $e=\min\{\eps,1\}$.  If $B(P,e)\geq4$, retain the actual witness
+constructed by the fixed explicit-baseline theorem and apply the universal
+state and prescribed-family caps.  Otherwise the two saturation lemmas imply
+$md\geq2$ and $md/q<1$.  The questionwise Naimark setting then constructs its
+global polynomial-pair witness internally, and the componentwise transfer
+gives one soundness witness carrying the squared state estimate and both raw
+operator estimates for the same auxiliary state.  The preceding scalar
+absorption bounds its unsquared state norm and both summed squared operator
+distances by $B(P,e)$.  Finally apply the canonical scalar bound without
+changing the witness.
+\end{proof}
+
+\begin{corollary}[Exact quantitative qubit form]
+\label{cor:pauli-final-quantitative-qubit}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_canonical}
+\leanok
+\uses{thm:pauli-final-quantitative-soundness, lem:pauli-binary}
+Under the hypotheses of
+Theorem~\ref{thm:pauli-final-quantitative-soundness}, there are local
+isometries into qubit registers and the same normalized auxiliary state for
+which the unsquared state norm and both prescribed-answer sums of squared
+operator norms are bounded by $\Delta_{\mathrm{new}}(P,\eps)$.  The same
+witness also satisfies the canonical bound
+$\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  The field-basis coordinate
+change preserves each of the three distances exactly, so the qubit forms
+introduce no additional constant, exponent loss, hypothesis, or change of
+witness.
+\end{corollary}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-quantitative-soundness, lem:pauli-binary}
+Transport the witness of
+Theorem~\ref{thm:pauli-final-quantitative-soundness} through the fixed
+self-dual field basis.  Simultaneous reindexing preserves the state norm and
+both prescribed operator-family distances term by term.
+\end{proof}

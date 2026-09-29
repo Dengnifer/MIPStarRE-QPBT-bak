@@ -64,5 +64,12 @@ Every declaration occurs in exactly one `\lean{...}` tag in the active
 blueprint.  The 32 theorem declarations were checked in a temporary module
 importing both `MIPStarRE` and `MIPStarRE.QPBT.Combining.Quantitative`; every
 axiom closure was exactly `propext`, `Classical.choice`, and `Quot.sound`.
-The aggregate `MIPStarRE.QPBT` import at this snapshot does not yet re-export
-`Combining.Quantitative`; that export is the remaining integration-side delta.
+
+Final integration source commit
+`3ae0b085606b4cdbbc6fe99dbde2f314a691ab50` split the direct scalar
+declarations into `Combining/QuantitativeDirectScalars.lean` without changing
+their names or signatures.  It also made the aggregate `MIPStarRE.QPBT` import
+provide both final quantitative soundness modules and, transitively,
+`Combining.Quantitative`.  Thus the earlier missing-export limitation is
+resolved; normal `checkdecls` evidence is recorded in
+`audits/issue-729-final-blueprint-coverage.md`.
