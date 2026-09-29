@@ -1,0 +1,29 @@
+{
+  "head": "388bfa7cf494d08482abe3bc286f4a78543d428c",
+  "changed_lean_files": 69,
+  "checks": {
+    "7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9": {
+      "public_headers_checked": 464,
+      "missing": [],
+      "drift": []
+    },
+    "35ad17dcd89de235373d5c1c5b10050f631144c9": {
+      "public_headers_checked": 578,
+      "missing": [],
+      "drift": []
+    },
+    "388bfa7cf494d08482abe3bc286f4a78543d428c": {
+      "public_headers_checked": 647,
+      "missing": [],
+      "drift": []
+    }
+  },
+  "frozen_ldt_tree": "ddd92480c55bbabba5a96af96064fc792a5eb68c",
+  "expected_ldt_tree": "ddd92480c55bbabba5a96af96064fc792a5eb68c",
+  "ldt_working_diff": "",
+  "new_c_public_count": 29,
+  "scope": "Normalized public headers including moved declarations; section context and elaborated types require separate source and independent review.",
+  "adopted_source_commit": "3ae0b085606b4cdbbc6fe99dbde2f314a691ab50",
+  "adoption_time": "2026-09-29T02:37:26.863896+00:00",
+  "source_commit_explanation": "The original audit ran on the terminal working snapshot based at388bfa7c, immediately before normal commit3ae0b085. Subsequent integration merges changed documentation/telemetry only."
+}
