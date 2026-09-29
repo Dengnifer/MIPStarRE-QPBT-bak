@@ -195,6 +195,9 @@ worktree.
   statement's label and kind, its exact source locator (`references/<mirror>/<file>.tex:<lines>`),
   a one-sentence restatement, what it depends on, and whether the printed proof
   establishes the printed claim.
+- For every estimate, the row also records the bound the printed proof
+  actually gives (explicit constants and exponents, one per error term), even
+  where the statement says only `poly(ε)` or `O(·)`.
 - A single merged inventory, produced by a verifier that read the files rather
   than their contents inline, listing: the headline results, the dependency
   edges between statements, the statements that will need definitions not in
@@ -260,6 +263,13 @@ whose conclusion has the right shape but whose hypotheses carry an extra
 load-bearing input is a *conditional* statement and must say so. Where the
 source is wrong, the node states the **corrected** statement and cites its gap
 note; the printed form stays visible in the note, not silently replaced.
+
+**Bound-strength rule.** Where the paper states a step only up to `poly(ε)`,
+`O(·)` or "some constant", the node records the bound the printed proof gives
+in a remark marked as a derived rate,
+one term per error of a different order. The paper's qualitative form is an
+envelope for the headline, never the interface between stages (`AGENTS.md`,
+*Bound strength*).
 
 **Commands**
 
@@ -371,6 +381,10 @@ Each chapter's Lean subtree is filled in with the **statements** of its nodes,
 every proof `sorry`, and each declaration carrying a docstring that names its
 blueprint label and the exact source locator it formalizes. Each blueprint node
 gains its `\lean{}` link and keeps `\notready` until the Lean side exists.
+These statements fix stage interfaces before any proof exists, so they state
+each error term explicitly (`C * n ^ k * x ^ b`, one per order, numerals from
+the derived rates); an existential or one-parameter class appears only in the
+headline corollary (`AGENTS.md`, *Bound strength*, rule 6).
 
 ```bash
 lake build
@@ -453,6 +467,10 @@ the procedure. It is by far the longest stage.
 - Every blueprint node is `\leanok` or listed in the exemption table with a
   written reason.
 - Every paper-gap note has a terminal status.
+- The track's bound ledger (`bound_ledger`) has a row for every stage
+  lemma on each headline's dependency path; each headline with existential
+  constants has a proved explicit-constant sibling; one read-only quantitative
+  survey found no unrecorded loss (completion C8).
 
 **Telemetry.** `4.3-proofs` start, `milestone` rows at stage boundaries with
 the snapshot numbers, `4.3-proofs` end when the exit criteria hold.
@@ -540,3 +558,4 @@ already happened once.
 | 17 | The commit message treated as the record | stage 4.2 onward |
 | 18 | Consumers rewritten before the evidence they read was archived | stage 4.2 |
 | 19 | A headline table and a challenge generator that disagree | stage 4.4 |
+| 20 | Bounds weakened to the paper's `poly`/`O(·)` form: faithful, sorry-free, and far weaker than the proofs | stages 2, 3, 4.2, 4.3 |

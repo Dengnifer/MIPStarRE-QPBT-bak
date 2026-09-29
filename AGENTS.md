@@ -286,6 +286,8 @@ integrity audit:
 - Lean conclusion;
 - verdict: exact, faithful boundary hypotheses, extra assumptions, weakened
   conclusion, or strengthened conclusion.
+- bound strength, for an estimate: the stated bound versus the bound the
+  proof establishes (`AGENTS.md`, *Bound strength*).
 
 ### Paper-realignment mode
 
@@ -345,6 +347,86 @@ restriction, use a lighter docstring marker such as `**Local fix:**` or
 markers are for mathematically correct local corrections; `**Unfaithful:**` is
 reserved for load-bearing assumptions or proof steps still missing from the
 paper hypotheses.
+
+### Bound strength
+
+The faithfulness checks above compare a Lean statement with the paper. This rule
+compares it with its own proof. A statement can match a paper that says only
+`poly(ε)` or `O(·)`, compile without `sorry`, and still discard most of what its
+proof established; losses compound along a chain of stages. This happened on
+the project this kit was extracted from: an error-bound survey found its headline chain
+faithful and sorry-free, yet its final exponent 16 times smaller than its own proofs support (`local/protocols/EVOLUTION.md`, 2026-09-29).
+
+Terms. An *estimate* is a conclusion, an error-function `def` or a
+witness-structure field that bounds an error, a distance or a probability. A
+*stage lemma* is an estimate that another stage consumes. An estimate is *on a
+headline's dependency path* when a headline theorem of
+`local/protocols/completion.md` §6 depends on it, or its issue or blueprint
+`\uses` says it will; if unsure, it is.
+
+1. **State what the argument gives.** An estimate states the bound its argument
+   establishes, with explicit numerals for constants and exponents. An
+   existential form (`∃ a b, …`, a poly-error contract, a one-parameter class
+   such as `a · n^a`) is a corollary of an explicit statement, never the only
+   version.
+2. **Keep separate errors separate.** When one construction yields errors of
+   different orders (a squared state error `O(x)` and a squared operator error
+   `O(√x)`, say), state each one. Do not merge them with `max`, a common weaker
+   exponent, or one `delta` field of a witness structure; stage interfaces pass
+   the separate bounds on.
+3. **Keep coefficients out of exponents.** Do not absorb a numerical
+   coefficient into a degree or an exponent (`C · n^a ≤ n^(C·a)`,
+   `C · x^b ≤ x^(b/2)` for small `x`). Keep `C · n^k · x^b` with three separate
+   parameters, and collapse to a canonical form once, at the headline.
+4. **No free loss.** At no step of an argument, not only the last, take a root
+   or a square the argument does not need, pad `d` to `m·d` or `√m` to `m`,
+   enlarge a proved bound to fit a shared lemma, prove a special case through a
+   general lemma that costs an exponent, or use an additive concentration bound
+   where a multiplicative one holds. Reuse is good when it costs no exponent
+   and no degree; a special-case lemma with a sharper bound than the general
+   lemma it parallels is not duplication.
+5. **Paper-shaped statements stay; the sharp bound sits beside them.** A
+   paper-labelled declaration (the one `\lean{}` names) keeps the paper's form,
+   as the faithfulness policy requires. When its argument gives more, the sharp
+   bound is a separate declaration and the paper-shaped one follows from it.
+   That sharp sibling is not a changed error parameter or a strengthened
+   conclusion under the faithfulness rules, and it needs no `**Local fix:**`
+   marker or paper-gap note. Any other weaker form is a separate corollary
+   whose docstring begins `Weakening: <sharp> ⇒ <weak>, because <reason>.` A
+   weakening is justified only by the paper's printed statement or by a
+   hypothesis of a Mathlib or source-paper result used verbatim. The shape of
+   a project-internal interface, witness structure or shared helper is never a
+   reason: change the interface or, when the task may not change it, record
+   the loss as `deferred #N`. Record in the diff, where the reviewer sees it:
+   a necessary loss by its `Weakening:` docstring, a deferred one by the line
+   `Bound: deferred #N.` in the lossy declaration's docstring.
+6. **Interfaces are designed for sharp bounds.** A skeleton, brief or issue
+   contract that fixes a stage interface before its proof exists states each
+   error term explicitly (`C * n ^ k * x ^ b`, one per order); an existential
+   or one-parameter class appears only in the headline corollary
+   (`docs/formalization-patterns.md`, Pattern 7).
+7. **The ledger.** Each track has a bound ledger (its `bound_ledger`,
+   `local/protocols/completion.md` §6) with a `Stage ledger` section: one row
+   per stage lemma on a headline's dependency path, giving the stated bound,
+   the bound its argument supports once rule-4 losses are removed, and a
+   `Disposition` of `sharp`, `necessary: <reason>` or `deferred #N`. A PR lists
+   the rows it adds or changes under `## Bound strength` in its body; main
+   copies them into the ledger after the merge.
+8. **Explicit headlines.** Every headline with existential constants has a
+   proved explicit-constant sibling in the axiom audit, and the ledger records
+   its numbers; an improvement is measured against it.
+
+**In review**, a loss is a finding only when the PR introduces it: a new
+estimate states less than its argument gives, or a changed estimate is weaker
+than on the base branch. A loss the PR leaves no worse is the ledger's backlog,
+not a finding; so is a loss whose repair needs results absent from Mathlib and
+the project or an interface change the task may not make, once the diff
+records it as `deferred #N` (rule 5). A finding has
+severity `changes` when the loss is in an exponent or a polynomial degree on a
+headline's dependency path and is not recorded as `necessary: <reason>` with a
+`Weakening:` corollary; a coefficient-only loss is mentioned in the review
+prose, not filed as a finding. The pattern is anti-pattern A7 in
+`docs/anti_patterns.md` and Pattern 7 in `docs/formalization-patterns.md`.
 
 ## Code Conventions
 
@@ -469,6 +551,9 @@ Do not jump straight to full builds for every small edit.
 - Check `docs/api_surface.md` for useful obligation-closing lemmas
 - If changing statements, confirm against paper and blueprint first
 - Never add axioms or weaken statements without explicit justification
+- Never state a bound weaker than its proof gives, except as a paper-shaped
+  statement beside its sharp sibling or a named `Weakening:` corollary
+  (*Bound strength*, rule 5)
 
 ## Mathematical Documentation Style
 
@@ -607,7 +692,8 @@ reviews its own diff) against these criteria:
    `set_option linter.<name> false` blocks.
 5. **Type safety** — No universe mismatches, coercion problems.
 6. **Performance** — Avoid expensive tactics on large types.
-7. **Modularity** — Are new lemmas general enough to be reused?
+7. **Modularity** — Are new lemmas general enough to be reused? Reuse must not
+   cost an exponent or a degree (*Bound strength*, rule 4).
 8. **Documentation** — Every new `def` and major `theorem` must have a docstring.
 9. **Blueprint sync and paper origin** — Add `\lean{}` and `\leanok` tags for
    formalized statements only when the Lean statement matches the source.
@@ -618,6 +704,8 @@ reviews its own diff) against these criteria:
    order, altered error parameters, or bridge/residual packages moving toward
    a paper theorem.
 12. **Proof-evasion anti-patterns** — Review against `docs/anti_patterns.md`.
+13. **Bound strength** — Does every new or changed estimate state what its proof
+   establishes (*Bound strength*; `docs/anti_patterns.md` A7)?
 
 For full details, see `docs/CONTRIBUTING.md` and the lean-conventions `MATHLIB_pr-review` reference.
 

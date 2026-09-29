@@ -263,8 +263,8 @@ class RenameTests(unittest.TestCase):
         track = json.loads(self.read("local/project.json"))["tracks"]["main"]
         self.assertEqual(sorted(track), [
             "artifact_files", "artifact_script", "axiom_audit", "blueprint_chapters",
-            "comparator_doc", "expected_challenge", "gap_register", "headline",
-            "lean_root", "leanok_exemptions", "name", "truthful_docs",
+            "bound_ledger", "comparator_doc", "expected_challenge", "gap_register",
+            "headline", "lean_root", "leanok_exemptions", "name", "truthful_docs",
         ])
         self.assertEqual(track["lean_root"], "Demo")
         self.assertEqual(track["axiom_audit"], "Demo/Test/AxiomAudit.lean")
@@ -272,6 +272,7 @@ class RenameTests(unittest.TestCase):
         self.assertEqual(track["blueprint_chapters"], [])
         self.assertEqual(track["expected_challenge"],
                          "scripts/comparator/expected/Challenge.lean.expected")
+        self.assertEqual(track["bound_ledger"], "docs/bound-ledger-main.md")
 
     def test_the_blueprint_carries_this_project_s_identity(self) -> None:
         for relative in ("blueprint/src/web.tex", "blueprint/src/print.tex"):

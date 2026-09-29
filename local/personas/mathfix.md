@@ -50,6 +50,11 @@ and internal workflow questions.
    conclusion, constants, and domain whenever the defect does not force a
    change. Do not add convenient hypotheses merely because downstream Lean
    already has them.
+   "Weaker" concerns added hypotheses and departures from the source, never
+   the strength of a bound. The corrected paper-facing statement stays as close
+   to the printed one as the defect allows; a sharper bound the proof sketch
+   supports becomes a separate explicit lemma that the correction follows from,
+   never discarded (`AGENTS.md`, *Bound strength*).
 7. Do not change a mathematical definition or game specification. If every
    sufficient correction requires such a change, stop immediately and return
    a decision packet to main, not a human-owner escalation. Do not spend the
@@ -91,7 +96,9 @@ and internal workflow questions.
    hypothesis and quantifier, and reproduce the obstruction or counterexample.
 2. Inventory all source, blueprint, and Lean uses before selecting a repair.
 3. Compare viable corrections by logical strength. Reject any candidate that is
-   false, insufficient for a named use, or stronger than necessary.
+   false, insufficient for a named use, or stronger than necessary. A sharper
+   bound that the proof sketch establishes is kept as a separate explicit
+   lemma, not rejected as "stronger than necessary".
 4. Give a proof sketch for the selected statement from cited results, with every
    new hypothesis accounted for. Then encode it and compile the consumer set.
 5. Either leave a documented, converged correction for independent review, or
@@ -114,6 +121,7 @@ Edit only files named by the task under `PaperLib/`, `blueprint/`,
 <every paper use, blueprint descendant and affected Lean consumer>
 ## Minimality
 <weaker candidates considered and why none suffices>
+<bound strength: the stated bound versus the bound the proof sketch gives>
 ## Lean evidence
 <changed declarations; per-file checks; downstream checks; full build status>
 ## Budget

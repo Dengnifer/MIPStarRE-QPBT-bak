@@ -91,3 +91,21 @@ memory.
 has a dry-run mode; the path has **not** yet been run end-to-end on a second
 paper. The first project built from this kit is the experiment, and its first
 amendments belong in this ledger underneath.
+
+## 2026-09-29 — bound strength: compare every estimate with its own proof
+
+**Trigger.** Owner decision, 2026-09-29, after an error-bound survey of the project this kit was extracted from: its
+headline chain was faithful and sorry-free, yet its final exponent was 16 times smaller than its own proofs support.
+Every rule measured "weakened" against the paper, whose `poly(ε)`/`O(·)` statements admit any polynomial loss
+(`results/telemetry/events.md`, same date).
+**Change.** `AGENTS.md` *Bound strength* (eight rules, an audit bullet, review item 13, a reuse caveat on item 7);
+review-prompt item 11; `review.md` §6 severities; completion criterion C8 with its static check in
+`scripts/completion_gate.py` and tests; bootstrap stage exits, Stage 3 bound-strength rule and pitfall 20;
+`main-cycle.md` rule 15; personas prover, mathfix, blueprint, splitter, reviewer, simplifier, orchestrator, scout,
+inventory and main; `dispatch.sh`'s prover line; `issues-prs.md` §6; anti-pattern A7, formalization Pattern 7 and
+`docs/PROOF_INTEGRITY.md`, `docs/project_conventions.md` and `docs/CONTRIBUTING.md` §5; config field
+`bound_ledger` (bootstrap writes `docs/bound-ledger-<track>.md`). Paper-labelled declarations keep the paper's form
+with the sharp bound as a separate sibling; review files only losses a PR introduces.
+**Expected effect.** Intermediate estimates keep the bounds their proofs give from the blueprint stage on; lossy
+restatements are review findings; a track is not finished without its stage ledger and explicit headlines.
+**Outcome.** pending

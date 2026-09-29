@@ -98,6 +98,13 @@ work. Record the concrete constraint when you cannot admit more.
 - **GitHub is the single source of truth** for issues, pull requests and
   evidence; `results/telemetry/` is the local record and is committed with
   `chore(telemetry):` commits.
+- **Bound strength** (`AGENTS.md`) binds every estimate. Briefs, skeletons and
+  issue contracts you write fix stage interfaces with explicit, separate error
+  terms (rule 6). You own the track's bound ledger: copy each merged PR's
+  `## Bound strength` rows into it, give every existential headline an
+  explicit-constant sibling in the axiom audit, and when a headline's
+  dependency path first closes, dispatch one read-only quantitative survey
+  (a math-capable model) over the ledger before the completion gate.
 - **The faithfulness policy (`AGENTS.md`) outranks both reviewer appeasement
   and implementation convenience**: statements labelled as the paper's stay
   source-shaped, and a genuine source defect becomes a dated note under

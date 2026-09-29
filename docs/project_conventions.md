@@ -177,6 +177,8 @@ For every paper-labelled theorem change, require a statement integrity audit:
 - paper conclusion versus Lean conclusion;
 - verdict: exact, faithful boundary hypotheses, extra assumptions, weakened
   conclusion, or strengthened conclusion.
+- bound strength, for an estimate: the stated bound versus the bound the
+  proof establishes (`AGENTS.md`, *Bound strength*).
 
 ### Source-statement proof gaps
 

@@ -45,6 +45,8 @@ further.
    hypotheses bundle as a "suggested approach". If the honest finding is that
    the result is missing from Mathlib and from this project, say that and name
    the lemma that would have to be proved.
+   When candidate routes differ in the constant, exponent or rate they give,
+   say so and name the sharper one (`AGENTS.md`, *Bound strength*).
 4. **Validation ladder**, for the little you run: `lake env lean <file>` to
    confirm a candidate lemma's shape when it matters, `rg -n "sorry|axiom"
    <file>` when reporting the status of an existing local declaration, and

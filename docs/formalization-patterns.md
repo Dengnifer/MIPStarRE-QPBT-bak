@@ -28,6 +28,7 @@ proof-gap protocol in `docs/paper-gaps/proof-gap-protocol.tex`.
 4. [Public re-export pattern](#pattern-4-public-re-export-pattern)
 5. [Temporary obligation-structure pattern](#pattern-5-temporary-obligation-structure-pattern)
 6. [Paper-gap documentation pattern](#pattern-6-paper-gap-documentation-pattern)
+7. [Explicit bounds beneath a poly contract](#pattern-7-explicit-bounds-beneath-a-poly-contract)
 
 ---
 
@@ -502,6 +503,43 @@ Paper-gap notes that reference Mathlib results should state the Mathlib
 result in ordinary mathematical language, explain how it is specialized
 to the notation of the paper, and compare its hypotheses and conclusion
 with the step it replaces.
+
+---
+
+## Pattern 7: Explicit bounds beneath a poly contract
+
+When the paper states a result "for some constants `a, b`" or as `poly(ε)`, the
+Lean headline may keep that existential form. Underneath it:
+
+1. Each stage lemma states an explicit bound, `C * n ^ k * x ^ b` with numerals,
+   one conclusion per error term. A witness structure carries one field per
+   error, never a shared `delta`.
+2. The existential headline is a corollary of an explicit headline theorem that
+   names its witnesses; both are in the axiom audit.
+3. The collapse to a canonical one-parameter form (such as `a * n ^ a`) happens
+   once, in that corollary, never at an interface between stages.
+4. Each stage bound, and any loss with its reason, is a row of the track's
+   bound ledger (`AGENTS.md`, *Bound strength*, rule 7).
+
+```lean
+-- stage lemma: two errors of different orders, explicit and separate
+theorem extract_bounds (h : pass ≥ 1 - x) :
+    stateErr ≤ 16 * x ∧ opErr ≤ 2 * x + 16 * Real.sqrt x := by
+  ...
+
+-- headline: explicit first, one term per error source
+theorem soundness_explicit (h : pass ≥ 1 - ε) :
+    err ≤ C₁ * (m * d) ^ k₁ * ε ^ b₁ + C₂ * (m * d) ^ k₂ * (d / q) ^ b₂ := by
+  ...
+
+-- the paper's existential form, with witnesses A₀ and b₀ defined beside it
+theorem soundness :
+    ∃ a b, ∀ ε, pass ≥ 1 - ε → err ≤ a * (m * d) ^ a * (ε ^ b + (d / q) ^ b) :=
+  ⟨A₀, b₀, fun ε h => (soundness_explicit h).trans (collapse_le ..)⟩
+```
+
+`AGENTS.md`, *Bound strength*, gives the rules; `docs/anti_patterns.md` A7 shows
+what goes wrong without them.
 
 ---
 

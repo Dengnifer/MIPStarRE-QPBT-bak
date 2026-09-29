@@ -95,6 +95,7 @@ TRACK_FIELDS: dict[str, Any] = {
     "truthful_docs": [],
     "artifact_files": [],
     "artifact_script": "scripts/make_artifact.sh",
+    "bound_ledger": "",
 }
 
 #: Values that are file-system paths and therefore get `~` expanded on load.

@@ -142,6 +142,25 @@ end Fixture
 """
 
 
+GOOD_LEDGER = """\
+# Error bounds
+
+Stated and proved bounds of every stage of the fixture track.
+
+## Stage ledger
+
+| Stage | Stated bound | Proved bound | Disposition |
+|---|---|---|---|
+| `Fixture.good` | `O(eps^(1/2))` | `O(eps^(1/2))` | sharp |
+| `Fixture.step` | `O(eps^(1/4))` | `O(eps^(1/2))` | `necessary: the paper-shaped statement keeps the printed exponent` |
+| `Fixture.tail` | `O(eps^(1/4))` | `O(eps^(1/2))` | deferred #42 |
+
+## Notes
+
+Review judges whether each disposition is honest.
+"""
+
+
 def track_for(root: Path) -> gate.Track:
     return gate.Track(
         name="fixture",
@@ -156,6 +175,7 @@ def track_for(root: Path) -> gate.Track:
         truthful_docs=("README.md",),
         artifact_files=("README.md", "docs/ARTIFACT.md", "LICENSE"),
         artifact_script="scripts/make_artifact.sh",
+        bound_ledger="docs/bound-ledger-fixture.md",
     )
 
 
@@ -198,6 +218,7 @@ class GateFixture(unittest.TestCase):
         write(self.root, "docs/ARTIFACT.md", "How to run the artifact.\n")
         write(self.root, "LICENSE", "Apache-2.0 fixture text.\n")
         write(self.root, "scripts/make_artifact.sh", "#!/bin/sh\nexit 0\n")
+        write(self.root, "docs/bound-ledger-fixture.md", GOOD_LEDGER)
 
         if shutil.which("git"):
             git(self.root, "init", "-q")
@@ -589,6 +610,151 @@ class ArtifactReadinessTests(GateFixture):
         self.assertIn("scripts/make_artifact.sh", crit.summary)
 
 
+class BoundLedgerTests(GateFixture):
+    LEDGER = "docs/bound-ledger-fixture.md"
+
+    def check(self, text: str | None = None) -> gate.Criterion:
+        if text is not None:
+            write(self.root, self.LEDGER, text)
+        return gate.criterion_bound_ledger(self.root, self.track)
+
+    def test_valid_ledger_is_delegated_not_passed(self) -> None:
+        """The gate checks the ledger's shape; review judges the bounds."""
+        crit = self.check()
+        self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+        self.assertFalse(crit.counts_against_exit)
+        self.assertIn("all 3 stage row(s)", crit.summary)
+        self.assertIn("independent review", " ".join(crit.notes))
+
+    def test_any_heading_level_and_spelling_of_a_valid_row_is_accepted(self) -> None:
+        variants = {
+            "h1": GOOD_LEDGER.replace("## Stage ledger", "# Stage ledger"),
+            "h3": GOOD_LEDGER.replace("## Stage ledger", "### Stage ledger"),
+            "closed": GOOD_LEDGER.replace("## Stage ledger", "## Stage ledger ##"),
+            "column case": GOOD_LEDGER.replace("| Disposition |", "| DISPOSITION |"),
+            "backticked sharp": GOOD_LEDGER.replace("| sharp |", "| `sharp` |"),
+            "no space": GOOD_LEDGER.replace("| sharp |", "| necessary:optimal |"),
+            "padded issue": GOOD_LEDGER.replace("| deferred #42 |", "| ` deferred #1234 ` |"),
+        }
+        for name, text in variants.items():
+            with self.subTest(variant=name):
+                crit = self.check(text)
+                self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+
+    def test_missing_ledger_fails(self) -> None:
+        (self.root / self.LEDGER).unlink()
+        crit = self.check()
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(crit.summary, f"missing {self.LEDGER}")
+        self.assertEqual(crit.evidence, [f"{self.LEDGER}:0: no bound ledger for this track"])
+
+    def test_missing_heading_fails(self) -> None:
+        for heading in (
+            "## Stage table",
+            "## Stage Ledger",
+            "## Stage ledger (draft)",
+            "Stage ledger",
+            "```\n## Stage ledger\n```",
+        ):
+            with self.subTest(heading=heading):
+                crit = self.check(GOOD_LEDGER.replace("## Stage ledger", heading))
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertEqual(crit.summary, "no `Stage ledger` heading")
+                self.assertEqual(
+                    crit.evidence, [f"{self.LEDGER}:1: no markdown heading `Stage ledger`"]
+                )
+
+    def test_bad_disposition_fails_naming_the_row(self) -> None:
+        text = GOOD_LEDGER.replace("| deferred #42 |", "| deferred |")
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        line = 1 + next(
+            i for i, row in enumerate(text.splitlines()) if "Fixture.tail" in row
+        )
+        self.assertEqual(
+            crit.evidence,
+            [f"{self.LEDGER}:{line}: disposition 'deferred' for Fixture.tail"],
+        )
+        self.assertTrue(crit.summary.startswith("1 of 3 stage row(s)"))
+
+    def test_every_malformed_disposition_fails(self) -> None:
+        for value in (
+            "", "``", "tight", "necessary", "necessary:", "`necessary: `",
+            "deferred", "deferred #", "deferred #4a", "deferred 42", "sharp, probably",
+        ):
+            with self.subTest(value=value):
+                crit = self.check(GOOD_LEDGER.replace("| sharp |", f"| {value} |"))
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertEqual(len(crit.evidence), 1)
+                self.assertTrue(crit.evidence[0].endswith("for Fixture.good"))
+
+    def test_missing_disposition_column_fails(self) -> None:
+        crit = self.check(GOOD_LEDGER.replace("| Disposition |", "| Status |"))
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(crit.summary, "stage ledger has no `Disposition` column")
+        self.assertEqual(
+            crit.evidence,
+            [f"{self.LEDGER}:7: columns are Stage, Stated bound, Proved bound, Status"],
+        )
+
+    def test_table_without_data_rows_fails(self) -> None:
+        crit = self.check("## Stage ledger\n\n| Stage | Disposition |\n|---|---|\n")
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(crit.summary, "stage ledger has no data row")
+        self.assertEqual(
+            crit.evidence, [f"{self.LEDGER}:3: table has a header but no stage row"]
+        )
+
+    def test_a_table_under_a_later_heading_does_not_count(self) -> None:
+        crit = self.check(
+            "# Error bounds\n\n## Stage ledger\n\nTo be written.\n\n## Appendix\n\n"
+            "| Stage | Disposition |\n|---|---|\n| `Fixture.good` | sharp |\n"
+        )
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(
+            crit.evidence, [f"{self.LEDGER}:3: no markdown table in this section"]
+        )
+
+    def test_a_table_under_a_subheading_of_the_section_is_checked(self) -> None:
+        text = GOOD_LEDGER.replace(
+            "## Notes",
+            "### Tail stages\n\n"
+            "| Stage | Stated bound | Proved bound | Disposition |\n|---|---|---|---|\n"
+            "| `Fixture.late` | `O(eps^(1/4))` | `O(eps^(1/4))` | tight |\n\n## Notes",
+        )
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        line = 1 + next(
+            i for i, row in enumerate(text.splitlines()) if "Fixture.late" in row
+        )
+        self.assertEqual(
+            crit.evidence,
+            [f"{self.LEDGER}:{line}: disposition 'tight' for Fixture.late"],
+        )
+        self.assertTrue(crit.summary.startswith("1 of 4 stage row(s)"))
+
+    def test_a_table_inside_a_fenced_block_does_not_count(self) -> None:
+        crit = self.check(
+            "## Stage ledger\n\n```markdown\n"
+            "| Stage | Disposition |\n|---|---|\n| `Fixture.good` | sharp |\n```\n"
+        )
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(crit.summary, "no table under the `Stage ledger` heading")
+        self.assertEqual(
+            crit.evidence, [f"{self.LEDGER}:1: no markdown table in this section"]
+        )
+
+    def test_an_escaped_pipe_stays_in_its_cell(self) -> None:
+        text = GOOD_LEDGER.replace(
+            "| `Fixture.tail` |",
+            "| `Fixture.norm` | `O(\\|x\\|^(1/2))` | `O(\\|x\\|^(1/2))` | sharp |\n"
+            "| `Fixture.tail` |",
+        )
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+        self.assertIn("all 4 stage row(s)", crit.summary)
+
+
 @unittest.skipUnless(shutil.which("git"), "git is required")
 class DriverTests(GateFixture):
     def setUp(self) -> None:
@@ -641,15 +807,15 @@ class DriverTests(GateFixture):
     def test_text_report_names_every_criterion(self) -> None:
         criteria = gate.run_check(self.root, self.track, self.head)
         text = gate.render_text(self.track, self.head, criteria)
-        for ident in ("C1", "C2", "C3", "C4", "C5", "C6", "C7"):
+        for ident in ("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8"):
             self.assertIn(ident, text)
 
     def test_text_report_lists_the_delegated_criteria(self) -> None:
         criteria = gate.run_check(self.root, self.track, self.head)
         delegated = [c.ident for c in criteria if c.status == gate.DELEGATED]
-        self.assertEqual(delegated, ["C2", "C4", "C5", "C7"])
+        self.assertEqual(delegated, ["C2", "C4", "C5", "C7", "C8"])
         self.assertIn(
-            "(C2, C4, C5, C7)", gate.render_text(self.track, self.head, criteria)
+            "(C2, C4, C5, C7, C8)", gate.render_text(self.track, self.head, criteria)
         )
 
     def test_missing_artifact_file_fails_the_run(self) -> None:
@@ -660,6 +826,15 @@ class DriverTests(GateFixture):
         )
         self.assertEqual(code, 1)
         self.assertIn("FAIL: C7", text)
+
+    def test_missing_bound_ledger_fails_the_run(self) -> None:
+        (self.root / "docs/bound-ledger-fixture.md").unlink()
+        code, text = self.run_gate(
+            "check", "--track", "fixture", "--repo-root", str(self.root),
+            "--commit", self.head,
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("FAIL: C8", text)
 
 
 @unittest.skipUnless(shutil.which("git"), "git is required")
@@ -810,6 +985,11 @@ class RegisteredTrackTests(unittest.TestCase):
             # failing the load half-way through a bootstrap.
             self.assertEqual(track.comparator_doc, "docs/comparator.md")
             self.assertEqual(track.artifact_script, "scripts/make_artifact.sh")
+            # The bound ledger has no default: the gate never invents one
+            # (protocol section 6), so an unset ledger loads empty and C8
+            # fails closed.
+            self.assertEqual(track.bound_ledger, "")
+            self.assertEqual(gate.criterion_bound_ledger(root, track).status, gate.FAIL)
 
     def test_the_track_fields_are_the_ones_the_project_file_documents(self) -> None:
         import project_config
@@ -837,6 +1017,7 @@ class RegisteredTrackTests(unittest.TestCase):
             "truthful_docs",
             "artifact_files",
             "artifact_script",
+            "bound_ledger",
         )
         # A field added to `Track` without a line here would silently escape
         # the rule stated at the end of section 6, which is the shape of defect

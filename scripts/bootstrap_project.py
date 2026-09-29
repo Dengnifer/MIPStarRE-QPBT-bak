@@ -353,6 +353,7 @@ def track_entry(name: str, track: str) -> dict:
         "truthful_docs": ["README.md"],
         "artifact_files": ["README.md", "docs/ARTIFACT.md", "LICENSE"],
         "artifact_script": "scripts/make_artifact.sh",
+        "bound_ledger": f"docs/bound-ledger-{track}.md",
     }
 
 

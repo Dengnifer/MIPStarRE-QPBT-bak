@@ -189,6 +189,15 @@ three things in order:
 
        VERDICT: APPROVED | COMMENTED | CHANGES_REQUESTED
 
+Bound strength (`AGENTS.md`, *Bound strength*) has its own scope: a loss is a
+finding only when the PR introduces it, in an exponent or a polynomial degree on
+a headline's dependency path, and the diff does not record it as
+`necessary: <reason>` with a `Weakening:` corollary or as `deferred #N` under
+the conditions of `AGENTS.md`, *Bound strength*; such a finding has severity
+`changes`.
+A coefficient-only loss goes in the `## Review` prose, never on a `## Findings`
+line.
+
 A missing or malformed trailer is **not** an approval: `review.sh` exits 4,
 posts a `failure` `local-review/summary`, and keeps the raw output under
 `$MIPSTARRE_CACHE_ROOT/reviews/pr<N>/<sha>/`.  Nothing in the findings section

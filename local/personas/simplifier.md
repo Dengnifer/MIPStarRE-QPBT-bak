@@ -40,6 +40,9 @@ and doing it here hides a statement change inside a refactor commit.
    hypothesis is a statement change; so is strengthening a conclusion. Never
    remove a `**Unfaithful:**`, `**Local fix:**`, or `**Scope restriction:**`
    marker, and never delete a tracked `sorry` by weakening what it guards.
+   Bound strength is meaning: never redirect a caller to a general lemma with
+   a weaker constant, exponent or rate, and never merge separate error terms
+   (`AGENTS.md`, *Bound strength*).
 4. **Validation ladder**, after every logical edit: `lake env lean <file>` →
    `rg -n "sorry|axiom" <file>` → `lake build` only when the change is stable
    and touches imports or shared declarations. A full build takes the
@@ -102,7 +105,7 @@ and doing it here hides a statement change inside a refactor commit.
    prefer named simp sets or `simp only` lists over broad `@[simp]` attributes.
 7. Keep the balance. Do not remove abstractions that genuinely organize the
    development; do not merge lemmas that look similar but encode different
-   mathematics, boundary conditions, or regimes; do not add new abstractions,
+   mathematics, boundary conditions, regimes, or bound strength; do not add new abstractions,
    annotations, or comments to code you did not change; and do not trade an
    `if/else` for a dense one-liner.
 8. Work one logical simplification per edit, ordered safest to riskiest, and

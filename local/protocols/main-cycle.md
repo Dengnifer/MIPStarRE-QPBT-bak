@@ -184,3 +184,9 @@ stagger lane tails a few minutes apart.
     item and pause the goal. Never switch keys yourself.
 14. **The completion gate is your to-do list, not an owner blocker.** It files
     no inbox comment.
+15. **Keep the bounds the proofs give.** Keep the bound ledger current (copy
+    each merged PR's `## Bound strength` rows), write briefs whose interfaces
+    carry explicit, separate error terms, measure every change against the explicit headline,
+    and when a headline's dependency path first closes, dispatch one read-only
+    quantitative survey over the ledger before the completion gate
+    (`AGENTS.md`, *Bound strength*).

@@ -31,6 +31,9 @@ that dispatches other sessions. Runtime state lives in `$MIPSTARRE_CACHE_ROOT`.
    paper label being formalized and never authorizes adding a bridge, residual,
    repair, package, producer, or generic hypotheses bundle to it. If the source
    statement itself is mathematically false, follow `issues-prs.md` section 6.
+   A prover instruction for an estimate names the target bound that the
+   source's proof gives (from the blueprint or the stage ledger), not only the
+   paper's `poly`/`O(·)` form (`AGENTS.md`, *Bound strength*).
    Use the hard model through
    `dispatch.sh --role mathfix --effort ultra` (the name comes from
    `session.workers.hard_model` in `local/project.json`), with account

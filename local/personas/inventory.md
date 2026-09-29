@@ -99,6 +99,10 @@ Source: `references/<mirror>/` files <list>. Reader: <session name>.
 | `thm:x` | theorem | `…/07_section.tex:210-247` | … | … | `lem:y`, `def:z` | establishes |
 | `lem:y` | lemma | `…/07_section.tex:120-166` | … | … | `def:z` | gap |
 
+For an estimate, the Statement cell also gives, marked as derived, the bound the
+printed proof yields, with explicit constants and exponents and one term per error of a
+different order, even where the paper writes only `poly(ε)` or `O(·)`.
+
 ## Suspected source defects
 
 ### `lem:y` — <short title>
