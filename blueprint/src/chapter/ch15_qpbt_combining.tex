@@ -7458,3 +7458,347 @@ Construct the point and extended-line witnesses, apply the rounded pair
 construction, and use the final inequality of
 Theorem~\ref{thm:qld-baseline-scalar-bounds}.
 \end{proof}
+
+\section{Coefficient-30 quantitative global-pair construction}
+\label{sec:qld-coefficient-thirty-global-pair}
+
+The results in this section are Lean-only quantitative refinements of the
+argument through Lemma~\ref{lem:qld-4-7}. They use the complete-measurement
+linear-triangle estimate of Theorem~\ref{thm:main-formal-linear-triangle} and
+do not alter the statement or status of any source-labelled result. The final
+construction is restricted to the small regime $0\leq e\leq1$ and
+$md/q\leq1$; it is not the unrestricted Pauli soundness theorem.
+
+\begin{definition}[Coefficient-30 error scales and envelopes]
+\label{def:qld-coefficient-thirty-scales}
+\lean{MIPStarRE.QPBT.quantitativeLowDegreePower}
+\lean{MIPStarRE.QPBT.quantitativeGlobalPairPower}
+\lean{MIPStarRE.QPBT.quantitativePreRoundingPower}
+\lean{MIPStarRE.QPBT.directQuantitativeEnvelope}
+\lean{MIPStarRE.QPBT.quantitativePreRoundingEnvelope}
+\lean{MIPStarRE.QPBT.quantitativeGlobalPairEnvelope}
+\leanok
+Put
+\[
+ \tau=\frac1{8192},\qquad
+ u=\frac1{4194304},\qquad
+ b=\frac1{33554432}=\frac u8.
+\]
+For direct low-degree parameters $D=(q,m,d,k)$ and $\eps\in\mathbb R$, define
+\[
+ E_D(\eps)=\eps^\tau+q^{-\tau}+2^{-\tau md}.
+\]
+For admissible Pauli-test parameters $P=(q,m,d)$ and $e\in\mathbb R$, define
+the pre-rounding and post-rounding envelopes
+\[
+ E_{\mathrm{pre}}(P,e)=e^u+q^{-u}+2^{-umd},
+ \qquad
+ E_{\mathrm{pair}}(P,e)=e^b+q^{-b}+2^{-bmd}.
+\]
+All powers in these definitions are real powers.
+\end{definition}
+
+\begin{theorem}[Scalar bounds for the coefficient-30 direct LDT]
+\label{thm:qld-coefficient-thirty-ldt-scalars}
+\lean{MIPStarRE.QPBT.three_rpow_quantitative_low_degree_power_le_two}
+\lean{MIPStarRE.QPBT.direct_ld_aux_parameter_linear_triangle_exp_arg}
+\lean{MIPStarRE.QPBT.direct_ld_aux_parameter_quarter_le}
+\lean{MIPStarRE.QPBT.direct_ld_aux_parameter_quarter_le_sharp}
+\lean{MIPStarRE.QPBT.direct_ld_field_term_quantitative_eq}
+\lean{MIPStarRE.QPBT.direct_ld_exponential_term_quantitative_le}
+\lean{MIPStarRE.QPBT.direct_ld_test_term_quantitative_le}
+\lean{MIPStarRE.QPBT.direct_quantitative_envelope_nonneg}
+\lean{MIPStarRE.QPBT.direct_ld_linear_triangle_raw_error_le}
+\lean{MIPStarRE.QPBT.main_formal_linear_triangle_error_le_delta_ld_quantitative}
+\leanok
+\uses{def:qld-coefficient-thirty-scales,
+  thm:main-formal-linear-triangle}
+Let $D=(q,m,d,k)$ be direct low-degree parameters and let $N_D$ be its
+auxiliary sampling parameter. Then
+\[
+ 3^\tau\leq2,
+ \qquad \frac{N_D}{640000m^2}=4md,
+\]
+\[
+ N_D^{1/4}\leq40md,
+ \qquad N_D^{1/4}\leq40m d^{1/4},
+\]
+\[
+ (d/q)^\tau=d^\tau q^{-\tau},
+ \qquad
+ \exp\!\left(-\frac{N_D}{640000m^2}\right)\leq2^{-\tau md}.
+\]
+For every $\eps\geq0$ one also has
+\[
+ (3\eps)^\tau\leq2\eps^\tau,
+ \qquad 0\leq E_D(\eps),
+\]
+and the uncapped complete-measurement linear-triangle error satisfies
+\[
+ T_D(\eps)\leq10^6(md)^2E_D(\eps).
+\]
+If $k=1$, its capped value is bounded without any additional upper bound on
+$\eps$ by
+\[
+ \min\{1,T_D(\eps)\}
+ \leq\delta_{\mathrm{ld}}(30,\tau,\eps,q,m,d,k)
+ =30(md)^{30}E_D(\eps).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:qld-coefficient-thirty-scales,
+  thm:main-formal-linear-triangle}
+Substitute $N_D=2560000m^3d$ in the linear-triangle estimate, separate the
+field and exponential terms, and absorb the resulting quadratic factor into
+the coefficient-$30$ error. The cases $md=1$ and $md\geq2$ respectively use
+the unit cap and the power $(md)^{30}$.
+\end{proof}
+
+\begin{theorem}[Fixed numerical certificates and the uncapped passing bound]
+\label{thm:qld-coefficient-thirty-passing-scalars}
+\lean{MIPStarRE.QPBT.pauli_baseline_point_constant_le}
+\lean{MIPStarRE.QPBT.pauli_baseline_line_constant_le}
+\lean{MIPStarRE.QPBT.pauli_baseline_extended_line_constant_le}
+\lean{MIPStarRE.QPBT.pauli_baseline_passing_constant_le}
+\lean{MIPStarRE.QPBT.pauli_baseline_direct_passing_bound_uncapped}
+\lean{MIPStarRE.QPBT.direct_passing_error_envelope_quantitative_bound}
+\leanok
+\uses{def:qld-baseline-scalar-functions}
+The fixed coefficients of
+Definition~\ref{def:qld-baseline-scalar-functions} satisfy
+\[
+ C_{\mathrm{pt}}\leq10^{15},\qquad
+ C_{\mathrm{line}}\leq10^5,\qquad
+ C_{\mathrm{ext}}\leq10^9,\qquad
+ C_{\mathrm{pass}}\leq10^8.
+\]
+Write $V(x,r)=3(\sqrt{x}+r)$ for the direct passing envelope. For all real
+$e,r,n$ with $0\leq e\leq1$, $0\leq r\leq1$, and $n\geq1$,
+\[
+ V\bigl(E_{\mathrm{pt}}(e)+nE_{\mathrm{ext}}(e,r),r\bigr)
+ \leq nE_{\mathrm{pass}}(e,r).
+\]
+In particular, if $P=(q,m,d)$ is admissible, then for the same domain of
+$e$ and $r$,
+\[
+ V\bigl(E_{\mathrm{pt}}(e)+mE_{\mathrm{ext}}(e,r),r\bigr)
+ \leq10^8m\bigl(e^{1/512}+r^{1/32}\bigr).
+\]
+These are uncapped inequalities.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:qld-baseline-scalar-functions}
+Bound the square root of the point and extended-line sum by the sum of the
+$1/512$ and $1/32$ powers, use $\sqrt n\leq n$, and substitute the four
+fixed coefficient estimates.
+\end{proof}
+
+\begin{theorem}[Pre-rounding and rounded-pair scalar absorption]
+\label{thm:qld-coefficient-thirty-rounding-scalars}
+\lean{MIPStarRE.QPBT.quantitative_low_degree_error_bound}
+\lean{MIPStarRE.QPBT.quantitative_pre_rounding_envelope_nonneg}
+\lean{MIPStarRE.QPBT.quantitative_point_error_root_bound}
+\lean{MIPStarRE.QPBT.quantitative_ratio_bound_of_nonneg}
+\lean{MIPStarRE.QPBT.quantitative_pre_rounding_envelope_eighth_root_le}
+\lean{MIPStarRE.QPBT.quantitative_actual_rounded_global_pair_error_bound}
+\leanok
+\uses{def:qld-coefficient-thirty-scales,
+  thm:qld-coefficient-thirty-passing-scalars}
+Let $P=(q,m,d)$ be admissible, put $n=md$ and $\rho=n/q$, and define
+\[
+ v=V\bigl(E_{\mathrm{pt}}(e)+mE_{\mathrm{ext}}(e,\rho),\rho\bigr),
+ \qquad
+ \delta=\delta_{\mathrm{ld}}(30,\tau,v,q,2m+2,d,1).
+\]
+If $0\leq e\leq1$ and $\rho\leq1$, then
+\[
+ \delta\leq10^{30}n^{32}E_{\mathrm{pre}}(P,e).
+\]
+For every $e\geq0$,
+\[
+ 0\leq E_{\mathrm{pre}}(P,e),
+ \qquad
+ \rho\leq nE_{\mathrm{pre}}(P,e),
+ \qquad
+ \sqrt{\sqrt{\sqrt{E_{\mathrm{pre}}(P,e)}}}
+ \leq E_{\mathrm{pair}}(P,e).
+\]
+If in addition $e\leq1$, then
+\[
+ \sqrt{E_{\mathrm{pt}}(e)}\leq4\cdot10^7E_{\mathrm{pre}}(P,e).
+\]
+Finally, under $0\leq e\leq1$ and $\rho\leq1$, set
+\[
+ \eta=\delta+\sqrt{220\delta^{1/4}}+2\sqrt{2\delta},
+ \qquad
+ R=8\bigl(4\eta+8E_{\mathrm{pt}}(e)\bigr)
+   +\frac{12md+4d+14}{q}.
+\]
+Then the exact rounded-pair error obeys
+\[
+ \min\{1,R\}\leq10^7n^4E_{\mathrm{pair}}(P,e).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:qld-coefficient-thirty-scales,
+  thm:qld-coefficient-thirty-passing-scalars}
+The uncapped passing estimate bounds the low-degree input. Each field, point,
+and tail term is absorbed into $E_{\mathrm{pre}}$. Three successive square
+roots convert that envelope to $E_{\mathrm{pair}}$, while the unit cap handles
+the complementary range.
+\end{proof}
+
+\begin{theorem}[Coefficient-30 one-coordinate direct soundness]
+\label{thm:qld-coefficient-thirty-direct-soundness}
+\lean{MIPStarRE.QPBT.direct_coordinate_main_formal_quantitative}
+\lean{MIPStarRE.QPBT.exists_direct_simultaneous_polynomial_measurements_quantitative_of_k_eq_one}
+\lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_quantitative}
+\lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_any_strategy_quantitative}
+\leanok
+\uses{def:qld-coefficient-thirty-scales,
+  thm:qld-coefficient-thirty-ldt-scalars,
+  thm:main-formal-linear-triangle}
+Let $D=(q,m,d,k)$ be direct low-degree parameters with $k=1$, let
+$\eps\geq0$, and put
+\[
+ \Delta_D(\eps)=\delta_{\mathrm{ld}}(30,\tau,\eps,q,m,d,k).
+\]
+For every projective direct-game strategy of value at least $1-\eps$ and its
+unique coordinate, there are projective polynomial measurements
+$G^{\mathrm A},G^{\mathrm B}$ such that the point measurement of Alice is
+consistent with the evaluation of $G^{\mathrm B}$, the evaluation of
+$G^{\mathrm A}$ is consistent with Bob's point measurement, and
+$G^{\mathrm A}$ is consistent with $G^{\mathrm B}$, each with defect at most
+$\Delta_D(\eps)$. Relabelling these measurements as one-coordinate tuples
+gives tuple measurements with the same three bounds.
+
+If moreover $\eps>0$, the projective direct-game soundness theorem returns
+such tuple measurements directly under the hypotheses $k=1$, projectivity,
+and value at least $1-\eps$. Under the same strict positivity and passing
+hypotheses but without projectivity of the input strategy, Naimark dilation
+and compression produce tuple measurements satisfying the same three defect
+bounds; projectivity of these compressed measurements is not asserted.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:qld-coefficient-thirty-ldt-scalars,
+  thm:main-formal-linear-triangle}
+Apply the complete-measurement linear-triangle theorem to the unique
+coordinate and use the scalar absorption above. Constant-tuple relabelling
+preserves all three defects. For an arbitrary strategy, dilate every answer
+measurement, apply the projective result, and compress at the distinguished
+ancillary outcome.
+\end{proof}
+
+\begin{theorem}[Coefficient-30 rounded polynomial witnesses]
+\label{thm:qld-coefficient-thirty-rounded-polynomials}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_ordered_estimates_quantitative}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_scalar_mass_quantitative}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_wrong_variable_mass_quantitative}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_separated_mass_quantitative}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.pair_witness_of_points_lines_quantitative}
+\leanok
+\uses{thm:qld-coefficient-thirty-direct-soundness,
+  thm:qld-rounded-polynomials-explicit}
+Let $P=(q,m,d)$ be admissible, let $\eps,\delta_Q,\delta_L\in\mathbb R$,
+and let $S$ be a projective Pauli-test setting with a supplied combined-point
+witness of error $\delta_Q$ and a supplied directly indexed extended-line
+witness of error $\delta_L$. Put $\rho=md/q$ and
+\[
+ \delta=\delta_{\mathrm{ld}}
+   \bigl(30,\tau,V(\delta_Q+\delta_L,\rho),q,2m+2,d,1\bigr),
+ \qquad
+ \eta=\delta+\sqrt{220\delta^{1/4}}+2\sqrt{2\delta},
+ \qquad E=4\eta+8\delta_Q.
+\]
+No sign or small-regime hypothesis is imposed on
+$\eps,\delta_Q,\delta_L$ in these conditional statements.
+
+There exist projective rounded polynomial measurements on the two expanded
+local spaces whose ordered errors, in both orderings and on both player
+placements, are at most $E$. There also exist such measurements satisfying,
+in addition, the two scalar nonlinear-mass bounds
+\[
+ 2E+2\frac{(2m+2)d+1}{q}.
+\]
+There exist such measurements satisfying those ordered and scalar bounds and,
+for both orderings, the two wrong-variable mass bounds
+\[
+ 2E+2\frac{2md+2}{q}.
+\]
+Separately, there exist projective rounded measurements satisfying the ordered
+bounds and the two non-separated-mass bounds
+\[
+ 6E+\frac{12md+4d+10}{q}.
+\]
+Finally, the supplied point and line witnesses determine complete projective
+polynomial-pair measurements on both player spaces. All four point defects,
+one for each player placement and Pauli basis, are bounded by the uncapped
+quantity
+\[
+ 8E+\frac{12md+4d+14}{q}.
+\]
+Each existential assertion above concerns the measurements constructed in its
+own declaration; no conjunction between independently quantified witnesses is
+being asserted.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:qld-coefficient-thirty-direct-soundness,
+  thm:qld-rounded-polynomials-explicit}
+Apply arbitrary-strategy one-coordinate soundness to the direct combined game,
+round the two resulting polynomial measurements projectively, and retain both
+ordered estimates. The scalar, wrong-variable, and separated-mass bounds are
+the corresponding finite-field root-counting estimates. Completion at the
+zero polynomial pair gives the two projective pair measurements and the four
+displayed defects.
+\end{proof}
+
+\begin{theorem}[Small-regime quantitative global polynomial pair]
+\label{thm:qld-small-regime-global-pair}
+\lean{MIPStarRE.QPBT.exists_quantitative_global_pair_witness}
+\leanok
+\uses{thm:qld-combined-points-explicit,
+  thm:qld-extended-lines-explicit,
+  thm:qld-coefficient-thirty-rounded-polynomials,
+  thm:qld-coefficient-thirty-rounding-scalars}
+Let $P=(q,m,d)$ be admissible, let $0\leq e\leq1$, suppose
+\[
+ \frac{md}{q}\leq1,
+\]
+and let $S$ be a projective Pauli-test setting with error $e$. Then there is
+a real number $g$ such that
+\[
+ 0\leq g\leq10^7(md)^4
+ \left(e^{1/33554432}+q^{-1/33554432}
+       +2^{-md/33554432}\right),
+\]
+together with complete projective polynomial-pair measurements on both
+expanded player spaces. For each of the two Pauli bases, Alice's evaluated
+global measurement is consistent with Bob's expanded point measurement with
+defect at most $g$, and Bob's evaluated global measurement is consistent with
+Alice's expanded point measurement with defect at most $g$. Thus all four
+point defects are bounded by the same $g$.
+
+The combined-point witness, the extended-line witness, and the global pair are
+constructed inside the theorem; no global-pair witness is a hypothesis. The
+two displayed small-regime assumptions are additional to the source statement
+of Lemma~\ref{lem:qld-4-7}, so this Lean-only theorem is not presented as that
+unrestricted source result or as the final Pauli soundness theorem.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:qld-combined-points-explicit,
+  thm:qld-extended-lines-explicit,
+  thm:qld-coefficient-thirty-rounded-polynomials,
+  thm:qld-coefficient-thirty-rounding-scalars}
+Construct the combined-point and extended-line witnesses, apply the
+coefficient-$30$ rounded-pair constructor, and set $g$ to the minimum of one
+and its uncapped error. The universal unit bound for a consistency defect
+gives the cap for each of the four constructed defects, and
+Theorem~\ref{thm:qld-coefficient-thirty-rounding-scalars} gives the displayed
+quantitative estimate.
+\end{proof}
