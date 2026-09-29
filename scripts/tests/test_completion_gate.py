@@ -773,6 +773,84 @@ class BoundLedgerTests(GateFixture):
                 crit = self.check(text)
                 self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
 
+    def test_header_aliases_and_optional_outer_pipes_are_accepted(self) -> None:
+        owner_header = "| Stage lemma | Stated bound | Bound the argument supports | Disposition |"
+        owner = GOOD_LEDGER.replace(GOOD_LEDGER.splitlines()[6], owner_header)
+        self.assertEqual(self.check(owner).status, gate.DELEGATED)
+        for method in ("lstrip", "rstrip", "strip"):
+            text = "\n".join(getattr(line, method)("|") if line.startswith("|") else line
+                             for line in GOOD_LEDGER.splitlines())
+            self.assertEqual(self.check(text).status, gate.DELEGATED)
+
+    def test_required_columns_are_unique_and_required_cells_are_nonempty(self) -> None:
+        duplicate = GOOD_LEDGER.replace("| Stage |", "| Stage | Stage lemma |", 1)
+        empty = GOOD_LEDGER.replace(GOOD_LEDGER.splitlines()[8], "| | | | sharp |")
+        cases = (
+            ("## Stage ledger\n\n| Disposition |\n|---|\n| sharp |\n", "missing Stage"),
+            (duplicate, "ambiguous duplicate Stage"),
+            (empty, "empty `Stated bound`"),
+        )
+        for text, expected in cases:
+            crit = self.check(text)
+            self.assertEqual(crit.status, gate.FAIL)
+            self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
+
+    def test_suffix_rows_and_delimiter_must_have_valid_width_and_content(self) -> None:
+        cases = (
+            ("Example.bad | x | sqrt(x) | invalid |", "disposition 'invalid'"),
+            ("Example.bad | x | invalid |", "wrong width"),
+        )
+        for row, expected in cases:
+            with self.subTest(row=row):
+                text = GOOD_LEDGER.replace("\n\n## Notes", f"\n{row}\n\n## Notes")
+                crit = self.check(text)
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
+        crit = self.check(GOOD_LEDGER.replace("|---|---|---|---|", "|---|---|---|"))
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("delimiter has 3 cell(s); header has 4", crit.evidence[0])
+
+    def test_pipe_free_body_row_is_validated(self) -> None:
+        text = (
+            "## Stage ledger\n\n"
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Good | x | x | sharp |\n"
+            "Incomplete\n"
+        )
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("wrong width", " ".join((crit.summary, *crit.evidence)))
+
+    def test_table_body_stops_at_explicit_block_boundaries(self) -> None:
+        for name, boundary in (
+            ("heading", "### Detail"),
+            ("fence", "```text\nexample\n```"),
+            ("indented code", "    example"),
+        ):
+            with self.subTest(boundary=name):
+                text = GOOD_LEDGER.replace("\n\n## Notes", f"\n{boundary}\n\n## Notes")
+                self.assertEqual(self.check(text).status, gate.DELEGATED)
+
+    def test_code_indented_table_candidates_do_not_count(self) -> None:
+        table = GOOD_LEDGER.splitlines()[6:9]
+        for name, indent in (
+            ("four spaces", "    "),
+            ("tab", "\t"),
+            ("space and tab", " \t"),
+        ):
+            with self.subTest(indent=name):
+                text = "## Stage ledger\n\n" + "\n".join(indent + row for row in table)
+                self.assertEqual(self.check(text).status, gate.FAIL)
+
+    def test_tables_indented_up_to_three_spaces_are_accepted(self) -> None:
+        table = GOOD_LEDGER.splitlines()[6:10]
+        for width in range(4):
+            with self.subTest(spaces=width):
+                indent = " " * width
+                text = "## Stage ledger\n\n" + "\n".join(indent + row for row in table)
+                self.assertEqual(self.check(text).status, gate.DELEGATED)
+
     def test_missing_ledger_fails(self) -> None:
         (self.root / self.LEDGER).unlink()
         crit = self.check()
@@ -830,11 +908,11 @@ class BoundLedgerTests(GateFixture):
         )
 
     def test_table_without_data_rows_fails(self) -> None:
-        crit = self.check("## Stage ledger\n\n| Stage | Disposition |\n|---|---|\n")
+        crit = self.check("\n".join(GOOD_LEDGER.splitlines()[:8]) + "\n")
         self.assertEqual(crit.status, gate.FAIL)
         self.assertEqual(crit.summary, "stage ledger has no data row")
         self.assertEqual(
-            crit.evidence, [f"{self.LEDGER}:3: table has a header but no stage row"]
+            crit.evidence, [f"{self.LEDGER}:7: table has a header but no stage row"]
         )
 
     def test_a_table_under_a_later_heading_does_not_count(self) -> None:
@@ -875,6 +953,22 @@ class BoundLedgerTests(GateFixture):
         self.assertEqual(
             crit.evidence, [f"{self.LEDGER}:1: no markdown table in this section"]
         )
+
+    def test_nested_short_fence_exposes_neither_heading_nor_table(self) -> None:
+        table = "\n".join(GOOD_LEDGER.splitlines()[6:11]) + "\n"
+        documents = (
+            "````markdown\n```markdown\n## Stage ledger\n\n" + table + "```\n````\n",
+            "## Stage ledger\n\n````markdown\n```markdown\n" + table + "```\n````\n",
+        )
+        for text in documents:
+            self.assertEqual(self.check(text).status, gate.FAIL)
+
+    def test_fence_closing_character_length_and_tail_are_checked(self) -> None:
+        self.assertEqual(gate._fence_state("```", ("`", 4)), ("`", 4))
+        self.assertEqual(gate._fence_state("~~~", ("`", 3)), ("`", 3))
+        self.assertEqual(gate._fence_state("```text", ("`", 3)), ("`", 3))
+        self.assertIsNone(gate._fence_state("````  ", ("`", 3)))
+        self.assertEqual(self.check("```markdown\n" + GOOD_LEDGER).status, gate.FAIL)
 
     def test_an_escaped_pipe_stays_in_its_cell(self) -> None:
         text = GOOD_LEDGER.replace(
