@@ -1,6 +1,8 @@
 import Lean
 import MIPStarRE.QPBT.Test.Soundness
 import MIPStarRE.QPBT.Test.QubitForm
+import MIPStarRE.QPBT.Test.QuantitativeSoundness
+import MIPStarRE.QPBT.Test.QuantitativeQubitForm
 import MIPStarRE.QPBT.Test.LowDegreeGameTheorems
 import MIPStarRE.QPBT.Test.Completeness
 import MIPStarRE.QPBT.Test.Soundness.ProjectiveSetting
@@ -46,6 +48,12 @@ soundness statement down to the combining and extraction layers:
 * `pauli_soundness_explicit_baseline` and
   `pauli_soundness_qubit_explicit_baseline` — the Lean-only issue #729
   quantitative specializations with fixed current-proof constants.
+* `pauli_soundness_quantitative` and
+  `pauli_soundness_qubit_quantitative` — the structured degree-four issue #729
+  bounds, with internally constructed global and extraction witnesses.
+* `pauli_soundness_quantitative_canonical` and
+  `pauli_soundness_qubit_quantitative_canonical` — the corresponding canonical
+  `deltaQld 100` bounds at exponent `1 / 67108864`.
 * `exists_ld_soundness` — quantum low-degree soundness (`lem:ld-soundness`).
 * `exists_spcc_value_one` and `honestStrategy_isSPCC` — completeness, which is
   what keeps the soundness hypothesis non-vacuous.
@@ -106,6 +114,14 @@ audit_standard_axioms MIPStarRE.QPBT.pauli_soundness
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_explicit_baseline
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_explicit_baseline
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_canonical
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_canonical
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_gain_mul_baseline
+audit_standard_axioms MIPStarRE.QPBT.deltaQld_quantitative_lt_explicit_baseline
+audit_standard_axioms
+  MIPStarRE.QPBT.pauli_soundness_quantitative_error_lt_explicit_baseline_clipped
 
 /-! ### Quantum low-degree soundness -/
 
