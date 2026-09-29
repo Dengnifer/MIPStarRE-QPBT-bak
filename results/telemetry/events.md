@@ -9997,3 +9997,7 @@ Scout733 reported that lake env lean could not create its missing .lake/config i
 ## 2026-09-29T04:32:29.749408+00:00 — post-push GitHub head propagation
 
 PR736 checked-push succeeded, but the immediate pr_for_branch read still exposed its old head and the operator tail stopped before CI. A fresh REST pull read confirmed b9cf0757; a new driver began at canonical CI without republishing or bypassing a gate. Inspect the actual remote head after a successful push; an assertion failure is not evidence that publication failed.
+
+## 2026-09-29T16:22:41.361683+00:00 — owner resumes after stale watcher cutoff
+
+The owner reports that an obsolete September22 watcher misread the pane, probed an obsolete main key and stopped the session at20260929T05:04Z. The interrupted prover729-07 also recorded terminal API_KEY_DISABLED401; its672seconds and rawcapture remain preserved, without fabricated finalusage. The owner has verified qpbt-space3 availability and restored three primaryslots. Main resumes authorized work without changing runtime, keys or otherprojects; priority737gets canonicalCI and independentreview before merge. Recover729fromits actualuncommittedfiles afterthat amendment, preserving earlierchecks and chargingvalidationstilloutstanding.
