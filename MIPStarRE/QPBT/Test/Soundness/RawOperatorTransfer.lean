@@ -339,7 +339,7 @@ private theorem raw_right_sum_adjoint_mul_le_one {α ι κ : Type*}
 
 /-- The canonical Pauli projectors packaged as a complete measurement for the
 universal raw-distance estimate. -/
-private def raw_ideal_pauli_measurement (P : AdmissibleParams) (W : PauliKind) :
+private def rawIdealPauliMeasurement (P : AdmissibleParams) (W : PauliKind) :
     Measurement (PauliRegister P) (PauliRegister P) :=
   Measurement.ofSumEqOne (pauliProj W) (fun h => (posSemidef_pauliProj W h).nonneg)
     (sum_pauliProj_eq_one W)
@@ -369,7 +369,7 @@ private theorem raw_pauli_proj_on_a_sum_adjoint_mul_le_one (P : AdmissibleParams
       pauliProjOnA'' P W h ≤ 1 := by
   simp only [raw_pauli_proj_on_a_eq_tensor]
   exact measurement_sum_adjoint_mul_le_one
-    (leftPlacedMeasurement (rightPlacedMeasurement (raw_ideal_pauli_measurement P W)))
+    (leftPlacedMeasurement (rightPlacedMeasurement (rawIdealPauliMeasurement P W)))
 
 private theorem raw_pauli_proj_on_b_sum_adjoint_mul_le_one (P : AdmissibleParams)
     {ιA' ιB' : Type} [Fintype ιA'] [DecidableEq ιA']
@@ -378,7 +378,7 @@ private theorem raw_pauli_proj_on_b_sum_adjoint_mul_le_one (P : AdmissibleParams
       pauliProjOnB'' P W h ≤ 1 := by
   simp only [raw_pauli_proj_on_b_eq_tensor]
   exact measurement_sum_adjoint_mul_le_one
-    (rightPlacedMeasurement (rightPlacedMeasurement (raw_ideal_pauli_measurement P W)))
+    (rightPlacedMeasurement (rightPlacedMeasurement (rawIdealPauliMeasurement P W)))
 
 private theorem ideal_state_norm_one {P : AdmissibleParams}
     {S : Strategy (pauliBasisTest P)} (w : PauliSoundnessWitness P S) :

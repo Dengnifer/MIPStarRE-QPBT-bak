@@ -6994,3 +6994,467 @@ If $t\geq1$, use the unit cap. Apply the square-root bound three times
 to the direct absorption constants $A_0,B_0$ and choose
 $A=1024A_0$, $B=B_0/8$.
 \end{proof}
+
+\section{Closed quantitative baseline}
+\label{sec:qld-combining-explicit}
+
+The results in this section expose the constants used by the current formal
+proof.  They are Lean-only quantitative specializations of the constructions
+above.  All ratios below are real numbers, and for admissible parameters we
+write
+\[
+  \rho=\frac{md}{q}.
+\]
+
+\begin{definition}[Explicit pasting error]
+\label{def:qld-heterogeneous-pasting-error-explicit}
+\lean{MIPStarRE.QPBT.heterogeneousPastingError}
+\leanok
+The heterogeneous one-sided pasting error is
+\[
+  H(\eta,\delta)=115\bigl(\eta^{1/4}+\delta^{1/8}\bigr).
+\]
+\end{definition}
+
+\begin{theorem}[Explicit commutator and heterogeneous pasting bounds]
+\label{thm:qld-pasting-explicit}
+\lean{MIPStarRE.QPBT.op_dist_sq_commutator_le_explicit}
+\lean{MIPStarRE.QPBT.op_dist_sq_commutator_right_le_explicit}
+\lean{MIPStarRE.QPBT.coarse_commutator_bound_explicit}
+\lean{MIPStarRE.QPBT.pasting_error_of_marginal_consistency_explicit}
+\lean{MIPStarRE.QPBT.pasting_error_heterogeneous_explicit}
+\lean{MIPStarRE.QPBT.heterogeneous_pasting_error_is_poly_err₂}
+\leanok
+\uses{def:qld-heterogeneous-pasting-error-explicit, lem:pasting}
+If two marginals are each within squared operator-family distance $\delta$ of
+the corresponding marginal of one projective joint measurement, then their
+commutator family has squared distance at most $16\delta$.  This holds on
+either tensor factor.  In the codeword-pasting application, the two forward
+marginal defects therefore give the coarse commutator bound $32\delta$.
+
+Let the sampling law be a probability distribution, let the state be
+normalized, and let $\eta,\delta\geq0$.  If the second codeword family has
+conditional collision at most $\eta$, the joint and second-codeword
+measurements are projective, and the two forward marginal consistency defects
+are at most $\delta$, then the pasted joint family has consistency defect at
+most $H(\eta,\delta)$.  The same statement holds for unequal
+finite-dimensional local spaces.  Moreover, $H$ is polynomially small on the
+nonnegative quadrant, with coefficient $115$ and exponents $1/4$ and $1/8$.
+\end{theorem}
+\begin{proof}
+\leanok
+The commutator estimate compares both products to the projective refinement.
+The pasting estimate then applies Cauchy--Schwarz to the collision term and
+uses the coarse commutator bound; adjoining fixed unit vectors transports the
+same calculation to unequal local spaces.
+\end{proof}
+
+\begin{theorem}[Explicit combined-point construction]
+\label{thm:qld-combined-points-explicit}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.avg_sandwich_defect_bound_le_explicit}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.sandwich_point_ordered_dist_le_explicit}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.ordered_cross_dist_le_explicit}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.exp_point_comm_explicit}
+\lean{MIPStarRE.QPBT.exists_combined_points_witness_explicit}
+\leanok
+\uses{thm:qld-expanded-comparisons-explicit,
+thm:qld-twisted-commutation-explicit, lem:qld-4-10}
+For opposite placements, the average sandwich defect is at most
+\[
+  (344+3C_{\mathrm{tw}})(\eps+\sqrt\eps).
+\]
+On one placement the sandwich measurement is within
+$C_{\mathrm{tw}}\sqrt\eps$ of the ordered product, the ordered products on
+opposite placements are within $688\eps$, and reversing the two factors on one
+placement costs at most $C_{\mathrm{tw}}\sqrt\eps$.
+
+Consequently there is a projective combined-point witness whose error is
+\[
+  E_{\mathrm{pt}}(\eps)=C_{\mathrm{pt}}\eps^{1/8},
+\]
+where $C_{\mathrm{pt}}$ is defined in
+Definition~\ref{def:qld-baseline-scalar-functions} below.  The witness contains
+all four directed opposite-placement comparisons and both ordered marginals.
+\end{theorem}
+\begin{proof}
+\leanok
+Orthonormalize the sandwich measurement pointwise and chain the four displayed
+distance estimates.  The eighth root absorbs the square roots introduced by
+orthonormalization and by the triangle inequalities.
+\end{proof}
+
+\begin{theorem}[Explicit combined-line construction]
+\label{thm:qld-combined-lines-explicit}
+\lean{MIPStarRE.QPBT.exp_line_point_same_placement_distance_le_explicit}
+\lean{MIPStarRE.QPBT.combined_points_line_marginal_distance_le_explicit}
+\lean{MIPStarRE.QPBT.combined_points_line_marginal_defect_le_explicit}
+\lean{MIPStarRE.QPBT.combined_points_conditioned_line_marginal_defect_le_explicit}
+\lean{MIPStarRE.QPBT.combined_line_conditioned_defect_le_explicit}
+\lean{MIPStarRE.QPBT.combined_line_restored_defect_le_explicit}
+\lean{MIPStarRE.QPBT.combined_line_measurement_consistency_explicit}
+\lean{MIPStarRE.QPBT.exists_combined_lines_witness_of_points_witness_explicit}
+\leanok
+\uses{thm:qld-pasting-explicit, thm:qld-combined-points-explicit,
+lem:qld-xz-lines}
+Let a supplied combined-point witness have error $\delta_Q$, and let $r$ be
+the mass of the nondegenerate line-pasting event.  The same-placement
+line--point distance is at most $1040(\eps+\sqrt\eps)$.  Each of the two
+completed point-to-line marginal distances, and hence each corresponding
+consistency defect, is at most
+\[
+  8\delta_Q+2080(\eps+\sqrt\eps).
+\]
+After conditioning, both defects are at most this quantity divided by $r$.
+The conditioned pasted line defect is therefore bounded by
+\[
+ H\left(\rho,\frac{8\delta_Q+2080(\eps+\sqrt\eps)}{r}\right),
+\]
+and restoring the discarded zero direction gives
+\[
+ rH\left(\rho,\frac{8\delta_Q+2080(\eps+\sqrt\eps)}{r}\right)
+   +\frac1{2q}.
+\]
+For $\delta_Q=E_{\mathrm{pt}}(\eps)$ this is at most
+$E_{\mathrm{line}}(\eps,\rho)$, and hence there is a combined-line witness
+with precisely that error.  All measurement outcomes in these comparisons
+belong to the completed field alphabet.
+\end{theorem}
+\begin{proof}
+\leanok
+Use the expanded line--point comparison twice, condition on nonzero direction,
+apply Theorem~\ref{thm:qld-pasting-explicit}, and restore the discarded mass.
+The final scalar inequality is included in
+Theorem~\ref{thm:qld-baseline-scalar-bounds}.
+\end{proof}
+
+\begin{theorem}[Explicit subline overlap estimates]
+\label{thm:qld-subline-overlaps-explicit}
+\lean{MIPStarRE.QPBT.subline_remove_x_factor_at_explicit}
+\lean{MIPStarRE.QPBT.subline_z_term_near_one_at_explicit}
+\lean{MIPStarRE.QPBT.subline_joint_overlap_near_one_at_explicit}
+\leanok
+\uses{thm:qld-combined-lines-explicit, lem:qld-sublines}
+For point error $\delta_Q$, line error $\delta_P$, and any directed opposite
+placements, removing the $X$ factor from the ordered subline overlap costs at
+most
+\[
+  2\sqrt m\bigl(\delta_P^{1/4}+\delta_Q^{1/4}\bigr).
+\]
+The remaining $Z$ overlap differs from one by at most
+\[
+  2\sqrt m\bigl(\delta_P^{1/4}+\delta_Q^{1/4}+\eps^{1/4}\bigr).
+\]
+Thus the paired subline overlap $I$ satisfies the closed estimate
+\[
+ |I-1|\leq6\left(\delta_Q^{1/2}+\sqrt m
+   (\delta_P^{1/4}+\delta_Q^{1/4}+\eps^{1/4})\right).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+Apply Cauchy--Schwarz to remove the first point factor, use the line and point
+consistency defects for the remaining factor, and chain the three overlap
+comparisons.
+\end{proof}
+
+\begin{theorem}[Explicit extended-line witness]
+\label{thm:qld-extended-lines-explicit}
+\lean{MIPStarRE.QPBT.exists_extended_lines_witness_established_of_points_witness_explicit}
+\leanok
+\uses{thm:qld-subline-overlaps-explicit}
+Given the witness of Theorem~\ref{thm:qld-combined-points-explicit}, there is a
+directly indexed extended-line witness with completed answer alphabet and
+error
+\[
+  mE_{\mathrm{ext}}(\eps,\rho).
+\]
+The conclusion includes both player orientations and the direct axis-degree
+bound.
+\end{theorem}
+\begin{proof}
+\leanok
+Use the subline measurement and the paired-overlap estimate, then absorb the
+result with the scalar combining inequality of
+Theorem~\ref{thm:qld-baseline-scalar-bounds}.
+\end{proof}
+
+\begin{theorem}[Explicit one-coordinate direct low-degree soundness]
+\label{thm:qld-direct-soundness-explicit}
+\lean{MIPStarRE.QPBT.direct_ld_transport_constants_explicit}
+\lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_explicit}
+\lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_any_strategy_explicit}
+\leanok
+\uses{lem:ld-soundness}
+For every $C_0\geq1$, the transport estimate is absorbed by the direct
+low-degree error with constants
+\[
+  a=2500000000C_0,\qquad b=\frac1{80000}.
+\]
+More precisely, for $0<\eta\leq1$ it bounds
+\[
+ C_0k\sqrt{\delta_{\mathrm{LDT}}(3\eta)+md/q+\eta}
+ \leq\delta_{\mathrm{ld}}(a,b,\eta,q,m,d,k).
+\]
+When $k=1$, every projective strategy of value at least $1-\eta$ has two
+global polynomial-tuple measurements satisfying the two point-consistency
+bounds and their mutual consistency bound, each at
+\[
+ \delta_{\mathrm{ld}}(2500000000,1/80000,\eta,q,m,d,1).
+\]
+The same three bounds hold for an arbitrary strategy after Naimark dilation
+and compression; projectivity of the compressed polynomial measurements is
+not asserted.
+\end{theorem}
+\begin{proof}
+\leanok
+Specialize the quantitative low-degree transport to one simultaneous
+coordinate.  For an arbitrary strategy, apply the projective result to its
+questionwise Naimark dilation and compress the resulting measurements.
+\end{proof}
+
+\begin{theorem}[Explicit rounded polynomial estimates]
+\label{thm:qld-rounded-polynomials-explicit}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_ordered_estimates_explicit}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_scalar_mass_explicit}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_wrong_variable_mass_explicit}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_separated_mass_explicit}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.pair_witness_of_points_lines_explicit}
+\leanok
+\uses{thm:qld-direct-soundness-explicit, thm:qld-extended-lines-explicit,
+lem:qld-4-7}
+For supplied point and extended-line errors $\delta_Q,\delta_L$, put
+\[
+ \begin{split}
+ \delta&=\delta_{\mathrm{ld}}\left(2500000000,\frac1{80000},
+   3(\sqrt{\delta_Q+\delta_L}+\rho),q,2m+2,d,1\right),\\
+ \eta&=\delta+\sqrt{220\delta^{1/4}}+2\sqrt{2\delta},
+ \qquad E=4\eta+8\delta_Q.
+ \end{split}
+\]
+There are projective rounded polynomial measurements for Alice and Bob whose
+two ordered errors are at most $E$.  For the same measurements, the scalar
+nonlinearity mass is at most
+\[
+ 2E+2\frac{(2m+2)d+1}{q},
+\]
+each wrong-variable mass is at most
+\[
+ 2E+2\frac{2md+2}{q},
+\]
+and the non-separated mass is at most
+\[
+ 6E+\frac{12md+4d+10}{q}.
+\]
+They induce a projective global polynomial-pair witness with error
+\[
+ 8E+\frac{12md+4d+14}{q}.
+\]
+All four estimates use the directly indexed, completed-answer extended-line
+witness; no unproved source-domain conversion is hidden in these statements.
+\end{theorem}
+\begin{proof}
+\leanok
+Apply Theorem~\ref{thm:qld-direct-soundness-explicit}, round both polynomial
+measurements on their own spaces, and combine the ordered estimates with the
+three finite-field root-counting bounds.
+\end{proof}
+
+\begin{definition}[Scalar functions of the closed baseline]
+\label{def:qld-baseline-scalar-functions}
+\lean{MIPStarRE.QPBT.pauliBaselinePointConstant}
+\lean{MIPStarRE.QPBT.pauliBaselinePointError}
+\lean{MIPStarRE.QPBT.pauliBaselineLineConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineLineError}
+\lean{MIPStarRE.QPBT.pauliBaselineExtendedLineConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineExtendedLineError}
+\lean{MIPStarRE.QPBT.pauliBaselinePassingConstant}
+\lean{MIPStarRE.QPBT.pauliBaselinePassingError}
+\lean{MIPStarRE.QPBT.pauliBaselineLowDegreeConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineLowDegreePower}
+\lean{MIPStarRE.QPBT.pauliBaselineGlobalAbsorptionConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineGlobalAbsorptionPower}
+\lean{MIPStarRE.QPBT.pauliBaselineGlobalPairConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineGlobalPairPower}
+\leanok
+\uses{def:pauli-observable-baseline-constants}
+Define
+\[
+\begin{aligned}
+C_{\mathrm{pt}}&=10560(344+3C_{\mathrm{tw}})+24C_{\mathrm{tw}}+11008,
+&E_{\mathrm{pt}}(x)&=C_{\mathrm{pt}}x^{1/8},\\
+C_{\mathrm{line}}&=115\left(1+(16C_{\mathrm{pt}}+8320)^{1/8}\right)+1,
+&E_{\mathrm{line}}(x,y)&=C_{\mathrm{line}}(x^{1/64}+y^{1/4}),\\
+C_{\mathrm{ext}}&=1+6\left(\sqrt{C_{\mathrm{pt}}}
+ +C_{\mathrm{line}}^{1/4}+C_{\mathrm{pt}}^{1/4}+1\right),
+&E_{\mathrm{ext}}(x,y)&=C_{\mathrm{ext}}(x^{1/256}+y^{1/16}),\\
+C_{\mathrm{pass}}&=4+3\sqrt{C_{\mathrm{pt}}+C_{\mathrm{ext}}},
+&E_{\mathrm{pass}}(x,y)&=C_{\mathrm{pass}}(x^{1/512}+y^{1/32}).
+\end{aligned}
+\]
+The direct low-degree constants are
+\[
+ C_{\mathrm{ld}}=2500000000,
+ \qquad b_{\mathrm{ld}}=\frac1{80000}.
+\]
+Finally, set
+\[
+\begin{aligned}
+C_{\mathrm{abs}}={}&2\left(C_{\mathrm{ld}}4^{C_{\mathrm{ld}}}
+  (C_{\mathrm{pass}}^{b_{\mathrm{ld}}}+2)+\sqrt{C_{\mathrm{pt}}}+1\right)
+  +C_{\mathrm{ld}}+\frac{33}{32}b_{\mathrm{ld}}+3,\\
+b_{\mathrm{abs}}={}&\frac1{40960000},\qquad
+C_{\mathrm{pair}}=1024C_{\mathrm{abs}},\qquad
+b_{\mathrm{pair}}=\frac1{327680000}.
+\end{aligned}
+\]
+\end{definition}
+
+\begin{theorem}[Polynomiality and scalar absorption of the baseline]
+\label{thm:qld-baseline-scalar-bounds}
+\lean{MIPStarRE.QPBT.one_le_pauli_baseline_point_constant}
+\lean{MIPStarRE.QPBT.one_le_pauli_baseline_line_constant}
+\lean{MIPStarRE.QPBT.one_le_pauli_baseline_extended_line_constant}
+\lean{MIPStarRE.QPBT.one_le_pauli_baseline_passing_constant}
+\lean{MIPStarRE.QPBT.pauli_baseline_point_error_is_poly_err}
+\lean{MIPStarRE.QPBT.pauli_baseline_line_error_is_poly_err₂}
+\lean{MIPStarRE.QPBT.pauli_baseline_extended_line_error_is_poly_err₂}
+\lean{MIPStarRE.QPBT.pauli_baseline_passing_error_is_poly_err₂}
+\lean{MIPStarRE.QPBT.pauli_baseline_conditioned_line_bound}
+\lean{MIPStarRE.QPBT.pauli_baseline_combining_bound}
+\lean{MIPStarRE.QPBT.pauli_baseline_direct_passing_bound}
+\lean{MIPStarRE.QPBT.pauli_baseline_global_absorption_bound}
+\lean{MIPStarRE.QPBT.pauli_baseline_direct_global_pair_error_bound}
+\lean{MIPStarRE.QPBT.pauli_baseline_actual_rounded_global_pair_error_bound}
+\leanok
+\uses{def:qld-baseline-scalar-functions,
+thm:qld-rounded-polynomials-explicit}
+The four coefficients $C_{\mathrm{pt}},C_{\mathrm{line}},C_{\mathrm{ext}}$
+and $C_{\mathrm{pass}}$ are at least one.  Their error functions are
+polynomially small on the nonnegative domain with the coefficients and powers
+displayed in Definition~\ref{def:qld-baseline-scalar-functions}.
+
+If $x,y\geq0$, $1/2\leq r\leq1$, and $n\geq1$, then
+\[
+ \min\left\{1,rH\left(y,
+   \frac{8E_{\mathrm{pt}}(x)+2080(x+\sqrt x)}r\right)+y\right\}
+ \leq E_{\mathrm{line}}(x,y),
+\]
+\[
+ \min\left\{1,6\left(E_{\mathrm{pt}}(x)^{1/2}+\sqrt n
+   \left(E_{\mathrm{line}}(x,y)^{1/4}
+    +E_{\mathrm{pt}}(x)^{1/4}+x^{1/4}\right)\right)\right\}
+ \leq nE_{\mathrm{ext}}(x,y),
+\]
+and
+\[
+ \min\{1,3(\sqrt{E_{\mathrm{pt}}(x)+nE_{\mathrm{ext}}(x,y)}+y)\}
+ \leq nE_{\mathrm{pass}}(x,y).
+\]
+Moreover $C_{\mathrm{abs}}>1$, $0<b_{\mathrm{abs}}<1$, and for every
+admissible parameter tuple and $x\geq0$,
+\[
+\begin{split}
+ \min\{1,2(&\delta_{\mathrm{ld}}(C_{\mathrm{ld}},b_{\mathrm{ld}},
+    mE_{\mathrm{pass}}(x,\rho)+x,q,2m+2,d,1)\\
+   &+\sqrt{E_{\mathrm{pt}}(x)}+\rho)\}
+ \leq\delta_{\mathrm{qld}}(C_{\mathrm{abs}},b_{\mathrm{abs}},x,m,d,q).
+\end{split}
+\]
+The direct-envelope version is
+\[
+\begin{split}
+ \min\{1,{}&\delta_{\mathrm{ld}}(C_{\mathrm{ld}},b_{\mathrm{ld}},
+  3(\sqrt{E_{\mathrm{pt}}(x)+mE_{\mathrm{ext}}(x,\rho)}+\rho)+x,
+  q,2m+2,d,1)\\
+  &+\sqrt{E_{\mathrm{pt}}(x)}+\rho\}
+ \leq\delta_{\mathrm{qld}}(C_{\mathrm{abs}},b_{\mathrm{abs}},x,m,d,q).
+\end{split}
+\]
+
+Finally, put
+\[
+\begin{split}
+ \delta_0={}&\delta_{\mathrm{ld}}\left(C_{\mathrm{ld}},b_{\mathrm{ld}},
+  3\left(\sqrt{E_{\mathrm{pt}}(x)+mE_{\mathrm{ext}}(x,\rho)}+\rho\right),
+  q,2m+2,d,1\right),\\
+ \eta_0={}&\delta_0+\sqrt{220\delta_0^{1/4}}+2\sqrt{2\delta_0}.
+\end{split}
+\]
+The final rounded error satisfies
+\[
+ \min\left\{1,8(4\eta_0+8E_{\mathrm{pt}}(x))
+   +\frac{12md+4d+14}{q}\right\}
+ \leq\delta_{\mathrm{qld}}(C_{\mathrm{pair}},b_{\mathrm{pair}},x,m,d,q).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+Each assertion is a direct comparison of nonnegative powers.  Split into the
+unit range and its complement, use the cap by one in the latter case, and
+apply the eighth-root absorption to the rounded error.
+\end{proof}
+
+\begin{definition}[Generic global-pair absorption witnesses]
+\label{def:qld-global-pair-generic-constants}
+\lean{MIPStarRE.QPBT.globalPairBoundPower}
+\lean{MIPStarRE.QPBT.globalPairBoundConstant}
+\leanok
+For real powers $p,e,r,s$, define
+\[
+ B=\min\left\{\frac12,s,es,rs,\frac p2\right\}.
+\]
+For coefficients $P,L,K,A$ and a final scale $F$, put
+\[
+ \begin{split}
+ \lambda&=s+rs,\qquad G=A+\lambda+1,\\
+ L_0&=A4^A\bigl((KL)^s+2\bigr),\\
+ C&=F(L_0+\sqrt P+1)+G+2.
+ \end{split}
+\]
+These are respectively the generic global-pair power and coefficient.
+\end{definition}
+
+\begin{theorem}[Generic global-pair absorption]
+\label{thm:qld-global-pair-bound-explicit}
+\lean{MIPStarRE.QPBT.global_pair_error_bound_explicit}
+\leanok
+\uses{def:qld-global-pair-generic-constants}
+Suppose $0\leq f(x)\leq Px^p$ and
+$0\leq g(x,y)\leq L(x^e+y^r)$ on the nonnegative domain, with $P,L\geq1$
+and $p,e,r>0$.  Suppose also $A\geq1$, $0<s\leq1$, and $K,F\geq0$.
+Then the constants $C,B$ of
+Definition~\ref{def:qld-global-pair-generic-constants} satisfy
+$C>1$ and $0<B<1$, and
+\[
+ \min\{1,F(\delta_{\mathrm{ld}}(A,s,Km g(x,\rho)+x,q,2m+2,d,1)
+   +\sqrt{f(x)}+\rho)\}
+ \leq\delta_{\mathrm{qld}}(C,B,x,m,d,q).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+Bound each summand by the smallest displayed exponent and absorb all
+dimension growth into the coefficient $C$.
+\end{proof}
+
+\begin{theorem}[Explicit global polynomial-pair witness]
+\label{thm:qld-global-pair-witness-explicit}
+\lean{MIPStarRE.QPBT.exists_global_pair_witness_explicit}
+\leanok
+\uses{thm:qld-combined-points-explicit, thm:qld-extended-lines-explicit,
+thm:qld-rounded-polynomials-explicit, thm:qld-baseline-scalar-bounds}
+Every projective Pauli-test setting has a projective global polynomial-pair
+witness with error
+\[
+ \delta_{\mathrm{qld}}(C_{\mathrm{pair}},b_{\mathrm{pair}},
+   \eps,m,d,q).
+\]
+The point and extended-line witnesses are constructed internally and are not
+hypotheses of this statement.
+\end{theorem}
+\begin{proof}
+\leanok
+Construct the point and extended-line witnesses, apply the rounded pair
+construction, and use the final inequality of
+Theorem~\ref{thm:qld-baseline-scalar-bounds}.
+\end{proof}

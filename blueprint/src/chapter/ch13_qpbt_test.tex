@@ -2046,3 +2046,25 @@ low-degree question and line-point laws above.
 	\leanok
 	This is the prefix-zero property carried by a diagonal line description.
 \end{proof}
+
+\section{Explicit verifier cardinality}
+
+The quantitative estimates below use the exact size of the finite set of
+question-pair types in the Pauli basis test.  This is a Lean-only numerical
+specialization; it does not alter the verifier or the source soundness theorem.
+
+\begin{lemma}[Cardinality of the Pauli verifier edge set]
+\label{lem:pauli-edge-card-explicit}
+\lean{MIPStarRE.QPBT.pauli_edge_card}
+\leanok
+\uses{def:pauli-question-distribution}
+The type of directed Pauli verifier edges has cardinality
+\[
+  \lvert \mathcal E_{\mathrm{Pauli}}\rvert=86.
+\]
+\end{lemma}
+\begin{proof}
+\leanok
+Expand the finite union defining the verifier edges and count its disjoint
+question-pair classes.
+\end{proof}
