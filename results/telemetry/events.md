@@ -10005,3 +10005,7 @@ The owner reports that an obsolete September22 watcher misread the pane, probed 
 ## 2026-09-29T16:33:17.534711+00:00 — missing authorized QPBT worker registration
 
 CI737passed, but reviewer01 exited75beforeanymodelrequest because the owner-bin shim found no keyrotationdirectory. Accountcaps were primary3/second0 and main-key qpbt-space3, with the expectedhomepresent; keyrotcontainedonly.lock. Underthatlock mainrestoredonlyqpbt-space3/.limit=3, implementingtheowner20260930explicitallocation withoutnewkeys,credentialchanges orshimchanges. Retryusescanonicalreview.sh atthesamegreenhead. The0s/nullthreadattemptremainsrecorded; itwasnotaproviderauthfailure.
+
+## 2026-09-29T23:08:33.338862+00:00 — C8 round-two disposition
+
+R2of737resolvedallfirst-roundfindingsbutdemonstratedtwoadditionalfalseacceptancesunderthesameC8shapecontract: HTML-commentedledgersandtablesafterSetextsectionboundaries. Mainacceptsbothandassignsoneboundedrepair. review.md9 explicitlypermitsanotherreviewwhenheadchangeswithinfourroundceiling; thisisthe recordedexceptionto normaltwo-roundworkflowdisposition, withnocapreset, noadjudicatedmerge andnoothermechanismadded. Acleannormalexact-headreviewisrequiredbytheowner; donotwaiveafailinggate. Preserve974-linecompletePRbudgetduringtherepair.
