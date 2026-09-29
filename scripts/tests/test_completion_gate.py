@@ -915,6 +915,44 @@ class BoundLedgerTests(GateFixture):
             crit.evidence, [f"{self.LEDGER}:7: table has a header but no stage row"]
         )
 
+    def test_thematic_break_after_table_preserves_final_rows(self) -> None:
+        one_row = (
+            "## Stage ledger\n\n"
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Good | x | x | sharp |\n"
+        )
+        cases = (
+            (
+                "invalid final row",
+                one_row + "| Bad | x | x | invalid |\n---\n",
+                gate.FAIL,
+                "disposition 'invalid' for Bad",
+            ),
+            (
+                "one valid row",
+                one_row + "---\n",
+                gate.DELEGATED,
+                "all 1 stage row(s)",
+            ),
+        )
+        for outer_pipes, method in (
+            ("both", None),
+            ("trailing only", "lstrip"),
+            ("leading only", "rstrip"),
+            ("neither", "strip"),
+        ):
+            for name, text, status, expected in cases:
+                with self.subTest(case=name, outer_pipes=outer_pipes):
+                    if method is not None:
+                        text = "\n".join(
+                            getattr(line, method)("|") if line.startswith("|") else line
+                            for line in text.splitlines()
+                        )
+                    crit = self.check(text)
+                    self.assertEqual(crit.status, status, crit.evidence)
+                    self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
+
     def test_a_table_under_a_later_heading_does_not_count(self) -> None:
         table = "\n".join(GOOD_LEDGER.splitlines()[6:9])
         for heading in ("## Appendix", "Appendix\n--------"):

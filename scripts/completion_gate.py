@@ -817,6 +817,9 @@ HEADING_RE = re.compile(
     r"^ {0,3}(?P<hashes>#{1,6})(?:[ \t]+(?P<text>.*?))?(?:[ \t]+#+)?[ \t]*$"
 )
 SETEXT_RE = re.compile(r"^ {0,3}(?P<marker>=+|-+)[ \t]*$")
+THEMATIC_BREAK_RE = re.compile(
+    r"^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,})$"
+)
 FENCE_RE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<tail>.*)$")
 # A table delimiter cell, and a pipe that separates two cells. A pipe preceded
 # by a backslash is text in its cell, so `\|x\|` is a norm.
@@ -853,6 +856,18 @@ def _fence_state(line: str, opened: tuple[str, int] | None) -> tuple[str, int] |
     return opened
 
 
+def _is_ledger_table_row(
+    lines: list[str], start: int, end: int, row_index: int
+) -> bool:
+    """Whether ``row_index`` is a body row under the ledger table parser."""
+
+    return any(
+        number == row_index + 1
+        for _, _, _, _, rows in _ledger_tables(lines, start, end)
+        for number, _ in rows
+    )
+
+
 def _ledger_section(lines: list[str]) -> tuple[int, int] | None:
     """Return (heading index, end index) of the ``Stage ledger`` section.
 
@@ -873,9 +888,15 @@ def _ledger_section(lines: list[str]) -> tuple[int, int] | None:
         if match is None:
             prior = lines[index - 1] if index else ""
             setext = SETEXT_RE.match(line)
-            if (start is not None and setext and prior.strip()
-                    and HEADING_RE.match(prior) is None and not _code_indented(prior)
-                    and (setext.group("marker")[0] == "=" or level >= 2)):
+            if (
+                start is not None
+                and setext
+                and prior.strip()
+                and HEADING_RE.match(prior) is None
+                and not _code_indented(prior)
+                and not _is_ledger_table_row(lines, start, index, index - 1)
+                and (setext.group("marker")[0] == "=" or level >= 2)
+            ):
                 return start, index - 1
             continue
         if start is None:
@@ -939,6 +960,7 @@ def _table_body_boundary(line: str) -> bool:
     return (
         not line.strip()
         or HEADING_RE.match(line) is not None
+        or THEMATIC_BREAK_RE.match(line) is not None
         or FENCE_RE.match(line) is not None
         or _code_indented(line)
     )
