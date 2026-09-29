@@ -2432,22 +2432,25 @@ $n/q$ after multiplication by $n$.
 \leanok
 \uses{def:pauli-final-quantitative-error,
 thm:pauli-final-envelope-support}
-Let $0\leq e\leq1$, put $r=n/q$, and suppose
+Let $0\leq e\leq1$ and put $r=n/q$.  For every $g\in\mathbb R$ satisfying
 \[
- g\leq10^7n^4E_{\mathrm{pair}}(P,e),\qquad
- x=2800(g+\sqrt e+r).
+ g\leq10^7n^4E_{\mathrm{pair}}(P,e),
+\]
+the extraction scale satisfies
+\[
+ 2800(g+\sqrt e+r)\leq10^{11}n^4E_{\mathrm{pair}}(P,e).
+\]
+More generally, let $e\geq0$ and $x\geq0$ satisfy
+\[
+ x\leq10^{11}n^4E_{\mathrm{pair}}(P,e).
 \]
 Then
 \[
- x\leq10^{11}n^4E_{\mathrm{pair}}(P,e),\qquad
- \sqrt{x}\leq10^6n^4E_b(P,e).
-\]
-More generally, the second inequality holds for every $e\geq0$ and $x\geq0$
-that satisfies the displayed $10^{11}$ bound.  Under that same bound,
-\[
+ \sqrt{x}\leq10^6n^4E_b(P,e),\qquad
  4\sqrt{x}\leq B(P,e).
 \]
-If $e\leq1$, the prescribed-family component bound is also absorbed:
+If in addition $e\leq1$, the prescribed-family component bound is also
+absorbed:
 \[
  472x+24r+192\sqrt{x}+344e\leq B(P,e).
 \]
@@ -2458,10 +2461,10 @@ same auxiliary state.
 \begin{proof}
 \leanok
 \uses{thm:pauli-final-envelope-support}
-Use the bounds for $g$, $\sqrt e$, and $r$ to obtain
-$x\leq10^{11}n^4E_{\mathrm{pair}}$.  Taking a square root halves the envelope
-exponent, and $n\geq1$ permits the resulting $n^2$ factor to be enlarged to
-$n^4$.  The numerical inequalities
+Use the bounds for $g$, $\sqrt e$, and $r$ to obtain the extraction-scale
+inequality.  For a nonnegative $x$ below that scale, taking a square root
+halves the envelope exponent, and $n\geq1$ permits the resulting $n^2$ factor
+to be enlarged to $n^4$.  The numerical inequalities
 $4\cdot10^6<10^{14}$ and
 $472\cdot10^{11}+24+192\cdot10^6+344<10^{14}$ absorb the state and operator
 components into the common structured error.
