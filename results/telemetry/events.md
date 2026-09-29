@@ -10001,3 +10001,7 @@ PR736 checked-push succeeded, but the immediate pr_for_branch read still exposed
 ## 2026-09-29T16:22:41.361683+00:00 — owner resumes after stale watcher cutoff
 
 The owner reports that an obsolete September22 watcher misread the pane, probed an obsolete main key and stopped the session at20260929T05:04Z. The interrupted prover729-07 also recorded terminal API_KEY_DISABLED401; its672seconds and rawcapture remain preserved, without fabricated finalusage. The owner has verified qpbt-space3 availability and restored three primaryslots. Main resumes authorized work without changing runtime, keys or otherprojects; priority737gets canonicalCI and independentreview before merge. Recover729fromits actualuncommittedfiles afterthat amendment, preserving earlierchecks and chargingvalidationstilloutstanding.
+
+## 2026-09-29T16:33:17.534711+00:00 — missing authorized QPBT worker registration
+
+CI737passed, but reviewer01 exited75beforeanymodelrequest because the owner-bin shim found no keyrotationdirectory. Accountcaps were primary3/second0 and main-key qpbt-space3, with the expectedhomepresent; keyrotcontainedonly.lock. Underthatlock mainrestoredonlyqpbt-space3/.limit=3, implementingtheowner20260930explicitallocation withoutnewkeys,credentialchanges orshimchanges. Retryusescanonicalreview.sh atthesamegreenhead. The0s/nullthreadattemptremainsrecorded; itwasnotaproviderauthfailure.
