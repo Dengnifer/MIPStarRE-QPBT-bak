@@ -328,6 +328,46 @@ theorem direct_ld_soundness_of_k_eq_one_explicit :
     rw [one_mul]
     exact le_trans h3 (hmature hT)
 
+/-- Projective one-coordinate direct-game soundness with the quantitative
+coefficient `30` and exponent `1/8192`.  The witnesses and all three
+consistency expressions are those constructed from the native
+complete-measurement linear-triangle LDT theorem. -/
+theorem direct_ld_soundness_of_k_eq_one_quantitative :
+    ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), S.IsProjective → 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
+                    ε D.q D.m D.d D.k ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
+                    ε D.q D.m D.d D.k ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
+                    ε D.q D.m D.d D.k := by
+  intro D ε hk hε S hS hwin
+  exact exists_direct_simultaneous_polynomial_measurements_quantitative_of_k_eq_one
+    D hk S hS ε hε.le hwin
+
 /-- Existential packaging of `direct_ld_soundness_of_k_eq_one_explicit`,
 preserving the established auxiliary API. -/
 theorem exists_direct_ld_soundness_of_k_eq_one :
