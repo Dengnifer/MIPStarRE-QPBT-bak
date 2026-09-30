@@ -128,9 +128,8 @@ blueprint `lem:pasting-forward-comparisons`.
 
 **Local fix:** the additive interpretation of `IsPolyErr₂` is documented in
 `docs/paper-gaps/qpbt_pasting-product-error.tex`, issue #201. -/
-theorem exists_pasting_error_of_marginal_consistency :
-    ∃ δp : ℝ → ℝ → ℝ, IsPolyErr₂ δp ∧
-      ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}
+theorem pasting_error_of_marginal_consistency_explicit :
+    ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}
         [Fintype X] [DecidableEq X] [Fintype Y₁] [DecidableEq Y₁]
         [Fintype Y₂] [DecidableEq Y₂] [Fintype R₁] [DecidableEq R₁]
         [Fintype R₂] [DecidableEq R₂]
@@ -157,14 +156,9 @@ theorem exists_pasting_error_of_marginal_consistency :
           (fun q a => heteroKron 1 (∑ g₁ : Γ₁, ∑ g₂ : Γ₂,
             if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
               pastedMeasurement (fun g => (G₁ q.1.1).effect g)
-                (fun g => (G₂ q.1.1).effect g) g₁ g₂ else 0)) ψ ≤ δp η δ := by
+                (fun g => (G₂ q.1.1).effect g) g₁ g₂ else 0)) ψ ≤
+          115 * (η ^ (1 / 4 : ℝ) + δ ^ (1 / 8 : ℝ)) := by
   classical
-  obtain ⟨C, hC1, hCbound⟩ := exists_coarse_commutator_bound
-  refine ⟨fun x y => (3 * C + 19) * (x ^ (1/4 : ℝ) + y ^ (1/8 : ℝ)), ?_, ?_⟩
-  · refine ⟨3 * C + 19, 1/4, 1/8, by linarith, by norm_num, by norm_num, ?_⟩
-    intro x y hx hy
-    exact ⟨mul_nonneg (by linarith)
-      (add_nonneg (Real.rpow_nonneg hx _) (Real.rpow_nonneg hy _)), le_rfl⟩
   intro X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
     D eval₁ eval₂ G₁ G₂ A ψ η δ hD hψ hη hδ hG₂ hA hcoll h₁ h₂
   have hpm : ∀ q : (X × Y₁) × Y₂,
@@ -199,25 +193,65 @@ theorem exists_pasting_error_of_marginal_consistency :
   rcases le_or_gt δ 1 with hδ1 | hδgt
   · rcases le_or_gt η 1 with hη1 | hηgt
     · refine le_trans (consistencyDefect_pasted_le_sqrt_one_sided D eval₁ eval₂ G₁ G₂ A ψ
-        η δ C hD hψ hη hG₂ hA hcoll h₁ h₂ hδ hδ1
-        (hCbound D eval₁ eval₂ G₁ G₂ A ψ δ hA h₁ h₂)) ?_
-      exact pasting_error_sqrt_le_rpow C δ η hC1 hδ hδ1 hη hη1
+        η δ 32 hD hψ hη hG₂ hA hcoll h₁ h₂ hδ hδ1
+        (coarse_commutator_bound_explicit D eval₁ eval₂ G₁ G₂ A ψ δ hA h₁ h₂)) ?_
+      have h := pasting_error_sqrt_le_rpow 32 δ η (by norm_num) hδ hδ1 hη hη1
+      have hcoeff : (3 * (32 : ℝ) + 19) = 115 := by norm_num
+      rw [hcoeff] at h
+      exact h
     · refine le_trans hle1 ?_
       have hb : (0:ℝ) ≤ δ ^ (1/8 : ℝ) := Real.rpow_nonneg hδ _
       have ha : (1:ℝ) ≤ η ^ (1/4 : ℝ) := by
         calc (1:ℝ) = (1:ℝ) ^ (1/4 : ℝ) := (Real.one_rpow _).symm
           _ ≤ η ^ (1/4 : ℝ) :=
             Real.rpow_le_rpow zero_le_one hηgt.le (by norm_num)
-      nlinarith [mul_nonneg (sub_nonneg.mpr hC1) (sub_nonneg.mpr ha),
-        mul_nonneg (show (0:ℝ) ≤ 3 * C + 19 by linarith) hb]
+      nlinarith [mul_nonneg (show (0 : ℝ) ≤ 115 by norm_num) hb]
   · refine le_trans hle1 ?_
     have ha : (0:ℝ) ≤ η ^ (1/4 : ℝ) := Real.rpow_nonneg hη _
     have hb : (1:ℝ) ≤ δ ^ (1/8 : ℝ) := by
       calc (1:ℝ) = (1:ℝ) ^ (1/8 : ℝ) := (Real.one_rpow _).symm
         _ ≤ δ ^ (1/8 : ℝ) :=
           Real.rpow_le_rpow zero_le_one hδgt.le (by norm_num)
-    nlinarith [mul_nonneg (sub_nonneg.mpr hC1) (sub_nonneg.mpr hb),
-      mul_nonneg (show (0:ℝ) ≤ 3 * C + 19 by linarith) ha]
+    nlinarith [mul_nonneg (show (0 : ℝ) ≤ 115 by norm_num) ha]
+
+/-- The two-variable polynomial error `115 * (η^(1/4) + δ^(1/8))` bounds the
+one-sided pasted consistency defect. -/
+theorem exists_pasting_error_of_marginal_consistency :
+    ∃ δp : ℝ → ℝ → ℝ, IsPolyErr₂ δp ∧
+      ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}
+        [Fintype X] [DecidableEq X] [Fintype Y₁] [DecidableEq Y₁]
+        [Fintype Y₂] [DecidableEq Y₂] [Fintype R₁] [DecidableEq R₁]
+        [Fintype R₂] [DecidableEq R₂]
+        [Fintype Γ₁] [DecidableEq Γ₁] [Fintype Γ₂] [DecidableEq Γ₂]
+        [Fintype ι] [DecidableEq ι]
+        (D : Distribution ((X × Y₁) × Y₂))
+        (eval₁ : Γ₁ → Y₁ → R₁) (eval₂ : Γ₂ → Y₂ → R₂)
+        (G₁ : X → Measurement Γ₁ ι) (G₂ : X → Measurement Γ₂ ι)
+        (A : ((X × Y₁) × Y₂) → Measurement (R₁ × R₂) ι)
+        (ψ : EuclideanSpace ℂ (ι × ι)) (η δ : ℝ),
+        D.IsProbability → ‖ψ‖ = 1 → 0 ≤ η → 0 ≤ δ →
+        (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (G₂ x)) →
+        (∀ q, MIPStarRE.QPBT.Measurement.IsProjective (A q)) →
+        HasConditionalCollisionBound D eval₂ η →
+        consistencyDefect D
+          (fun q a₁ => heteroKron (((A q).postprocess Prod.fst).effect a₁) 1)
+          (fun q a₁ => heteroKron 1 (((G₁ q.1.1).postprocess
+            (fun g => eval₁ g q.1.2)).effect a₁)) ψ ≤ δ →
+        consistencyDefect D
+          (fun q a₂ => heteroKron (((A q).postprocess Prod.snd).effect a₂) 1)
+          (fun q a₂ => heteroKron 1 (((G₂ q.1.1).postprocess
+            (fun g => eval₂ g q.2)).effect a₂)) ψ ≤ δ →
+        consistencyDefect D (fun q a => heteroKron ((A q).effect a) 1)
+          (fun q a => heteroKron 1 (∑ g₁ : Γ₁, ∑ g₂ : Γ₂,
+            if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
+              pastedMeasurement (fun g => (G₁ q.1.1).effect g)
+                (fun g => (G₂ q.1.1).effect g) g₁ g₂ else 0)) ψ ≤ δp η δ := by
+  refine ⟨fun η δ => 115 * (η ^ (1 / 4 : ℝ) + δ ^ (1 / 8 : ℝ)), ?_,
+    pasting_error_of_marginal_consistency_explicit⟩
+  exact ⟨115, 1 / 4, 1 / 8, by norm_num, by norm_num, by norm_num,
+    fun η δ hη hδ =>
+      ⟨mul_nonneg (by norm_num)
+        (add_nonneg (Real.rpow_nonneg hη _) (Real.rpow_nonneg hδ _)), le_rfl⟩⟩
 
 /-- The one-sided pasting estimate on independent Alice and Bob spaces.
 This is a stronger formalization-only auxiliary for paper `lem:pasting`,
@@ -234,6 +268,103 @@ no nonemptiness assumption on outcomes is needed. See issue #495 and blueprint
 
 **Local fix:** the additive interpretation of `IsPolyErr₂` is documented in
 `docs/paper-gaps/qpbt_pasting-product-error.tex`, issue #201. -/
+theorem pasting_error_heterogeneous_explicit :
+    ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ιA ιB : Type*}
+        [Fintype X] [DecidableEq X] [Fintype Y₁] [DecidableEq Y₁]
+        [Fintype Y₂] [DecidableEq Y₂] [Fintype R₁] [DecidableEq R₁]
+        [Fintype R₂] [DecidableEq R₂]
+        [Fintype Γ₁] [DecidableEq Γ₁] [Fintype Γ₂] [DecidableEq Γ₂]
+        [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
+        (D : Distribution ((X × Y₁) × Y₂))
+        (eval₁ : Γ₁ → Y₁ → R₁) (eval₂ : Γ₂ → Y₂ → R₂)
+        (G₁ : X → Measurement Γ₁ ιB) (G₂ : X → Measurement Γ₂ ιB)
+        (A : ((X × Y₁) × Y₂) → Measurement (R₁ × R₂) ιA)
+        (ψ : EuclideanSpace ℂ (ιA × ιB)) (η δ : ℝ),
+        D.IsProbability → ‖ψ‖ = 1 → 0 ≤ η → 0 ≤ δ →
+        (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (G₂ x)) →
+        (∀ q, MIPStarRE.QPBT.Measurement.IsProjective (A q)) →
+        HasConditionalCollisionBound D eval₂ η →
+        consistencyDefect D
+          (fun q a₁ => heteroKron (((A q).postprocess Prod.fst).effect a₁) 1)
+          (fun q a₁ => heteroKron 1 (((G₁ q.1.1).postprocess
+            (fun g => eval₁ g q.1.2)).effect a₁)) ψ ≤ δ →
+        consistencyDefect D
+          (fun q a₂ => heteroKron (((A q).postprocess Prod.snd).effect a₂) 1)
+          (fun q a₂ => heteroKron 1 (((G₂ q.1.1).postprocess
+            (fun g => eval₂ g q.2)).effect a₂)) ψ ≤ δ →
+        consistencyDefect D (fun q a => heteroKron ((A q).effect a) 1)
+          (fun q a => heteroKron 1 (∑ g₁ : Γ₁, ∑ g₂ : Γ₂,
+            if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
+              pastedMeasurement (fun g => (G₁ q.1.1).effect g)
+                (fun g => (G₂ q.1.1).effect g) g₁ g₂ else 0)) ψ ≤
+          115 * (η ^ (1 / 4 : ℝ) + δ ^ (1 / 8 : ℝ)) := by
+  classical
+  intro X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ιA ιB _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    D eval₁ eval₂ G₁ G₂ A ψ η δ hD hψ hη hδ hG₂ hA hcoll h₁ h₂
+  have hnonempty : Nonempty (ιA × ιB) := by
+    rcases isEmpty_or_nonempty (ιA × ιB) with h | h
+    · letI := h
+      have hz : ψ = 0 := Subsingleton.elim _ _
+      simp [hz] at hψ
+    · exact h
+  obtain ⟨⟨a₀, b₀⟩⟩ := hnonempty
+  let A' := fun q => Measurement.leftPlacement (ιB := ιB) (A q)
+  let G₁' := fun x => Measurement.rightPlacement (ιA := ιA) (G₁ x)
+  let G₂' := fun x => Measurement.rightPlacement (ιA := ιA) (G₂ x)
+  let ψ' := Pasting.productPaddedState a₀ b₀ ψ
+  have hψ' : ‖ψ'‖ = 1 := (Pasting.productPaddedState_norm a₀ b₀ ψ).trans hψ
+  have h₁' : consistencyDefect D
+      (fun q a₁ => heteroKron (((A' q).postprocess Prod.fst).effect a₁) 1)
+      (fun q a₁ => heteroKron 1 (((G₁' q.1.1).postprocess
+        (fun g => eval₁ g q.1.2)).effect a₁)) ψ' ≤ δ := by
+    simpa only [A', G₁', ψ', ← Measurement.leftPlacement_postprocess,
+      ← Measurement.rightPlacement_postprocess, Measurement.leftPlacement_effect,
+      Measurement.rightPlacement_effect, Pasting.consistencyDefect_productPaddedState] using h₁
+  have h₂' : consistencyDefect D
+      (fun q a₂ => heteroKron (((A' q).postprocess Prod.snd).effect a₂) 1)
+      (fun q a₂ => heteroKron 1 (((G₂' q.1.1).postprocess
+        (fun g => eval₂ g q.2)).effect a₂)) ψ' ≤ δ := by
+    simpa only [A', G₂', ψ', ← Measurement.leftPlacement_postprocess,
+      ← Measurement.rightPlacement_postprocess, Measurement.leftPlacement_effect,
+      Measurement.rightPlacement_effect, Pasting.consistencyDefect_productPaddedState] using h₂
+  have hpadded := pasting_error_of_marginal_consistency_explicit
+    D eval₁ eval₂ G₁' G₂' A' ψ' η δ hD hψ' hη hδ
+    (fun x => Measurement.isProjective_rightPlacement (G₂ x) (hG₂ x))
+    (fun q => Measurement.isProjective_leftPlacement (A q) (hA q)) hcoll h₁' h₂'
+  have hpaste (q : (X × Y₁) × Y₂) (a : R₁ × R₂) :
+      (∑ g₁ : Γ₁, ∑ g₂ : Γ₂,
+        if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
+          pastedMeasurement (fun g => (G₁' q.1.1).effect g)
+            (fun g => (G₂' q.1.1).effect g) g₁ g₂ else 0) =
+        heteroKron (1 : Op ιA) (∑ g₁ : Γ₁, ∑ g₂ : Γ₂,
+          if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
+            pastedMeasurement (fun g => (G₁ q.1.1).effect g)
+              (fun g => (G₂ q.1.1).effect g) g₁ g₂ else 0) := by
+    simp only [G₁', G₂', Measurement.rightPlacement_effect, pastedMeasurement,
+      heteroKron_mul, one_mul]
+    simp_rw [heteroKron_finset_sum_right]
+    apply Finset.sum_congr rfl
+    intro g₁ _
+    apply Finset.sum_congr rfl
+    intro g₂ _
+    split_ifs <;> simp [heteroKron, Matrix.kronecker]
+  simp_rw [hpaste] at hpadded
+  simpa only [A', ψ', Measurement.leftPlacement_effect,
+    Pasting.consistencyDefect_productPaddedState] using hpadded
+
+/-- The fixed heterogeneous pasting error used by the current QPBT proof. -/
+noncomputable def heterogeneousPastingError (η δ : ℝ) : ℝ :=
+  115 * (η ^ (1 / 4 : ℝ) + δ ^ (1 / 8 : ℝ))
+
+/-- The fixed heterogeneous pasting error is polynomial in its two inputs. -/
+theorem heterogeneous_pasting_error_is_poly_err₂ : IsPolyErr₂ heterogeneousPastingError := by
+  exact ⟨115, 1 / 4, 1 / 8, by norm_num, by norm_num, by norm_num,
+    fun η δ hη hδ =>
+      ⟨mul_nonneg (by norm_num)
+        (add_nonneg (Real.rpow_nonneg hη _) (Real.rpow_nonneg hδ _)), le_rfl⟩⟩
+
+/-- A two-variable polynomial error bounds the heterogeneous pasted consistency
+defect on distinct local spaces. -/
 theorem exists_pasting_error_heterogeneous :
     ∃ δp : ℝ → ℝ → ℝ, IsPolyErr₂ δp ∧
       ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ιA ιB : Type*}
@@ -264,59 +395,7 @@ theorem exists_pasting_error_heterogeneous :
             if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
               pastedMeasurement (fun g => (G₁ q.1.1).effect g)
                 (fun g => (G₂ q.1.1).effect g) g₁ g₂ else 0)) ψ ≤ δp η δ := by
-  classical
-  obtain ⟨δp, hpoly, hbound⟩ := exists_pasting_error_of_marginal_consistency
-  refine ⟨δp, hpoly, ?_⟩
-  intro X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ιA ιB _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-    D eval₁ eval₂ G₁ G₂ A ψ η δ hD hψ hη hδ hG₂ hA hcoll h₁ h₂
-  have hnonempty : Nonempty (ιA × ιB) := by
-    rcases isEmpty_or_nonempty (ιA × ιB) with h | h
-    · letI := h
-      have hz : ψ = 0 := Subsingleton.elim _ _
-      simp [hz] at hψ
-    · exact h
-  obtain ⟨⟨a₀, b₀⟩⟩ := hnonempty
-  let A' := fun q => Measurement.leftPlacement (ιB := ιB) (A q)
-  let G₁' := fun x => Measurement.rightPlacement (ιA := ιA) (G₁ x)
-  let G₂' := fun x => Measurement.rightPlacement (ιA := ιA) (G₂ x)
-  let ψ' := Pasting.productPaddedState a₀ b₀ ψ
-  have hψ' : ‖ψ'‖ = 1 := (Pasting.productPaddedState_norm a₀ b₀ ψ).trans hψ
-  have h₁' : consistencyDefect D
-      (fun q a₁ => heteroKron (((A' q).postprocess Prod.fst).effect a₁) 1)
-      (fun q a₁ => heteroKron 1 (((G₁' q.1.1).postprocess
-        (fun g => eval₁ g q.1.2)).effect a₁)) ψ' ≤ δ := by
-    simpa only [A', G₁', ψ', ← Measurement.leftPlacement_postprocess,
-      ← Measurement.rightPlacement_postprocess, Measurement.leftPlacement_effect,
-      Measurement.rightPlacement_effect, Pasting.consistencyDefect_productPaddedState] using h₁
-  have h₂' : consistencyDefect D
-      (fun q a₂ => heteroKron (((A' q).postprocess Prod.snd).effect a₂) 1)
-      (fun q a₂ => heteroKron 1 (((G₂' q.1.1).postprocess
-        (fun g => eval₂ g q.2)).effect a₂)) ψ' ≤ δ := by
-    simpa only [A', G₂', ψ', ← Measurement.leftPlacement_postprocess,
-      ← Measurement.rightPlacement_postprocess, Measurement.leftPlacement_effect,
-      Measurement.rightPlacement_effect, Pasting.consistencyDefect_productPaddedState] using h₂
-  have hpadded := hbound D eval₁ eval₂ G₁' G₂' A' ψ' η δ hD hψ' hη hδ
-    (fun x => Measurement.isProjective_rightPlacement (G₂ x) (hG₂ x))
-    (fun q => Measurement.isProjective_leftPlacement (A q) (hA q)) hcoll h₁' h₂'
-  have hpaste (q : (X × Y₁) × Y₂) (a : R₁ × R₂) :
-      (∑ g₁ : Γ₁, ∑ g₂ : Γ₂,
-        if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
-          pastedMeasurement (fun g => (G₁' q.1.1).effect g)
-            (fun g => (G₂' q.1.1).effect g) g₁ g₂ else 0) =
-        heteroKron (1 : Op ιA) (∑ g₁ : Γ₁, ∑ g₂ : Γ₂,
-          if (eval₁ g₁ q.1.2, eval₂ g₂ q.2) = a then
-            pastedMeasurement (fun g => (G₁ q.1.1).effect g)
-              (fun g => (G₂ q.1.1).effect g) g₁ g₂ else 0) := by
-    simp only [G₁', G₂', Measurement.rightPlacement_effect, pastedMeasurement,
-      heteroKron_mul, one_mul]
-    simp_rw [heteroKron_finset_sum_right]
-    apply Finset.sum_congr rfl
-    intro g₁ _
-    apply Finset.sum_congr rfl
-    intro g₂ _
-    split_ifs <;> simp [heteroKron, Matrix.kronecker]
-  simp_rw [hpaste] at hpadded
-  simpa only [A', ψ', Measurement.leftPlacement_effect,
-    Pasting.consistencyDefect_productPaddedState] using hpadded
+  exact ⟨heterogeneousPastingError, heterogeneous_pasting_error_is_poly_err₂,
+    pasting_error_heterogeneous_explicit⟩
 
 end MIPStarRE.QPBT

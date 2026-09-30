@@ -223,19 +223,19 @@ The direct-domain and line-error discrepancies remain documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` and
 `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 -/
-theorem exists_pairWitness_of_points_lines :
-    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+theorem pair_witness_of_points_lines_explicit :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
         (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
-      let delta := deltaLd a b
+      let delta := deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
         (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
         P.q (2 * P.m + 2) P.d 1
       let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
         2 * Real.sqrt (2 * delta)
       Nonempty (GlobalPairWitness S (8 * (4 * eta + 8 * δQ) +
         (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q))) := by
-  obtain ⟨a, b, ha, hb, hb1, h⟩ := exists_rounded_polynomial_separated_mass
-  refine ⟨a, b, ha, hb, hb1, ?_⟩
+  let a := pauliBaselineLowDegreeConstant
+  let b := pauliBaselineLowDegreePower
+  have h := rounded_polynomial_separated_mass_explicit
   intro P ε δQ δL S points lines delta eta
   obtain ⟨RA, RB, hRA, hRB, horder, hmassA, hmassB⟩ := h P ε δQ δL S points lines
   let pair₀ : PolyPair P := (0, 0)
@@ -276,6 +276,138 @@ theorem exists_pairWitness_of_points_lines :
     · exact (hB true).trans ((add_le_add
         (add_le_add hmassB (mul_le_mul_of_nonneg_left (horder true).2 (by norm_num)))
         le_rfl).trans_eq hbound)
+
+/-- Complete projective polynomial-pair measurements at the exact uncapped
+native mixed error.  The same rounded measurements satisfy all four directed
+point comparisons. -/
+theorem pair_witness_of_points_lines_at_native_error :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := directNativeError P.extendedDirectLd
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+      Nonempty (GlobalPairWitness S (nativeGlobalPairRawError P delta δQ)) := by
+  intro P ε δQ δL S points lines delta
+  obtain ⟨RA, RB, hRA, hRB, horder, hmassA, hmassB⟩ :=
+    rounded_polynomial_separated_mass_at_native_error P ε δQ δL S points lines
+  let pair₀ : PolyPair P := (0, 0)
+  have hA (reverse : Bool) := directPairMeasurement_consistency_le_ordered_error
+    S .AA' .BA'' (by trivial) RA hRA pair₀ reverse
+  have hB (reverse : Bool) := directPairMeasurement_consistency_le_ordered_error
+    S .BB' .AB'' (by trivial) RB hRB pair₀ reverse
+  have hbound :
+      6 * nativeOrderedPolynomialError delta δQ +
+          (((12 * P.m * P.d + 4 * P.d + 10 : ℕ) : ℝ) / P.q) +
+        2 * nativeOrderedPolynomialError delta δQ + 4 / P.q =
+      nativeGlobalPairRawError P delta δQ := by
+    unfold nativeOrderedPolynomialError nativeGlobalPairRawError
+    push_cast
+    ring
+  refine ⟨{
+    Smeas := fun side => match side with
+      | .alice => directPairMeasurement RA pair₀
+      | .bob => directPairMeasurement RB pair₀
+    projective := ?_
+    point_consistent_alice := ?_
+    point_consistent_bob := ?_ }⟩
+  · intro side
+    cases side
+    · exact directPairMeasurement_projective RA hRA pair₀
+    · exact directPairMeasurement_projective RB hRB pair₀
+  · intro W
+    cases W
+    · exact (hA false).trans ((add_le_add
+        (add_le_add hmassA (mul_le_mul_of_nonneg_left (horder false).1 (by norm_num)))
+        le_rfl).trans_eq hbound)
+    · exact (hA true).trans ((add_le_add
+        (add_le_add hmassA (mul_le_mul_of_nonneg_left (horder true).1 (by norm_num)))
+        le_rfl).trans_eq hbound)
+  · intro W
+    cases W
+    · exact (hB false).trans ((add_le_add
+        (add_le_add hmassB (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num)))
+        le_rfl).trans_eq hbound)
+    · exact (hB true).trans ((add_le_add
+        (add_le_add hmassB (mul_le_mul_of_nonneg_left (horder true).2 (by norm_num)))
+        le_rfl).trans_eq hbound)
+
+/-- The coefficient-`30` construction of rounded polynomial-pair measurements.
+It returns the actual complete projective polynomial-pair measurements and proves
+all four point consistency bounds at the displayed uncapped error. -/
+theorem pair_witness_of_points_lines_quantitative :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd 30 quantitativeLowDegreePower
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      Nonempty (GlobalPairWitness S (8 * (4 * eta + 8 * δQ) +
+        (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q))) := by
+  have h := rounded_polynomial_separated_mass_quantitative
+  intro P ε δQ δL S points lines delta eta
+  obtain ⟨RA, RB, hRA, hRB, horder, hmassA, hmassB⟩ := h P ε δQ δL S points lines
+  let pair₀ : PolyPair P := (0, 0)
+  have hA (reverse : Bool) := directPairMeasurement_consistency_le_ordered_error
+    S .AA' .BA'' (by trivial) RA hRA pair₀ reverse
+  have hB (reverse : Bool) := directPairMeasurement_consistency_le_ordered_error
+    S .BB' .AB'' (by trivial) RB hRB pair₀ reverse
+  have hbound :
+      6 * (4 * eta + 8 * δQ) + (((12 * P.m * P.d + 4 * P.d + 10 : ℕ) : ℝ) / P.q) +
+        2 * (4 * eta + 8 * δQ) + 4 / P.q =
+      8 * (4 * eta + 8 * δQ) + (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q) := by
+    push_cast
+    ring
+  refine ⟨{
+    Smeas := fun side => match side with
+      | .alice => directPairMeasurement RA pair₀
+      | .bob => directPairMeasurement RB pair₀
+    projective := ?_
+    point_consistent_alice := ?_
+    point_consistent_bob := ?_ }⟩
+  · intro side
+    cases side
+    · exact directPairMeasurement_projective RA hRA pair₀
+    · exact directPairMeasurement_projective RB hRB pair₀
+  · intro W
+    cases W
+    · exact (hA false).trans ((add_le_add
+        (add_le_add hmassA (mul_le_mul_of_nonneg_left (horder false).1 (by norm_num)))
+        le_rfl).trans_eq hbound)
+    · exact (hA true).trans ((add_le_add
+        (add_le_add hmassA (mul_le_mul_of_nonneg_left (horder true).1 (by norm_num)))
+        le_rfl).trans_eq hbound)
+  · intro W
+    cases W
+    · exact (hB false).trans ((add_le_add
+        (add_le_add hmassB (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num)))
+        le_rfl).trans_eq hbound)
+    · exact (hB true).trans ((add_le_add
+        (add_le_add hmassB (mul_le_mul_of_nonneg_left (horder true).2 (by norm_num)))
+        le_rfl).trans_eq hbound)
+
+
+/-- There are universal low-degree constants for which supplied point and
+extended-line witnesses determine complete projective polynomial-pair
+measurements satisfying all four point-consistency bounds. -/
+theorem exists_pairWitness_of_points_lines :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd a b
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      Nonempty (GlobalPairWitness S (8 * (4 * eta + 8 * δQ) +
+        (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q))) := by
+  refine ⟨pauliBaselineLowDegreeConstant, pauliBaselineLowDegreePower, ?_, ?_, ?_,
+    pair_witness_of_points_lines_explicit⟩
+  · unfold pauliBaselineLowDegreeConstant
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
 
 end
 

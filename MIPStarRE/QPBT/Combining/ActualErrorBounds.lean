@@ -1,4 +1,5 @@
 import MIPStarRE.QPBT.Combining.DirectPassingErrorBounds
+import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
 import MIPStarRE.QPBT.Combining.RootErrorBounds
 
 /-! # Absorption of the actual rounded polynomial-pair error
@@ -150,5 +151,114 @@ theorem exists_actual_rounded_global_pair_error_bound (pointError : ℝ → ℝ)
         (scale_deltaQld_le hA.le he (by norm_num : (1 : ℝ) ≤ 1024))))
   dsimp [eta]
   linarith
+
+/-- The actual rounded polynomial-pair error at the closed baseline constants.
+This is the issue #729 specialization of the eighth-root rounding calculation
+supporting paper `lem:qld-4-7`, lines 1267--1404. -/
+theorem pauli_baseline_actual_rounded_global_pair_error_bound
+    (P : AdmissibleParams) (epsilon : ℝ) (he : 0 ≤ epsilon) :
+    let delta := deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
+      (directPassingErrorEnvelope
+        (pauliBaselinePointError epsilon + (P.m : ℝ) *
+          pauliBaselineExtendedLineError epsilon
+            (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))
+        (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))
+      P.q (2 * P.m + 2) P.d 1
+    let eta := delta + Real.sqrt (220 * delta ^ (1 / 4 : ℝ)) +
+      2 * Real.sqrt (2 * delta)
+    min 1 (8 * (4 * eta + 8 * pauliBaselinePointError epsilon) +
+      (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q)) ≤
+      deltaQld pauliBaselineGlobalPairConstant pauliBaselineGlobalPairPower
+        epsilon P.m P.d P.q := by
+  intro delta eta
+  obtain ⟨hA, hB, hB1, _⟩ := pauli_baseline_global_absorption_bound
+  let ratio : ℝ := ((P.m * P.d : ℕ) : ℝ) / P.q
+  let passing := directPassingErrorEnvelope
+    (pauliBaselinePointError epsilon + (P.m : ℝ) *
+      pauliBaselineExtendedLineError epsilon ratio) ratio
+  let slack := deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
+    (passing + epsilon) P.q (2 * P.m + 2) P.d 1
+  let t := slack + Real.sqrt (pauliBaselinePointError epsilon) + ratio
+  have hr : 0 ≤ ratio := by dsimp [ratio]; positivity
+  have hpass : 0 ≤ passing := by dsimp [passing, directPassingErrorEnvelope]; positivity
+  have hp : 0 ≤ pauliBaselinePointError epsilon := by
+    unfold pauliBaselinePointError
+    exact mul_nonneg (le_trans zero_le_one one_le_pauli_baseline_point_constant)
+      (Real.rpow_nonneg he _)
+  have hs : 0 ≤ slack := by
+    dsimp [slack, deltaLd]
+    exact mul_nonneg
+      (mul_nonneg (by unfold pauliBaselineLowDegreeConstant; norm_num)
+        (Real.rpow_nonneg (Nat.cast_nonneg _) _))
+      (add_nonneg (add_nonneg
+        (Real.rpow_nonneg (add_nonneg hpass he) _)
+        (Real.rpow_nonneg (Nat.cast_nonneg _) _))
+        (Real.rpow_nonneg (by norm_num) _))
+  have hd : 0 ≤ delta := by
+    dsimp [delta, deltaLd, directPassingErrorEnvelope]
+    exact mul_nonneg
+      (mul_nonneg (by unfold pauliBaselineLowDegreeConstant; norm_num)
+        (Real.rpow_nonneg (Nat.cast_nonneg _) _))
+      (add_nonneg (add_nonneg
+        (Real.rpow_nonneg (by positivity) _)
+        (Real.rpow_nonneg (Nat.cast_nonneg _) _))
+        (Real.rpow_nonneg (by norm_num) _))
+  have hds : delta ≤ slack := by
+    change deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower passing
+      P.q (2 * P.m + 2) P.d 1 ≤ _
+    dsimp [slack, deltaLd]
+    apply mul_le_mul_of_nonneg_left _
+      (mul_nonneg (by unfold pauliBaselineLowDegreeConstant; norm_num)
+        (Real.rpow_nonneg (Nat.cast_nonneg _) _))
+    exact add_le_add (add_le_add
+      (Real.rpow_le_rpow hpass (by linarith)
+        (by unfold pauliBaselineLowDegreePower; norm_num)) le_rfl) le_rfl
+  have hdt : delta ≤ t := by
+    dsimp [t]
+    linarith [Real.sqrt_nonneg (pauliBaselinePointError epsilon)]
+  have hpt : Real.sqrt (pauliBaselinePointError epsilon) ≤ t := by
+    dsimp [t]
+    linarith
+  have hrt : ratio ≤ t := by
+    dsimp [t]
+    linarith [Real.sqrt_nonneg (pauliBaselinePointError epsilon)]
+  have hratio : (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q) ≤
+      30 * ratio := by
+    have hm : (1 : ℝ) ≤ P.m := by exact_mod_cast P.one_le_m
+    have hd' : (1 : ℝ) ≤ P.d := by exact_mod_cast P.hd
+    dsimp [ratio]
+    rw [← mul_div_assoc]
+    apply div_le_div_of_nonneg_right _ (Nat.cast_nonneg _)
+    push_cast
+    nlinarith
+  have hcap : min 1 t ≤
+      deltaQld pauliBaselineGlobalAbsorptionConstant
+        pauliBaselineGlobalAbsorptionPower epsilon P.m P.d P.q := by
+    simpa only [one_mul] using
+      pauli_baseline_direct_global_pair_error_bound P epsilon he
+  have hroot := Real.sqrt_le_sqrt (Real.sqrt_le_sqrt (Real.sqrt_le_sqrt hcap))
+  have hrootBound := (Real.sqrt_le_sqrt (Real.sqrt_le_sqrt
+    (sqrt_deltaQld_le (P := P) hA.le he))).trans
+      ((Real.sqrt_le_sqrt
+        (sqrt_deltaQld_le (P := P) (b := pauliBaselineGlobalAbsorptionPower / 2)
+          hA.le he)).trans
+        (sqrt_deltaQld_le (P := P) (b := pauliBaselineGlobalAbsorptionPower / 2 / 2)
+          hA.le he))
+  have hscaled : 1024 * Real.sqrt (Real.sqrt (Real.sqrt (min 1 t))) ≤
+      deltaQld (1024 * pauliBaselineGlobalAbsorptionConstant)
+        (pauliBaselineGlobalAbsorptionPower / 2 / 2 / 2)
+        epsilon P.m P.d P.q :=
+    (mul_le_mul_of_nonneg_left (hroot.trans hrootBound) (by norm_num)).trans
+      (scale_deltaQld_le hA.le he (by norm_num : (1 : ℝ) ≤ 1024))
+  have hpower : pauliBaselineGlobalAbsorptionPower / 2 / 2 / 2 =
+      pauliBaselineGlobalPairPower := by
+    unfold pauliBaselineGlobalAbsorptionPower pauliBaselineGlobalPairPower
+    norm_num
+  rw [hpower] at hscaled
+  refine (min_le_min_left 1 ?_).trans
+    ((actual_rounding_error_le_root hd hp hdt hpt hrt).trans ?_)
+  · dsimp [eta]
+    linarith
+  · simpa only [pauliBaselineGlobalPairConstant] using hscaled
 
 end MIPStarRE.QPBT

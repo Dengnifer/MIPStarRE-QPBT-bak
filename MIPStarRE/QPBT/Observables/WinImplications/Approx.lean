@@ -107,20 +107,15 @@ theorem commConsistency_eq_mismatch_interchanged {P : AdmissibleParams} {ε : �
 
 /-- Factor-interchanged form of the commutation-check implication. Paper
 `14_analysis_of_the_pauli_basis_test.tex:210-231,227`. -/
-theorem win_comm_interchanged_proof :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_comm_interchanged_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (commTupleDist P)
         (fun ω a => heteroKron
           ((S.pairComponentMeas .alice W ω).effect a) 1)
         (fun ω a => heteroKron 1
           ((S.pairWMeas .bob W ω.1 ω.2.1 ω.2.2.1 ω.2.2.2).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
+        S.toStrategy.ψ ≤ 2 * (Fintype.card PauliEdge : ℝ) * ε := by
   intro P ε S _ W
   rw [commConsistency_eq_mismatch_interchanged]
   calc
@@ -156,6 +151,23 @@ theorem win_comm_interchanged_proof :
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _)
         (by norm_num)
+
+/-- A universal coefficient bounds the factor-interchanged consistency defect
+between Alice's pair component and Bob's commuting-pair measurement. -/
+theorem win_comm_interchanged_proof :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron
+          ((S.pairComponentMeas .alice W ω).effect a) 1)
+        (fun ω a => heteroKron 1
+          ((S.pairWMeas .bob W ω.1 ω.2.1 ω.2.2.1 ω.2.2.2).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, win_comm_interchanged_explicit⟩
+  have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+  linarith
 
 /-- Operator-distance and factor-interchanged companions to the commuting
 Pair check. This is the trailing clause of `lem:qld-win-implications`, paper
@@ -278,9 +290,8 @@ theorem commConsConsistency_eq_mismatch_interchanged {P : AdmissibleParams}
 
 /-- Factor-interchanged form of the commutation-consistency implication. Paper
 `14_analysis_of_the_pauli_basis_test.tex:232-239,227`. -/
-theorem win_comm_cons_interchanged_proof :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_comm_cons_interchanged_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (commTupleDist P)
         (fun ω a => heteroKron
@@ -288,11 +299,7 @@ theorem win_comm_cons_interchanged_proof :
         (fun ω a => heteroKron 1
           ((S.pointTraceMeas .bob W (selectedTuplePoint W ω)
             (selectedTupleScalar W ω)).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
+        S.toStrategy.ψ ≤ 2 * (Fintype.card PauliEdge : ℝ) * ε := by
   intro P ε S _ W
   rw [commConsConsistency_eq_mismatch_interchanged]
   calc
@@ -329,6 +336,24 @@ theorem win_comm_cons_interchanged_proof :
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _)
         (by norm_num)
+
+/-- A universal coefficient bounds the factor-interchanged consistency defect
+between Alice's commuting-pair measurement and Bob's selected point trace. -/
+theorem win_comm_cons_interchanged_proof :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron
+          ((S.pairWMeas .alice W ω.1 ω.2.1 ω.2.2.1 ω.2.2.2).effect a) 1)
+        (fun ω a => heteroKron 1
+          ((S.pointTraceMeas .bob W (selectedTuplePoint W ω)
+            (selectedTupleScalar W ω)).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, win_comm_cons_interchanged_explicit⟩
+  have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+  linarith
 
 /-- Operator-distance and factor-interchanged companions to commuting point
 consistency. This is the trailing clause of `lem:qld-win-implications`, paper
@@ -483,9 +508,8 @@ theorem msConsConsistency_eq_mismatch_interchanged {P : AdmissibleParams}
 
 /-- Factor-interchanged form of the Magic Square consistency implication. Paper
 `14_analysis_of_the_pauli_basis_test.tex:250-263,227`. -/
-theorem win_ms_cons_interchanged_proof :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_ms_cons_interchanged_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (anticommTupleDist P)
         (fun ω a => heteroKron
@@ -493,11 +517,7 @@ theorem win_ms_cons_interchanged_proof :
         (fun ω a => heteroKron 1
           ((S.pointTraceMeas .bob W (selectedTuplePoint W ω)
             (selectedTupleScalar W ω)).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨16 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
+        S.toStrategy.ψ ≤ 16 * (Fintype.card PauliEdge : ℝ) * ε := by
   intro P ε S _ W
   rw [msConsConsistency_eq_mismatch_interchanged]
   calc
@@ -534,6 +554,24 @@ theorem win_ms_cons_interchanged_proof :
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _)
         (by norm_num)
+
+/-- A universal coefficient bounds the factor-interchanged consistency defect
+between Alice's Magic Square variable and Bob's selected point trace. -/
+theorem win_ms_cons_interchanged_proof :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (anticommTupleDist P)
+        (fun ω a => heteroKron
+          ((S.msVarBitMeas .alice (selectedMsVar W) ω).effect a) 1)
+        (fun ω a => heteroKron 1
+          ((S.pointTraceMeas .bob W (selectedTuplePoint W ω)
+            (selectedTupleScalar W ω)).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  refine ⟨16 * (Fintype.card PauliEdge : ℝ), ?_, win_ms_cons_interchanged_explicit⟩
+  have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+  linarith
 
 /-- Operator-distance and factor-interchanged companions to Magic Square
 variable consistency. This is the trailing clause of

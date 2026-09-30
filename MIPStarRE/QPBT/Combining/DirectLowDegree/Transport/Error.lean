@@ -458,15 +458,15 @@ constants `a = 2500000000 C₀` and `b = 1/80000` satisfy the side conditions of
 into `deltaLd a b ε q m d k` in the nontrivial regime `0 < ε ≤ 1`.  Blueprint
 `ch13_qpbt_test.tex:139-167`; paper
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`. -/
-theorem exists_directLdTransportConstants (C₀ : ℝ) (hC₀ : 1 ≤ C₀) :
-    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+theorem direct_ld_transport_constants_explicit (C₀ : ℝ) (hC₀ : 1 ≤ C₀) :
+    1 ≤ 2500000000 * C₀ ∧ 0 < (1 / 80000 : ℝ) ∧ (1 / 80000 : ℝ) ≤ 1 ∧
       ∀ (D : DirectLdParams) (ε : ℝ), 0 < ε → ε ≤ 1 →
         C₀ * (D.k : ℝ) *
             Real.sqrt
               (Test.mainFormalError D.toLDTParameters (directLdAuxParameter D) (3 * ε) +
                 ((D.m : ℝ) * (D.d : ℝ)) / (D.q : ℝ) + ε) ≤
-          deltaLd a b ε D.q D.m D.d D.k := by
-  refine ⟨2500000000 * C₀, 1 / 80000, by linarith, by norm_num, by norm_num, ?_⟩
+          deltaLd (2500000000 * C₀) (1 / 80000) ε D.q D.m D.d D.k := by
+  refine ⟨by linarith, by norm_num, by norm_num, ?_⟩
   intro D ε hε0 hε1
   have hm1 := directLd_one_le_m D
   have hd1 := directLd_one_le_d D
@@ -509,10 +509,24 @@ theorem exists_directLdTransportConstants (C₀ : ℝ) (hC₀ : 1 ≤ C₀) :
     _ = 2500000000 * C₀ *
           ((D.k : ℝ) * (D.m : ℝ) ^ (5 : ℕ) * (D.d : ℝ) ^ (2 : ℕ)) *
           transportEnvelope D ε := by ring
-    _ ≤ 2500000000 * C₀ * Real.rpow ((D.d * D.m * D.k : ℕ) : ℝ) (2500000000 * C₀) *
+    _ ≤ 2500000000 * C₀ *
+          Real.rpow ((D.d * D.m * D.k : ℕ) : ℝ) (2500000000 * C₀) *
           transportEnvelope D ε := by
         apply mul_le_mul_of_nonneg_right _ hT
         exact mul_le_mul_of_nonneg_left (le_trans hmono hpow) (by linarith)
+
+/-- The coefficient `2500000000 * C₀` and exponent `1 / 80000` satisfy the
+direct low-degree transport bound. -/
+theorem exists_directLdTransportConstants (C₀ : ℝ) (hC₀ : 1 ≤ C₀) :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (D : DirectLdParams) (ε : ℝ), 0 < ε → ε ≤ 1 →
+        C₀ * (D.k : ℝ) *
+            Real.sqrt
+              (Test.mainFormalError D.toLDTParameters (directLdAuxParameter D) (3 * ε) +
+                ((D.m : ℝ) * (D.d : ℝ)) / (D.q : ℝ) + ε) ≤
+          deltaLd a b ε D.q D.m D.d D.k := by
+  refine ⟨2500000000 * C₀, 1 / 80000, ?_⟩
+  exact direct_ld_transport_constants_explicit C₀ hC₀
 
 /-! ## The degenerate regimes
 

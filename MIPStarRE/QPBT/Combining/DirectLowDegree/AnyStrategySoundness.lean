@@ -94,62 +94,55 @@ private theorem directLdNaimarkStrategy_pointB_compress (D : DirectLdParams)
     Measurement.compressAt_dilatedMeasurement]
   rfl
 
-/-- Formalization-only soundness transport for the directly indexed low-degree
-game at simultaneity parameter `1`, with no projectivity premise on the input
-strategy.
-
-Apply Naimark dilation to both question-indexed POVM families, use
-`exists_direct_ld_soundness_of_k_eq_one` on the resulting projective strategy,
-and compress its two polynomial-tuple POVMs at the distinguished ancillary
-coordinates. The padded-state defect identity preserves the two point versus
-polynomial bounds and the polynomial self-consistency bound exactly, with the
-same witnesses `a`, `b`, and `deltaLd` as the projective theorem.
-
-This theorem is formalization-only support for the Naimark step in the proof of paper
-`lem:qld-4-7`,
-`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1277-1289`.
-Its separate blueprint entry is `thm:qld-direct-soundness-any-strategy`.
-It does not assert projectivity of the compressed POVMs and does not add a
-hypothesis to any paper-labelled theorem. -/
-theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
-    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-      ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
-        ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
-          ∃ GA : DirectPolyMeasTuple D S.ιA,
-            ∃ GB : DirectPolyMeasTuple D S.ιB,
-              consistencyDefect
-                  (uniformDistribution (Fin D.m → DirectScalarQ D))
-                  (fun u outcome =>
-                    heteroKron
-                      (((S.A (directLdPointQuestionOf D u)).postprocess
-                        (directLdPointValuesOrZero D)).effect outcome) 1)
-                  (fun u outcome =>
-                    heteroKron 1
-                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
-                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
-              consistencyDefect
-                  (uniformDistribution (Fin D.m → DirectScalarQ D))
-                  (fun u outcome =>
-                    heteroKron
-                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
-                  (fun u outcome =>
-                    heteroKron 1
-                      (((S.B (directLdPointQuestionOf D u)).postprocess
-                        (directLdPointValuesOrZero D)).effect outcome))
-                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
-              consistencyDefect (uniformDistribution Unit)
-                  (fun _ g => heteroKron (GA.effect g) 1)
-                  (fun _ g => heteroKron 1 (GB.effect g))
-                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k := by
-  obtain ⟨a, b, ha, hb, hb1, hsound⟩ := exists_direct_ld_soundness_of_k_eq_one
-  refine ⟨a, b, ha, hb, hb1, ?_⟩
-  intro D ε hk hε S hwin
-  have hwin' : 1 - ε ≤ (directLdNaimarkStrategy D S).value := by
-    rw [directLdNaimarkStrategy_value]
-    exact hwin
-  obtain ⟨GA, GB, h1, h2, h3⟩ :=
-    hsound D ε hk hε (directLdNaimarkStrategy D S)
-      (directLdNaimarkStrategy_isProjective D S) hwin'
+/-- Compress concrete polynomial measurements for the dilated strategy back to
+the original player spaces while preserving all three consistency bounds. -/
+private theorem directLdNaimarkStrategy_compress_soundness
+    (D : DirectLdParams) (S : Strategy (directLdGame D)) (bound : ℝ)
+    (GA : DirectPolyMeasTuple D (directLdNaimarkStrategy D S).ιA)
+    (GB : DirectPolyMeasTuple D (directLdNaimarkStrategy D S).ιB)
+    (h1 : consistencyDefect
+      (uniformDistribution (Fin D.m → DirectScalarQ D))
+      (fun u outcome => heteroKron
+        ((((directLdNaimarkStrategy D S).A
+          (directLdPointQuestionOf D u)).postprocess
+            (directLdPointValuesOrZero D)).effect outcome) 1)
+      (fun u outcome => heteroKron 1
+        ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+      (directLdNaimarkStrategy D S).ψ ≤ bound)
+    (h2 : consistencyDefect
+      (uniformDistribution (Fin D.m → DirectScalarQ D))
+      (fun u outcome => heteroKron
+        ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+      (fun u outcome => heteroKron 1
+        ((((directLdNaimarkStrategy D S).B
+          (directLdPointQuestionOf D u)).postprocess
+            (directLdPointValuesOrZero D)).effect outcome))
+      (directLdNaimarkStrategy D S).ψ ≤ bound)
+    (h3 : consistencyDefect (uniformDistribution Unit)
+      (fun _ g => heteroKron (GA.effect g) 1)
+      (fun _ g => heteroKron 1 (GB.effect g))
+      (directLdNaimarkStrategy D S).ψ ≤ bound) :
+    ∃ GA0 : DirectPolyMeasTuple D S.ιA,
+      ∃ GB0 : DirectPolyMeasTuple D S.ιB,
+        consistencyDefect
+            (uniformDistribution (Fin D.m → DirectScalarQ D))
+            (fun u outcome => heteroKron
+              (((S.A (directLdPointQuestionOf D u)).postprocess
+                (directLdPointValuesOrZero D)).effect outcome) 1)
+            (fun u outcome => heteroKron 1
+              ((GB0.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+            S.ψ ≤ bound ∧
+        consistencyDefect
+            (uniformDistribution (Fin D.m → DirectScalarQ D))
+            (fun u outcome => heteroKron
+              ((GA0.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+            (fun u outcome => heteroKron 1
+              (((S.B (directLdPointQuestionOf D u)).postprocess
+                (directLdPointValuesOrZero D)).effect outcome))
+            S.ψ ≤ bound ∧
+        consistencyDefect (uniformDistribution Unit)
+            (fun _ g => heteroKron (GA0.effect g) 1)
+            (fun _ g => heteroKron 1 (GB0.effect g)) S.ψ ≤ bound := by
   let GA0 : DirectPolyMeasTuple D S.ιA :=
     GA.compressAt (none : Option (directLdGame D).AnswerA)
   let GB0 : DirectPolyMeasTuple D S.ιB :=
@@ -215,7 +208,7 @@ theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
           (fun u outcome => heteroKron 1
             ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
           (directLdNaimarkStrategy D S).ψ := htransport.symm
-      _ ≤ deltaLd a b ε D.q D.m D.d D.k := h1
+      _ ≤ bound := h1
   · have htransport :
         consistencyDefect (uniformDistribution (Fin D.m → DirectScalarQ D))
             (fun u outcome => heteroKron
@@ -276,7 +269,7 @@ theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
               (directLdPointQuestionOf D u)).postprocess
                 (directLdPointValuesOrZero D)).effect outcome))
           (directLdNaimarkStrategy D S).ψ := htransport.symm
-      _ ≤ deltaLd a b ε D.q D.m D.d D.k := h2
+      _ ≤ bound := h2
   · have htransport :
         consistencyDefect (uniformDistribution Unit)
             (fun _ g => heteroKron (GA.effect g) 1)
@@ -302,7 +295,192 @@ theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
           (fun _ g => heteroKron (GA.effect g) 1)
           (fun _ g => heteroKron 1 (GB.effect g))
           (directLdNaimarkStrategy D S).ψ := htransport.symm
-      _ ≤ deltaLd a b ε D.q D.m D.d D.k := h3
+      _ ≤ bound := h3
+
+/-- Formalization-only soundness transport for the directly indexed low-degree
+game at simultaneity parameter `1`, with no projectivity premise on the input
+strategy.
+
+Apply Naimark dilation to both question-indexed POVM families, use
+`exists_direct_ld_soundness_of_k_eq_one` on the resulting projective strategy,
+and compress its two polynomial-tuple POVMs at the distinguished ancillary
+coordinates. The padded-state defect identity preserves the two point versus
+polynomial bounds and the polynomial self-consistency bound exactly, with the
+same witnesses `a`, `b`, and `deltaLd` as the projective theorem.
+
+This theorem is formalization-only support for the Naimark step in the proof of paper
+`lem:qld-4-7`,
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1277-1289`.
+Its separate blueprint entry is `thm:qld-direct-soundness-any-strategy`.
+It does not assert projectivity of the compressed POVMs and does not add a
+hypothesis to any paper-labelled theorem. -/
+theorem direct_ld_soundness_of_k_eq_one_any_strategy_explicit :
+    ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ deltaLd pauliBaselineLowDegreeConstant
+                    pauliBaselineLowDegreePower ε D.q D.m D.d D.k ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ deltaLd pauliBaselineLowDegreeConstant
+                    pauliBaselineLowDegreePower ε D.q D.m D.d D.k ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ deltaLd pauliBaselineLowDegreeConstant
+                    pauliBaselineLowDegreePower ε D.q D.m D.d D.k := by
+  intro D ε hk hε S hwin
+  have hwin' : 1 - ε ≤ (directLdNaimarkStrategy D S).value := by
+    rw [directLdNaimarkStrategy_value]
+    exact hwin
+  obtain ⟨GA, GB, h1, h2, h3⟩ :=
+    direct_ld_soundness_of_k_eq_one_explicit D ε hk hε
+      (directLdNaimarkStrategy D S) (directLdNaimarkStrategy_isProjective D S) hwin'
+  exact directLdNaimarkStrategy_compress_soundness D S
+    (deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
+      ε D.q D.m D.d D.k) GA GB h1 h2 h3
+
+/-- Native-error one-coordinate direct-game soundness for arbitrary strategies.
+Naimark dilation and ground-slice compression preserve all three defects and
+the compressed polynomial measurements exactly. -/
+theorem direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error :
+    ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ directNativeError D ε ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ directNativeError D ε ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ directNativeError D ε := by
+  intro D ε hk hε S hwin
+  have hwin' : 1 - ε ≤ (directLdNaimarkStrategy D S).value := by
+    rw [directLdNaimarkStrategy_value]
+    exact hwin
+  obtain ⟨GA, GB, h1, h2, h3⟩ :=
+    direct_ld_soundness_of_k_eq_one_at_native_error D ε hk hε
+      (directLdNaimarkStrategy D S) (directLdNaimarkStrategy_isProjective D S) hwin'
+  exact directLdNaimarkStrategy_compress_soundness D S
+    (directNativeError D ε) GA GB h1 h2 h3
+
+/-- Weakening: the native-error arbitrary-strategy theorem implies this
+coefficient-`30` common-error form, matching paper `lem:ld-soundness`.
+Ground-slice compression preserves the three defects exactly. -/
+theorem direct_ld_soundness_of_k_eq_one_any_strategy_quantitative :
+    ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
+                    ε D.q D.m D.d D.k ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
+                    ε D.q D.m D.d D.k ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
+                    ε D.q D.m D.d D.k := by
+  intro D ε hk hε S hwin
+  obtain ⟨GA, GB, h1, h2, h3⟩ :=
+    direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error D ε hk hε S hwin
+  have herr := direct_native_error_le_delta_ld_quantitative D hε.le hk
+  exact ⟨GA, GB, h1.trans herr, h2.trans herr, h3.trans herr⟩
+
+/-- There are universal constants bounding both point--polynomial consistency
+defects and the polynomial self-consistency defect for arbitrary strategies in
+the one-coordinate directly indexed low-degree game. -/
+theorem exists_direct_ld_soundness_of_k_eq_one_any_strategy :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ deltaLd a b ε D.q D.m D.d D.k := by
+  refine ⟨pauliBaselineLowDegreeConstant, pauliBaselineLowDegreePower, ?_, ?_, ?_,
+    direct_ld_soundness_of_k_eq_one_any_strategy_explicit⟩
+  · unfold pauliBaselineLowDegreeConstant
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
 
 end
 

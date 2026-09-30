@@ -709,11 +709,35 @@ def ExpandedPointConclusions (δ : ℝ → ℝ) : Prop :=
             (S.expPointTrace p.side .X ω.1 ω.2.2.1).effect bits.1))
         S.psiHat ≤ C * δ ε)
 
-/-- Expanded point measurements are self-consistent for each of the four
-directed opposite-placement pairs. The universal constant precedes all test
-parameters and strategies. This is item 1 of `lem:qld-comm-cons`, paper
+/-- Expanded point measurements are self-consistent with the fixed coefficient
+`172 = 2 * |PauliEdge|`. This is item 1 of `lem:qld-comm-cons`, paper
 `14_analysis_of_the_pauli_basis_test.tex:455-465`, blueprint
 `lem:qld-comm-cons`. -/
+theorem exp_point_self_cons_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+      (p₁ p₂ : Placement), p₁.IsOpposite p₂ →
+      ∀ W : PauliKind,
+        opFamilyDistSq (uniformDistribution (Fin P.m → PauliScalar P))
+          (fun u a => S.place p₁
+            ((S.pointMeasExp p₁.side W u).effect a))
+          (fun u a => S.place p₂
+            ((S.pointMeasExp p₂.side W u).effect a))
+          S.psiHat ≤ 172 * ε := by
+  intro P ε S p₁ p₂ hopp W
+  cases p₁ <;> cases p₂ <;> simp only [Placement.IsOpposite] at hopp
+  · convert ProjectiveSetting.expPointDist_aaBa_le S W using 1 <;>
+      simp only [Placement.side, pauli_edge_card, Nat.cast_ofNat] <;> ring
+  · rw [DistanceCalculus.opFamilyDistSq_symm]
+    convert ProjectiveSetting.expPointDist_aaBa_le S W using 1 <;>
+      simp only [Placement.side, pauli_edge_card, Nat.cast_ofNat] <;> ring
+  · rw [DistanceCalculus.opFamilyDistSq_symm]
+    convert ProjectiveSetting.expPointDist_abBb_le S W using 1 <;>
+      simp only [Placement.side, pauli_edge_card, Nat.cast_ofNat] <;> ring
+  · convert ProjectiveSetting.expPointDist_abBb_le S W using 1 <;>
+      simp only [Placement.side, pauli_edge_card, Nat.cast_ofNat] <;> ring
+
+/-- Opposite-placement expanded point measurements have squared distance at most
+`172 * ε`. -/
 theorem expPoint_self_cons :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -725,22 +749,7 @@ theorem expPoint_self_cons :
             (fun u a => S.place p₂
               ((S.pointMeasExp p₂.side W u).effect a))
             S.psiHat ≤ C * ε := by
-  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
-  intro P ε S p₁ p₂ hopp W
-  cases p₁ <;> cases p₂ <;> simp only [Placement.IsOpposite] at hopp
-  · simpa only [Placement.side, mul_assoc] using
-      ProjectiveSetting.expPointDist_aaBa_le S W
-  · rw [DistanceCalculus.opFamilyDistSq_symm]
-    simpa only [Placement.side, mul_assoc] using
-      ProjectiveSetting.expPointDist_aaBa_le S W
-  · rw [DistanceCalculus.opFamilyDistSq_symm]
-    simpa only [Placement.side, mul_assoc] using
-      ProjectiveSetting.expPointDist_abBb_le S W
-  · simpa only [Placement.side, mul_assoc] using
-      ProjectiveSetting.expPointDist_abBb_le S W
+  exact ⟨172, by norm_num, exp_point_self_cons_explicit⟩
 
 /-- Trace-coarse-grained expanded point projections approximately commute on
 each of `AA'`, `BA''`, `BB'`, and `AB''`. The universal constant precedes all

@@ -53,6 +53,7 @@ theorem consistencyDefect_measurement_symm {X α I : Type*}
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 800000 in
+-- Both pulled-measurement comparisons expand nested finite averages and matrix products.
 /-- Both evaluated total-Pauli measurements are consistent with the opposite
 pulled-apart measurement at one universal construction scale. This proves the
 two-player form of paper `eq:qld-unitary-5` from the actual game checks.
@@ -60,29 +61,20 @@ two-player form of paper `eq:qld-unitary-5` from the actual game checks.
 **Unfaithful:** The global witness is supplied, as in the recovered point
 estimates. Its construction and the source-facing composition remain open
 under issue #123 and `docs/paper-gaps/qpbt_extraction-transfer.tex`. -/
-theorem evaluated_pauli_tilde_consistency_ofGlobalPairWitness :
-    ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+theorem evaluated_pauli_tilde_consistency_of_global_pair_witness_explicit :
+    ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
       ∀ (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG) (W : PauliKind),
       consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
           (fun u a => S.placePlayer .alice ((S.pauliEvalMeas .alice W u).effect a))
           (fun u a => S.placeSide .bob (tildeM w .bob W (indicatorVec u) a)) S.psiHat ≤
-        deltaConstructPaulis C epsilon deltaG P.m P.d P.q ∧
+        deltaConstructPaulis (2 + 4 * Real.sqrt 172)
+          epsilon deltaG P.m P.d P.q ∧
       consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
           (fun u a => S.placeSide .alice (tildeM w .alice W (indicatorVec u) a))
           (fun u a => S.placePlayer .bob ((S.pauliEvalMeas .bob W u).effect a)) S.psiHat ≤
-        deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
-  obtain ⟨CA, hCA, hA⟩ := tildeM_consistent_pointMeas_ofGlobalPairWitness
-  obtain ⟨CB, hCB, hB⟩ := tildeM_consistent_pointMeas'_ofGlobalPairWitness
-  obtain ⟨CF, hCF, hF⟩ := win_pauli_basis_cons
-  obtain ⟨CR, hCR, hR⟩ := WinImplications.win_pauli_basis_cons_interchanged_proof
-  let E : ℝ := Fintype.card PauliEdge
-  let K : ℝ := max CF CR
-  let L : ℝ := max CA CB
-  let C : ℝ := L + 2 * Real.sqrt (E + K)
-  have hL : 1 ≤ L := hCA.trans (le_max_left _ _)
-  have hC : 1 ≤ C := by dsimp [C]; linarith [Real.sqrt_nonneg (E + K)]
-  refine ⟨C, hC, ?_⟩
+        deltaConstructPaulis (2 + 4 * Real.sqrt 172)
+          epsilon deltaG P.m P.d P.q := by
   intro P epsilon deltaG he he1 hd S w W
   let mu := uniformDistribution (Fin P.m → PauliScalar P)
   let PA := fun u => S.placedMeasurement .AA' (leftPlacedMeasurement (S.pointMeas .alice W u))
@@ -96,56 +88,57 @@ theorem evaluated_pauli_tilde_consistency_ofGlobalPairWitness :
       (tildeM w side W (indicatorVec u))
       (fun a => (tildeM_isProj w side W (indicatorVec u) a).nonneg)
       (sum_tildeM_eq_one w side W (indicatorVec u)))
-  have hpoints : consistencyDefect mu (fun u a => (PA u).effect a)
-      (fun u a => (PB u).effect a) S.psiHat ≤ E * epsilon := by
+  have hpointsCard : consistencyDefect mu (fun u a => (PA u).effect a)
+      (fun u a => (PB u).effect a) S.psiHat ≤
+        (Fintype.card PauliEdge : ℝ) * epsilon := by
     change consistencyDefect mu (fun u a => S.placePlayer .alice _)
       (fun u a => S.placePlayer .bob _) S.psiHat ≤ _
     rw [S.consistencyDefect_placePlayers]
     exact point_self_consistency_le S W
+  have hpoints : consistencyDefect mu (fun u a => (PA u).effect a)
+      (fun u a => (PB u).effect a) S.psiHat ≤ 86 * epsilon := by
+    simpa only [pauli_edge_card, Nat.cast_ofNat] using hpointsCard
   have hforward : consistencyDefect mu (fun u a => (PA u).effect a)
-      (fun u a => (QB u).effect a) S.psiHat ≤ K * epsilon := by
+      (fun u a => (QB u).effect a) S.psiHat ≤ 86 * epsilon := by
     change consistencyDefect mu (fun u a => S.placePlayer .alice _)
       (fun u a => S.placePlayer .bob _) S.psiHat ≤ _
     rw [S.consistencyDefect_placePlayers]
-    exact (hF P epsilon S he W).trans
-      (mul_le_mul_of_nonneg_right (le_max_left _ _) he)
+    exact WinImplications.win_pauli_basis_cons_explicit P epsilon S he W
   have hreverse : consistencyDefect mu (fun u a => (QA u).effect a)
-      (fun u a => (PB u).effect a) S.psiHat ≤ K * epsilon := by
+      (fun u a => (PB u).effect a) S.psiHat ≤ 86 * epsilon := by
     change consistencyDefect mu (fun u a => S.placePlayer .alice _)
       (fun u a => S.placePlayer .bob _) S.psiHat ≤ _
     rw [S.consistencyDefect_placePlayers]
-    exact (hR P epsilon S he W).trans
-      (mul_le_mul_of_nonneg_right (le_max_right _ _) he)
+    exact WinImplications.win_pauli_basis_cons_interchanged_explicit P epsilon S he W
   have hleft : consistencyDefect mu (fun u a => (T .alice u).effect a)
       (fun u a => (PB u).effect a) S.psiHat ≤
-        deltaConstructPaulis L epsilon deltaG P.m P.d P.q := by
+        deltaConstructPaulis (2 + 2 * Real.sqrt 172)
+          epsilon deltaG P.m P.d P.q := by
     change consistencyDefect mu
       (fun u a => S.placeSide .alice (tildeM w .alice W (indicatorVec u) a))
       (fun u a => S.placePlayer .bob ((S.pointMeas .bob W u).effect a)) S.psiHat ≤ _
-    have h := hB P epsilon deltaG he he1 hd S w W
-    exact h.trans (mul_le_mul_of_nonneg_right (le_max_right _ _) (by
-      positivity))
+    exact tilde_m_consistent_point_meas'_of_global_pair_witness_explicit
+      P epsilon deltaG he he1 hd S w W
   have hright : consistencyDefect mu (fun u a => (PA u).effect a)
       (fun u a => (T .bob u).effect a) S.psiHat ≤
-        deltaConstructPaulis L epsilon deltaG P.m P.d P.q := by
+        deltaConstructPaulis (2 + 2 * Real.sqrt 172)
+          epsilon deltaG P.m P.d P.q := by
     change consistencyDefect mu
       (fun u a => S.placePlayer .alice ((S.pointMeas .alice W u).effect a))
       (fun u a => S.placeSide .bob (tildeM w .bob W (indicatorVec u) a)) S.psiHat ≤ _
-    have h := hA P epsilon deltaG he he1 hd S w W
-    exact h.trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (by
-      positivity))
-  have hscalar : deltaConstructPaulis L epsilon deltaG P.m P.d P.q +
-      2 * Real.sqrt (E * epsilon + K * epsilon) ≤
-        deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
-    have hEK : 0 ≤ E + K := add_nonneg (Nat.cast_nonneg _)
-      ((by linarith : 0 ≤ CF).trans (le_max_left _ _))
-    rw [← add_mul, Real.sqrt_mul hEK]
-    change L * (deltaG + Real.sqrt epsilon + ((P.m * P.d : ℕ) : ℝ) / P.q) +
-      2 * (Real.sqrt (E + K) * Real.sqrt epsilon) ≤
-      (L + 2 * Real.sqrt (E + K)) *
-        (deltaG + Real.sqrt epsilon + ((P.m * P.d : ℕ) : ℝ) / P.q)
+    exact tilde_m_consistent_point_meas_of_global_pair_witness_explicit
+      P epsilon deltaG he he1 hd S w W
+  have hscalar :
+      deltaConstructPaulis (2 + 2 * Real.sqrt 172)
+          epsilon deltaG P.m P.d P.q +
+        2 * Real.sqrt (86 * epsilon + 86 * epsilon) ≤
+      deltaConstructPaulis (2 + 4 * Real.sqrt 172)
+        epsilon deltaG P.m P.d P.q := by
+    rw [← add_mul, show (86 : ℝ) + 86 = 172 by norm_num,
+      Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 172)]
+    unfold deltaConstructPaulis
     have hr : 0 ≤ ((P.m * P.d : ℕ) : ℝ) / P.q := by positivity
-    nlinarith [Real.sqrt_nonneg (E + K)]
+    nlinarith [Real.sqrt_nonneg (172 : ℝ), Real.sqrt_nonneg epsilon]
   constructor
   · change consistencyDefect mu (fun u a => (QA u).effect a)
       (fun u a => (T .bob u).effect a) S.psiHat ≤ _
@@ -157,6 +150,24 @@ theorem evaluated_pauli_tilde_consistency_ofGlobalPairWitness :
     · rw [consistencyDefect_measurement_symm]; exact hreverse
   · exact (consistencyDefect_trans_le mu (T .alice) PB PA QB S.psiHat _ _ _
       (uniformDistribution_isProbability _) S.psiHat_norm hleft hpoints hforward).trans hscalar
+
+/-- A universal constant bounds both cross-player consistency defects between the
+evaluated Pauli measurements and the corresponding extracted point measurements. -/
+theorem evaluated_pauli_tilde_consistency_ofGlobalPairWitness :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+      0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
+      ∀ (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG) (W : PauliKind),
+      consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
+          (fun u a => S.placePlayer .alice ((S.pauliEvalMeas .alice W u).effect a))
+          (fun u a => S.placeSide .bob (tildeM w .bob W (indicatorVec u) a)) S.psiHat ≤
+        deltaConstructPaulis C epsilon deltaG P.m P.d P.q ∧
+      consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
+          (fun u a => S.placeSide .alice (tildeM w .alice W (indicatorVec u) a))
+          (fun u a => S.placePlayer .bob ((S.pauliEvalMeas .bob W u).effect a)) S.psiHat ≤
+        deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
+  refine ⟨2 + 4 * Real.sqrt 172, ?_,
+    evaluated_pauli_tilde_consistency_of_global_pair_witness_explicit⟩
+  nlinarith [Real.sqrt_nonneg (172 : ℝ)]
 
 end
 

@@ -185,21 +185,22 @@ either player side. This packages both orientations of
 `eq:pts-obs-commutation`; paper
 `14_analysis_of_the_pauli_basis_test.tex:309-354`, blueprint
 `ch14_qpbt_observables.tex:761-794`. -/
-theorem exists_twistedCommutator_avg_le :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+theorem twisted_commutator_avg_le_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
         (side : PlayerSide), 0 ≤ ε →
       avgOver (uniformDistribution (PauliTuple P)) (fun ω =>
         ‖applyOperatorToState (S.placeStrategySide side (S.twistedCommutator side ω))
-          S.toStrategy.ψ‖ ^ 2) ≤ C * Real.sqrt ε := by
-  obtain ⟨C₁, hC₁, h₁⟩ := pointObs_twisted_commutation
-  obtain ⟨C₂, hC₂, h₂⟩ := pointObs_twisted_commutation_interchanged
-  refine ⟨C₁ + C₂, by linarith, ?_⟩
+          S.toStrategy.ψ‖ ^ 2) ≤
+        2 * (2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+              1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +
+            (96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+              3551040 * (16 * (Fintype.card PauliEdge : ℝ))) + 4) *
+            Real.sqrt ε := by
   intro P ε S side hε
   have hs : (0 : ℝ) ≤ Real.sqrt ε := Real.sqrt_nonneg ε
   cases side with
   | alice =>
-      have h := h₁ P ε S hε
+      have h := WinImplications.point_obs_twisted_commutation_explicit P ε S hε
       rw [WinImplications.opDistSq_eq_avgOver] at h
       refine le_trans (le_of_eq ?_) (le_trans h ?_)
       · refine avgOver_congr _ _ _ (fun ω => ?_)
@@ -223,9 +224,16 @@ theorem exists_twistedCommutator_avg_le :
           exact h1
         rw [hop]
         rfl
-      · nlinarith
+      · have hcoeff : 0 ≤
+            2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+                1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +
+              (96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+                3551040 * (16 * (Fintype.card PauliEdge : ℝ))) + 4 := by
+          positivity
+        nlinarith
   | bob =>
-      have h := h₂ P ε S hε
+      have h :=
+        WinImplications.point_obs_twisted_commutation_interchanged_explicit P ε S hε
       rw [WinImplications.opDistSq_eq_avgOver] at h
       refine le_trans (le_of_eq ?_) (le_trans h ?_)
       · refine avgOver_congr _ _ _ (fun ω => ?_)
@@ -249,7 +257,33 @@ theorem exists_twistedCommutator_avg_le :
           exact h1
         rw [hop]
         rfl
-      · nlinarith
+      · have hcoeff : 0 ≤
+            2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+                1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +
+              (96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+                3551040 * (16 * (Fintype.card PauliEdge : ℝ))) + 4 := by
+          positivity
+        nlinarith
+
+/-- A universal coefficient bounds the average squared two-sided twisted
+commutator by a constant multiple of `sqrt ε`. -/
+theorem exists_twistedCommutator_avg_le :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+        (side : PlayerSide), 0 ≤ ε →
+      avgOver (uniformDistribution (PauliTuple P)) (fun ω =>
+        ‖applyOperatorToState (S.placeStrategySide side (S.twistedCommutator side ω))
+          S.toStrategy.ψ‖ ^ 2) ≤ C * Real.sqrt ε := by
+  let C : ℝ := 2 * (2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+      1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +
+    (96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+      3551040 * (16 * (Fintype.card PauliEdge : ℝ))) + 4)
+  refine ⟨C, ?_, ?_⟩
+  · dsimp only [C]
+    rw [pauli_edge_card]
+    norm_num
+    nlinarith [Real.sqrt_nonneg (344 : ℝ)]
+  · simpa only [C] using twisted_commutator_avg_le_explicit
 
 /-- Trace-coarse-grained expanded point projections approximately commute on
 each of the four register placements. This is item 2 of `lem:qld-comm-cons`,

@@ -111,6 +111,23 @@ theorem exists_combinedLinesWitness_ofPointsWitness (deltaQ : ℝ -> ℝ)
            axis_degree_Z := S.combinedLineMeasurement_axis_degree_Z
            consistent := hconsistent P ε S points }⟩
 
+/-- The combined-line witness with the closed baseline error from issue #729.
+This Lean-only quantitative specialization states the constants in the current
+proof of paper `lem:qld-xz-lines`,
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:882-963`.
+The source-facing existential theorem above remains unchanged. -/
+theorem exists_combined_lines_witness_of_points_witness_explicit
+    (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+    (points : CombinedPointsWitness S (pauliBaselinePointError ε)) :
+    Nonempty (CombinedLinesWitness S points
+      (pauliBaselineLineError ε (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))) := by
+  exact ⟨{
+    T := S.combinedLineMeasurement
+    axis_degree_X := S.combinedLineMeasurement_axis_degree_X
+    axis_degree_Z := S.combinedLineMeasurement_axis_degree_Z
+    consistent := combined_line_measurement_consistency_explicit P ε S points
+  }⟩
+
 /-! The source-facing declaration below supplies the point witness produced by
 `lem:qld-4-10` existentially.  The `_ofPointsWitness` companion above is the
 conditional form for a supplied polynomially controlled point family. -/

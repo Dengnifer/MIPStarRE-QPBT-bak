@@ -262,9 +262,8 @@ on commuting tuples. This is Equation `eq:qld-obs-comm`, obtained from
 `lem:commutation-analysis`; the statement is generic in the two tensor factors
 and in the state. Paper `14_analysis_of_the_pauli_basis_test.tex:322-329`,
 blueprint `ch14_qpbt_observables.tex:761-794`. -/
-theorem exists_pointTrace_commutator_comm_le :
-    ∃ C₀ : ℝ, 1 ≤ C₀ ∧
-      ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]
+theorem point_trace_commutator_comm_le_explicit :
+    ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]
         [Fintype ιR] [DecidableEq ιR]
         (MX MZ : PauliTuple P → MIPStarRE.Quantum.Measurement (ZMod 2) ιL)
         (N : PauliTuple P →
@@ -282,10 +281,8 @@ theorem exists_pointTrace_commutator_comm_le :
       avgOver (commTupleDist P) (fun ω =>
         ‖applyOperatorToState (heteroKron
           ((MX ω).effect 1 * (MZ ω).effect 1 -
-            (MZ ω).effect 1 * (MX ω).effect 1) 1) χ‖ ^ 2) ≤ C₀ * δ := by
+            (MZ ω).effect 1 * (MX ω).effect 1) 1) χ‖ ^ 2) ≤ 16 * δ := by
   classical
-  obtain ⟨C₀, hC₀, hcomm⟩ := opDistSq_commutator_le
-  refine ⟨C₀, hC₀, ?_⟩
   intro P ιL ιR _ _ _ _ MX MZ N χ δ hN hX hZ
   set A : PauliTuple P →
       MIPStarRE.Quantum.Measurement (Unit × ZMod 2) ιL := fun ω =>
@@ -361,7 +358,8 @@ theorem exists_pointTrace_commutator_comm_le :
       (fun ω b => heteroKron ((MZ ω).effect b) (1 : Op ιR))
       (fun ω b => heteroKron (1 : Op ιL)
         (((N ω).postprocess (fun bits => bits.2)).effect b)) χ) hZ
-  have hout := hcomm (commTupleDist P) A B D χ δ hBproj hAB hDB
+  have hout := op_dist_sq_commutator_le_explicit
+    (commTupleDist P) A B D χ δ hBproj hAB hDB
   refine le_trans ?_ hout
   unfold opFamilyDistSq
   apply avgOver_mono
@@ -376,6 +374,32 @@ theorem exists_pointTrace_commutator_comm_le :
     (fun _ _ => by positivity) (Finset.mem_univ (((), 1), 1)))
   rw [hAdef, hDdef]
   simp only [unitProd_postprocess_effect]
+
+/-- If both binary marginals are close to a projective joint measurement, then
+their average squared projection-commutator norm is at most `16 * δ`, as required
+in `eq:qld-obs-comm`. -/
+theorem exists_pointTrace_commutator_comm_le :
+    ∃ C₀ : ℝ, 1 ≤ C₀ ∧
+      ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]
+        [Fintype ιR] [DecidableEq ιR]
+        (MX MZ : PauliTuple P → MIPStarRE.Quantum.Measurement (ZMod 2) ιL)
+        (N : PauliTuple P →
+          MIPStarRE.Quantum.Measurement (ZMod 2 × ZMod 2) ιR)
+        (χ : EuclideanSpace ℂ (ιL × ιR)) {δ : ℝ},
+      (∀ ω, MIPStarRE.QPBT.Measurement.IsProjective (N ω)) →
+      opFamilyDistSq (commTupleDist P)
+          (fun ω b => heteroKron ((MX ω).effect b) 1)
+          (fun ω b => heteroKron 1
+            (((N ω).postprocess (fun bits => bits.1)).effect b)) χ ≤ δ →
+      opFamilyDistSq (commTupleDist P)
+          (fun ω b => heteroKron ((MZ ω).effect b) 1)
+          (fun ω b => heteroKron 1
+            (((N ω).postprocess (fun bits => bits.2)).effect b)) χ ≤ δ →
+      avgOver (commTupleDist P) (fun ω =>
+        ‖applyOperatorToState (heteroKron
+          ((MX ω).effect 1 * (MZ ω).effect 1 -
+            (MZ ω).effect 1 * (MX ω).effect 1) 1) χ‖ ^ 2) ≤ C₀ * δ := by
+  exact ⟨16, by norm_num, point_trace_commutator_comm_le_explicit⟩
 
 /-! ## From projections to observables -/
 
@@ -423,6 +447,75 @@ under a square root, while the defect `c₁` of the step used directly enters
 linearly. Paper
 `14_analysis_of_the_pauli_basis_test.tex:311-341`, blueprint
 `ch14_qpbt_observables.tex:761-794`. -/
+theorem point_obs_commutator_comm_le_explicit :
+    ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]
+        [Fintype ιR] [DecidableEq ιR]
+        (MX MZ QX QZ : PauliTuple P →
+          MIPStarRE.Quantum.Measurement (ZMod 2) ιL)
+        (VX VZ : PauliTuple P → MIPStarRE.Quantum.Measurement (ZMod 2) ιR)
+        (N : PauliTuple P →
+          MIPStarRE.Quantum.Measurement (ZMod 2 × ZMod 2) ιR)
+        (OX OZ : PauliTuple P → Op ιL)
+        (χ : EuclideanSpace ℂ (ιL × ιR)) {c₁ c₂ c₃ : ℝ},
+      ‖χ‖ = 1 → 0 ≤ c₁ →
+      (∀ ω, MIPStarRE.QPBT.Measurement.IsProjective (N ω)) →
+      (∀ ω, OX ω = 1 - (2 : ℂ) • (MX ω).effect 1) →
+      (∀ ω, OZ ω = 1 - (2 : ℂ) • (MZ ω).effect 1) →
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron ((MX ω).effect a) 1)
+        (fun ω a => heteroKron 1 ((VX ω).effect a)) χ ≤ c₁ →
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron ((MZ ω).effect a) 1)
+        (fun ω a => heteroKron 1 ((VZ ω).effect a)) χ ≤ c₁ →
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron ((QX ω).effect a) 1)
+        (fun ω a => heteroKron 1 ((VX ω).effect a)) χ ≤ c₂ →
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron ((QZ ω).effect a) 1)
+        (fun ω a => heteroKron 1 ((VZ ω).effect a)) χ ≤ c₂ →
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron ((QX ω).effect a) 1)
+        (fun ω a => heteroKron 1
+          (((N ω).postprocess (fun bits => bits.1)).effect a)) χ ≤ c₃ →
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron ((QZ ω).effect a) 1)
+        (fun ω a => heteroKron 1
+          (((N ω).postprocess (fun bits => bits.2)).effect a)) χ ≤ c₃ →
+      avgOver (commTupleDist P) (fun ω =>
+        ‖applyOperatorToState
+          (heteroKron (OX ω * OZ ω) (1 : Op ιR) -
+            heteroKron (OZ ω * OX ω) (1 : Op ιR)) χ‖ ^ 2) ≤
+        1024 * (c₁ + Real.sqrt (c₂ + c₃)) := by
+  classical
+  intro P ιL ιR _ _ _ _ MX MZ QX QZ VX VZ N OX OZ χ c₁ c₂ c₃ hn hc hp hx hz a1 a2 b1 b2 d1 d2
+  set δ : ℝ := 2 * (c₁ + 2 * Real.sqrt (c₂ + c₃)) with hδdef
+  have hchainX := pointTrace_pairComponent_dist_le MX QX VX
+    (fun ω => (N ω).postprocess (fun bits => bits.1)) χ hn a1 b1 d1
+  have hchainZ := pointTrace_pairComponent_dist_le MZ QZ VZ
+    (fun ω => (N ω).postprocess (fun bits => bits.2)) χ hn a2 b2 d2
+  have hproj := point_trace_commutator_comm_le_explicit MX MZ N χ hp hchainX hchainZ
+  have hcongr : avgOver (commTupleDist P) (fun ω =>
+      ‖applyOperatorToState
+        (heteroKron (OX ω * OZ ω) (1 : Op ιR) -
+          heteroKron (OZ ω * OX ω) (1 : Op ιR)) χ‖ ^ 2) =
+    16 * avgOver (commTupleDist P) (fun ω =>
+      ‖applyOperatorToState (heteroKron
+        ((MX ω).effect 1 * (MZ ω).effect 1 -
+          (MZ ω).effect 1 * (MX ω).effect 1) (1 : Op ιR)) χ‖ ^ 2) := by
+    rw [← avgOver_const_mul]
+    refine avgOver_congr _ _ _ (fun ω => ?_)
+    exact norm_pointObs_commutator_sq ((MX ω).effect 1) ((MZ ω).effect 1)
+      (OX ω) (OZ ω) (hx ω) (hz ω) χ
+  rw [hcongr]
+  have hs : (0 : ℝ) ≤ Real.sqrt (c₂ + c₃) := Real.sqrt_nonneg _
+  have hfinal : 16 * (16 * δ) ≤ 1024 * (c₁ + Real.sqrt (c₂ + c₃)) := by
+    rw [hδdef]
+    nlinarith
+  exact le_trans (mul_le_mul_of_nonneg_left hproj (by norm_num)) hfinal
+
+/-- A universal coefficient bounds the average squared point-observable
+commutator norm in terms of the supplied consistency and approximation errors;
+the current commutation analysis uses coefficient `1024`. -/
 theorem exists_pointObs_commutator_comm_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]
@@ -463,35 +556,7 @@ theorem exists_pointObs_commutator_comm_le :
           (heteroKron (OX ω * OZ ω) (1 : Op ιR) -
             heteroKron (OZ ω * OX ω) (1 : Op ιR)) χ‖ ^ 2) ≤
         C * (c₁ + Real.sqrt (c₂ + c₃)) := by
-  classical
-  obtain ⟨C₀, hC₀, hcommutator⟩ := exists_pointTrace_commutator_comm_le
-  refine ⟨64 * C₀, by linarith, ?_⟩
-  intro P ιL ιR _ _ _ _ MX MZ QX QZ VX VZ N OX OZ χ c₁ c₂ c₃ hn hc hp hx hz a1 a2 b1 b2 d1 d2
-  set δ : ℝ := 2 * (c₁ + 2 * Real.sqrt (c₂ + c₃)) with hδdef
-  have hchainX := pointTrace_pairComponent_dist_le MX QX VX
-    (fun ω => (N ω).postprocess (fun bits => bits.1)) χ hn a1 b1 d1
-  have hchainZ := pointTrace_pairComponent_dist_le MZ QZ VZ
-    (fun ω => (N ω).postprocess (fun bits => bits.2)) χ hn a2 b2 d2
-  have hproj := hcommutator MX MZ N χ hp hchainX hchainZ
-  have hcongr : avgOver (commTupleDist P) (fun ω =>
-      ‖applyOperatorToState
-        (heteroKron (OX ω * OZ ω) (1 : Op ιR) -
-          heteroKron (OZ ω * OX ω) (1 : Op ιR)) χ‖ ^ 2) =
-    16 * avgOver (commTupleDist P) (fun ω =>
-      ‖applyOperatorToState (heteroKron
-        ((MX ω).effect 1 * (MZ ω).effect 1 -
-          (MZ ω).effect 1 * (MX ω).effect 1) (1 : Op ιR)) χ‖ ^ 2) := by
-    rw [← avgOver_const_mul]
-    refine avgOver_congr _ _ _ (fun ω => ?_)
-    exact norm_pointObs_commutator_sq ((MX ω).effect 1) ((MZ ω).effect 1)
-      (OX ω) (OZ ω) (hx ω) (hz ω) χ
-  rw [hcongr]
-  have hC00 : (0 : ℝ) ≤ C₀ := by linarith
-  have hs : (0 : ℝ) ≤ Real.sqrt (c₂ + c₃) := Real.sqrt_nonneg _
-  have hfinal : 16 * (C₀ * δ) ≤ 64 * C₀ * (c₁ + Real.sqrt (c₂ + c₃)) := by
-    rw [hδdef]
-    nlinarith [mul_nonneg hC00 hc, mul_nonneg hC00 hs]
-  exact le_trans (mul_le_mul_of_nonneg_left hproj (by norm_num)) hfinal
+  exact ⟨1024, by norm_num, point_obs_commutator_comm_le_explicit⟩
 
 end WinImplications
 

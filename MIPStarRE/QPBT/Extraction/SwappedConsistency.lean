@@ -101,6 +101,25 @@ This is the distance form of paper `eq:qld-unitary-1`.
 `lem:qld-4-7`. The missing source construction and its planned composition
 with `exists_globalPairWitness` are recorded in
 `docs/paper-gaps/qpbt_extraction-transfer.tex`, issue #123. -/
+theorem extracted_obs_self_consistent_of_global_pair_witness_explicit
+    (P : AdmissibleParams) (epsilon deltaG : ℝ)
+    (hepsilon : 0 ≤ epsilon) (hepsilon_one : epsilon ≤ 1) (hdeltaG : 0 ≤ deltaG)
+    (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG)
+    (W : PauliKind) (j : Fin P.model.basisDim) :
+    opDistSq (uniformDistribution (PauliRegister P))
+      (fun u => S.placeSide .alice (heteroKron (1 : Op (S.ExpandedLocalSpace .alice))
+        (tauObservable W (P.model.basis j • u))))
+      (fun u => S.placeSide .bob (heteroKron (1 : Op (S.ExpandedLocalSpace .bob))
+        (tauObservable W (P.model.basis j • u))))
+      (S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat) ≤
+        deltaConstructPaulis pauliBaselineExtractionConstant
+          epsilon deltaG P.m P.d P.q := by
+  rw [opDistSq_extracted_eq_tildeObs]
+  exact tilde_obs_self_consistent_of_global_pair_witness_explicit
+    P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j
+
+/-- A universal constant bounds the squared distance between the ideal Pauli
+observables on the two extracted registers in the swapped state. -/
 theorem extracted_obs_selfConsistent_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
@@ -113,11 +132,10 @@ theorem extracted_obs_selfConsistent_ofGlobalPairWitness :
             (tauObservable W (P.model.basis j • u))))
           (S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat) ≤
             deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
-  obtain ⟨C, hC, hbound⟩ := tildeObs_selfConsistent_ofGlobalPairWitness
-  refine ⟨C, hC, ?_⟩
-  intro P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j
-  rw [opDistSq_extracted_eq_tildeObs]
-  exact hbound P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j
+  refine ⟨pauliBaselineExtractionConstant, ?_, ?_⟩
+  · unfold pauliBaselineExtractionConstant
+    norm_num
+  · exact extracted_obs_self_consistent_of_global_pair_witness_explicit
 
 end
 

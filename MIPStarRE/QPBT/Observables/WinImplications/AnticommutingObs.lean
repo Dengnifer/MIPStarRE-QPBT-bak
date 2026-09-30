@@ -726,20 +726,18 @@ theorem pointTraceObs_conjTranspose_mul_self {P : AdmissibleParams} {ε : ℝ}
 This is the anticommuting half of Equation `eq:pts-obs-commutation`, paper
 `14_analysis_of_the_pauli_basis_test.tex:342-362`, blueprint
 `ch14_qpbt_observables.tex:761-794`. -/
-theorem exists_pointObs_anticommutator_anticomm_le :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
+theorem point_obs_anticommutator_anticomm_le_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
       avgOver (anticommTupleDist P) (fun ω =>
         ‖applyOperatorToState
           (heteroKron (S.pointObs .alice .X ω.2.2.1 ω.1 *
               S.pointObs .alice .Z ω.2.2.2 ω.2.1) (1 : Op S.toStrategy.ιB) +
             heteroKron (S.pointObs .alice .Z ω.2.2.2 ω.2.1 *
               S.pointObs .alice .X ω.2.2.1 ω.1) (1 : Op S.toStrategy.ιB))
-          S.toStrategy.ψ‖ ^ 2) ≤ C * ε := by
+          S.toStrategy.ψ‖ ^ 2) ≤
+        (96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+          3551040 * (16 * (Fintype.card PauliEdge : ℝ))) * ε := by
   classical
-  obtain ⟨Cms, hCms, hms⟩ := win_ms_cons
-  obtain ⟨Cv, hCv, hv⟩ := win_magic_square
-  refine ⟨96 * Cms + 3551040 * Cv, by nlinarith, ?_⟩
   intro P ε S hε
   simp only [pointObs_eq_obsOf]
   have hdist : ∀ W : PauliKind,
@@ -749,39 +747,42 @@ theorem exists_pointObs_anticommutator_anticomm_le :
               (selectedTupleScalar W ω))) 1 -
           heteroKron (ιA := S.toStrategy.ιA) (ιB := S.toStrategy.ιB) 1
             (obsOf (S.msVarBitMeas .bob (selectedMsVar W) ω)))
-        S.toStrategy.ψ‖ ^ 2) ≤ 4 * (Cms * ε) := by
+        S.toStrategy.ψ‖ ^ 2) ≤
+          4 * ((16 * (Fintype.card PauliEdge : ℝ)) * ε) := by
     intro W
     have h := obsDist_le_of_consistencyDefect
       (ιL := S.toStrategy.ιA) (ιR := S.toStrategy.ιB) (anticommTupleDist P)
       (fun ω => S.pointTraceMeas .alice W (selectedTuplePoint W ω)
         (selectedTupleScalar W ω))
       (fun ω => S.msVarBitMeas .bob (selectedMsVar W) ω) S.toStrategy.ψ
-      (hms P ε S hε W)
+      (win_ms_cons_explicit P ε S hε W)
     rw [opDistSq_eq_avgOver] at h
     exact h
   have hdefect : avgOver (anticommTupleDist P)
-      (fun ω => 1 - S.msValueAt ω) ≤ Cv * ε := by
+      (fun ω => 1 - S.msValueAt ω) ≤
+        (16 * (Fintype.card PauliEdge : ℝ)) * ε := by
     have hprob := anticommTupleDist_isProbability P
     have hsplit : avgOver (anticommTupleDist P)
         (fun ω => 1 - S.msValueAt ω) =
         1 - avgOver (anticommTupleDist P) S.msValueAt := by
       rw [avgOver_sub, avgOver_const_of_isProbability _ hprob]
     rw [hsplit]
-    exact le_of_abs_le (hv P ε S hε)
+    exact le_of_abs_le (win_magic_square_explicit P ε S hε)
   have hmsavg : avgOver (anticommTupleDist P) (fun ω =>
       ‖applyOperatorToState
         (heteroKron (ιA := S.toStrategy.ιA) (ιB := S.toStrategy.ιB) 1
           (obsOf (S.msVarBitMeas .bob 0 ω) * obsOf (S.msVarBitMeas .bob 4 ω) +
             obsOf (S.msVarBitMeas .bob 4 ω) *
               obsOf (S.msVarBitMeas .bob 0 ω)))
-        S.toStrategy.ψ‖ ^ 2) ≤ 1183680 * (Cv * ε) := by
+        S.toStrategy.ψ‖ ^ 2) ≤
+          1183680 * ((16 * (Fintype.card PauliEdge : ℝ)) * ε) := by
     calc
       _ ≤ avgOver (anticommTupleDist P)
           (fun ω => 1183680 * (1 - S.msValueAt ω)) :=
         avgOver_mono _ _ _ (fun ω => msVarBitObs_anticommutator_le S ω)
       _ = 1183680 * avgOver (anticommTupleDist P)
           (fun ω => 1 - S.msValueAt ω) := avgOver_const_mul _ _ _
-      _ ≤ 1183680 * (Cv * ε) :=
+      _ ≤ 1183680 * ((16 * (Fintype.card PauliEdge : ℝ)) * ε) :=
         mul_le_mul_of_nonneg_left hdefect (by norm_num)
   have hmain := obs_anticommutator_avg_le (ιL := S.toStrategy.ιA)
     (ιR := S.toStrategy.ιB)
@@ -795,6 +796,27 @@ theorem exists_pointObs_anticommutator_anticomm_le :
     (fun ω => msVarBitObs_conjTranspose_mul_self S .bob 4 ω)
     (hdist .X) (hdist .Z) hmsavg
   exact le_trans hmain (le_of_eq (by ring))
+
+/-- A universal coefficient bounds the average squared anticommutator norm of
+Alice's X- and Z-point observables by a constant multiple of `ε`. -/
+theorem exists_pointObs_anticommutator_anticomm_le :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
+      avgOver (anticommTupleDist P) (fun ω =>
+        ‖applyOperatorToState
+          (heteroKron (S.pointObs .alice .X ω.2.2.1 ω.1 *
+              S.pointObs .alice .Z ω.2.2.2 ω.2.1) (1 : Op S.toStrategy.ιB) +
+            heteroKron (S.pointObs .alice .Z ω.2.2.2 ω.2.1 *
+              S.pointObs .alice .X ω.2.2.1 ω.1) (1 : Op S.toStrategy.ιB))
+          S.toStrategy.ψ‖ ^ 2) ≤ C * ε := by
+  let C : ℝ := 96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+    3551040 * (16 * (Fintype.card PauliEdge : ℝ))
+  refine ⟨C, ?_, ?_⟩
+  · dsimp only [C]
+    have hcard : (1 : ℝ) ≤ (Fintype.card PauliEdge : ℝ) := by
+      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+    nlinarith
+  · simpa only [C] using point_obs_anticommutator_anticomm_le_explicit
 
 end WinImplications
 

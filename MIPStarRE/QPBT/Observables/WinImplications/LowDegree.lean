@@ -613,18 +613,15 @@ completed point measurements. This is item 2 of
 `lem:qld-win-implications`, paper
 `14_analysis_of_the_pauli_basis_test.tex:200-204`, blueprint
 `lem:qld-win-implications`. -/
-theorem win_low_degree :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_low_degree_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (linePointDist P.toLdParams)
         (fun sample a => heteroKron
           ((S.lineEvalMeas .alice W sample.1 sample.2).effect a) 1)
         (fun sample a => heteroKron 1
           ((S.pointMeasOption .bob W sample.2).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨(Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+        S.toStrategy.ψ ≤ 86 * ε := by
   intro P ε S _ W
   rw [lowDegreeConsistency_eq_mismatch]
   change avgOver (linePointDist P.toLdParams) (lowDegreeMismatchMass S W) ≤ _
@@ -653,7 +650,22 @@ theorem win_low_degree :
       _ ≤ (Fintype.card PauliEdge : ℝ) * ε :=
         fixedEdgeRejection_le_error S _
   rw [linePointDist, avgOver_mix]
+  rw [pauli_edge_card] at ha hd
+  norm_num at ha hd
   linarith
+
+/-- The low-degree line--point consistency defect is at most `86 * ε`. -/
+theorem win_low_degree :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (linePointDist P.toLdParams)
+        (fun sample a => heteroKron
+          ((S.lineEvalMeas .alice W sample.1 sample.2).effect a) 1)
+        (fun sample a => heteroKron 1
+          ((S.pointMeasOption .bob W sample.2).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  exact ⟨86, by norm_num, win_low_degree_explicit⟩
 
 /-- Winning the point-versus-Pauli branch forces equality of evaluated labels. -/
 theorem pauliBasisLabels_eq_of_win (P : AdmissibleParams) (W : PauliKind)
@@ -767,16 +779,13 @@ low-degree encodings of Pauli answers. This is item 3 of
 `lem:qld-win-implications`, paper
 `14_analysis_of_the_pauli_basis_test.tex:205-209`, blueprint
 `lem:qld-win-implications`. -/
-theorem win_pauli_basis_cons :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_pauli_basis_cons_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
         (fun u a => heteroKron ((S.pointMeas .alice W u).effect a) 1)
         (fun u a => heteroKron 1 ((S.pauliEvalMeas .bob W u).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨(Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+        S.toStrategy.ψ ≤ 86 * ε := by
   intro P ε S _ W
   rw [pauliBasisConsistency_eq_mismatch, avg_pauliBasisMismatch_eq_source]
   calc
@@ -788,8 +797,19 @@ theorem win_pauli_basis_cons :
       have hs := pauliBasisMismatch_le_rejection S W z
       rw [pauliCL_point_eq] at hs
       simpa only [pauliCL, ProjectiveSetting.pointQuestion, pauliQuestion] using hs
-    _ ≤ (Fintype.card PauliEdge : ℝ) * ε :=
-      fixedEdgeRejection_le_error S _
+    _ ≤ (Fintype.card PauliEdge : ℝ) * ε := fixedEdgeRejection_le_error S _
+    _ = 86 * ε := by rw [pauli_edge_card]; norm_num
+
+/-- The Pauli point--evaluation consistency defect is at most `86 * ε`. -/
+theorem win_pauli_basis_cons :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
+        (fun u a => heteroKron ((S.pointMeas .alice W u).effect a) 1)
+        (fun u a => heteroKron 1 ((S.pauliEvalMeas .bob W u).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  exact ⟨86, by norm_num, win_pauli_basis_cons_explicit⟩
 
 
 end WinImplications

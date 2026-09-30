@@ -447,9 +447,8 @@ commutation. The bound has one universal constant, independent of the finite
 alphabets, Hilbert space, distributions, operators, state, and error; blueprint
 `lem:commutation-analysis`, paper
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:410-461`. -/
-theorem opDistSq_commutator_le :
-    ∃ C₀ : ℝ, 1 ≤ C₀ ∧
-      ∀ {X α β γ ιA ιB : Type*}
+theorem op_dist_sq_commutator_le_explicit :
+    ∀ {X α β γ ιA ιB : Type*}
       [Fintype α] [DecidableEq α]
       [Fintype β] [DecidableEq β] [Fintype γ] [DecidableEq γ]
       [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
@@ -471,8 +470,7 @@ theorem opDistSq_commutator_le :
         (fun x (abc : (α × β) × γ) => heteroKron
           (((A x).effect (abc.1.1, abc.1.2)) * ((D x).effect (abc.1.1, abc.2)) -
             ((D x).effect (abc.1.1, abc.2)) * ((A x).effect (abc.1.1, abc.1.2))) 1)
-        (fun _ _ => 0) ψ ≤ C₀ * δ := by
-  refine ⟨16, by norm_num, ?_⟩
+        (fun _ _ => 0) ψ ≤ 16 * δ := by
   intro X α β γ ιA ιB _ _ _ _ _ _ _ _ _ _ μ A B D ψ δ hB hAB hDB
   let AL : X → (α × β) → Op (ιA × ιB) :=
     fun x ab => leftTensor (ι₂ := ιB) ((A x).effect ab)
@@ -633,6 +631,35 @@ theorem opDistSq_commutator_le :
       exact (leftTensor_sub _ _).symm
     _ ≤ 16 * δ := hraw
 
+/-- Joint closeness to a projective refinement implies approximate
+commutation with one universal constant, which may be taken to be `16`. -/
+theorem opDistSq_commutator_le :
+    ∃ C₀ : ℝ, 1 ≤ C₀ ∧
+      ∀ {X α β γ ιA ιB : Type*}
+      [Fintype α] [DecidableEq α]
+      [Fintype β] [DecidableEq β] [Fintype γ] [DecidableEq γ]
+      [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
+      (μ : Distribution X)
+      (A : X → Measurement (α × β) ιA)
+      (B : X → Measurement ((α × β) × γ) ιB)
+      (D : X → Measurement (α × γ) ιA)
+      (ψ : EuclideanSpace ℂ (ιA × ιB)) (δ : ℝ),
+      (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (B x)) →
+      opFamilyDistSq μ
+        (fun x ab => heteroKron ((A x).effect ab) 1)
+        (fun x ab => heteroKron 1 (((B x).postprocess
+          (fun abc => abc.1)).effect ab)) ψ ≤ δ →
+      opFamilyDistSq μ
+        (fun x ac => heteroKron ((D x).effect ac) 1)
+        (fun x ac => heteroKron 1 (((B x).postprocess
+          (fun abc => (abc.1.1, abc.2))).effect ac)) ψ ≤ δ →
+      opFamilyDistSq μ
+        (fun x (abc : (α × β) × γ) => heteroKron
+          (((A x).effect (abc.1.1, abc.1.2)) * ((D x).effect (abc.1.1, abc.2)) -
+            ((D x).effect (abc.1.1, abc.2)) * ((A x).effect (abc.1.1, abc.1.2))) 1)
+        (fun _ _ => 0) ψ ≤ C₀ * δ := by
+  exact ⟨16, by norm_num, op_dist_sq_commutator_le_explicit⟩
+
 /-- Joint closeness to a projective refinement on the left tensor factor
 implies approximate commutation of the corresponding right-factor POVMs.
 
@@ -644,9 +671,8 @@ same explicit constant. It is stated on the right factor because the pasting
 conclusion of `lem:pasting` carries the codeword families there. It supplies the
 constant of `exists_coarse_commutator_bound`, the coarse commutator estimate of
 the proof of `exists_pasting_error`. -/
-theorem opDistSq_commutator_right_le :
-    ∃ C₀ : ℝ, 1 ≤ C₀ ∧
-      ∀ {X α β γ ιA ιB : Type*}
+theorem op_dist_sq_commutator_right_le_explicit :
+    ∀ {X α β γ ιA ιB : Type*}
       [Fintype α] [DecidableEq α]
       [Fintype β] [DecidableEq β] [Fintype γ] [DecidableEq γ]
       [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
@@ -668,8 +694,7 @@ theorem opDistSq_commutator_right_le :
         (fun x (abc : (α × β) × γ) => heteroKron 1
           (((A x).effect (abc.1.1, abc.1.2)) * ((D x).effect (abc.1.1, abc.2)) -
             ((D x).effect (abc.1.1, abc.2)) * ((A x).effect (abc.1.1, abc.1.2))))
-        (fun _ _ => 0) ψ ≤ C₀ * δ := by
-  refine ⟨16, by norm_num, ?_⟩
+        (fun _ _ => 0) ψ ≤ 16 * δ := by
   intro X α β γ ιA ιB _ _ _ _ _ _ _ _ _ _ μ A B D ψ δ hB hBA hBD
   let AR : X → (α × β) → Op (ιA × ιB) :=
     fun x ab => rightTensor (ι₁ := ιA) ((A x).effect ab)
@@ -831,5 +856,34 @@ theorem opDistSq_commutator_right_le :
       rw [rightTensor_mul_rightTensor, rightTensor_mul_rightTensor, sub_zero]
       exact (rightTensor_sub _ _).symm
     _ ≤ 16 * δ := hraw
+
+/-- The right-factor form of the commutation analysis uses the same explicit
+constant `16`. -/
+theorem opDistSq_commutator_right_le :
+    ∃ C₀ : ℝ, 1 ≤ C₀ ∧
+      ∀ {X α β γ ιA ιB : Type*}
+      [Fintype α] [DecidableEq α]
+      [Fintype β] [DecidableEq β] [Fintype γ] [DecidableEq γ]
+      [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
+      (μ : Distribution X)
+      (A : X → Measurement (α × β) ιB)
+      (B : X → Measurement ((α × β) × γ) ιA)
+      (D : X → Measurement (α × γ) ιB)
+      (ψ : EuclideanSpace ℂ (ιA × ιB)) (δ : ℝ),
+      (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (B x)) →
+      opFamilyDistSq μ
+        (fun x ab => heteroKron (((B x).postprocess
+          (fun abc => abc.1)).effect ab) 1)
+        (fun x ab => heteroKron 1 ((A x).effect ab)) ψ ≤ δ →
+      opFamilyDistSq μ
+        (fun x ac => heteroKron (((B x).postprocess
+          (fun abc => (abc.1.1, abc.2))).effect ac) 1)
+        (fun x ac => heteroKron 1 ((D x).effect ac)) ψ ≤ δ →
+      opFamilyDistSq μ
+        (fun x (abc : (α × β) × γ) => heteroKron 1
+          (((A x).effect (abc.1.1, abc.1.2)) * ((D x).effect (abc.1.1, abc.2)) -
+            ((D x).effect (abc.1.1, abc.2)) * ((A x).effect (abc.1.1, abc.1.2))))
+        (fun _ _ => 0) ψ ≤ C₀ * δ := by
+  exact ⟨16, by norm_num, op_dist_sq_commutator_right_le_explicit⟩
 
 end MIPStarRE.QPBT

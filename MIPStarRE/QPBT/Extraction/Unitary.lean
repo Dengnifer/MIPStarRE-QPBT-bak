@@ -170,40 +170,38 @@ global polynomial-pair witness yields a normalized auxiliary state, the
 transformed-state estimate, and both total-Pauli comparison bounds. This result
 neither constructs the global witness nor passes from the swap unitaries to the
 isometries of the source theorem. -/
-theorem exists_extractionWitness_ofGlobalPairWitness :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
-        0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
-          ∀ (S : ProjectiveSetting P epsilon)
-            (w : GlobalPairWitness S deltaG),
-            Nonempty
-              (ExtractionWitness S w
-                (deltaExtract C
-                  (deltaConstructPaulis C epsilon deltaG P.m P.d P.q)
-                  P.m P.d P.q)) := by
-  obtain ⟨CS, hCS, hstate⟩ := exists_extraction_aux_ofGlobalPairWitness
-  obtain ⟨CE, -, heval⟩ := evaluated_pauli_tilde_consistency_ofGlobalPairWitness
-  let C : ℝ := max (max CS CE) 18
-  have hCS_C : CS ≤ C := (le_max_left CS CE).trans (le_max_left _ _)
-  have hCE_C : CE ≤ C := (le_max_right CS CE).trans (le_max_left _ _)
-  have hC18 : 18 ≤ C := le_max_right _ _
-  have hC : 1 ≤ C := hCS.trans hCS_C
-  refine ⟨C, hC, ?_⟩
-  intro P epsilon deltaG hepsilon hepsilon_one hdeltaG S w
+theorem exists_extraction_witness_of_global_pair_witness_explicit
+    (P : AdmissibleParams) (epsilon deltaG : ℝ)
+    (hepsilon : 0 ≤ epsilon) (hepsilon_one : epsilon ≤ 1) (hdeltaG : 0 ≤ deltaG)
+    (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG) :
+    Nonempty (ExtractionWitness S w
+      (deltaExtract pauliBaselineExtractionConstant
+        (deltaConstructPaulis pauliBaselineExtractionConstant
+          epsilon deltaG P.m P.d P.q) P.m P.d P.q)) := by
+  let C : ℝ := pauliBaselineExtractionConstant
+  have hCE_C : 2 + 4 * Real.sqrt 172 ≤ C := by
+    have hroot := Real.sqrt_nonneg (172 : ℝ)
+    have hsquare := Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 172)
+    dsimp [C, pauliBaselineExtractionConstant]
+    nlinarith
+  have hC18 : 18 ≤ C := by
+    dsimp [C, pauliBaselineExtractionConstant]
+    norm_num
   let delta := deltaConstructPaulis C epsilon deltaG P.m P.d P.q
   have hmono (K : ℝ) (hK : K ≤ C) :
       deltaConstructPaulis K epsilon deltaG P.m P.d P.q ≤ delta :=
     mul_le_mul_of_nonneg_right hK (by positivity)
   have hdelta : 0 ≤ delta := by
-    dsimp [delta, deltaConstructPaulis]
+    dsimp [delta, C, deltaConstructPaulis, pauliBaselineExtractionConstant]
     positivity
   by_cases hdelta_one : delta ≤ 1
   · obtain ⟨aux, haux, hclose⟩ :=
-      hstate P epsilon deltaG hepsilon hepsilon_one hdeltaG S w
+      exists_extraction_aux_of_global_pair_witness_explicit
+        P epsilon deltaG hepsilon hepsilon_one hdeltaG S w
     have hstate_delta :
         ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
           S.idealExpState aux‖ ^ 2 ≤ 16 * delta :=
-      hclose.trans (mul_le_mul_of_nonneg_left (hmono CS hCS_C) (by norm_num))
+      hclose
     have hnorm :
         ‖S.applyBoth (swapUnitary w .alice) (swapUnitary w .bob) S.psiHat -
           S.idealExpState aux‖ ≤ 4 * Real.sqrt delta := by
@@ -221,17 +219,36 @@ theorem exists_extractionWitness_ofGlobalPairWitness :
       pauli_close := ?_
     }⟩
     intro side W
-    have he := heval P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W
+    have he := evaluated_pauli_tilde_consistency_of_global_pair_witness_explicit
+      P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W
     have hdefect : S.evaluatedPauliDefect w side W ≤ delta := by
       cases side
-      · exact he.1.trans (hmono CE hCE_C)
-      · exact he.2.trans (hmono CE hCE_C)
+      · exact he.1.trans (hmono _ hCE_C)
+      · exact he.2.trans (hmono _ hCE_C)
     apply (S.extraction_pauli_dist_le w aux haux side W).trans
     apply le_trans _ habsorb.2
     push_cast
     linarith
   · exact exists_extractionWitness_ofGlobalPairWitness_of_one_le_construct S w
       (by linarith) (le_of_lt (lt_of_not_ge hdelta_one))
+
+/-- A universal constant guarantees an extraction witness at the composed
+construction-and-extraction error. -/
+theorem exists_extractionWitness_ofGlobalPairWitness :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+        0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
+          ∀ (S : ProjectiveSetting P epsilon)
+            (w : GlobalPairWitness S deltaG),
+            Nonempty
+              (ExtractionWitness S w
+                (deltaExtract C
+                  (deltaConstructPaulis C epsilon deltaG P.m P.d P.q)
+                  P.m P.d P.q)) := by
+  refine ⟨pauliBaselineExtractionConstant, ?_, ?_⟩
+  · unfold pauliBaselineExtractionConstant
+    norm_num
+  · exact exists_extraction_witness_of_global_pair_witness_explicit
 
 /-- The composed construction and extraction errors preserve the error family
 of `thm:pauli`: when `deltaG` has the form
@@ -248,22 +265,19 @@ fourth root bounds the three construction terms separately. Admissibility
 gives `md ≥ 1` and `q ≥ 1`, so their polynomial factors and the term `md/q`
 are absorbed into the enlarged prefactor. This discharges the scalar
 estimate tracked by issue #241. -/
-theorem deltaExtract_le_deltaQld (C a b : ℝ) (hC : 1 ≤ C) (ha : 1 < a)
+theorem delta_extract_le_delta_qld_explicit (C a b : ℝ) (hC : 1 ≤ C) (ha : 1 < a)
     (hb : 0 < b) (hb1 : b < 1) :
-    ∃ a' b' : ℝ, 1 ≤ a' ∧ 0 < b' ∧ b' < 1 ∧
-      ∀ (P : AdmissibleParams) (epsilon : ℝ), 0 ≤ epsilon →
-        epsilon ≤ 1 →
-        deltaExtract C
-            (deltaConstructPaulis C epsilon
-              (deltaQld a b epsilon P.m P.d P.q) P.m P.d P.q)
-            P.m P.d P.q ≤
-          deltaQld a' b' epsilon P.m P.d P.q := by
+    ∀ (P : AdmissibleParams) (epsilon : ℝ), 0 ≤ epsilon → epsilon ≤ 1 →
+      deltaExtract C
+          (deltaConstructPaulis C epsilon
+            (deltaQld a b epsilon P.m P.d P.q) P.m P.d P.q)
+          P.m P.d P.q ≤
+        deltaQld (4 * C ^ 2 * a) (b / 8) epsilon P.m P.d P.q := by
   have hC0 : 0 ≤ C := by linarith
   have ha0 : 0 ≤ a := by linarith
   have hconstant : a ≤ 4 * C ^ 2 * a := by
     have hCsq : 1 ≤ C ^ 2 := by nlinarith
     nlinarith [mul_le_mul_of_nonneg_right hCsq ha0]
-  refine ⟨4 * C ^ 2 * a, b / 8, ha.le.trans hconstant, by positivity, by linarith, ?_⟩
   intro params epsilon hepsilon0 hepsilon1
   let degree : ℝ := ((params.m * params.d : ℕ) : ℝ)
   have hdegree1 : 1 ≤ degree :=
@@ -375,6 +389,24 @@ theorem deltaExtract_le_deltaQld (C a b : ℝ) (hC : 1 ≤ C) (ha : 1 < a)
       mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_left
           (Real.rpow_le_rpow_of_exponent_le hdegree1 hconstant) (by positivity)) hrate0
+
+/-- Every admissible input coefficient and exponent yield new universal constants
+that bound the composed extraction error by an error of `deltaQld` form. -/
+theorem deltaExtract_le_deltaQld (C a b : ℝ) (hC : 1 ≤ C) (ha : 1 < a)
+    (hb : 0 < b) (hb1 : b < 1) :
+    ∃ a' b' : ℝ, 1 ≤ a' ∧ 0 < b' ∧ b' < 1 ∧
+      ∀ (P : AdmissibleParams) (epsilon : ℝ), 0 ≤ epsilon →
+        epsilon ≤ 1 →
+        deltaExtract C
+            (deltaConstructPaulis C epsilon
+              (deltaQld a b epsilon P.m P.d P.q) P.m P.d P.q)
+            P.m P.d P.q ≤
+          deltaQld a' b' epsilon P.m P.d P.q := by
+  have hconstant : a ≤ 4 * C ^ 2 * a := by
+    have hCsq : 1 ≤ C ^ 2 := by nlinarith
+    nlinarith [mul_le_mul_of_nonneg_right hCsq (by linarith : 0 ≤ a)]
+  exact ⟨4 * C ^ 2 * a, b / 8, ha.le.trans hconstant, by positivity, by linarith,
+    delta_extract_le_delta_qld_explicit C a b hC ha hb hb1⟩
 
 end
 

@@ -275,30 +275,27 @@ contribute `O(√ε)`, while the defect of the step used directly contributes
 `O(ε)`. Paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:311-341`,
 blueprint `lem:qld-point-obs-commuting-estimate`. -/
-theorem exists_pointObs_commutator_comm_le_alice :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
+theorem point_obs_commutator_comm_le_alice_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
       avgOver (commTupleDist P) (fun ω =>
         ‖applyOperatorToState
           (heteroKron (S.pointObs .alice .X ω.2.2.1 ω.1 *
               S.pointObs .alice .Z ω.2.2.2 ω.2.1) (1 : Op S.toStrategy.ιB) -
             heteroKron (S.pointObs .alice .Z ω.2.2.2 ω.2.1 *
               S.pointObs .alice .X ω.2.2.1 ω.1) (1 : Op S.toStrategy.ιB))
-          S.toStrategy.ψ‖ ^ 2) ≤ C * (ε + Real.sqrt ε) := by
+          S.toStrategy.ψ‖ ^ 2) ≤
+        (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+          1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) *
+            (ε + Real.sqrt ε) := by
   classical
-  obtain ⟨C₁, hC₁, hgen⟩ := exists_pointObs_commutator_comm_le
-  obtain ⟨Cc, hCc, hcc⟩ := win_comm_cons
-  obtain ⟨Cm, hCm, hcm⟩ := win_comm
   have hcard : (1 : ℝ) ≤ (Fintype.card PauliEdge : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-  set K : ℝ := 2 * (Fintype.card PauliEdge : ℝ) + Cm with hKdef
+  set K : ℝ := 4 * (Fintype.card PauliEdge : ℝ) with hKdef
   have hK : (0 : ℝ) ≤ K := by rw [hKdef]; linarith
-  refine ⟨C₁ * Cc + C₁ * Real.sqrt K, by nlinarith [Real.sqrt_nonneg K], ?_⟩
   intro P ε S hε
   have hsq : (0 : ℝ) ≤ Real.sqrt ε := Real.sqrt_nonneg ε
-  have hC₁0 : (0 : ℝ) ≤ C₁ := by linarith
-  have hCc0 : (0 : ℝ) ≤ Cc := by linarith
-  have hmain := hgen (ιL := S.toStrategy.ιA) (ιR := S.toStrategy.ιB)
+  have hmain := point_obs_commutator_comm_le_explicit
+    (ιL := S.toStrategy.ιA) (ιR := S.toStrategy.ιB)
     (fun ω => S.pointTraceMeas .alice .X ω.1 ω.2.2.1)
     (fun ω => S.pointTraceMeas .alice .Z ω.2.1 ω.2.2.2)
     (fun ω => S.pairWMeas .alice .X ω.1 ω.2.1 ω.2.2.1 ω.2.2.2)
@@ -312,23 +309,76 @@ theorem exists_pointObs_commutator_comm_le_alice :
     (fun ω => SandwichProduct.postprocess_isProjective _ (S.isProjective.2 _) _)
     (fun ω => pointObs_eq_one_sub_two_smul S .alice .X ω.2.2.1 ω.1)
     (fun ω => pointObs_eq_one_sub_two_smul S .alice .Z ω.2.2.2 ω.2.1)
-    (hcc P ε S hε .X) (hcc P ε S hε .Z)
+    (win_comm_cons_explicit P ε S hε .X) (win_comm_cons_explicit P ε S hε .Z)
     (pairW_self_consistency_comm_le S .X) (pairW_self_consistency_comm_le S .Z)
-    (hcm P ε S hε .X) (hcm P ε S hε .Z)
+    (win_comm_explicit P ε S hε .X) (win_comm_explicit P ε S hε .Z)
   refine le_trans hmain ?_
-  have hKsplit : Real.sqrt (2 * (Fintype.card PauliEdge : ℝ) * ε + Cm * ε) =
+  have hKsplit : Real.sqrt (2 * (Fintype.card PauliEdge : ℝ) * ε +
+      2 * (Fintype.card PauliEdge : ℝ) * ε) =
       Real.sqrt K * Real.sqrt ε := by
-    rw [show 2 * (Fintype.card PauliEdge : ℝ) * ε + Cm * ε = K * ε by
+    rw [show 2 * (Fintype.card PauliEdge : ℝ) * ε +
+        2 * (Fintype.card PauliEdge : ℝ) * ε = K * ε by
       rw [hKdef]; ring]
     exact Real.sqrt_mul hK ε
   rw [hKsplit]
-  nlinarith [mul_nonneg hC₁0 hCc0,
-    mul_nonneg hC₁0 (Real.sqrt_nonneg K), hε, hsq]
+  nlinarith [Real.sqrt_nonneg K, hε, hsq]
+
+/-- A universal coefficient bounds Alice's average squared point-observable
+commutator norm by a multiple of `ε + sqrt ε`. -/
+theorem exists_pointObs_commutator_comm_le_alice :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
+      avgOver (commTupleDist P) (fun ω =>
+        ‖applyOperatorToState
+          (heteroKron (S.pointObs .alice .X ω.2.2.1 ω.1 *
+              S.pointObs .alice .Z ω.2.2.2 ω.2.1) (1 : Op S.toStrategy.ιB) -
+            heteroKron (S.pointObs .alice .Z ω.2.2.2 ω.2.1 *
+              S.pointObs .alice .X ω.2.2.1 ω.1) (1 : Op S.toStrategy.ιB))
+          S.toStrategy.ψ‖ ^ 2) ≤ C * (ε + Real.sqrt ε) := by
+  let C : ℝ := 1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+    1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))
+  refine ⟨C, ?_, ?_⟩
+  · dsimp only [C]
+    have hcard : (1 : ℝ) ≤ (Fintype.card PauliEdge : ℝ) := by
+      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+    nlinarith [Real.sqrt_nonneg (4 * (Fintype.card PauliEdge : ℝ))]
+  · simpa only [C] using point_obs_commutator_comm_le_alice_explicit
 
 /-- The strategy observables satisfy the phase-signed commutation relation on
 Alice's factor. This is Equation `eq:pts-obs-commutation`, paper
 `14_analysis_of_the_pauli_basis_test.tex:309-354`, blueprint
 `ch14_qpbt_observables.tex:761-794`. -/
+theorem point_obs_twisted_commutation_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε →
+      opDistSq (uniformDistribution (PauliTuple P))
+        (fun ω => heteroKron
+          (S.pointObs .alice .X ω.2.2.1 ω.1 *
+            S.pointObs .alice .Z ω.2.2.2 ω.2.1) 1)
+        (fun ω => phaseSign (gammaValue P ω.1 ω.2.1 ω.2.2.1 ω.2.2.2) •
+          heteroKron
+            (S.pointObs .alice .Z ω.2.2.2 ω.2.1 *
+              S.pointObs .alice .X ω.2.2.1 ω.1) 1)
+        S.toStrategy.ψ ≤
+          (2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+              1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +
+            (96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+              3551040 * (16 * (Fintype.card PauliEdge : ℝ))) + 4) *
+            Real.sqrt ε := by
+  classical
+  intro P ε S hε
+  exact twisted_commutation_of_halves
+    (fun ω => S.pointObs .alice .X ω.2.2.1 ω.1)
+    (fun ω => S.pointObs .alice .Z ω.2.2.2 ω.2.1)
+    S.toStrategy.ψ S.toStrategy.ψ_norm
+    (fun ω => pointObs_conjTranspose_mul_self S .alice .X ω.2.2.1 ω.1)
+    (fun ω => pointObs_conjTranspose_mul_self S .alice .Z ω.2.2.2 ω.2.1)
+    hε (by positivity) (by positivity)
+    (point_obs_commutator_comm_le_alice_explicit P ε S hε)
+    (point_obs_anticommutator_anticomm_le_explicit P ε S hε)
+
+/-- A universal coefficient bounds Alice's phase-signed point-observable
+commutation distance by a multiple of `sqrt ε`. -/
 theorem pointObs_twisted_commutation_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
@@ -342,18 +392,16 @@ theorem pointObs_twisted_commutation_proof :
             (S.pointObs .alice .Z ω.2.2.2 ω.2.1 *
               S.pointObs .alice .X ω.2.2.1 ω.1) 1)
         S.toStrategy.ψ ≤ C * Real.sqrt ε := by
-  classical
-  obtain ⟨Cc, hCc, hcomm⟩ := exists_pointObs_commutator_comm_le_alice
-  obtain ⟨Ca, hCa, hanti⟩ := exists_pointObs_anticommutator_anticomm_le
-  refine ⟨2 * Cc + Ca + 4, by linarith, ?_⟩
-  intro P ε S hε
-  exact twisted_commutation_of_halves
-    (fun ω => S.pointObs .alice .X ω.2.2.1 ω.1)
-    (fun ω => S.pointObs .alice .Z ω.2.2.2 ω.2.1)
-    S.toStrategy.ψ S.toStrategy.ψ_norm
-    (fun ω => pointObs_conjTranspose_mul_self S .alice .X ω.2.2.1 ω.1)
-    (fun ω => pointObs_conjTranspose_mul_self S .alice .Z ω.2.2.2 ω.2.1)
-    hε (by linarith) (by linarith) (hcomm P ε S hε) (hanti P ε S hε)
+  let C : ℝ := 2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
+      1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +
+    (96 * (16 * (Fintype.card PauliEdge : ℝ)) +
+      3551040 * (16 * (Fintype.card PauliEdge : ℝ))) + 4
+  refine ⟨C, ?_, ?_⟩
+  · dsimp only [C]
+    have hcard : (1 : ℝ) ≤ (Fintype.card PauliEdge : ℝ) := by
+      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+    nlinarith [Real.sqrt_nonneg (4 * (Fintype.card PauliEdge : ℝ))]
+  · simpa only [C] using point_obs_twisted_commutation_explicit
 
 end WinImplications
 

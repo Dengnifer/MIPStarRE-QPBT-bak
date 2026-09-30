@@ -170,6 +170,101 @@ The directly indexed, completed-answer line witness is an explicit restriction
 of this auxiliary, as documented in `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 and `docs/paper-gaps/qpbt_combined-lines-error-term.tex`. This proves only the
 scalar-linearity calculation `eq:qld-g-prime-bound`, not `lem:qld-4-7`. -/
+theorem rounded_polynomial_scalar_mass_explicit :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        (∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ) ∧
+        scalarNonlinearMass S .AA' RA ≤ 2 * (4 * eta + 8 * δQ) +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q ∧
+        scalarNonlinearMass S .BB' RB ≤ 2 * (4 * eta + 8 * δQ) +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q := by
+  let a := pauliBaselineLowDegreeConstant
+  let b := pauliBaselineLowDegreePower
+  have h := rounded_polynomial_ordered_estimates_explicit
+  intro P ε δQ δL S points lines delta eta
+  obtain ⟨RA, RB, hRA, hRB, horder⟩ := h P ε δQ δL S points lines
+  refine ⟨RA, RB, hRA, hRB, horder, ?_, ?_⟩
+  · exact (scalarNonlinearMass_le_ordered_error S .AA' .BA'' (by trivial) RA hRA).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).1 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+  · exact (scalarNonlinearMass_le_ordered_error S .BB' .AB'' (by trivial) RB hRB).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+
+/-- The native rounded measurements retain both ordered comparisons and the
+two scalar-nonlinear mass estimates at their concrete mixed error. -/
+theorem rounded_polynomial_scalar_mass_at_native_error :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := directNativeError P.extendedDirectLd
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+      let orderedError := nativeOrderedPolynomialError delta δQ
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        (∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ orderedError ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ orderedError) ∧
+        scalarNonlinearMass S .AA' RA ≤ 2 * orderedError +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q ∧
+        scalarNonlinearMass S .BB' RB ≤ 2 * orderedError +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q := by
+  intro P ε δQ δL S points lines delta orderedError
+  obtain ⟨RA, RB, hRA, hRB, horder⟩ :=
+    rounded_polynomial_ordered_estimates_at_native_error P ε δQ δL S points lines
+  refine ⟨RA, RB, hRA, hRB, horder, ?_, ?_⟩
+  · exact (scalarNonlinearMass_le_ordered_error S .AA' .BA'' (by trivial) RA hRA).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).1 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+  · exact (scalarNonlinearMass_le_ordered_error S .BB' .AB'' (by trivial) RB hRB).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+
+/-- The coefficient-`30` rounded witnesses satisfy the same scalar-linearity
+concentration estimate from `eq:qld-g-prime-bound`; the measurements are
+those constructed by `rounded_polynomial_ordered_estimates_quantitative`. -/
+theorem rounded_polynomial_scalar_mass_quantitative :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd 30 quantitativeLowDegreePower
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        (∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ) ∧
+        scalarNonlinearMass S .AA' RA ≤ 2 * (4 * eta + 8 * δQ) +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q ∧
+        scalarNonlinearMass S .BB' RB ≤ 2 * (4 * eta + 8 * δQ) +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q := by
+  have h := rounded_polynomial_ordered_estimates_quantitative
+  intro P ε δQ δL S points lines delta eta
+  obtain ⟨RA, RB, hRA, hRB, horder⟩ := h P ε δQ δL S points lines
+  refine ⟨RA, RB, hRA, hRB, horder, ?_, ?_⟩
+  · exact (scalarNonlinearMass_le_ordered_error S .AA' .BA'' (by trivial) RA hRA).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).1 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+  · exact (scalarNonlinearMass_le_ordered_error S .BB' .AB'' (by trivial) RB hRB).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+
+
+/-- Universal low-degree constants give projective rounded polynomial measurements
+with both ordered-error bounds and both scalar-nonlinearity mass bounds. -/
 theorem exists_rounded_polynomial_scalar_mass :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
@@ -189,17 +284,14 @@ theorem exists_rounded_polynomial_scalar_mass :
           2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q ∧
         scalarNonlinearMass S .BB' RB ≤ 2 * (4 * eta + 8 * δQ) +
           2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q := by
-  obtain ⟨a, b, ha, hb, hb1, h⟩ := exists_rounded_polynomial_ordered_estimates
-  refine ⟨a, b, ha, hb, hb1, ?_⟩
-  intro P ε δQ δL S points lines delta eta
-  obtain ⟨RA, RB, hRA, hRB, horder⟩ := h P ε δQ δL S points lines
-  refine ⟨RA, RB, hRA, hRB, horder, ?_, ?_⟩
-  · exact (scalarNonlinearMass_le_ordered_error S .AA' .BA'' (by trivial) RA hRA).trans
-      (add_le_add
-        (mul_le_mul_of_nonneg_left (horder false).1 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
-  · exact (scalarNonlinearMass_le_ordered_error S .BB' .AB'' (by trivial) RB hRB).trans
-      (add_le_add
-        (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+  refine ⟨pauliBaselineLowDegreeConstant, pauliBaselineLowDegreePower, ?_, ?_, ?_,
+    rounded_polynomial_scalar_mass_explicit⟩
+  · unfold pauliBaselineLowDegreeConstant
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
 
 end ExtendedLineGame
 

@@ -86,9 +86,8 @@ factor, so the two coarse families approximately commute on the state, with one
 universal constant. This is step 3 of the proof of the adopted statement in
 `docs/paper-gaps/qpbt_pasting-product-error.tex`; blueprint
 `ch12_qpbt_games.tex:960-990`. -/
-theorem exists_coarse_commutator_bound :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}
+theorem coarse_commutator_bound_explicit :
+    ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}
         [Fintype X] [DecidableEq X] [Fintype Y₁] [DecidableEq Y₁]
         [Fintype Y₂] [DecidableEq Y₂] [Fintype R₁] [DecidableEq R₁]
         [Fintype R₂] [DecidableEq R₂] [Fintype Γ₁] [DecidableEq Γ₁]
@@ -113,10 +112,8 @@ theorem exists_coarse_commutator_bound :
                 ((G₂ q.1.1).postprocess (fun g => eval₂ g q.2)).effect a.2 -
               ((G₂ q.1.1).postprocess (fun g => eval₂ g q.2)).effect a.2 *
                 ((G₁ q.1.1).postprocess (fun g => eval₁ g q.1.2)).effect a.1))
-          (fun _ _ => 0) ψ ≤ C * δ := by
+          (fun _ _ => 0) ψ ≤ 32 * δ := by
   classical
-  obtain ⟨C₀, hC₀, hcomm⟩ := opDistSq_commutator_right_le
-  refine ⟨2 * C₀, by linarith, ?_⟩
   intro X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
     D eval₁ eval₂ G₁ G₂ A ψ δ hA h₁ h₂
   set P : ((X × Y₁) × Y₂) → Measurement R₁ ι :=
@@ -184,10 +181,43 @@ theorem exists_coarse_commutator_bound :
     simp only [Measurement.postprocess_effect]
     refine Finset.sum_congr (Finset.filter_congr fun a _ => ?_) fun _ _ => rfl
     simp [eB, f₂, Prod.ext_iff]
-  have hconc := hcomm D AR BJ DR ψ (2 * δ) hBJ hBA hBD
+  have hconc := op_dist_sq_commutator_right_le_explicit
+    D AR BJ DR ψ (2 * δ) hBJ hBA hBD
   rw [opFamilyDistSq_reindex D eB _ _ ψ] at hconc
   refine le_trans (le_of_eq ?_) (le_trans hconc (le_of_eq (by ring)))
   exact opFamilyDistSq_congr D _ _ _ _ ψ (fun q a => rfl) (fun q a => rfl)
+
+/-- The two marginal consistency bounds control the squared commutator distance
+with the universal coefficient `32`. -/
+theorem exists_coarse_commutator_bound :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}
+        [Fintype X] [DecidableEq X] [Fintype Y₁] [DecidableEq Y₁]
+        [Fintype Y₂] [DecidableEq Y₂] [Fintype R₁] [DecidableEq R₁]
+        [Fintype R₂] [DecidableEq R₂] [Fintype Γ₁] [DecidableEq Γ₁]
+        [Fintype Γ₂] [DecidableEq Γ₂] [Fintype ι] [DecidableEq ι]
+        (D : Distribution ((X × Y₁) × Y₂))
+        (eval₁ : Γ₁ → Y₁ → R₁) (eval₂ : Γ₂ → Y₂ → R₂)
+        (G₁ : X → Measurement Γ₁ ι) (G₂ : X → Measurement Γ₂ ι)
+        (A : ((X × Y₁) × Y₂) → Measurement (R₁ × R₂) ι)
+        (ψ : EuclideanSpace ℂ (ι × ι)) (δ : ℝ),
+        (∀ q, MIPStarRE.QPBT.Measurement.IsProjective (A q)) →
+        consistencyDefect D
+          (fun q a₁ => heteroKron (((A q).postprocess Prod.fst).effect a₁) 1)
+          (fun q a₁ => heteroKron 1 (((G₁ q.1.1).postprocess
+            (fun g => eval₁ g q.1.2)).effect a₁)) ψ ≤ δ →
+        consistencyDefect D
+          (fun q a₂ => heteroKron (((A q).postprocess Prod.snd).effect a₂) 1)
+          (fun q a₂ => heteroKron 1 (((G₂ q.1.1).postprocess
+            (fun g => eval₂ g q.2)).effect a₂)) ψ ≤ δ →
+        opFamilyDistSq D
+          (fun q (a : R₁ × R₂) => heteroKron 1
+            (((G₁ q.1.1).postprocess (fun g => eval₁ g q.1.2)).effect a.1 *
+                ((G₂ q.1.1).postprocess (fun g => eval₂ g q.2)).effect a.2 -
+              ((G₂ q.1.1).postprocess (fun g => eval₂ g q.2)).effect a.2 *
+                ((G₁ q.1.1).postprocess (fun g => eval₁ g q.1.2)).effect a.1))
+          (fun _ _ => 0) ψ ≤ C * δ := by
+  exact ⟨32, by norm_num, coarse_commutator_bound_explicit⟩
 
 /-- Averaging a collision term against the conditional collision bound. A
 family of nonnegative weights indexed by pairs of distinct second codewords,
