@@ -22,7 +22,8 @@ Eight criteria, in the protocol's numbering:
 * ``C7`` artifact readiness — every file an ITP artifact submission needs is
   committed (the snapshot build and its leak scan are delegated).
 * ``C8`` bound ledger — the track's bound ledger has a ``Stage ledger`` table
-  whose every row carries a ``Disposition`` of ``sharp``,
+  in the canonical raw-line format whose every row carries a ``Disposition``
+  of ``sharp``,
   ``necessary: <reason>`` or ``deferred #<issue>`` (whether the bounds and
   dispositions are honest is delegated to independent review).
 
@@ -811,24 +812,17 @@ def criterion_artifact_readiness(root: Path, track: Track) -> Criterion:
 # C8 bound ledger
 # ---------------------------------------------------------------------------
 
-LEDGER_HEADING = "Stage ledger"
-# An ATX heading of any level; a closing run of ``#`` is optional markdown.
-HEADING_RE = re.compile(
-    r"^ {0,3}(?P<hashes>#{1,6})(?:[ \t]+(?P<text>.*?))?(?:[ \t]+#+)?[ \t]*$"
-)
-SETEXT_RE = re.compile(r"^ {0,3}(?P<marker>=+|-+)[ \t]*$")
+LEDGER_HEADING = "## Stage ledger"
+# The sole section boundary is the next unindented level-two ATX heading with a
+# nonempty title. C8 deliberately does not reconstruct Markdown block context.
+TOP_LEVEL_ATX_RE = re.compile(r"^##[ \t]+\S.*$")
+ATX_HEADING_RE = re.compile(r"^ {0,3}#{1,6}(?:[ \t]+|$)")
+SETEXT_UNDERLINE_RE = re.compile(r"^ {0,3}(?:=+|-+)[ \t]*$")
 THEMATIC_BREAK_RE = re.compile(
     r"^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,})$"
 )
-FENCE_RE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<tail>.*)$")
-# These block starts can own following unindented lines as lazy continuation
-# text.  Keep that context until a definite top-level boundary instead of
-# mistaking a later thematic break for a Setext underline.
-CONTAINER_BLOCK_RE = re.compile(
-    r"^ {0,3}(?:>[ \t]?|(?:[*+-]|\d{1,9}[.)])(?:[ \t]+|$))"
-)
-REFERENCE_DEFINITION_RE = re.compile(r"^ {0,3}\[[^]\n]+\]:")
-HTML_BLOCK_CANDIDATE_RE = re.compile(r"^ {0,3}<")
+FENCE_RE = re.compile(r"^ {0,3}(?:`{3,}|~{3,})")
+HTML_COMMENT_RE = re.compile(r"<!--|-->")
 # A table delimiter cell, and a pipe that separates two cells. A pipe preceded
 # by a backslash is text in its cell, so `\|x\|` is a norm.
 LEDGER_DELIMITER_CELL_RE = re.compile(r":?-{2,}:?")
@@ -846,168 +840,14 @@ LEDGER_COLUMNS = {
 DISPOSITION_RE = re.compile(r"sharp|necessary:[ \t]*\S.*|deferred[ \t]+#\d+")
 
 
-def _fence_state(line: str, opened: tuple[str, int] | None) -> tuple[str, int] | None:
-    """Update state; only a matching, long-enough, bare fence closes a block."""
-
-    match = FENCE_RE.match(line)
-    if match is None:
-        return opened
-    marker = match.group("marker")
-    if opened is None:
-        return marker[0], len(marker)
-    if (
-        marker[0] == opened[0]
-        and len(marker) >= opened[1]
-        and not match.group("tail").strip()
-    ):
-        return None
-    return opened
-
-
-def _ledger_table_header(
-    lines: list[str], index: int, end: int
-) -> tuple[list[str], list[str]] | None:
-    """Return parsed cells when ``index`` opens a ledger-style table."""
-
-    if index + 1 >= end:
-        return None
-    header_text, delimiter_text = lines[index], lines[index + 1]
-    delimiter = _cells(delimiter_text)
-    if not (
-        not _code_indented(header_text)
-        and not _code_indented(delimiter_text)
-        and UNESCAPED_PIPE_RE.search(header_text)
-        and UNESCAPED_PIPE_RE.search(delimiter_text)
-        and all(LEDGER_DELIMITER_CELL_RE.fullmatch(cell) for cell in delimiter)
-    ):
-        return None
-    return _cells(header_text), delimiter
-
-
-def _starts_nonparagraph_context(line: str) -> bool:
-    """Whether ``line`` definitely or conservatively opens a nonparagraph block."""
-
-    return (
-        CONTAINER_BLOCK_RE.match(line) is not None
-        or REFERENCE_DEFINITION_RE.match(line) is not None
-        or HTML_BLOCK_CANDIDATE_RE.match(line) is not None
-        or _code_indented(line)
-    )
-
-
-def _ledger_section(lines: list[str]) -> tuple[int, int] | None:
-    """Return (heading index, end index) of the ``Stage ledger`` section.
-
-    The section runs to the next heading of the same or a higher level, so a
-    table under a later heading can never stand in for a missing ledger table.
-    Headings inside fenced code blocks are not headings.  A Setext underline
-    closes the section only after an unambiguous top-level paragraph; tables,
-    container blocks and their lazy continuations are not paragraph headings.
-    """
-
-    fence: tuple[str, int] | None = None
-    start: int | None = None
-    level = 0
-    paragraph: tuple[str, int] | None = None
-    table = False
-    for index, line in enumerate(lines):
-        previous = fence
-        fence = _fence_state(line, fence)
-        if previous is not None or fence is not None:
-            paragraph = None
-            table = False
-            continue
-        match = HEADING_RE.match(line)
-        if match is not None:
-            paragraph = None
-            table = False
-            heading_level = len(match.group("hashes"))
-            if start is None:
-                if (match.group("text") or "") == LEDGER_HEADING:
-                    start, level = index, heading_level
-            elif heading_level <= level:
-                return start, index
-            continue
-
-        if table:
-            if not _table_body_boundary(line):
-                continue
-            table = False
-            paragraph = None
-        if not line.strip():
-            paragraph = None
-            continue
-        if _ledger_table_header(lines, index, len(lines)) is not None:
-            paragraph = None
-            table = True
-            continue
-
-        setext = SETEXT_RE.match(line)
-        if setext is not None:
-            if paragraph is not None and paragraph[0] == "plain":
-                heading_level = 1 if setext.group("marker")[0] == "=" else 2
-                heading_start = paragraph[1]
-                paragraph = None
-                if start is not None and heading_level <= level:
-                    return start, heading_start
-            elif THEMATIC_BREAK_RE.match(line) is not None:
-                paragraph = None
-            elif paragraph is None:
-                # An equals run without preceding paragraph text is ordinary
-                # text.  Keeping it as paragraph context also handles a later
-                # genuine Setext underline without guessing at a block type.
-                paragraph = ("plain", index)
-            # Otherwise the line is lazy continuation text in a container or
-            # opaque block, and that context remains deliberately conservative.
-            continue
-
-        if THEMATIC_BREAK_RE.match(line) is not None:
-            paragraph = None
-        elif _starts_nonparagraph_context(line):
-            if paragraph is None or paragraph[0] == "plain":
-                paragraph = ("opaque", index)
-        elif paragraph is None:
-            paragraph = ("plain", index)
-    return None if start is None else (start, len(lines))
-
-
-def _blank_invisible(lines: list[str]) -> list[str]:
-    """Blank fenced blocks and HTML comments while preserving line positions."""
-    visible: list[str] = []
-    fence: tuple[str, int] | None = None
-    comment = False
-    for line in lines:
-        previous = fence
-        if not comment:
-            fence = _fence_state(line, fence)
-        if previous is not None or fence is not None:
-            visible.append("")
-            continue
-        parts, offset = [], 0
-        while comment or (start := line.find("<!--", offset)) >= 0:
-            start = offset if comment else start
-            end = line.find("-->", start)
-            stop = len(line) if end < 0 else end + 3
-            parts.extend((line[offset:start], " " * (stop - start)))
-            offset, comment = stop, end < 0
-            if comment:
-                break
-        visible.append("".join(parts) + line[offset:])
-    return visible
-
-
 def _cells(row: str) -> list[str]:
-    r"""The cells of one table row, split on unescaped pipes only.
+    r"""The cells of one canonical outer-piped row.
 
     An escaped pipe ``\|`` (a norm ``\|x\|``, say) stays in its cell and reads
     back as ``|``.
     """
 
-    body = row.strip()
-    if body.startswith("|"):
-        body = body[1:]
-    if body.endswith("|") and not body.endswith("\\|"):
-        body = body[:-1]
+    body = row[1:-1]
     return [cell.strip().replace("\\|", "|") for cell in UNESCAPED_PIPE_RE.split(body)]
 
 
@@ -1018,51 +858,61 @@ def _code_indented(line: str) -> bool:
     return len(expanded) - len(expanded.lstrip(" ")) >= 4
 
 
-def _table_body_boundary(line: str) -> bool:
-    """Whether an explicit block boundary ends a ledger table body."""
+def _canonical_pipe_row(line: str) -> bool:
+    """Whether ``line`` has the required opening and closing outer pipes."""
 
-    return (
-        not line.strip()
-        or HEADING_RE.match(line) is not None
-        or THEMATIC_BREAK_RE.match(line) is not None
-        or FENCE_RE.match(line) is not None
-        or _code_indented(line)
-    )
+    if len(line) < 2 or not line.startswith("|") or not line.endswith("|"):
+        return False
+    closing_slashes = len(line[:-1]) - len(line[:-1].rstrip("\\"))
+    return closing_slashes % 2 == 0
 
 
-def _ledger_tables(
-    lines: list[str], start: int, end: int
-) -> list[tuple[int, list[str], int, list[str], list[tuple[int, list[str]]]]]:
-    """Every markdown table of the section ``lines[start:end]``.
+def _section_end(lines: list[str], start: int) -> int:
+    """Return the next unindented level-two ATX heading, or end of file."""
 
-    Each table is (header line, header cells, delimiter line, delimiter cells,
-    data rows), numbered as file lines. ``lines`` must already have its fenced
-    code blocks blanked.
-    """
+    for index in range(start + 1, len(lines)):
+        if TOP_LEVEL_ATX_RE.fullmatch(lines[index]) is not None:
+            return index
+    return len(lines)
 
-    tables: list[
-        tuple[int, list[str], int, list[str], list[tuple[int, list[str]]]]
-    ] = []
-    index = start + 1
-    while index + 1 < end:
-        parsed = _ledger_table_header(lines, index, end)
-        if parsed is None:
-            index += 1
-            continue
-        header, delimiter = parsed
-        header_line = index + 1
-        delimiter_line = index + 2
-        rows: list[tuple[int, list[str]]] = []
-        index += 2
-        while index < end and not _table_body_boundary(lines[index]):
-            rows.append((index + 1, _cells(lines[index])))
-            index += 1
-        tables.append((header_line, header, delimiter_line, delimiter, rows))
-    return tables
+
+def _noncanonical_construct(lines: list[str], index: int, end: int) -> str:
+    """Name the noncanonical construct beginning at ``index``."""
+
+    line = lines[index]
+    if HTML_COMMENT_RE.search(line) is not None:
+        return "HTML comment"
+    if (
+        index + 1 < end
+        and line.strip()
+        and SETEXT_UNDERLINE_RE.fullmatch(lines[index + 1]) is not None
+    ):
+        return "Setext heading"
+    if FENCE_RE.match(line) is not None:
+        return "fenced block"
+    if THEMATIC_BREAK_RE.fullmatch(line) is not None:
+        return "thematic break"
+    if _code_indented(line):
+        return "indented block"
+    if ATX_HEADING_RE.match(line) is not None:
+        return "noncanonical ATX heading"
+    if (
+        _canonical_pipe_row(line)
+        and index + 1 < end
+        and _canonical_pipe_row(lines[index + 1])
+        and all(
+            LEDGER_DELIMITER_CELL_RE.fullmatch(cell)
+            for cell in _cells(lines[index + 1])
+        )
+    ):
+        return "second pipe table"
+    if _canonical_pipe_row(line):
+        return "pipe row outside the single table"
+    return "row without canonical opening and closing pipes"
 
 
 def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
-    """C8: every stage row of the bound ledger has its four required fields."""
+    """C8: one canonical stage table has all four required fields."""
 
     crit = Criterion("C8", "bound ledger", DELEGATED)
     ledger = track.bound_ledger
@@ -1073,8 +923,6 @@ def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
     )
     path = root / ledger if ledger else None
     if path is None or not path.is_file():
-        # Fail closed: a track without a ledger has not accounted for its
-        # bounds at all.
         crit.status = FAIL
         crit.summary = f"missing {ledger}" if ledger else "no bound ledger registered"
         crit.evidence.append(
@@ -1082,60 +930,133 @@ def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
         )
         return crit
 
-    lines = _blank_invisible(path.read_text(encoding="utf-8", errors="replace").splitlines())
-    section = _ledger_section(lines)
-    if section is None:
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    headings = [index for index, line in enumerate(lines) if line == LEDGER_HEADING]
+    if not headings:
         crit.status = FAIL
-        crit.summary = f"no `{LEDGER_HEADING}` heading"
-        crit.evidence.append(f"{ledger}:1: no markdown heading `{LEDGER_HEADING}`")
+        crit.summary = f"no exact `{LEDGER_HEADING}` heading"
+        crit.evidence = [f"{ledger}:1: expected the exact line `{LEDGER_HEADING}`"]
         return crit
-    start, end = section
-    tables = _ledger_tables(lines, start, end)
-    if not tables:
+    if len(headings) != 1:
         crit.status = FAIL
-        crit.summary = f"no table under the `{LEDGER_HEADING}` heading"
-        crit.evidence.append(f"{ledger}:{start + 1}: no markdown table in this section")
+        crit.summary = f"{len(headings)} exact `{LEDGER_HEADING}` headings"
+        crit.evidence = [
+            f"{ledger}:{index + 1}: duplicate `{LEDGER_HEADING}` heading"
+            for index in headings
+        ]
         return crit
 
-    # Every table of the section belongs to the ledger (a subheading may group
-    # stages), so each one is held to the same shape.
+    start = headings[0]
+    end = _section_end(lines, start)
+    for comment_line in range(start + 1, end):
+        if HTML_COMMENT_RE.search(lines[comment_line]) is not None:
+            crit.status = FAIL
+            crit.summary = "noncanonical HTML comment in the stage-ledger section"
+            crit.evidence = [
+                f"{ledger}:{comment_line + 1}: HTML comment is not permitted"
+            ]
+            return crit
+    index = start + 1
+    while index < end and not lines[index].strip():
+        index += 1
+    if index == end:
+        crit.status = FAIL
+        crit.summary = f"no table under the `{LEDGER_HEADING}` heading"
+        crit.evidence = [f"{ledger}:{start + 1}: canonical pipe table is missing"]
+        return crit
+    if not _canonical_pipe_row(lines[index]):
+        construct = _noncanonical_construct(lines, index, end)
+        crit.status = FAIL
+        crit.summary = f"noncanonical {construct} before the stage table"
+        crit.evidence = [f"{ledger}:{index + 1}: {construct} is not permitted"]
+        return crit
+
+    header_line = index + 1
+    header = _cells(lines[index])
+    index += 1
+    if index == end or not _canonical_pipe_row(lines[index]):
+        construct = (
+            "end of section"
+            if index == end
+            else _noncanonical_construct(lines, index, end)
+        )
+        crit.status = FAIL
+        crit.summary = "stage ledger has no canonical delimiter row"
+        crit.evidence = [
+            f"{ledger}:{min(index + 1, end)}: expected an outer-piped delimiter row; "
+            f"found {construct}"
+        ]
+        return crit
+
+    delimiter_line = index + 1
+    delimiter = _cells(lines[index])
+    index += 1
+    rows: list[tuple[int, list[str]]] = []
+    while index < end and _canonical_pipe_row(lines[index]):
+        if (
+            rows
+            and index + 1 < end
+            and _canonical_pipe_row(lines[index + 1])
+            and all(
+                LEDGER_DELIMITER_CELL_RE.fullmatch(cell)
+                for cell in _cells(lines[index + 1])
+            )
+        ):
+            crit.status = FAIL
+            crit.summary = "noncanonical second pipe table in the stage-ledger section"
+            crit.evidence = [
+                f"{ledger}:{index + 1}: second pipe table is not permitted"
+            ]
+            return crit
+        rows.append((index + 1, _cells(lines[index])))
+        index += 1
+
+    remainder = index
+    while remainder < end:
+        if lines[remainder].strip():
+            construct = _noncanonical_construct(lines, remainder, end)
+            crit.status = FAIL
+            crit.summary = f"noncanonical {construct} in the stage-ledger section"
+            crit.evidence = [
+                f"{ledger}:{remainder + 1}: {construct} is not permitted"
+            ]
+            return crit
+        remainder += 1
+
     missing: list[str] = []
     shape: list[str] = []
     bad: list[str] = []
-    only_disposition_missing = False
-    total = 0
-    for header_line, header, delimiter_line, delimiter, rows in tables:
-        total += len(rows)
-        if len(delimiter) != len(header):
-            shape.append(
-                f"{ledger}:{delimiter_line}: delimiter has {len(delimiter)} cell(s); "
-                f"header has {len(header)} (wrong width)"
-            )
+    if not all(LEDGER_DELIMITER_CELL_RE.fullmatch(cell) for cell in delimiter):
+        shape.append(
+            f"{ledger}:{delimiter_line}: delimiter row contains a non-delimiter cell"
+        )
+    if len(delimiter) != len(header):
+        shape.append(
+            f"{ledger}:{delimiter_line}: delimiter has {len(delimiter)} cell(s); "
+            f"header has {len(header)} (wrong width)"
+        )
 
-        names = [cell.strip("` \t").casefold() for cell in header]
-        columns: dict[str, int] = {}
-        column_issues: list[str] = []
-        for label, aliases in LEDGER_COLUMNS.items():
-            matches = [index for index, name in enumerate(names) if name in aliases]
-            if not matches:
-                column_issues.append(f"missing {label}")
-            elif len(matches) > 1:
-                column_issues.append(f"ambiguous duplicate {label}")
-            else:
-                columns[label] = matches[0]
-        if column_issues:
-            evidence = f"{ledger}:{header_line}: columns are " + ", ".join(header)
-            if column_issues != ["missing Disposition"]:
-                evidence = (
-                    f"{ledger}:{header_line}: {'; '.join(column_issues)}; columns are "
-                    + ", ".join(header)
-                )
-            missing.append(evidence)
-            only_disposition_missing = (
-                len(tables) == 1 and column_issues == ["missing Disposition"]
+    names = [cell.strip("` \t").casefold() for cell in header]
+    columns: dict[str, int] = {}
+    column_issues: list[str] = []
+    for label, aliases in LEDGER_COLUMNS.items():
+        matches = [column for column, name in enumerate(names) if name in aliases]
+        if not matches:
+            column_issues.append(f"missing {label}")
+        elif len(matches) > 1:
+            column_issues.append(f"ambiguous duplicate {label}")
+        else:
+            columns[label] = matches[0]
+    if column_issues:
+        evidence = f"{ledger}:{header_line}: columns are " + ", ".join(header)
+        if column_issues != ["missing Disposition"]:
+            evidence = (
+                f"{ledger}:{header_line}: {'; '.join(column_issues)}; columns are "
+                + ", ".join(header)
             )
-            continue
+        missing.append(evidence)
 
+    if not column_issues:
         for number, cells in rows:
             if len(cells) != len(header):
                 shape.append(
@@ -1153,11 +1074,11 @@ def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
                         f"{ledger}:{number}: empty `{label}` cell for "
                         f"{stage or '(empty stage)'}"
                     )
-            value = values["Disposition"]
-            if value and DISPOSITION_RE.fullmatch(value) is None:
+            disposition = values["Disposition"]
+            if disposition and DISPOSITION_RE.fullmatch(disposition) is None:
                 bad.append(
-                    f"{ledger}:{number}: disposition "
-                    f"{value or '(empty)'!r} for {stage[:60] or '(empty stage)'}"
+                    f"{ledger}:{number}: disposition {disposition!r} for "
+                    f"{stage[:60] or '(empty stage)'}"
                 )
     if missing or shape or bad:
         crit.status = FAIL
@@ -1165,30 +1086,26 @@ def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
         if missing:
             problems.append(
                 "stage ledger has no `Disposition` column"
-                if only_disposition_missing and len(missing) == 1
-                else f"{len(missing)} of {len(tables)} stage ledger table(s) have "
-                "missing or ambiguous required columns"
+                if column_issues == ["missing Disposition"]
+                else "stage ledger has missing or ambiguous required columns"
             )
         if shape:
             problems.append(f"{len(shape)} invalid required table-shape item(s)")
         if bad:
             problems.append(
-                f"{len(bad)} of {total} stage row(s) without a valid disposition "
+                f"{len(bad)} of {len(rows)} stage row(s) without a valid disposition "
                 "(sharp | necessary: <reason> | deferred #<issue>)"
             )
         crit.summary = "; ".join(problems)
         crit.evidence = missing + shape + bad
         return crit
-    if not total:
+    if not rows:
         crit.status = FAIL
         crit.summary = "stage ledger has no data row"
-        crit.evidence = [
-            f"{ledger}:{header_line}: table has a header but no stage row"
-            for header_line, _, _, _, _ in tables
-        ]
+        crit.evidence = [f"{ledger}:{header_line}: table has a header but no stage row"]
         return crit
     crit.summary = (
-        f"all {total} stage row(s) have the required nonempty cells and a valid "
+        f"all {len(rows)} stage row(s) have the required nonempty cells and a valid "
         "disposition; the bounds' honesty comes from independent review"
     )
     return crit

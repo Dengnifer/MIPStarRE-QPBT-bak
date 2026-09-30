@@ -758,29 +758,43 @@ class BoundLedgerTests(GateFixture):
         self.assertIn("all 3 stage row(s)", crit.summary)
         self.assertIn("independent review", " ".join(crit.notes))
 
-    def test_any_heading_level_and_spelling_of_a_valid_row_is_accepted(self) -> None:
+    def test_existing_cell_and_column_spellings_remain_accepted(self) -> None:
+        variants = {
+            "column case": GOOD_LEDGER.replace("| Disposition |", "| DISPOSITION |"),
+            "backticked sharp": GOOD_LEDGER.replace("| sharp |", "| `sharp` |"),
+            "no space": GOOD_LEDGER.replace("| sharp |", "| necessary:optimal |"),
+            "padded issue": GOOD_LEDGER.replace(
+                "| deferred #42 |", "| ` deferred #1234 ` |"
+            ),
+        }
+        for name, text in variants.items():
+            with self.subTest(variant=name):
+                self.assertEqual(self.check(text).status, gate.DELEGATED)
+
+    def test_header_aliases_are_accepted(self) -> None:
+        owner_header = "| Stage lemma | Stated bound | Bound the argument supports | Disposition |"
+        owner = GOOD_LEDGER.replace(GOOD_LEDGER.splitlines()[6], owner_header)
+        self.assertEqual(self.check(owner).status, gate.DELEGATED)
+
+    def test_heading_and_outer_pipes_are_exact(self) -> None:
         variants = {
             "h1": GOOD_LEDGER.replace("## Stage ledger", "# Stage ledger"),
             "h3": GOOD_LEDGER.replace("## Stage ledger", "### Stage ledger"),
             "closed": GOOD_LEDGER.replace("## Stage ledger", "## Stage ledger ##"),
-            "column case": GOOD_LEDGER.replace("| Disposition |", "| DISPOSITION |"),
-            "backticked sharp": GOOD_LEDGER.replace("| sharp |", "| `sharp` |"),
-            "no space": GOOD_LEDGER.replace("| sharp |", "| necessary:optimal |"),
-            "padded issue": GOOD_LEDGER.replace("| deferred #42 |", "| ` deferred #1234 ` |"),
+            "trailing space": GOOD_LEDGER.replace("## Stage ledger", "## Stage ledger "),
+            "no leading pipes": "\n".join(
+                line[1:] if line.startswith("|") else line
+                for line in GOOD_LEDGER.splitlines()
+            ),
+            "no trailing pipes": "\n".join(
+                line[:-1] if line.startswith("|") else line
+                for line in GOOD_LEDGER.splitlines()
+            ),
+            "escaped closing pipe": GOOD_LEDGER.replace("| sharp |", "| sharp \\|"),
         }
         for name, text in variants.items():
             with self.subTest(variant=name):
-                crit = self.check(text)
-                self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
-
-    def test_header_aliases_and_optional_outer_pipes_are_accepted(self) -> None:
-        owner_header = "| Stage lemma | Stated bound | Bound the argument supports | Disposition |"
-        owner = GOOD_LEDGER.replace(GOOD_LEDGER.splitlines()[6], owner_header)
-        self.assertEqual(self.check(owner).status, gate.DELEGATED)
-        for method in ("lstrip", "rstrip", "strip"):
-            text = "\n".join(getattr(line, method)("|") if line.startswith("|") else line
-                             for line in GOOD_LEDGER.splitlines())
-            self.assertEqual(self.check(text).status, gate.DELEGATED)
+                self.assertEqual(self.check(text).status, gate.FAIL)
 
     def test_required_columns_are_unique_and_required_cells_are_nonempty(self) -> None:
         duplicate = GOOD_LEDGER.replace("| Stage |", "| Stage | Stage lemma |", 1)
@@ -795,10 +809,10 @@ class BoundLedgerTests(GateFixture):
             self.assertEqual(crit.status, gate.FAIL)
             self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
 
-    def test_suffix_rows_and_delimiter_must_have_valid_width_and_content(self) -> None:
+    def test_rows_and_delimiter_must_have_valid_width_and_content(self) -> None:
         cases = (
-            ("Example.bad | x | sqrt(x) | invalid |", "disposition 'invalid'"),
-            ("Example.bad | x | invalid |", "wrong width"),
+            ("| Example.bad | x | sqrt(x) | invalid |", "disposition 'invalid'"),
+            ("| Example.bad | x | invalid |", "wrong width"),
         )
         for row, expected in cases:
             with self.subTest(row=row):
@@ -809,6 +823,9 @@ class BoundLedgerTests(GateFixture):
         crit = self.check(GOOD_LEDGER.replace("|---|---|---|---|", "|---|---|---|"))
         self.assertEqual(crit.status, gate.FAIL)
         self.assertIn("delimiter has 3 cell(s); header has 4", crit.evidence[0])
+        crit = self.check(GOOD_LEDGER.replace("|---|---|---|---|", "|---|---|x|---|"))
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("non-delimiter cell", crit.evidence[0])
 
     def test_pipe_free_body_row_is_validated(self) -> None:
         text = (
@@ -820,36 +837,7 @@ class BoundLedgerTests(GateFixture):
         )
         crit = self.check(text)
         self.assertEqual(crit.status, gate.FAIL)
-        self.assertIn("wrong width", " ".join((crit.summary, *crit.evidence)))
-
-    def test_table_body_stops_at_explicit_block_boundaries(self) -> None:
-        for name, boundary in (
-            ("heading", "### Detail"),
-            ("fence", "```text\nexample\n```"),
-            ("indented code", "    example"),
-        ):
-            with self.subTest(boundary=name):
-                text = GOOD_LEDGER.replace("\n\n## Notes", f"\n{boundary}\n\n## Notes")
-                self.assertEqual(self.check(text).status, gate.DELEGATED)
-
-    def test_code_indented_table_candidates_do_not_count(self) -> None:
-        table = GOOD_LEDGER.splitlines()[6:9]
-        for name, indent in (
-            ("four spaces", "    "),
-            ("tab", "\t"),
-            ("space and tab", " \t"),
-        ):
-            with self.subTest(indent=name):
-                text = "## Stage ledger\n\n" + "\n".join(indent + row for row in table)
-                self.assertEqual(self.check(text).status, gate.FAIL)
-
-    def test_tables_indented_up_to_three_spaces_are_accepted(self) -> None:
-        table = GOOD_LEDGER.splitlines()[6:10]
-        for width in range(4):
-            with self.subTest(spaces=width):
-                indent = " " * width
-                text = "## Stage ledger\n\n" + "\n".join(indent + row for row in table)
-                self.assertEqual(self.check(text).status, gate.DELEGATED)
+        self.assertIn("row without canonical", " ".join((crit.summary, *crit.evidence)))
 
     def test_missing_ledger_fails(self) -> None:
         (self.root / self.LEDGER).unlink()
@@ -864,14 +852,14 @@ class BoundLedgerTests(GateFixture):
             "## Stage Ledger",
             "## Stage ledger (draft)",
             "Stage ledger",
-            "```\n## Stage ledger\n```",
         ):
             with self.subTest(heading=heading):
                 crit = self.check(GOOD_LEDGER.replace("## Stage ledger", heading))
                 self.assertEqual(crit.status, gate.FAIL)
-                self.assertEqual(crit.summary, "no `Stage ledger` heading")
+                self.assertEqual(crit.summary, "no exact `## Stage ledger` heading")
                 self.assertEqual(
-                    crit.evidence, [f"{self.LEDGER}:1: no markdown heading `Stage ledger`"]
+                    crit.evidence,
+                    [f"{self.LEDGER}:1: expected the exact line `## Stage ledger`"],
                 )
 
     def test_bad_disposition_fails_naming_the_row(self) -> None:
@@ -915,210 +903,76 @@ class BoundLedgerTests(GateFixture):
             crit.evidence, [f"{self.LEDGER}:7: table has a header but no stage row"]
         )
 
-    def test_thematic_break_after_table_preserves_final_rows(self) -> None:
-        one_row = (
-            "## Stage ledger\n\n"
-            "| Stage | Stated bound | Proved bound | Disposition |\n"
-            "|---|---|---|---|\n"
-            "| Good | x | x | sharp |\n"
-        )
-        cases = (
-            (
-                "invalid final row",
-                one_row + "| Bad | x | x | invalid |\n---\n",
-                gate.FAIL,
-                "disposition 'invalid' for Bad",
-            ),
-            (
-                "one valid row",
-                one_row + "---\n",
-                gate.DELEGATED,
-                "all 1 stage row(s)",
-            ),
-        )
-        for outer_pipes, method in (
-            ("both", None),
-            ("trailing only", "lstrip"),
-            ("leading only", "rstrip"),
-            ("neither", "strip"),
-        ):
-            for name, text, status, expected in cases:
-                with self.subTest(case=name, outer_pipes=outer_pipes):
-                    if method is not None:
-                        text = "\n".join(
-                            getattr(line, method)("|") if line.startswith("|") else line
-                            for line in text.splitlines()
-                        )
-                    crit = self.check(text)
-                    self.assertEqual(crit.status, status, crit.evidence)
-                    self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
+    def test_noncanonical_constructs_are_named(self) -> None:
+        insertions = {
+            "HTML comment": "<!-- note -->",
+            "Setext heading": "Appendix\n--------",
+            "fenced block": "```text\nexample\n```",
+            "thematic break": "---",
+            "indented block": "    example",
+            "row without canonical": "ordinary prose",
+            "noncanonical ATX heading": "### Detail",
+        }
+        for expected, insertion in insertions.items():
+            with self.subTest(construct=expected):
+                text = GOOD_LEDGER.replace(
+                    "\n\n## Notes", f"\n\n{insertion}\n\n## Notes"
+                )
+                crit = self.check(text)
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
 
-    def test_nonparagraph_blocks_do_not_form_setext_section_boundaries(self) -> None:
-        def table(stage: str, disposition: str) -> str:
-            return (
-                "| Stage | Stated bound | Proved bound | Disposition |\n"
-                "|---|---|---|---|\n"
-                f"| {stage} | x | x | {disposition} |"
-            )
-
-        separators = (
-            ("thematic break", "---"),
-            ("bullet list", "- Additional stages follow.\n---"),
-            ("ordered list", "1. Additional stages follow.\n---"),
-            ("blockquote", "> Additional stages follow.\n---"),
-            ("consecutive thematic breaks", "---\n---"),
-            (
-                "bullet lazy continuation",
-                "- Additional stages follow.\nLazy continuation.\n---",
-            ),
-            (
-                "ordered lazy continuation",
-                "1. Additional stages follow.\nLazy continuation.\n---",
-            ),
-            (
-                "blockquote lazy continuation",
-                "> Additional stages follow.\nLazy continuation.\n---",
-            ),
-            ("indented code", "    example\n---"),
-            ("reference definition", "[reference]: /target\n---"),
-            ("HTML block candidate", "<div></div>\n---"),
-            ("nested blockquote heading", "> Appendix\n> --------"),
-        )
-        for outer_pipes, method in (
-            ("both", None),
-            ("trailing only", "lstrip"),
-            ("leading only", "rstrip"),
-            ("neither", "strip"),
-        ):
-            for separator_name, separator in separators:
-                for disposition, status, expected in (
-                    ("invalid", gate.FAIL, "1 of 2 stage row(s)"),
-                    ("sharp", gate.DELEGATED, "all 2 stage row(s)"),
-                ):
-                    with self.subTest(
-                        separator=separator_name,
-                        disposition=disposition,
-                        outer_pipes=outer_pipes,
-                    ):
-                        text = (
-                            "## Stage ledger\n\n"
-                            + table("Good", "sharp")
-                            + "\n\n"
-                            + separator
-                            + "\n\n"
-                            + table("Bad", disposition)
-                            + "\n"
-                        )
-                        if method is not None:
-                            text = "\n".join(
-                                getattr(line, method)("|")
-                                if line.startswith("|") else line
-                                for line in text.splitlines()
-                            )
-                        crit = self.check(text)
-                        self.assertEqual(crit.status, status, crit.evidence)
-                        report = " ".join((crit.summary, *crit.evidence))
-                        self.assertIn(expected, report)
-                        if disposition == "invalid":
-                            self.assertIn("disposition 'invalid' for Bad", report)
-
-    def test_plain_text_setext_heading_still_ends_the_section(self) -> None:
-        table = (
-            "| Stage | Stated bound | Proved bound | Disposition |\n"
-            "|---|---|---|---|\n"
-            "| Good | x | x | sharp |"
-        )
-        invalid = table.replace("Good | x | x | sharp", "Bad | x | x | invalid")
-        for heading in (
-            "Appendix\n--------",
-            "Appendix\n========",
-            "Appendix notes\ncontinued here\n--------",
-        ):
-            for outer_pipes, method in (("both", None), ("neither", "strip")):
-                with self.subTest(heading=heading, outer_pipes=outer_pipes):
-                    text = (
-                        "## Stage ledger\n\n"
-                        + table
-                        + "\n\n"
-                        + heading
-                        + "\n\n"
-                        + invalid
-                        + "\n"
-                    )
-                    if method is not None:
-                        text = "\n".join(
-                            getattr(line, method)("|")
-                            if line.startswith("|") else line
-                            for line in text.splitlines()
-                        )
-                    crit = self.check(text)
-                    self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
-                    self.assertIn("all 1 stage row(s)", crit.summary)
-
-    def test_a_table_under_a_later_heading_does_not_count(self) -> None:
-        table = "\n".join(GOOD_LEDGER.splitlines()[6:9])
-        for heading in ("## Appendix", "Appendix\n--------"):
-            crit = self.check("# Error bounds\n\n## Stage ledger\n\nTo be written.\n\n"
-                              + heading + "\n\n" + table)
-            self.assertEqual(crit.status, gate.FAIL)
-            self.assertEqual(crit.evidence,
-                             [f"{self.LEDGER}:3: no markdown table in this section"])
-
-    def test_a_table_under_a_subheading_of_the_section_is_checked(self) -> None:
+    def test_construct_before_table_is_named(self) -> None:
         text = GOOD_LEDGER.replace(
-            "## Notes",
-            "### Tail stages\n\n"
-            "| Stage | Stated bound | Proved bound | Disposition |\n|---|---|---|---|\n"
-            "| `Fixture.late` | `O(eps^(1/4))` | `O(eps^(1/4))` | tight |\n\n## Notes",
+            "## Stage ledger\n\n| Stage",
+            "## Stage ledger\n\n<!-- pending -->\n| Stage",
         )
         crit = self.check(text)
         self.assertEqual(crit.status, gate.FAIL)
-        line = 1 + next(
-            i for i, row in enumerate(text.splitlines()) if "Fixture.late" in row
-        )
-        self.assertEqual(
-            crit.evidence,
-            [f"{self.LEDGER}:{line}: disposition 'tight' for Fixture.late"],
-        )
-        self.assertTrue(crit.summary.startswith("1 of 4 stage row(s)"))
+        self.assertIn("HTML comment", " ".join((crit.summary, *crit.evidence)))
 
-    def test_a_table_inside_a_fenced_block_does_not_count(self) -> None:
-        crit = self.check(
-            "## Stage ledger\n\n```markdown\n"
-            "| Stage | Disposition |\n|---|---|\n| `Fixture.good` | sharp |\n```\n"
-        )
+        inline = GOOD_LEDGER.replace("| sharp |", "| sharp <!-- note --> |")
+        crit = self.check(inline)
         self.assertEqual(crit.status, gate.FAIL)
-        self.assertEqual(crit.summary, "no table under the `Stage ledger` heading")
-        self.assertEqual(
-            crit.evidence, [f"{self.LEDGER}:1: no markdown table in this section"]
+        self.assertIn("HTML comment", " ".join((crit.summary, *crit.evidence)))
+
+    def test_second_table_is_rejected(self) -> None:
+        table = (
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Later | x | x | sharp |"
         )
+        text = GOOD_LEDGER.replace("\n\n## Notes", f"\n\n{table}\n\n## Notes")
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("second pipe table", " ".join((crit.summary, *crit.evidence)))
 
-    def test_html_comments_do_not_expose_ledger_markup(self) -> None:
-        table = "\n".join(GOOD_LEDGER.splitlines()[6:9])
-        for text in (
-            "## Stage ledger\n\n<!--\n" + table + "\n-->\n",
-            "<!--\n" + GOOD_LEDGER + "-->\n",
-            "<!--\n" + GOOD_LEDGER,
-        ):
-            self.assertEqual(self.check(text).status, gate.FAIL)
-        visible = GOOD_LEDGER.replace("## Stage ledger", "## Stage ledger <!-- note -->")
-        self.assertEqual(self.check(visible).status, gate.DELEGATED)
+        contiguous = GOOD_LEDGER.replace("\n\n## Notes", f"\n{table}\n\n## Notes")
+        crit = self.check(contiguous)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("second pipe table", " ".join((crit.summary, *crit.evidence)))
 
-    def test_nested_short_fence_exposes_neither_heading_nor_table(self) -> None:
-        table = "\n".join(GOOD_LEDGER.splitlines()[6:11]) + "\n"
-        documents = (
-            "````markdown\n```markdown\n## Stage ledger\n\n" + table + "```\n````\n",
-            "## Stage ledger\n\n````markdown\n```markdown\n" + table + "```\n````\n",
+    def test_next_level_two_atx_heading_is_the_only_section_boundary(self) -> None:
+        invalid = (
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Later | x | x | invalid |"
         )
-        for text in documents:
-            self.assertEqual(self.check(text).status, gate.FAIL)
+        text = GOOD_LEDGER + "\n" + invalid + "\n"
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+        self.assertIn("all 3 stage row(s)", crit.summary)
 
-    def test_fence_closing_character_length_and_tail_are_checked(self) -> None:
-        self.assertEqual(gate._fence_state("```", ("`", 4)), ("`", 4))
-        self.assertEqual(gate._fence_state("~~~", ("`", 3)), ("`", 3))
-        self.assertEqual(gate._fence_state("```text", ("`", 3)), ("`", 3))
-        self.assertIsNone(gate._fence_state("````  ", ("`", 3)))
-        self.assertEqual(self.check("```markdown\n" + GOOD_LEDGER).status, gate.FAIL)
+        for heading in ("# Notes", "### Notes", "Notes\n-----"):
+            with self.subTest(nonboundary=heading):
+                changed = GOOD_LEDGER.replace("## Notes", heading)
+                crit = self.check(changed)
+                self.assertEqual(crit.status, gate.FAIL)
+
+    def test_duplicate_exact_heading_is_rejected(self) -> None:
+        crit = self.check(GOOD_LEDGER + "\n## Stage ledger\n")
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("2 exact", crit.summary)
 
     def test_an_escaped_pipe_stays_in_its_cell(self) -> None:
         text = GOOD_LEDGER.replace(

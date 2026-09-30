@@ -1819,3 +1819,34 @@ and main (ledger and survey duty); the prover role line in `dispatch.sh`; minima
 review findings, and no track is declared finished without its ledger. Losses already in the tree are the ledger's
 backlog, not findings against unrelated PRs. No Lean statement or proof changes. C8 fails the QPBT completion gate
 until `docs/bound-ledger-qpbt.md` exists with its *Stage ledger*; that is main's to-do list, not an owner blocker.
+
+## 2026-09-30 - Make the C8 ledger format canonical and fail closed (#732)
+
+**Trigger:** `results/telemetry/events.md`, "C8 fourth-review disposition: gate
+remains blocked" (2026-09-30T00:04:57Z), exposed the general ambiguity caused
+by reconstructing Markdown paragraph and Setext context. The owner's relayed
+decision in issue #27 comment 5901583288
+(`meta-decision-737-c8-fail-closed-20260930`) replaces that repair target with a
+strict canonical format for PR #737.
+
+**Change:** C8 now accepts one exact `## Stage ledger` heading, optional blank
+lines, and one contiguous outer-piped table with its delimiter and data rows.
+Only the next unindented level-two ATX heading with a nonempty title ends the
+section; other nonblank constructs fail with a named diagnostic. Optional-pipe
+tables, HTML comments, Setext headings, fences, thematic breaks, indented
+blocks, subheadings, prose rows and second tables are intentionally rejected.
+These conservative rendering rejections are accepted: the static checker is a
+canonical-format convenience, while mathematical coverage and honesty remain
+delegated to the ledger survey and independent review.
+
+**Review authority:** the owner-relayed meta decision admits exactly one fifth
+independent review after the new head is committed and CI-green. If that fifth
+review still reports a parsing case, the same decision authorizes an override
+merge with the case recorded and C8's delegated ledger inspection covering the
+remaining limitation. This entry records authority only; it does not claim that
+the review approved or that an override merge occurred. No sixth review or
+unrelated override is authorized. Main records the actual outcome.
+
+**Expected effect:** ledger syntax is linear to validate and unambiguous to
+write, without maintaining a partial Markdown renderer or weakening C8's
+delegated mathematical inspection.

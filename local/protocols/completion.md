@@ -169,6 +169,24 @@ review, so a passing static half prints `DELEGATED`. Trigger,
 owner, 2026-09-29: an error-bound survey found a finished track faithful and
 sorry-free, yet its final exponent 16 times smaller than its own proofs support.
 
+The static check uses a strict canonical raw-line format, not Markdown
+rendering. The section begins with the exact unindented line
+`## Stage ledger`, followed by optional blank lines and exactly one table. Every
+table line has opening and closing outer pipes; the header is followed
+immediately by an outer-piped delimiter row and at least one outer-piped data
+row. The table ends at its first non-table line. After that, only blank lines
+are permitted before the section boundary. The sole boundary is the next
+unindented level-two ATX heading with a nonempty title (`## <title>`), or end of
+file. A level-one or level-three heading and a Setext heading are not boundaries.
+
+Any HTML comment, Setext heading, fence, thematic break, indented block,
+noncanonical ATX heading, row without both outer pipes, or second table inside
+the section fails with a diagnostic naming that construct. Duplicate exact
+`## Stage ledger` headings also fail. This deliberately rejects optional-pipe
+tables and other renderable Markdown variants: ledger writers must use the one
+canonical form, while independent review remains responsible for mathematical
+coverage and honesty.
+
 ## 3. Where the comparator challenge lives
 
 The challenge repository lives **outside** this library repository
