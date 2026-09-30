@@ -376,8 +376,8 @@ theorem point_trace_commutator_comm_le_explicit :
   simp only [unitProd_postprocess_effect]
 
 /-- If both binary marginals are close to a projective joint measurement, then
-their average squared projection-commutator norm is at most `16 * δ`, preserving
-the interface used by `eq:qld-obs-comm`. -/
+their average squared projection-commutator norm is at most `16 * δ`, as required
+in `eq:qld-obs-comm`. -/
 theorem exists_pointTrace_commutator_comm_le :
     ∃ C₀ : ℝ, 1 ≤ C₀ ∧
       ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]

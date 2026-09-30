@@ -367,8 +367,8 @@ theorem native_global_pair_error_nonneg
   exact le_min zero_le_one
     (native_global_pair_raw_error_nonneg P hdelta hdeltaQ)
 
-/-- At the direct-game auxiliary sample count, the named native error is
-definitionally the capped complete-measurement linear-triangle error. -/
+/-- At the direct-game auxiliary sample count, the native error equals the capped
+complete-measurement linear-triangle error. -/
 theorem main_formal_linear_triangle_error_eq_direct_native_error
     (D : DirectLdParams) (ε : ℝ) :
     Test.mainFormalLinearTriangleError D.toLDTParameters

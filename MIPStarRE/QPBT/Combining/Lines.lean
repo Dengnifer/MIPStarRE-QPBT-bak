@@ -112,7 +112,7 @@ theorem exists_combinedLinesWitness_ofPointsWitness (deltaQ : ℝ -> ℝ)
            consistent := hconsistent P ε S points }⟩
 
 /-- The combined-line witness with the closed baseline error from issue #729.
-This Lean-only quantitative interface exposes the constants in the current
+This Lean-only quantitative specialization states the constants in the current
 proof of paper `lem:qld-xz-lines`,
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:882-963`.
 The source-facing existential theorem above remains unchanged. -/
