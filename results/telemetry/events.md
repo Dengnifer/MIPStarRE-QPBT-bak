@@ -10043,3 +10043,7 @@ Owner, 2026-09-30 (relayed by the Decoy project's meta session, confirmed in the
 ### 2026-09-30T02:00:20.410107+00:00 — Kit bootstrap REST access and Git transport
 
 The owner-provided formalization-kit repository and bootstrapfile returnedHTTP404 throughgh_common. The explicitly authorized repository remained readable through this project's existingSSHGittransport; main verifiedv0.3 commit3860c1bc andread the syncmanual in an isolatedsourceclone. No credential/key/globalconfigurationchange was made. Treat the earlier404 as REST visibility for this access context, not proof that the release is missing; keep all kit publication withmeta and retainprojectadoption's queuedorder.
+
+### 2026-09-30T02:47:08.477475+00:00 — Scalar file limit and stale aggregate validation
+
+Checked-push stopped the locally proved quadratic packet before transport: its scalar file had1067lines. Per-line formatting checks did not establish the separate1000-line file limit. A bounded splitter preserved all42declarations behind a facade andtwochildren; the actualfile-sizeguard and29QPBTaxiomaudits passed. No override orfailedpublication occurred. Separately, nativecheckdecls loadedan oldcachedaggregate; sourceinspection showed the neededquantitativeimports alreadyexist. Integration must refresh the build, notaddredundantimports fromthatdiagnosis.
