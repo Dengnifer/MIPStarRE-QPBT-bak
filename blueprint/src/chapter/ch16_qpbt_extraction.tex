@@ -1959,7 +1959,8 @@ The statements of this section are not named results of the source article.  The
 
 The entries below are Lean-only quantitative specializations.  Conditional
 entries display the supplied global polynomial-pair witness explicitly.  The
-tracked source-facing discharge of that input is not claimed in this section.
+construction of that witness from the source theorem's hypotheses is not
+claimed in this section.
 For a construction coefficient $C$, write
 \[
  \Delta_S(C;\eps,\delta_G,m,d,q)
@@ -2510,6 +2511,55 @@ $472\cdot10^{11}+24+192\cdot10^6+344<10^{14}$ absorb the state and operator
 components into the common structured error.
 \end{proof}
 
+\begin{theorem}[Degree-two scalar estimates]
+\label{thm:pauli-final-degree-two-scalar-support}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_pos}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two}
+\lean{MIPStarRE.QPBT.quantitative_ratio_le_degree_two_base}
+\lean{MIPStarRE.QPBT.quantitative_error_le_degree_two_base}
+\lean{MIPStarRE.QPBT.quantitative_ratio_lt_four_billionth_of_degree_two_raw_lt_four}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_lt_four_thousandths}
+\lean{MIPStarRE.QPBT.quantitative_extraction_scale_lt_one_of_degree_two_raw_lt_four}
+\lean{MIPStarRE.QPBT.quantitative_state_component_lt_degree_two_raw_error}
+\leanok
+\uses{def:pauli-final-degree-two-error, thm:pauli-final-envelope-support}
+Let $P=(q,m,d)$ be admissible, put $n=md$, and let $e\geq0$.  Then
+$E_b(P,e)>0$.  If $x\geq0$ and
+\[
+ x\leq10^{11}n^4E_{\mathrm{pair}}(P,e),
+\]
+then
+\[
+ \sqrt{x}\leq10^6n^2E_b(P,e),
+ \qquad
+ 4\sqrt{x}<I_{\rm raw}(P,e).
+\]
+If in addition $I_{\rm raw}(P,e)<4$, then
+\[
+ \sqrt{x}<\frac4{1000},\qquad x<1.
+\]
+For $0\leq e\leq1$ one also has
+\[
+ \frac nq\leq n^2E_b(P,e),
+ \qquad
+ e\leq n^2E_b(P,e).
+\]
+On this probability domain, $I_{\rm raw}(P,e)<4$ further implies
+\[
+ \frac nq<\frac4{10^9}.
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-envelope-support}
+The positive field term makes $E_b(P,e)$ strictly positive.  Taking the
+square root of the extraction-scale bound produces the factor $n^2$ and halves
+the envelope exponent.  The field ratio and the clipped error are absorbed by
+the same positive base.  On the nonsaturated branch, the inequality
+$I_{\rm raw}(P,e)<4$ gives the three strict numerical bounds, while positivity
+of the base makes the state-component comparison strict.
+\end{proof}
+
 \begin{theorem}[Full-domain and canonical scalar bounds]
 \label{thm:pauli-final-full-domain-support}
 \lean{MIPStarRE.QPBT.four_le_pauli_soundness_quantitative_raw_error_of_md_eq_one}
@@ -2626,11 +2676,11 @@ reindexing identities.
 
 \begin{theorem}[Degree-two quantitative Pauli soundness]
 \label{thm:pauli-final-degree-two-soundness}
-\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two}
 \lean{MIPStarRE.QPBT.quantitative_operator_component_lt_degree_two_raw_error}
 \lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two}
 \leanok
 \uses{def:pauli-final-degree-two-error,
+thm:pauli-final-degree-two-scalar-support,
 thm:qld-native-small-regime-global-pair,
 thm:pauli-supplied-global-component-transfer-explicit,
 thm:pauli-universal-distance-caps-support}
@@ -2653,7 +2703,9 @@ universal bounds $2$, $4$, and $4$ give the capped conclusion.
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:pauli-supplied-global-component-transfer-explicit,
+\uses{thm:pauli-final-degree-two-scalar-support,
+thm:qld-native-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
 thm:pauli-universal-distance-caps-support}
 Take square roots without enlarging $n^2$ to $n^4$.  The strict small-branch
 bound forces the field ratio below one, so the global-pair constructor applies.

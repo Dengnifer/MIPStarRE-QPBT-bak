@@ -27,14 +27,14 @@ noncomputable section
 
 /-- A supplied global polynomial-pair witness determines one extraction
 witness whose underlying auxiliary vector retains the stronger fixed-component
-state and swapped-Pauli estimates. The `18`-scale witness packages the data for
-the existing extraction API; the two displayed inequalities concern the same
-auxiliary vector and do not use that coarser scale.
+state and swapped-Pauli estimates. The extraction witness has common error
+`18 * (x + sqrt x + r)`; the two displayed estimates retain the sharper
+components for the same auxiliary vector.
 
 **Unfaithful:** The global measurement is supplied as `GlobalPairWitness`,
 rather than constructed from paper `lem:qld-4-7`. This is documented in
 `docs/paper-gaps/qpbt_extraction-transfer.tex`, issue #123. Elimination: compose
-this theorem with the source-facing global-witness construction. -/
+this theorem with the construction of the global witness from the test hypotheses. -/
 theorem exists_extraction_witness_with_component_bounds
     (P : AdmissibleParams) (epsilon deltaG : ℝ)
     (hepsilon : 0 ≤ epsilon) (hepsilon_one : epsilon ≤ 1) (hdeltaG : 0 ≤ deltaG)
@@ -153,10 +153,10 @@ and `pauli_naimark_witness_state_distance_eq`, and supplies that actual norm to
 the raw-effect transfer theorem.
 
 **Unfaithful:** The global measurement is supplied as `GlobalPairWitness`,
-rather than constructed from paper `lem:qld-4-7`. This conditional interface is
+rather than constructed from paper `lem:qld-4-7`. This conditional theorem is
 documented in `docs/paper-gaps/qpbt_extraction-transfer.tex`, issue #123.
 Elimination: construct the global witness from the test hypotheses before using
-this theorem in the source-facing proof of paper `thm:pauli`. -/
+this result to prove paper `thm:pauli` from its stated assumptions. -/
 theorem exists_pauli_soundness_witness_with_component_bounds
     (P : AdmissibleParams) (epsilon : ℝ)
     (hepsilon : 0 ≤ epsilon) (hepsilon_one : epsilon ≤ 1)

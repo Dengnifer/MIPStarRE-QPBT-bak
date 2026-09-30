@@ -515,7 +515,8 @@ theorem direct_ld_transport_constants_explicit (C₀ : ℝ) (hC₀ : 1 ≤ C₀)
         apply mul_le_mul_of_nonneg_right _ hT
         exact mul_le_mul_of_nonneg_left (le_trans hmono hpow) (by linarith)
 
-/-- Existential packaging of `direct_ld_transport_constants_explicit`. -/
+/-- The coefficient `2500000000 * C₀` and exponent `1 / 80000` satisfy the
+direct low-degree transport bound. -/
 theorem exists_directLdTransportConstants (C₀ : ℝ) (hC₀ : 1 ≤ C₀) :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (D : DirectLdParams) (ε : ℝ), 0 < ε → ε ≤ 1 →
