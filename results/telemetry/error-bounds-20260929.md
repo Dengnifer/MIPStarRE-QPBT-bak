@@ -1128,3 +1128,11 @@ Decision #27 comment5921008674 resolves the review-cap blocker. One independent 
 ## 2026-09-30T22:59:08.522906+00:00 — Scoped fifth review approved and published
 
 Reviewer reviewer-pr736-20261001-07, thread01a0f485-fa8d-7373-b9b1-a4f92a47ad13,265s exit0, APPROVED/no findings. Independent code/comment and TeX/uses equality,5976othertrackedpaths unchanged,814on-disk files matched,addedlabels correct/unique/acyclic,and allR4F1/F2/F3resolved. Review5372895844 is bound to6ea9f96b; local-review/summary=success andall9CIcontextsremain green. This is the owner-admitted narrow fifth review, not a newfullmathround. Authentic report published intact; primary runtime preparation used review.sh dry-run and one external dispatch because no scope flag exists. Cumulativeindependentreview6252s,source12831s,scouts15836s,report8660s. Normalmerge now ready; nooverride.
+
+## 2026-09-30T23:01:03.147988+00:00 — Second selected improvement736 merged normally
+
+Normal pr_merge.py736 passed all7gates (all9CIcontexts, exactheadapproval5372895844, clean/freshbase, noopenfindings/children). Merged6ea9f96b as0b847308c30769be983bbd05c297e1014db76590;729closed, actualtwo-parentcommitcontains6ea, LDTtreeddd92480c55bbabba5a96af96064fc792a5eb68cunchanged. PriorR4mathapproved0e; scopedR5approvedunchangedcode/editorialpatch underownerdecision5921008674. #27 two-linenote5921191213. Sourceworktreeremovedbygate; nooverride. Report730nowunblocked, existingreportdraft0efpreserved. Kit741/F735staydeferred perownerstoppingrule.
+
+## 2026-09-30T23:02:56.723670+00:00 — Admit final report and ledger reconciliation730
+
+Sole Sol Ultra/general writer at refreshedreportd83af17c417c090a843d8ddb5f464519332de159, preserving0ef and actual736merge0b847308. Scopeonlydocs/error-bounds.md anddocs/bound-ledger-qpbt.md;47candidateinventory,57mergedPRboundrows, native/separated/fractionalmathematics,H/Fandpublicbenchmarkcomparisons,actualgate/mergeevidence,truthfulbacklog. Work1800s/hard2400s,priorreport8660sretained;source12831s/review6252s/scouts15836s. NoLean/blueprint/tooling/kit/runtimechanges,publication,commitsorchildren. NormalCI/reviewplusindependentAstramathematicalauditfollowthefinishedreport. Kit741separategoal,F735deferred.
