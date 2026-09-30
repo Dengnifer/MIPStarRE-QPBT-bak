@@ -1850,3 +1850,23 @@ unrelated override is authorized. Main records the actual outcome.
 **Expected effect:** ledger syntax is linear to validate and unambiguous to
 write, without maintaining a partial Markdown renderer or weakening C8's
 delegated mathematical inspection.
+
+**Outcome:** PR #737 merged normally as `d1d7af164a52a59f200cdc37aadbd25a9417af4e`
+after exact-head CI and approving fifth review 5360274290, with zero findings.
+The conditional override authorized by comment5901583288 was not used.
+
+## 2026-09-30 — Raise the workflow-layer commit budget to 5000 lines
+
+**Trigger:** owner decision, 2026-09-30, relayed by the Decoy project's meta session ("tell qpbt-autoF to raise the
+ceiling to 5000 as well") and confirmed by the owner in the QPBT meta session; the Decoy project's identical guard
+moves to 5000 at the same time. Recorded in `results/telemetry/events.md`.
+
+**Change:** `.githooks/pre-commit` refuses a staged workflow-layer change above 5000 lines (was 1000; 400 before
+2026-09-05) unless `MIPSTARRE_INFRA_OVERRIDE=1` is set after a recorded main decision. The hook's regression tests
+build a 5001-line change, and the budget rule in `local/personas/main.md` says 5000. Everything else about the guard
+is unchanged: it still runs before the `MIPSTARRE_SKIP_HOOKS` exit, still measures merges the same way, and the
+override is still never self-granted.
+
+**Expected effect:** the guard still stops runaway scaffolding, at five times the old ceiling. The per-episode
+discipline in `local/personas/main.md` (stop at the limit, commit what stands, record, rescope) is unchanged, and
+review still checks the PR's cumulative workflow diff.

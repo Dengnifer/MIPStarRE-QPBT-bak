@@ -26,7 +26,8 @@ if [ -f "$MERGE_HEAD_PATH" ]; then
 fi
 
 # Scope-control guard (EVOLUTION.md 2026-09-01, the issue-0007 overbuild):
-# workflow scaffolding is budgeted at <=1000 changed lines per commit (400 until the owner raised it on 2026-09-05).  This is
+# workflow scaffolding is budgeted at <=5000 changed lines per commit (400 until the owner raised it to 1000 on
+# 2026-09-05, then to 5000 on 2026-09-30).  This is
 # mechanical enforcement — repeated verbal correction of scaffolding bloat did
 # not stick, so the budget lives in the hook.  The override env var is granted
 # only after a recorded main decision, never self-granted by a worker session. Runs
@@ -60,8 +61,8 @@ INFRA_CHANGED="$(git diff --cached --numstat $BUDGET_BASE -- local/ .githooks/ \
   scripts/tests/test_lake_root.py scripts/tests/test_pre_push_hook.py \
   scripts/tests/test_ready_packets.py scripts/tests/test_merge_loss_guard.py \
   | awk '{added=$1; deleted=$2; if (added != "-") total+=added+deleted} END {print total+0}')"
-if [ "${INFRA_CHANGED:-0}" -gt 1000 ] && [ "${MIPSTARRE_INFRA_OVERRIDE:-}" != "1" ]; then
-  echo "MIPStarRE pre-commit: staged workflow-layer change is ${INFRA_CHANGED} lines (budget: 1000)."
+if [ "${INFRA_CHANGED:-0}" -gt 5000 ] && [ "${MIPSTARRE_INFRA_OVERRIDE:-}" != "1" ]; then
+  echo "MIPStarRE pre-commit: staged workflow-layer change is ${INFRA_CHANGED} lines (budget: 5000)."
   echo "Scope control (local/personas/main.md): the budget is PER EPISODE, not per"
   echo "commit — serial oversized commits are the same violation and show in the"
   echo "telemetry. Shrink the change, or stop for a recorded main decision that"
