@@ -187,7 +187,8 @@ theorem coarse_commutator_bound_explicit :
   refine le_trans (le_of_eq ?_) (le_trans hconc (le_of_eq (by ring)))
   exact opFamilyDistSq_congr D _ _ _ _ ψ (fun q a => rfl) (fun q a => rfl)
 
-/-- Existential packaging of the fixed coarse commutator coefficient `32`. -/
+/-- The two marginal consistency bounds control the squared commutator distance
+with the universal coefficient `32`. -/
 theorem exists_coarse_commutator_bound :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}

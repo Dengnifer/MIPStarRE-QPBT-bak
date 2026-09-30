@@ -360,7 +360,8 @@ theorem exp_line_point_cons_explicit' :
       (DistanceCalculus.opFamilyDistSq_nonneg _ _ _ _) hb
       (ProjectiveSetting.evalClassDist_abBb_le_four S W)
 
-/-- Existential packaging of the fixed completed line-point coefficient `348`. -/
+/-- Opposite-placement expanded line and completed point measurements have squared
+distance at most `348 * deltaLine ε`. -/
 theorem expLine_point_cons' :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)

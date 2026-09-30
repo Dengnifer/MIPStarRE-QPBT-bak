@@ -654,7 +654,7 @@ theorem win_low_degree_explicit :
   norm_num at ha hd
   linarith
 
-/-- Existential packaging of the fixed low-degree winning coefficient `86`. -/
+/-- The low-degree line--point consistency defect is at most `86 * ε`. -/
 theorem win_low_degree :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
@@ -800,7 +800,7 @@ theorem win_pauli_basis_cons_explicit :
     _ ≤ (Fintype.card PauliEdge : ℝ) * ε := fixedEdgeRejection_le_error S _
     _ = 86 * ε := by rw [pauli_edge_card]; norm_num
 
-/-- Existential packaging of `win_pauli_basis_cons_explicit`. -/
+/-- The Pauli point--evaluation consistency defect is at most `86 * ε`. -/
 theorem win_pauli_basis_cons :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),

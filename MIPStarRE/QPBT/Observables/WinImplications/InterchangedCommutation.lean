@@ -227,7 +227,8 @@ theorem point_obs_commutator_comm_le_bob_explicit :
   rw [hKsplit]
   nlinarith [Real.sqrt_nonneg K, hε, hsq]
 
-/-- Existential packaging of the fixed Bob commuting coefficient. -/
+/-- A universal coefficient bounds Bob's average squared point-observable
+commutator norm in the interchanged state by a multiple of `ε + sqrt ε`. -/
 theorem exists_pointObs_commutator_comm_le_bob :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
@@ -348,7 +349,8 @@ theorem point_obs_anticommutator_anticomm_le_bob_explicit :
     (hdist .X) (hdist .Z) hmsavg
   exact le_trans hmain (le_of_eq (by ring))
 
-/-- Existential packaging of the fixed Bob anticommuting coefficient. -/
+/-- A universal coefficient bounds Bob's average squared point-observable
+anticommutator norm in the interchanged state by a multiple of `ε`. -/
 theorem exists_pointObs_anticommutator_anticomm_le_bob :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
@@ -412,7 +414,8 @@ theorem point_obs_twisted_commutation_interchanged_explicit :
       S.pointObs .bob .X ω.2.2.1 ω.1) S.toStrategy.ψ
   exact le_of_eq_of_le htransport.symm hswapped
 
-/-- Existential packaging of the fixed Bob twisted-commutation coefficient. -/
+/-- A universal coefficient bounds Bob's phase-signed point-observable
+commutation distance by a multiple of `sqrt ε`. -/
 theorem pointObs_twisted_commutation_interchanged_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),

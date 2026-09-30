@@ -280,7 +280,8 @@ theorem global_marginal_encoding_consistency_explicit :
       exact (WinImplications.heteroKron_left_right_comm _ _).symm)] at h
     exact h
 
-/-- Existential packaging of `global_marginal_encoding_consistency_explicit`. -/
+/-- A universal constant bounds both consistency defects between the global
+polynomial marginals and the encoding Pauli measurements by `deltaG + C * sqrt epsilon`. -/
 theorem global_marginal_encoding_consistency :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → ∀ (S : ProjectiveSetting P epsilon)

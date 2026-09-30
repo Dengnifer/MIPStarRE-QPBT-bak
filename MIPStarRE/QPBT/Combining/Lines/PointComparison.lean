@@ -235,8 +235,8 @@ theorem exp_line_point_same_placement_distance_le_explicit :
   have hline : 0 ≤ deltaLine ε := Real.sqrt_nonneg ε
   nlinarith
 
-/-- Existential packaging of the fixed same-placement line-point coefficient
-`1040`. -/
+/-- The same-placement expanded line and point measurements have squared distance
+at most `1040 * (ε + deltaLine ε)`. -/
 theorem exists_expLine_point_same_placement_distance_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -312,7 +312,8 @@ theorem combined_points_line_marginal_distance_le_explicit
       (points.marginal_Z_option_linePoint_distance_le p1 p2 hopp) hZ using 1
     ring
 
-/-- Existential packaging of the fixed line-marginal coefficient `2080`. -/
+/-- Both combined-point line marginals have squared distance at most
+`8 * δQ + 2080 * (ε + deltaLine ε)`. -/
 theorem exists_combinedPoints_line_marginal_distance_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε δQ : ℝ) (S : ProjectiveSetting P ε)
@@ -415,8 +416,8 @@ theorem combined_points_line_marginal_defect_le_explicit
     (hcompare Prod.snd Prod.snd .Z).trans
       (combined_points_line_marginal_distance_le_explicit P ε δQ S points p1 p2 hopp).2⟩
 
-/-- Existential packaging of the fixed line-marginal defect coefficient
-`2080`. -/
+/-- Both completed combined-point line marginals have consistency defect at most
+`8 * δQ + 2080 * (ε + deltaLine ε)`. -/
 theorem exists_combinedPoints_line_marginal_defect_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε δQ : ℝ) (S : ProjectiveSetting P ε)

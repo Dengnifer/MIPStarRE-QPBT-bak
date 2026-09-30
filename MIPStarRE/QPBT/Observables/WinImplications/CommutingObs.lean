@@ -375,8 +375,9 @@ theorem point_trace_commutator_comm_le_explicit :
   rw [hAdef, hDdef]
   simp only [unitProd_postprocess_effect]
 
-/-- Existential packaging of the explicit projection-commutator coefficient
-`16`, preserving the interface used by `eq:qld-obs-comm`. -/
+/-- If both binary marginals are close to a projective joint measurement, then
+their average squared projection-commutator norm is at most `16 * δ`, preserving
+the interface used by `eq:qld-obs-comm`. -/
 theorem exists_pointTrace_commutator_comm_le :
     ∃ C₀ : ℝ, 1 ≤ C₀ ∧
       ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]
@@ -512,8 +513,9 @@ theorem point_obs_commutator_comm_le_explicit :
     nlinarith
   exact le_trans (mul_le_mul_of_nonneg_left hproj (by norm_num)) hfinal
 
-/-- Existential packaging of `point_obs_commutator_comm_le_explicit`; the
-current commutation analysis uses the fixed coefficient `1024`. -/
+/-- A universal coefficient bounds the average squared point-observable
+commutator norm in terms of the supplied consistency and approximation errors;
+the current commutation analysis uses coefficient `1024`. -/
 theorem exists_pointObs_commutator_comm_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ {P : AdmissibleParams} {ιL ιR : Type} [Fintype ιL] [DecidableEq ιL]

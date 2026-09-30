@@ -444,8 +444,8 @@ theorem exp_point_comm_explicit :
     simp only [pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant,
       Nat.cast_ofNat] <;> ring
 
-/-- Existential packaging of the fixed field-valued expanded-point
-commutation coefficient. -/
+/-- A universal coefficient bounds the squared distance between the two orders of
+the expanded X- and Z-point effects by a constant multiple of `sqrt ε`. -/
 theorem expPoint_comm :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)

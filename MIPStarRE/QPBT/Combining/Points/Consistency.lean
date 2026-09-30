@@ -410,7 +410,8 @@ theorem avg_sandwich_defect_bound_le_explicit :
   have hs : (0 : ℝ) ≤ Real.sqrt ε := Real.sqrt_nonneg ε
   nlinarith [hZ, hX, hK₁, hK₂, hs, hε, hC₁, hC₂]
 
-/-- Existential packaging of the fixed average sandwich-defect coefficient. -/
+/-- A universal coefficient bounds the average sandwich defect by a constant
+multiple of `ε + sqrt ε`. -/
 theorem avg_sandwichDefectBound_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)

@@ -2767,7 +2767,9 @@ thm:pauli-final-component-absorption,
 thm:pauli-final-full-domain-support,
 thm:qld-small-regime-global-pair,
 thm:pauli-supplied-global-component-transfer-explicit,
-thm:pauli-universal-distance-caps-support}
+thm:pauli-universal-distance-caps-support,
+thm:pauli-final-degree-two-soundness,
+thm:pauli-final-degree-two-comparison}
 Let $P=(q,m,d)$ be admissible, let $\eps\geq0$, and let an arbitrary strategy
 for the Pauli basis test have value at least $1-\eps$.  There are local
 isometries and one normalized auxiliary state such that
@@ -2789,10 +2791,13 @@ are at most $\Delta_{\mathrm{new}}(P,\eps)$.  Each operator distance is
 with the appropriate player placement.  The conjugated effects retain their
 isometry range projections; no range condition is imposed on the ideal state.
 
-The same witness satisfies all three conclusions with the larger canonical
-bound $\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  In particular
-$1\leq100$ and $0<b<1$, and neither form assumes a supplied global witness or
-a small-regime premise.
+This is the historical degree-four structured conclusion.  Separately, the
+degree-two soundness theorem supplies a witness whose three errors are bounded
+by $I(P,\eps)$; comparison with the canonical error shows that this witness
+satisfies all three conclusions with
+$\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  In particular $1\leq100$ and
+$0<b<1$, and neither form assumes a supplied global witness or a small-regime
+premise.
 \end{theorem}
 \begin{proof}
 \leanok
@@ -2801,7 +2806,9 @@ thm:pauli-universal-distance-caps-support,
 thm:qld-small-regime-global-pair,
 thm:pauli-supplied-global-component-transfer-explicit,
 thm:pauli-final-component-absorption,
-thm:pauli-final-full-domain-support}
+thm:pauli-final-full-domain-support,
+thm:pauli-final-degree-two-soundness,
+thm:pauli-final-degree-two-comparison}
 Put $e=\min\{\eps,1\}$.  If $B(P,e)\geq4$, retain the actual witness
 constructed by the fixed explicit-baseline theorem and apply the universal
 state and prescribed-family caps.  Otherwise the two saturation lemmas imply
@@ -2810,8 +2817,11 @@ global polynomial-pair witness internally, and the componentwise transfer
 gives one soundness witness carrying the squared state estimate and both raw
 operator estimates for the same auxiliary state.  The preceding scalar
 absorption bounds its unsquared state norm and both summed squared operator
-distances by $B(P,e)$.  Finally apply the canonical scalar bound without
-changing the witness.
+distances by $B(P,e)$, giving the historical degree-four structured theorem.
+For the canonical theorem, instead take the witness of
+Theorem~\ref{thm:pauli-final-degree-two-soundness} and apply the canonical
+comparison in Theorem~\ref{thm:pauli-final-degree-two-comparison} to each of
+its three bounds.
 \end{proof}
 
 \begin{corollary}[Exact quantitative qubit form]

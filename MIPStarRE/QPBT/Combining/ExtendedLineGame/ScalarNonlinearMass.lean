@@ -263,7 +263,8 @@ theorem rounded_polynomial_scalar_mass_quantitative :
         (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
 
 
-/-- Existential packaging of `rounded_polynomial_scalar_mass_explicit`. -/
+/-- Universal low-degree constants give projective rounded polynomial measurements
+with both ordered-error bounds and both scalar-nonlinearity mass bounds. -/
 theorem exists_rounded_polynomial_scalar_mass :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)

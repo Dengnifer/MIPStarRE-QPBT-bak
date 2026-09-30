@@ -307,7 +307,8 @@ theorem rounded_polynomial_wrong_variable_mass_quantitative :
         (mul_le_mul_of_nonneg_left (horder reverse).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
 
 
-/-- Existential packaging of `rounded_polynomial_wrong_variable_mass_explicit`. -/
+/-- Universal low-degree constants give projective rounded polynomial measurements
+with the ordered, scalar-nonlinearity, and wrong-variable mass bounds for both players. -/
 theorem exists_rounded_polynomial_wrong_variable_mass :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
@@ -512,7 +513,8 @@ theorem rounded_polynomial_separated_mass_quantitative :
     linarith
 
 
-/-- Existential packaging of `rounded_polynomial_separated_mass_explicit`. -/
+/-- Universal low-degree constants give projective rounded polynomial measurements
+with both ordered-error bounds and both non-separated-mass bounds. -/
 theorem exists_rounded_polynomial_separated_mass :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)

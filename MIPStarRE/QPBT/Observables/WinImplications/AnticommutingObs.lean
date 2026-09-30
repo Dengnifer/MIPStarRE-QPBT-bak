@@ -797,7 +797,8 @@ theorem point_obs_anticommutator_anticomm_le_explicit :
     (hdist .X) (hdist .Z) hmsavg
   exact le_trans hmain (le_of_eq (by ring))
 
-/-- Existential packaging of the fixed Alice anticommuting coefficient. -/
+/-- A universal coefficient bounds the average squared anticommutator norm of
+Alice's X- and Z-point observables by a constant multiple of `ε`. -/
 theorem exists_pointObs_anticommutator_anticomm_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →

@@ -7239,25 +7239,32 @@ For supplied point and extended-line errors $\delta_Q,\delta_L$, put
  \end{split}
 \]
 There are projective rounded polynomial measurements for Alice and Bob whose
-two ordered errors are at most $E$.  For the same measurements, the scalar
-nonlinearity mass is at most
+ordered errors, in both orderings and on both player placements, are at most
+$E$.  There also exist such measurements satisfying, in addition, the two
+scalar-nonlinearity mass bounds
 \[
- 2E+2\frac{(2m+2)d+1}{q},
+ 2E+2\frac{(2m+2)d+1}{q}.
 \]
-each wrong-variable mass is at most
+There exist such measurements satisfying those ordered and scalar bounds and,
+for both orderings, the two wrong-variable mass bounds
 \[
- 2E+2\frac{2md+2}{q},
+ 2E+2\frac{2md+2}{q}.
 \]
-and the non-separated mass is at most
+Separately, there exist projective rounded measurements satisfying the ordered
+bounds and the two non-separated-mass bounds
 \[
  6E+\frac{12md+4d+10}{q}.
 \]
-They induce a projective global polynomial-pair witness with error
+Finally, the supplied point and extended-line witnesses determine a projective
+global polynomial-pair witness with error
 \[
  8E+\frac{12md+4d+14}{q}.
 \]
-All four estimates use the directly indexed, completed-answer extended-line
-witness; no unproved source-domain conversion is hidden in these statements.
+Each existential assertion concerns the measurements constructed in its own
+linked declaration; no conjunction between independently quantified witnesses
+is asserted.  All four estimates use the directly indexed, completed-answer
+extended-line witness; no unproved source-domain conversion is hidden in these
+statements.
 \end{theorem}
 \begin{proof}
 \leanok
@@ -7933,8 +7940,9 @@ displayed defects.
 \leanok
 \uses{thm:qld-native-rounded-polynomials,
   thm:qld-coefficient-thirty-rounding-scalars}
-Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  If
-$0\leq e\leq1$ and $\rho\leq1$, take
+Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  Suppose
+$0\leq e\leq1$ and $\rho\leq1$, and let $S$ be a projective Pauli-test
+strategy of value at least $1-e$.  Take
 \[
  Q=E_{\rm pt}(e),\qquad
  L_{\rm ext}=mE_{\rm ext}(e,\rho),\qquad
@@ -7946,9 +7954,13 @@ and set
  G=\min\!\left\{1,
  32\eta(\lambda)+64Q+\frac{12n+4d+14}{q}\right\}.
 \]
-There are complete projective global polynomial-pair measurements whose four
-point defects are bounded by this concrete $G$.  The same witness also obeys
-the common-envelope consequence
+On the two expanded local spaces of $S$, there are complete projective global
+polynomial-pair measurements such that, for each $W\in\{X,Z\}$, Alice's
+evaluated global measurement is consistent with Bob's expanded point
+measurement and Bob's evaluated global measurement is consistent with Alice's
+expanded point measurement, each with defect at most $G$.  These are the four
+defects of the global-pair witness.  The scalar error also obeys the
+common-envelope consequence
 \[
  G\leq10^7n^4E_{\rm pair}(P,e).
 \]

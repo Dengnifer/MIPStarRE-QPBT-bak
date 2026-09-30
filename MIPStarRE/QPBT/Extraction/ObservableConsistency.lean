@@ -94,8 +94,8 @@ theorem tilde_obs_self_consistent_of_global_pair_witness_explicit
   norm_num [pauliBaselineExtractionConstant, pauli_edge_card] at h ⊢
   exact h
 
-/-- Existential packaging of
-`tilde_obs_self_consistent_of_global_pair_witness_explicit`. -/
+/-- A universal constant bounds the squared distance between Alice's and Bob's
+extracted observables by the constructed Pauli error. -/
 theorem tildeObs_selfConsistent_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),

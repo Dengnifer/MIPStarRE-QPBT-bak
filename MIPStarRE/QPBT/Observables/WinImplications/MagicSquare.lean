@@ -227,7 +227,8 @@ theorem win_ms_cons_explicit :
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _) (by norm_num)
 
-/-- Existential packaging of `win_ms_cons_explicit`, preserving item 7 of
+/-- A universal coefficient bounds consistency between Alice's selected point
+trace and Bob's Magic Square variable, preserving item 7 of
 `lem:qld-win-implications`. -/
 theorem win_ms_cons :
     ∃ C : ℝ, 1 ≤ C ∧
@@ -552,8 +553,8 @@ theorem win_magic_square_explicit :
       avgOver_nonneg ν _ fun xy =>
         outcome_event_weight_nonneg (S.msStrategyAt ω) xy.1 xy.2 _
 
-/-- Existential packaging of `win_magic_square_explicit`, preserving item 6
-of `lem:qld-win-implications`. -/
+/-- The average Magic Square value differs from one by at most a universal
+constant times `ε`, preserving item 6 of `lem:qld-win-implications`. -/
 theorem win_magic_square :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),

@@ -323,7 +323,8 @@ theorem point_obs_commutator_comm_le_alice_explicit :
   rw [hKsplit]
   nlinarith [Real.sqrt_nonneg K, hε, hsq]
 
-/-- Existential packaging of the fixed Alice commuting coefficient. -/
+/-- A universal coefficient bounds Alice's average squared point-observable
+commutator norm by a multiple of `ε + sqrt ε`. -/
 theorem exists_pointObs_commutator_comm_le_alice :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε), 0 ≤ ε →
@@ -376,7 +377,8 @@ theorem point_obs_twisted_commutation_explicit :
     (point_obs_commutator_comm_le_alice_explicit P ε S hε)
     (point_obs_anticommutator_anticomm_le_explicit P ε S hε)
 
-/-- Existential packaging of the fixed Alice twisted-commutation coefficient. -/
+/-- A universal coefficient bounds Alice's phase-signed point-observable
+commutation distance by a multiple of `sqrt ε`. -/
 theorem pointObs_twisted_commutation_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),

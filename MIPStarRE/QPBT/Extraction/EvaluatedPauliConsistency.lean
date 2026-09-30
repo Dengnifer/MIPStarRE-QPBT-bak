@@ -151,8 +151,8 @@ theorem evaluated_pauli_tilde_consistency_of_global_pair_witness_explicit :
   · exact (consistencyDefect_trans_le mu (T .alice) PB PA QB S.psiHat _ _ _
       (uniformDistribution_isProbability _) S.psiHat_norm hleft hpoints hforward).trans hscalar
 
-/-- Existential packaging of
-`evaluated_pauli_tilde_consistency_of_global_pair_witness_explicit`. -/
+/-- A universal constant bounds both cross-player consistency defects between the
+evaluated Pauli measurements and the corresponding extracted point measurements. -/
 theorem evaluated_pauli_tilde_consistency_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
