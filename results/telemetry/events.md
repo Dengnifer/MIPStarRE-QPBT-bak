@@ -10039,3 +10039,7 @@ The owner relayed meta decision #27 comment5901583288 (`meta-decision-737-c8-fai
 ## 2026-09-29T23:12:07.079306+00:00 — owner decision: workflow-layer commit budget raised to 5000 lines
 
 Owner, 2026-09-30 (relayed by the Decoy project's meta session, confirmed in the QPBT meta session): the pre-commit workflow-layer budget goes from 1000 to 5000 lines, as in the Decoy project. Applied by the meta session on branch `owner-0930-workflow-budget-5000` (`.githooks/pre-commit`, its regression tests, `local/personas/main.md`, `local/protocols/EVOLUTION.md`). Override rules unchanged.
+
+### 2026-09-30T02:00:20.410107+00:00 — Kit bootstrap REST access and Git transport
+
+The owner-provided formalization-kit repository and bootstrapfile returnedHTTP404 throughgh_common. The explicitly authorized repository remained readable through this project's existingSSHGittransport; main verifiedv0.3 commit3860c1bc andread the syncmanual in an isolatedsourceclone. No credential/key/globalconfigurationchange was made. Treat the earlier404 as REST visibility for this access context, not proof that the release is missing; keep all kit publication withmeta and retainprojectadoption's queuedorder.
