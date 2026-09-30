@@ -10068,3 +10068,7 @@ At 04:52:44Z, independent code reviewer `reviewer-pr736-20260930-02` ended with 
 ## 2026-09-30T16:33:28.997499+00:00 — Adopt bounded prose work; preserve unknown validation outcome
 
 The900s PR736 R2 prose worker reached its cap without a final answer, after producing the scoped3-file patch and passing non-comment Lean identity, direct-reference and dependency checks. MAIN adopted those actual bytes and checks, retained the failed-session charge, and did not count its unobserved second web-render outcome as passed. A987s Astra mathematical scout supplied the needed separate-power repair contract. One bounded Sol writer now owns the integrated packet (3600s work/4500s hard). All final source validation and independent R3 remain required; no gate evidence is carried from old2c9 to the mathematical repair. Receipt: `/tmp/qpbt-729-native-scalar-implementation-1001.json`.
+
+## 2026-09-30T17:26:24.321842+00:00 — Retain checked report draft from bounded timeout
+
+A1200s Sol report-preparation task timed out without final response. Its one-file patch contains the accepted conditional H/F comparison, explicit nonsaturated counterfamilies and public benchmark extension. MAIN verified actual scope/content and basic document invariants, preserved unknown usage and failed-session cost, and saved a local hooked draft commit with explicit final-source/wording follow-ups. No report publication or gate pass was inferred from the worker's progress message. Receipt: `/tmp/qpbt-730-comparison-prose-adopted-1001.json`.
