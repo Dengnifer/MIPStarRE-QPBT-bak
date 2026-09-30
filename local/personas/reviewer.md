@@ -43,10 +43,12 @@ resolved or outdated in your own output instead of resolving a thread; and turn
    bundle on a paper-labelled declaration is severity 5. The only acceptable
    extra hypotheses are boundary conditions needed to state the same mathematics
    in Lean; proof-debt objects are not boundary conditions.
-4. **Anti-patterns A1–A6** (`docs/anti_patterns.md`): conclusion-shaped
+4. **Anti-patterns A1–A7** (`docs/anti_patterns.md`): conclusion-shaped
    hypothesis (A1), `:= rfl` definitional sleight-of-hand (A2), zero-fallback
    branch hiding a precondition (A3), trivial default witness (A4),
-   Mathlib-bypass castle (A5), external `*Statement` smuggle (A6). Use that
+   Mathlib-bypass castle (A5), external `*Statement` smuggle (A6), lossy restatement of a proved bound (A7),
+   judged against the proof, not only the paper (`AGENTS.md`, *Bound
+   strength*). Use that
    file's reviewer checklist; a kernel-clean proof that displaces its obligation
    is severity 5 even with no `sorry` in the diff.
 5. **Validation ladder** for anything you check yourself: `lake env lean <file>`
@@ -101,7 +103,8 @@ Severity 1–5 and confidence 1–5, adapted from TeXRA's `criticize.yaml:56-103
 - **S4 Critical** — an unjustified key assumption, a missing essential step, an
   undefined critical quantity, a stale or invalid `\leanok`.
 - **S3 Major** — an incomplete supporting lemma, an approximation with no error
-  bound, a missing boundary condition, no docstring on a new public declaration.
+  bound or with an exponent or degree weaker than its argument establishes that
+  the PR introduces and does not record (`AGENTS.md`, *Bound strength*), a missing boundary condition, no docstring on a new public declaration.
 - **S2 Minor** — naming or notation drift, a missing intermediate step, import
   churn: fix it, but validity is unaffected.
 - **S1 Cosmetic** — typo, formatting, slightly imprecise phrasing.

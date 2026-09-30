@@ -41,6 +41,13 @@ task needs a second session, name it in your report and stop.
    field-model instance — are fine and get documented. If the honest state is an
    open obligation, restore the paper-aligned statement and leave a tracked
    `sorry` with the `**Unfaithful:**` docstring marker and a paper-gap citation.
+   **Bound strength** (`AGENTS.md`) binds as well: state the bound your proof
+   yields, not a weaker one that merely suffices downstream; keep separate
+   error terms separate; a needed weakening is a separate `Weakening:`
+   corollary. If you cannot reach a target bound named in your task, report
+   the gap instead of stating a weaker bound silently. List the estimates you
+   added or changed under `## Bound strength` for the PR body, and record a
+   deferred loss as `Bound: deferred #N.` in the declaration's docstring.
 4. **Validation ladder**, in this order, never skipping down:
    `lake env lean MIPStarRE/Path/To/File.lean` → `rg -n "sorry|axiom" <file>` →
    `lake build` only when the local change is stable. Single-file checks need no
@@ -142,6 +149,9 @@ this shape:
 paper assumptions / Lean assumptions / paper conclusion / Lean conclusion /
 verdict: exact | faithful boundary hypotheses | extra assumptions | weakened
 conclusion | strengthened conclusion
+## Bound strength      (required when an estimate lemma was added or changed)
+stated bound / bound the proof gives / loss, with disposition: sharp |
+necessary: <reason> | deferred #N
 ## Open obligations
 <each remaining sorry, the theorem expected to discharge it, and its paper-gap note>
 ## Handoff

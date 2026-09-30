@@ -175,6 +175,18 @@ For every paper-labelled theorem change, require a statement integrity audit:
 - paper conclusion versus Lean conclusion;
 - verdict: exact, faithful boundary hypotheses, extra assumptions, weakened
   conclusion, or strengthened conclusion.
+- bound strength, for an estimate: the stated bound versus the bound the
+  proof establishes (`AGENTS.md`, *Bound strength*).
+
+### Unforced bound loss
+
+A statement can match the paper and still discard what its proof proves, because
+the paper often gives a step only as `poly(ε)` or `O(·)`. Check every estimate
+against its own proof as well as against the paper. A loss the proof did not
+force (merged error terms, coefficients absorbed into exponents, needless roots
+or squares, padding, lossy reuse) is a defect even when the statement is
+faithful. The rules are in `AGENTS.md`, *Bound strength*; the pattern is A7 in
+`docs/anti_patterns.md`.
 
 ---
 

@@ -23,7 +23,7 @@ issues, tagging a release, or a README/status page that says the track is done.
 
 ## 2. Finished without caveat
 
-A track is finished without caveat at a commit when all seven criteria hold *at
+A track is finished without caveat at a commit when all eight criteria hold *at
 that commit*.
 
 **C1 — Proof integrity.** Zero term-level `sorry`, `admit`, project `axiom` or
@@ -81,7 +81,7 @@ No headline theorem statement may be weaker than the source paper except
 through a `corrected` row. `documented-deviation` cannot authorize a headline
 statement change or an unproved dependency of a headline theorem: in particular,
 `pauli_soundness` remains proved at its printed statement. All requirements of
-C1, C2, C4, C5, C6 and C7 remain in force.
+C1, C2, C4, C5, C6, C7 and C8 remain in force.
 
 The gate checks the status vocabulary and requires a nonempty `Source statement`
 cell for `documented-deviation`. A citation of a registered headline theorem or
@@ -153,6 +153,40 @@ leak scan passes is a run, and is reported as delegated like C2, C4 and C5.
 A missing artifact file is main's to-do list, not a caveat that may be carried
 into a completion statement.
 
+**C8 — Bound ledger.** Every headline theorem whose constants are existential
+has a proved explicit-constant sibling listed in the track's axiom audit, and
+the track's bound ledger (§6) has a `Stage ledger` section: a table with one row
+per stage lemma on a headline's dependency path, giving the stated bound, the
+bound its argument supports once the losses of `AGENTS.md` *Bound strength*
+rule 4 are removed, and a `Disposition` of `sharp`, `necessary: <reason>` or
+`deferred #N`. Before the first completion statement, one read-only
+quantitative survey by a math-capable model checks the ledger against the proofs
+(`AGENTS.md`, *Bound strength*). The gate checks the ledger's shape and
+dispositions and fails closed on a missing file, heading, column or unknown
+disposition. Whether the bounds and dispositions are honest, and whether every
+existential headline has its explicit sibling, is delegated to independent
+review, so a passing static half prints `DELEGATED`. Trigger,
+owner, 2026-09-29: an error-bound survey found a finished track faithful and
+sorry-free, yet its final exponent 16 times smaller than its own proofs support.
+
+The static check uses a strict canonical raw-line format, not Markdown
+rendering. The section begins with the exact unindented line
+`## Stage ledger`, followed by optional blank lines and exactly one table. Every
+table line has opening and closing outer pipes; the header is followed
+immediately by an outer-piped delimiter row and at least one outer-piped data
+row. The table ends at its first non-table line. After that, only blank lines
+are permitted before the section boundary. The sole boundary is the next
+unindented level-two ATX heading with a nonempty title (`## <title>`), or end of
+file. A level-one or level-three heading and a Setext heading are not boundaries.
+
+Any HTML comment, Setext heading, fence, thematic break, indented block,
+noncanonical ATX heading, row without both outer pipes, or second table inside
+the section fails with a diagnostic naming that construct. Duplicate exact
+`## Stage ledger` headings also fail. This deliberately rejects optional-pipe
+tables and other renderable Markdown variants: ledger writers must use the one
+canonical form, while independent review remains responsible for mathematical
+coverage and honesty.
+
 ## 3. Where the comparator challenge lives
 
 The challenge repository lives **outside** this library repository
@@ -200,12 +234,14 @@ no model call. `check --track <t> [--repo-root R] [--commit C] [--json]` prints
 one PASS/FAIL line per criterion with `file:line` evidence, and exits 0 only
 when every mechanically checkable criterion passes. Criteria with a half that
 needs a run the gate does not perform (C2 axiom values, C4 `--ci` run, C5 drift
-regeneration, C7 snapshot leak scan) print as
+regeneration, C7 snapshot leak scan, C8 honesty of
+the ledger) print as
 `DELEGATED` once their static half holds — never as `PASS`, so no completion
 comment can quote a green line for a check nobody ran — while a failing static
 half is still `FAIL`. `DELEGATED` does not turn a failing run green and does
 not by itself make one green either: the delegated halves are read off the CI
-run of the same commit. Unit tests:
+run of the same commit, and C8's from the quantitative survey and independent
+review linked in the completion comment. Unit tests:
 `scripts/tests/test_completion_gate.py`.
 
 ## 6. Registered tracks
@@ -224,6 +260,7 @@ run of the same commit. Unit tests:
 | Truthful docs (C6) | `README.md` |
 | Artifact files (C7) | `README.md`, `docs/QPBT-theorem-index.md`, `docs/DEVIATIONS.md`, `docs/ARTIFACT.md`, `LICENSE` |
 | Artifact script (C7) | `scripts/make_artifact.sh` |
+| Bound ledger (C8) | `docs/bound-ledger-qpbt.md`, section `Stage ledger` |
 | Umbrella issues | 27, 168 |
 
 Headline theorems (blueprint chapter `ch13_qpbt_test.tex`):

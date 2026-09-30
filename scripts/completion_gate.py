@@ -6,7 +6,7 @@ finished.  This script decides the mechanically checkable part of that
 definition: it runs no model, opens no network connection, and uses only the
 standard library, so its verdict is reproducible by anyone holding the commit.
 
-Seven criteria, in the protocol's numbering:
+Eight criteria, in the protocol's numbering:
 
 * ``C1`` proof integrity — no ``sorry``/``admit`` site, project ``axiom``
   declaration, native evaluation or ``trustCompiler`` under the track's Lean
@@ -21,11 +21,17 @@ Seven criteria, in the protocol's numbering:
 * ``C6`` docs truthful — no stale nonzero open-site claim once ``C1`` holds.
 * ``C7`` artifact readiness — every file an ITP artifact submission needs is
   committed (the snapshot build and its leak scan are delegated).
+* ``C8`` bound ledger — the track's bound ledger has a ``Stage ledger`` table
+  in the canonical raw-line format whose every row carries a ``Disposition``
+  of ``sharp``,
+  ``necessary: <reason>`` or ``deferred #<issue>`` (whether the bounds and
+  dispositions are honest is delegated to independent review).
 
-``C2``, ``C4``, ``C5`` and ``C7`` each have a half this gate cannot decide
-without running something — the axiom values, ``blueprint_leanok_axioms.py
---ci``, the comparator drift regeneration and the artifact snapshot's leak
-scan.  When their static half holds they report ``DELEGATED`` rather than
+``C2``, ``C4``, ``C5``, ``C7`` and ``C8`` each have a half this gate cannot
+decide without running something — the axiom values,
+``blueprint_leanok_axioms.py --ci``, the comparator drift regeneration, the
+artifact snapshot's leak scan and the independent review of the bound ledger.
+When their static half holds they report ``DELEGATED`` rather than
 ``PASS``, so a completion comment can never quote a ``PASS`` for a check nobody
 ran; ``DELEGATED`` does not count against the exit code, and a failing static
 half is still ``FAIL``.
@@ -126,6 +132,7 @@ class Track:
     truthful_docs: tuple[str, ...]
     artifact_files: tuple[str, ...]
     artifact_script: str
+    bound_ledger: str
 
 
 TRACKS: dict[str, Track] = {
@@ -162,6 +169,7 @@ TRACKS: dict[str, Track] = {
             "LICENSE",
         ),
         artifact_script="scripts/make_artifact.sh",
+        bound_ledger="docs/bound-ledger-qpbt.md",
     )
 }
 
@@ -801,6 +809,309 @@ def criterion_artifact_readiness(root: Path, track: Track) -> Criterion:
 
 
 # ---------------------------------------------------------------------------
+# C8 bound ledger
+# ---------------------------------------------------------------------------
+
+LEDGER_HEADING = "## Stage ledger"
+# The sole section boundary is the next unindented level-two ATX heading with a
+# nonempty title. C8 deliberately does not reconstruct Markdown block context.
+TOP_LEVEL_ATX_RE = re.compile(r"^##[ \t]+\S.*$")
+ATX_HEADING_RE = re.compile(r"^ {0,3}#{1,6}(?:[ \t]+|$)")
+SETEXT_UNDERLINE_RE = re.compile(r"^ {0,3}(?:=+|-+)[ \t]*$")
+THEMATIC_BREAK_RE = re.compile(
+    r"^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,})$"
+)
+FENCE_RE = re.compile(r"^ {0,3}(?:`{3,}|~{3,})")
+HTML_COMMENT_RE = re.compile(r"<!--|-->")
+# A table delimiter cell, and a pipe that separates two cells. A pipe preceded
+# by a backslash is text in its cell, so `\|x\|` is a norm.
+LEDGER_DELIMITER_CELL_RE = re.compile(r":?-{2,}:?")
+UNESCAPED_PIPE_RE = re.compile(r"(?<!\\)\|")
+# Finite aliases for the two header vocabularies already used by the project.
+LEDGER_COLUMNS = {
+    "Stage": ("stage", "stage lemma"),
+    "Stated bound": ("stated bound",),
+    "Bound the argument supports": ("proved bound", "bound the argument supports"),
+    "Disposition": ("disposition",),
+}
+# The three dispositions a stage row may carry, after surrounding whitespace
+# and backticks are trimmed: the proved bound is sharp, the loss is necessary
+# for a stated reason, or tightening it is deferred to a tracker issue.
+DISPOSITION_RE = re.compile(r"sharp|necessary:[ \t]*\S.*|deferred[ \t]+#\d+")
+
+
+def _cells(row: str) -> list[str]:
+    r"""The cells of one canonical outer-piped row.
+
+    An escaped pipe ``\|`` (a norm ``\|x\|``, say) stays in its cell and reads
+    back as ``|``.
+    """
+
+    body = row[1:-1]
+    return [cell.strip().replace("\\|", "|") for cell in UNESCAPED_PIPE_RE.split(body)]
+
+
+def _code_indented(line: str) -> bool:
+    """Whether CommonMark tab expansion gives ``line`` four-space indentation."""
+
+    expanded = line.expandtabs(4)
+    return len(expanded) - len(expanded.lstrip(" ")) >= 4
+
+
+def _canonical_pipe_row(line: str) -> bool:
+    """Whether ``line`` has the required opening and closing outer pipes."""
+
+    if len(line) < 2 or not line.startswith("|") or not line.endswith("|"):
+        return False
+    closing_slashes = len(line[:-1]) - len(line[:-1].rstrip("\\"))
+    return closing_slashes % 2 == 0
+
+
+def _section_end(lines: list[str], start: int) -> int:
+    """Return the next unindented level-two ATX heading, or end of file."""
+
+    for index in range(start + 1, len(lines)):
+        if TOP_LEVEL_ATX_RE.fullmatch(lines[index]) is not None:
+            return index
+    return len(lines)
+
+
+def _noncanonical_construct(lines: list[str], index: int, end: int) -> str:
+    """Name the noncanonical construct beginning at ``index``."""
+
+    line = lines[index]
+    if HTML_COMMENT_RE.search(line) is not None:
+        return "HTML comment"
+    if (
+        index + 1 < end
+        and line.strip()
+        and SETEXT_UNDERLINE_RE.fullmatch(lines[index + 1]) is not None
+    ):
+        return "Setext heading"
+    if FENCE_RE.match(line) is not None:
+        return "fenced block"
+    if THEMATIC_BREAK_RE.fullmatch(line) is not None:
+        return "thematic break"
+    if _code_indented(line):
+        return "indented block"
+    if ATX_HEADING_RE.match(line) is not None:
+        return "noncanonical ATX heading"
+    if (
+        _canonical_pipe_row(line)
+        and index + 1 < end
+        and _canonical_pipe_row(lines[index + 1])
+        and all(
+            LEDGER_DELIMITER_CELL_RE.fullmatch(cell)
+            for cell in _cells(lines[index + 1])
+        )
+    ):
+        return "second pipe table"
+    if _canonical_pipe_row(line):
+        return "pipe row outside the single table"
+    return "row without canonical opening and closing pipes"
+
+
+def criterion_bound_ledger(root: Path, track: Track) -> Criterion:
+    """C8: one canonical stage table has all four required fields."""
+
+    crit = Criterion("C8", "bound ledger", DELEGATED)
+    ledger = track.bound_ledger
+    crit.notes.append(
+        "the gate checks the ledger's shape only; independent review judges "
+        "whether each stated and proved bound is honest and each disposition "
+        "is justified"
+    )
+    path = root / ledger if ledger else None
+    if path is None or not path.is_file():
+        crit.status = FAIL
+        crit.summary = f"missing {ledger}" if ledger else "no bound ledger registered"
+        crit.evidence.append(
+            f"{ledger or '(bound_ledger)'}:0: no bound ledger for this track"
+        )
+        return crit
+
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    headings = [index for index, line in enumerate(lines) if line == LEDGER_HEADING]
+    if not headings:
+        crit.status = FAIL
+        crit.summary = f"no exact `{LEDGER_HEADING}` heading"
+        crit.evidence = [f"{ledger}:1: expected the exact line `{LEDGER_HEADING}`"]
+        return crit
+    if len(headings) != 1:
+        crit.status = FAIL
+        crit.summary = f"{len(headings)} exact `{LEDGER_HEADING}` headings"
+        crit.evidence = [
+            f"{ledger}:{index + 1}: duplicate `{LEDGER_HEADING}` heading"
+            for index in headings
+        ]
+        return crit
+
+    start = headings[0]
+    end = _section_end(lines, start)
+    for comment_line in range(start + 1, end):
+        if HTML_COMMENT_RE.search(lines[comment_line]) is not None:
+            crit.status = FAIL
+            crit.summary = "noncanonical HTML comment in the stage-ledger section"
+            crit.evidence = [
+                f"{ledger}:{comment_line + 1}: HTML comment is not permitted"
+            ]
+            return crit
+    index = start + 1
+    while index < end and not lines[index].strip():
+        index += 1
+    if index == end:
+        crit.status = FAIL
+        crit.summary = f"no table under the `{LEDGER_HEADING}` heading"
+        crit.evidence = [f"{ledger}:{start + 1}: canonical pipe table is missing"]
+        return crit
+    if not _canonical_pipe_row(lines[index]):
+        construct = _noncanonical_construct(lines, index, end)
+        crit.status = FAIL
+        crit.summary = f"noncanonical {construct} before the stage table"
+        crit.evidence = [f"{ledger}:{index + 1}: {construct} is not permitted"]
+        return crit
+
+    header_line = index + 1
+    header = _cells(lines[index])
+    index += 1
+    if index == end or not _canonical_pipe_row(lines[index]):
+        construct = (
+            "end of section"
+            if index == end
+            else _noncanonical_construct(lines, index, end)
+        )
+        crit.status = FAIL
+        crit.summary = "stage ledger has no canonical delimiter row"
+        crit.evidence = [
+            f"{ledger}:{min(index + 1, end)}: expected an outer-piped delimiter row; "
+            f"found {construct}"
+        ]
+        return crit
+
+    delimiter_line = index + 1
+    delimiter = _cells(lines[index])
+    index += 1
+    rows: list[tuple[int, list[str]]] = []
+    while index < end and _canonical_pipe_row(lines[index]):
+        if (
+            rows
+            and index + 1 < end
+            and _canonical_pipe_row(lines[index + 1])
+            and all(
+                LEDGER_DELIMITER_CELL_RE.fullmatch(cell)
+                for cell in _cells(lines[index + 1])
+            )
+        ):
+            crit.status = FAIL
+            crit.summary = "noncanonical second pipe table in the stage-ledger section"
+            crit.evidence = [
+                f"{ledger}:{index + 1}: second pipe table is not permitted"
+            ]
+            return crit
+        rows.append((index + 1, _cells(lines[index])))
+        index += 1
+
+    remainder = index
+    while remainder < end:
+        if lines[remainder].strip():
+            construct = _noncanonical_construct(lines, remainder, end)
+            crit.status = FAIL
+            crit.summary = f"noncanonical {construct} in the stage-ledger section"
+            crit.evidence = [
+                f"{ledger}:{remainder + 1}: {construct} is not permitted"
+            ]
+            return crit
+        remainder += 1
+
+    missing: list[str] = []
+    shape: list[str] = []
+    bad: list[str] = []
+    if not all(LEDGER_DELIMITER_CELL_RE.fullmatch(cell) for cell in delimiter):
+        shape.append(
+            f"{ledger}:{delimiter_line}: delimiter row contains a non-delimiter cell"
+        )
+    if len(delimiter) != len(header):
+        shape.append(
+            f"{ledger}:{delimiter_line}: delimiter has {len(delimiter)} cell(s); "
+            f"header has {len(header)} (wrong width)"
+        )
+
+    names = [cell.strip("` \t").casefold() for cell in header]
+    columns: dict[str, int] = {}
+    column_issues: list[str] = []
+    for label, aliases in LEDGER_COLUMNS.items():
+        matches = [column for column, name in enumerate(names) if name in aliases]
+        if not matches:
+            column_issues.append(f"missing {label}")
+        elif len(matches) > 1:
+            column_issues.append(f"ambiguous duplicate {label}")
+        else:
+            columns[label] = matches[0]
+    if column_issues:
+        evidence = f"{ledger}:{header_line}: columns are " + ", ".join(header)
+        if column_issues != ["missing Disposition"]:
+            evidence = (
+                f"{ledger}:{header_line}: {'; '.join(column_issues)}; columns are "
+                + ", ".join(header)
+            )
+        missing.append(evidence)
+
+    if not column_issues:
+        for number, cells in rows:
+            if len(cells) != len(header):
+                shape.append(
+                    f"{ledger}:{number}: wrong width: row has {len(cells)} cell(s); "
+                    f"header has {len(header)}"
+                )
+                continue
+            values = {
+                label: cells[column].strip("` \t") for label, column in columns.items()
+            }
+            stage = values["Stage"]
+            for label, value in values.items():
+                if not value:
+                    shape.append(
+                        f"{ledger}:{number}: empty `{label}` cell for "
+                        f"{stage or '(empty stage)'}"
+                    )
+            disposition = values["Disposition"]
+            if disposition and DISPOSITION_RE.fullmatch(disposition) is None:
+                bad.append(
+                    f"{ledger}:{number}: disposition {disposition!r} for "
+                    f"{stage[:60] or '(empty stage)'}"
+                )
+    if missing or shape or bad:
+        crit.status = FAIL
+        problems: list[str] = []
+        if missing:
+            problems.append(
+                "stage ledger has no `Disposition` column"
+                if column_issues == ["missing Disposition"]
+                else "stage ledger has missing or ambiguous required columns"
+            )
+        if shape:
+            problems.append(f"{len(shape)} invalid required table-shape item(s)")
+        if bad:
+            problems.append(
+                f"{len(bad)} of {len(rows)} stage row(s) without a valid disposition "
+                "(sharp | necessary: <reason> | deferred #<issue>)"
+            )
+        crit.summary = "; ".join(problems)
+        crit.evidence = missing + shape + bad
+        return crit
+    if not rows:
+        crit.status = FAIL
+        crit.summary = "stage ledger has no data row"
+        crit.evidence = [f"{ledger}:{header_line}: table has a header but no stage row"]
+        return crit
+    crit.summary = (
+        f"all {len(rows)} stage row(s) have the required nonempty cells and a valid "
+        "disposition; the bounds' honesty comes from independent review"
+    )
+    return crit
+
+
+# ---------------------------------------------------------------------------
 # Driver
 # ---------------------------------------------------------------------------
 
@@ -828,6 +1139,7 @@ def run_check(root: Path, track: Track, commit: str) -> list[Criterion]:
         criterion_comparator(root, track, commit),
         criterion_docs_truthful(root, track, integrity),
         criterion_artifact_readiness(root, track),
+        criterion_bound_ledger(root, track),
     ]
 
 
@@ -849,7 +1161,8 @@ def render_text(track: Track, commit: str, criteria: Sequence[Criterion]) -> str
         out.append("PASS: every mechanically checkable criterion holds")
     out.append(
         "reminder: C2 axiom values, the blueprint --ci run, the comparator "
-        "drift check and the artifact snapshot's leak scan are delegated"
+        "drift check, the artifact snapshot's leak scan and the review of the "
+        "bound ledger are delegated"
         + (f" ({', '.join(delegated)})" if delegated else "")
     )
     return "\n".join(out)
