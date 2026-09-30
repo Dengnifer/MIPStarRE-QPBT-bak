@@ -1752,3 +1752,4 @@
 {"ts": "2026-09-30T12:44:51+0900", "kind": "ci-build", "trigger": "ci.sh pr=736", "seconds": 80, "outcome": "success", "sha": "2ad0a5c12b28bbef8ba54b7bef22d786778a09e9", "note": "branch issue-729-qpbt-explicit-error-bounds"}
 {"ts": "2026-09-30T13:44:06+0900", "kind": "ci-build", "trigger": "ci.sh pr=736", "seconds": 179, "outcome": "success", "sha": "8cd8edfa743d5744a9acf0ceee397a45a24310c0", "note": "branch issue-729-qpbt-explicit-error-bounds"}
 {"ts": "2026-10-01T00:50:37+0900", "kind": "ci-build", "trigger": "ci.sh pr=736", "seconds": 184, "outcome": "success", "sha": "2c9fb42fbaefe2190e580fcc6302f3a44a3dc170", "note": "branch issue-729-qpbt-explicit-error-bounds"}
+{"ts": "2026-10-01T05:12:50+0900", "kind": "ci-build", "trigger": "ci.sh pr=736", "seconds": 72, "outcome": "success", "sha": "0c7e5a9463d3a53f9443d02ca28dd8059e08699f", "note": "branch issue-729-qpbt-explicit-error-bounds"}
