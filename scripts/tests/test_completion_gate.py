@@ -142,6 +142,25 @@ end Fixture
 """
 
 
+GOOD_LEDGER = """\
+# Error bounds
+
+Stated and proved bounds of every stage of the fixture track.
+
+## Stage ledger
+
+| Stage | Stated bound | Proved bound | Disposition |
+|---|---|---|---|
+| `Fixture.good` | `O(eps^(1/2))` | `O(eps^(1/2))` | sharp |
+| `Fixture.step` | `O(eps^(1/4))` | `O(eps^(1/2))` | `necessary: the paper-shaped statement keeps the printed exponent` |
+| `Fixture.tail` | `O(eps^(1/4))` | `O(eps^(1/2))` | deferred #42 |
+
+## Notes
+
+Review judges whether each disposition is honest.
+"""
+
+
 def track_for(root: Path) -> gate.Track:
     return gate.Track(
         name="fixture",
@@ -156,6 +175,7 @@ def track_for(root: Path) -> gate.Track:
         truthful_docs=("README.md",),
         artifact_files=("README.md", "docs/ARTIFACT.md", "LICENSE"),
         artifact_script="scripts/make_artifact.sh",
+        bound_ledger="docs/bound-ledger-fixture.md",
     )
 
 
@@ -198,6 +218,7 @@ class GateFixture(unittest.TestCase):
         write(self.root, "docs/ARTIFACT.md", "How to run the artifact.\n")
         write(self.root, "LICENSE", "Apache-2.0 fixture text.\n")
         write(self.root, "scripts/make_artifact.sh", "#!/bin/sh\nexit 0\n")
+        write(self.root, "docs/bound-ledger-fixture.md", GOOD_LEDGER)
 
         if shutil.which("git"):
             git(self.root, "init", "-q")
@@ -461,6 +482,7 @@ class PaperGapTests(GateFixture):
         write(self.root, self.track.comparator_doc, "# Missing comparator record\n")
         write(self.root, "README.md", "Fixture track: 3 open sites.\n")
         (self.root / "LICENSE").unlink()
+        (self.root / self.track.bound_ledger).unlink()
         before = gate.run_check(self.root, self.track, self.head)
         write(
             self.root,
@@ -474,7 +496,7 @@ class PaperGapTests(GateFixture):
             [c for c in before if c.ident != "C3"],
             [c for c in after if c.ident != "C3"],
         )
-        for ident in ("C1", "C2", "C4", "C5", "C7"):
+        for ident in ("C1", "C2", "C4", "C5", "C7", "C8"):
             self.assertEqual(next(c for c in after if c.ident == ident).status, gate.FAIL)
         # C6 is deferred while C1 fails; once the proof hole is removed its
         # stale-doc check must still fail with the documented deviation present.
@@ -720,6 +742,249 @@ class ArtifactReadinessTests(GateFixture):
         self.assertIn("scripts/make_artifact.sh", crit.summary)
 
 
+class BoundLedgerTests(GateFixture):
+    LEDGER = "docs/bound-ledger-fixture.md"
+
+    def check(self, text: str | None = None) -> gate.Criterion:
+        if text is not None:
+            write(self.root, self.LEDGER, text)
+        return gate.criterion_bound_ledger(self.root, self.track)
+
+    def test_valid_ledger_is_delegated_not_passed(self) -> None:
+        """The gate checks the ledger's shape; review judges the bounds."""
+        crit = self.check()
+        self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+        self.assertFalse(crit.counts_against_exit)
+        self.assertIn("all 3 stage row(s)", crit.summary)
+        self.assertIn("independent review", " ".join(crit.notes))
+
+    def test_existing_cell_and_column_spellings_remain_accepted(self) -> None:
+        variants = {
+            "column case": GOOD_LEDGER.replace("| Disposition |", "| DISPOSITION |"),
+            "backticked sharp": GOOD_LEDGER.replace("| sharp |", "| `sharp` |"),
+            "no space": GOOD_LEDGER.replace("| sharp |", "| necessary:optimal |"),
+            "padded issue": GOOD_LEDGER.replace(
+                "| deferred #42 |", "| ` deferred #1234 ` |"
+            ),
+        }
+        for name, text in variants.items():
+            with self.subTest(variant=name):
+                self.assertEqual(self.check(text).status, gate.DELEGATED)
+
+    def test_header_aliases_are_accepted(self) -> None:
+        owner_header = "| Stage lemma | Stated bound | Bound the argument supports | Disposition |"
+        owner = GOOD_LEDGER.replace(GOOD_LEDGER.splitlines()[6], owner_header)
+        self.assertEqual(self.check(owner).status, gate.DELEGATED)
+
+    def test_heading_and_outer_pipes_are_exact(self) -> None:
+        variants = {
+            "h1": GOOD_LEDGER.replace("## Stage ledger", "# Stage ledger"),
+            "h3": GOOD_LEDGER.replace("## Stage ledger", "### Stage ledger"),
+            "closed": GOOD_LEDGER.replace("## Stage ledger", "## Stage ledger ##"),
+            "trailing space": GOOD_LEDGER.replace("## Stage ledger", "## Stage ledger "),
+            "no leading pipes": "\n".join(
+                line[1:] if line.startswith("|") else line
+                for line in GOOD_LEDGER.splitlines()
+            ),
+            "no trailing pipes": "\n".join(
+                line[:-1] if line.startswith("|") else line
+                for line in GOOD_LEDGER.splitlines()
+            ),
+            "escaped closing pipe": GOOD_LEDGER.replace("| sharp |", "| sharp \\|"),
+        }
+        for name, text in variants.items():
+            with self.subTest(variant=name):
+                self.assertEqual(self.check(text).status, gate.FAIL)
+
+    def test_required_columns_are_unique_and_required_cells_are_nonempty(self) -> None:
+        duplicate = GOOD_LEDGER.replace("| Stage |", "| Stage | Stage lemma |", 1)
+        empty = GOOD_LEDGER.replace(GOOD_LEDGER.splitlines()[8], "| | | | sharp |")
+        cases = (
+            ("## Stage ledger\n\n| Disposition |\n|---|\n| sharp |\n", "missing Stage"),
+            (duplicate, "ambiguous duplicate Stage"),
+            (empty, "empty `Stated bound`"),
+        )
+        for text, expected in cases:
+            crit = self.check(text)
+            self.assertEqual(crit.status, gate.FAIL)
+            self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
+
+    def test_rows_and_delimiter_must_have_valid_width_and_content(self) -> None:
+        cases = (
+            ("| Example.bad | x | sqrt(x) | invalid |", "disposition 'invalid'"),
+            ("| Example.bad | x | invalid |", "wrong width"),
+        )
+        for row, expected in cases:
+            with self.subTest(row=row):
+                text = GOOD_LEDGER.replace("\n\n## Notes", f"\n{row}\n\n## Notes")
+                crit = self.check(text)
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
+        crit = self.check(GOOD_LEDGER.replace("|---|---|---|---|", "|---|---|---|"))
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("delimiter has 3 cell(s); header has 4", crit.evidence[0])
+        crit = self.check(GOOD_LEDGER.replace("|---|---|---|---|", "|---|---|x|---|"))
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("non-delimiter cell", crit.evidence[0])
+
+    def test_pipe_free_body_row_is_validated(self) -> None:
+        text = (
+            "## Stage ledger\n\n"
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Good | x | x | sharp |\n"
+            "Incomplete\n"
+        )
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("row without canonical", " ".join((crit.summary, *crit.evidence)))
+
+    def test_missing_ledger_fails(self) -> None:
+        (self.root / self.LEDGER).unlink()
+        crit = self.check()
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(crit.summary, f"missing {self.LEDGER}")
+        self.assertEqual(crit.evidence, [f"{self.LEDGER}:0: no bound ledger for this track"])
+
+    def test_missing_heading_fails(self) -> None:
+        for heading in (
+            "## Stage table",
+            "## Stage Ledger",
+            "## Stage ledger (draft)",
+            "Stage ledger",
+        ):
+            with self.subTest(heading=heading):
+                crit = self.check(GOOD_LEDGER.replace("## Stage ledger", heading))
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertEqual(crit.summary, "no exact `## Stage ledger` heading")
+                self.assertEqual(
+                    crit.evidence,
+                    [f"{self.LEDGER}:1: expected the exact line `## Stage ledger`"],
+                )
+
+    def test_bad_disposition_fails_naming_the_row(self) -> None:
+        text = GOOD_LEDGER.replace("| deferred #42 |", "| deferred |")
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        line = 1 + next(
+            i for i, row in enumerate(text.splitlines()) if "Fixture.tail" in row
+        )
+        self.assertEqual(
+            crit.evidence,
+            [f"{self.LEDGER}:{line}: disposition 'deferred' for Fixture.tail"],
+        )
+        self.assertTrue(crit.summary.startswith("1 of 3 stage row(s)"))
+
+    def test_every_malformed_disposition_fails(self) -> None:
+        for value in (
+            "", "``", "tight", "necessary", "necessary:", "`necessary: `",
+            "deferred", "deferred #", "deferred #4a", "deferred 42", "sharp, probably",
+        ):
+            with self.subTest(value=value):
+                crit = self.check(GOOD_LEDGER.replace("| sharp |", f"| {value} |"))
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertEqual(len(crit.evidence), 1)
+                self.assertTrue(crit.evidence[0].endswith("for Fixture.good"))
+
+    def test_missing_disposition_column_fails(self) -> None:
+        crit = self.check(GOOD_LEDGER.replace("| Disposition |", "| Status |"))
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(crit.summary, "stage ledger has no `Disposition` column")
+        self.assertEqual(
+            crit.evidence,
+            [f"{self.LEDGER}:7: columns are Stage, Stated bound, Proved bound, Status"],
+        )
+
+    def test_table_without_data_rows_fails(self) -> None:
+        crit = self.check("\n".join(GOOD_LEDGER.splitlines()[:8]) + "\n")
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertEqual(crit.summary, "stage ledger has no data row")
+        self.assertEqual(
+            crit.evidence, [f"{self.LEDGER}:7: table has a header but no stage row"]
+        )
+
+    def test_noncanonical_constructs_are_named(self) -> None:
+        insertions = {
+            "HTML comment": "<!-- note -->",
+            "Setext heading": "Appendix\n--------",
+            "fenced block": "```text\nexample\n```",
+            "thematic break": "---",
+            "indented block": "    example",
+            "row without canonical": "ordinary prose",
+            "noncanonical ATX heading": "### Detail",
+        }
+        for expected, insertion in insertions.items():
+            with self.subTest(construct=expected):
+                text = GOOD_LEDGER.replace(
+                    "\n\n## Notes", f"\n\n{insertion}\n\n## Notes"
+                )
+                crit = self.check(text)
+                self.assertEqual(crit.status, gate.FAIL)
+                self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
+
+    def test_construct_before_table_is_named(self) -> None:
+        text = GOOD_LEDGER.replace(
+            "## Stage ledger\n\n| Stage",
+            "## Stage ledger\n\n<!-- pending -->\n| Stage",
+        )
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("HTML comment", " ".join((crit.summary, *crit.evidence)))
+
+        inline = GOOD_LEDGER.replace("| sharp |", "| sharp <!-- note --> |")
+        crit = self.check(inline)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("HTML comment", " ".join((crit.summary, *crit.evidence)))
+
+    def test_second_table_is_rejected(self) -> None:
+        table = (
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Later | x | x | sharp |"
+        )
+        text = GOOD_LEDGER.replace("\n\n## Notes", f"\n\n{table}\n\n## Notes")
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("second pipe table", " ".join((crit.summary, *crit.evidence)))
+
+        contiguous = GOOD_LEDGER.replace("\n\n## Notes", f"\n{table}\n\n## Notes")
+        crit = self.check(contiguous)
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("second pipe table", " ".join((crit.summary, *crit.evidence)))
+
+    def test_next_level_two_atx_heading_is_the_only_section_boundary(self) -> None:
+        invalid = (
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Later | x | x | invalid |"
+        )
+        text = GOOD_LEDGER + "\n" + invalid + "\n"
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+        self.assertIn("all 3 stage row(s)", crit.summary)
+
+        for heading in ("# Notes", "### Notes", "Notes\n-----"):
+            with self.subTest(nonboundary=heading):
+                changed = GOOD_LEDGER.replace("## Notes", heading)
+                crit = self.check(changed)
+                self.assertEqual(crit.status, gate.FAIL)
+
+    def test_duplicate_exact_heading_is_rejected(self) -> None:
+        crit = self.check(GOOD_LEDGER + "\n## Stage ledger\n")
+        self.assertEqual(crit.status, gate.FAIL)
+        self.assertIn("2 exact", crit.summary)
+
+    def test_an_escaped_pipe_stays_in_its_cell(self) -> None:
+        text = GOOD_LEDGER.replace(
+            "| `Fixture.tail` |",
+            "| `Fixture.norm` | `O(\\|x\\|^(1/2))` | `O(\\|x\\|^(1/2))` | sharp |\n"
+            "| `Fixture.tail` |",
+        )
+        crit = self.check(text)
+        self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+        self.assertIn("all 4 stage row(s)", crit.summary)
+
+
 @unittest.skipUnless(shutil.which("git"), "git is required")
 class DriverTests(GateFixture):
     def setUp(self) -> None:
@@ -766,15 +1031,15 @@ class DriverTests(GateFixture):
     def test_text_report_names_every_criterion(self) -> None:
         criteria = gate.run_check(self.root, self.track, self.head)
         text = gate.render_text(self.track, self.head, criteria)
-        for ident in ("C1", "C2", "C3", "C4", "C5", "C6", "C7"):
+        for ident in ("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8"):
             self.assertIn(ident, text)
 
     def test_text_report_lists_the_delegated_criteria(self) -> None:
         criteria = gate.run_check(self.root, self.track, self.head)
         delegated = [c.ident for c in criteria if c.status == gate.DELEGATED]
-        self.assertEqual(delegated, ["C2", "C4", "C5", "C7"])
+        self.assertEqual(delegated, ["C2", "C4", "C5", "C7", "C8"])
         self.assertIn(
-            "(C2, C4, C5, C7)", gate.render_text(self.track, self.head, criteria)
+            "(C2, C4, C5, C7, C8)", gate.render_text(self.track, self.head, criteria)
         )
 
     def test_missing_artifact_file_fails_the_run(self) -> None:
@@ -785,6 +1050,15 @@ class DriverTests(GateFixture):
         )
         self.assertEqual(code, 1)
         self.assertIn("FAIL: C7", text)
+
+    def test_missing_bound_ledger_fails_the_run(self) -> None:
+        (self.root / "docs/bound-ledger-fixture.md").unlink()
+        code, text = self.run_gate(
+            "check", "--track", "fixture", "--repo-root", str(self.root),
+            "--commit", self.head,
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("FAIL: C8", text)
 
 
 class RegisteredTrackTests(unittest.TestCase):
@@ -879,6 +1153,7 @@ class RegisteredTrackTests(unittest.TestCase):
             "truthful_docs",
             "artifact_files",
             "artifact_script",
+            "bound_ledger",
         )
         # A field added to `Track` without a line here would silently escape
         # the rule stated at the end of section 6, which is the shape of defect

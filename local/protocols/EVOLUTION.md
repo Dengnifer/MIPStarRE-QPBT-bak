@@ -1791,3 +1791,62 @@ protocol history, telemetry, paper mirrors, or accepted comparator evidence.
 repository, historical and current identifying URLs remain anonymized, and
 the scope instructions distinguish the library from actual external
 repositories. No CI, review, merge, completion, or dependency-pin gate changes.
+
+## 2026-09-29 - Keep the bound strength each proof establishes (#732)
+
+**Trigger:** the owner's 2026-09-29 instruction to fix the protocol kit and workflow design so that proofs stop
+weakening their bounds, after the error-bound surveys on #727, recorded in `results/telemetry/events.md`, "Protocol
+blind spot: bound strength". The QPBT witness exponent is `1/5,242,880,000` where the same proofs support
+`1/327,680,000`; the LDT headline loses in the same ways. Every existing rule measured "weakened" against the paper.
+
+**Change:** `AGENTS.md` gains *Bound strength*: state what the proof gives; keep separate errors separate; keep
+coefficients out of exponents; no free loss; weakening only as a named `Weakening:` corollary; a stage
+ledger per track (QPBT: `docs/bound-ledger-qpbt.md`); explicit-constant siblings of existential headlines;
+paper-labelled declarations keep the paper's form with the sharp bound as a separate sibling; interfaces fixed by
+skeletons and briefs carry explicit, separate error terms. It also gains an audit-list
+bullet, review item 13 and a reuse caveat on item 7. The review prompt that `review.sh` reads gains item 11 and a
+caveat on item 7: only a loss the PR introduces, in an exponent or degree on a headline's dependency path and not
+recorded as `necessary` or `deferred #N`, is a finding; coefficient-only losses go in the review prose. `review.md` §6 states the same severities. `completion.md` adds
+C8 (explicit siblings, the stage ledger with `sharp` / `necessary: <reason>` / `deferred #N` dispositions, one
+quantitative survey before the first completion statement), and `scripts/completion_gate.py` checks its static half
+with tests. Personas: prover (rule and output section), mathfix (minimality no longer weakens a bound), blueprint
+(proof rates for `poly` steps, *Loose bounds* output), splitter, reviewer (A7, S3), simplifier, orchestrator, scout
+and main (ledger and survey duty); the prover role line in `dispatch.sh`; minimality in `issues-prs.md` §6.
+`docs/anti_patterns.md` A7, `docs/formalization-patterns.md` Pattern 7, `docs/PROOF_INTEGRITY.md`,
+`docs/project_conventions.md` and `docs/CONTRIBUTING.md` §5. The same amendment is applied to the kit branch `kit/formalize-any-paper`.
+
+**Expected effect:** new and changed estimate lemmas state the bounds their proofs give, lossy restatements become
+review findings, and no track is declared finished without its ledger. Losses already in the tree are the ledger's
+backlog, not findings against unrelated PRs. No Lean statement or proof changes. C8 fails the QPBT completion gate
+until `docs/bound-ledger-qpbt.md` exists with its *Stage ledger*; that is main's to-do list, not an owner blocker.
+
+## 2026-09-30 - Make the C8 ledger format canonical and fail closed (#732)
+
+**Trigger:** `results/telemetry/events.md`, "C8 fourth-review disposition: gate
+remains blocked" (2026-09-30T00:04:57Z), exposed the general ambiguity caused
+by reconstructing Markdown paragraph and Setext context. The owner's relayed
+decision in issue #27 comment 5901583288
+(`meta-decision-737-c8-fail-closed-20260930`) replaces that repair target with a
+strict canonical format for PR #737.
+
+**Change:** C8 now accepts one exact `## Stage ledger` heading, optional blank
+lines, and one contiguous outer-piped table with its delimiter and data rows.
+Only the next unindented level-two ATX heading with a nonempty title ends the
+section; other nonblank constructs fail with a named diagnostic. Optional-pipe
+tables, HTML comments, Setext headings, fences, thematic breaks, indented
+blocks, subheadings, prose rows and second tables are intentionally rejected.
+These conservative rendering rejections are accepted: the static checker is a
+canonical-format convenience, while mathematical coverage and honesty remain
+delegated to the ledger survey and independent review.
+
+**Review authority:** the owner-relayed meta decision admits exactly one fifth
+independent review after the new head is committed and CI-green. If that fifth
+review still reports a parsing case, the same decision authorizes an override
+merge with the case recorded and C8's delegated ledger inspection covering the
+remaining limitation. This entry records authority only; it does not claim that
+the review approved or that an override merge occurred. No sixth review or
+unrelated override is authorized. Main records the actual outcome.
+
+**Expected effect:** ledger syntax is linear to validate and unambiguous to
+write, without maintaining a partial Markdown renderer or weakening C8's
+delegated mathematical inspection.

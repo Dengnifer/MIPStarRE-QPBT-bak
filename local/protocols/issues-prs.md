@@ -479,7 +479,9 @@ A correction is adopted only when it meets all four conditions below.
    insufficient.
 3. **Minimality:** the correction is the closest sufficient statement to the
    source, with no unnecessary hypothesis or weakened conclusion and no change
-   to the source semantics. A necessary definition/game correction first
+   to the source semantics; "weakened" is judged against the proof as well as
+   the source (`AGENTS.md`, *Bound strength*). A necessary definition/game
+   correction first
    returns to main for a separately recorded decision and scoped task, with an
    explicit faithfulness audit and independent mathematical review. It is never
    silently adopted as the printed theorem or exempted from consumer analysis.

@@ -33,6 +33,7 @@ codebase.
 - [A4 — Trivial default witnesses for existentials](#a4--trivial-default-witnesses-for-existentials)
 - [A5 — Castle-in-the-air / bypassing Mathlib](#a5--castle-in-the-air--bypassing-mathlib)
 - [A6 — External `*Statement` smuggles](#a6--external-statement-smuggles)
+- [A7 — Lossy restatement of a proved bound](#a7--lossy-restatement-of-a-proved-bound)
 
 ---
 
@@ -571,6 +572,64 @@ merge.
 
 ---
 
+## A7 — Lossy restatement of a proved bound
+
+A lemma is faithful to the paper and its proof is kernel-clean, yet its
+statement discards part of what the proof established. The paper often states
+the step only as `poly(ε)` or `O(·)`, so the paper comparisons of A1–A6 cannot
+see the loss.
+
+### Why it's bad
+
+Losses compound along a chain: an exponent halved at each of five stages is 32
+times smaller at the headline, and no downstream proof can recover a bound an
+upstream statement threw away. A sorry-free chain can end up proving a headline
+far weaker than the mathematics it formalizes.
+
+### How to spot it
+
+- The proof reaches a stronger inequality than the statement, then applies a
+  monotonicity step (`Real.rpow_le_rpow_of_exponent_le`, `Real.sqrt_le_sqrt`,
+  `le_max_left`, `norm_num : (c : ℝ) ≤ c'`) whose only purpose is to reach the
+  stated form.
+- Two conclusions of different orders share one parameter, one `delta` field,
+  or a `max`.
+- One parameter plays two roles, e.g. `a` as both coefficient and degree in
+  `a · n^a`, so absorbing a constant raises the degree.
+- A special case is proved by instantiating a general lemma whose slack (a
+  square root, `m·d` in place of `d`) the special case does not need.
+- An internal envelope is fixed to the paper's printed constants, and a sharper
+  computed bound is weakened to meet it.
+- An additive (Hoeffding) tail is used where a multiplicative (Chernoff) tail
+  holds.
+
+### Concrete example
+
+The extraction step of the QPBT chain, found by the error-bound surveys on
+issue #727. `StateExtraction.lean` proves a squared state error of at most
+`16x`, and `ConcretePauliComparison.lean` proves a squared operator error of at
+most `2x + 2r + 16√x`. `ExtractionWitness` nevertheless carries one `delta` for both,
+at the operator's weaker order, and `deltaExtract` is `C(δ^(1/4) + md/q)`, so the
+state error inherits the operator's fourth root; `OperatorTransfer.lean` then
+takes a further square root. Together with coefficients absorbed into the
+degree of `a(md)^a` and a squared/root consistency triangle, the chain's final
+exponent is `1/5,242,880,000`, where the surveys derive `1/327,680,000` from the
+same proofs. Every statement involved was faithful to a paper that writes
+`O(δ^(1/4) + md/q)`.
+
+### How to fix it
+
+- State the sharp bound, one conclusion per error term, with coefficient,
+  degree and exponent as separate parameters (`C · n^k · x^b`).
+- If a weaker form is needed, add it as a separate corollary whose docstring
+  begins `Weakening:` and gives the reason; keep the sharp lemma public.
+- For a special case, prove the direct bound, or generalize the lemma so that
+  the slack becomes a parameter.
+- Record the stage in the track's bound ledger (`AGENTS.md`, *Bound strength*,
+  rule 7).
+
+---
+
 ## Reviewer checklist
 
 Use this alongside the blocker
@@ -598,6 +657,12 @@ result, ask:
 - [ ] **Paper-faithfulness.** Does the Lean signature match the paper's
       statement, or does Lean sneak in extra hypotheses? Flag divergences
       as ⚠️S in [#1379].
+- [ ] **Bound audit.** Does each new or changed estimate state what its proof
+      establishes: separate error terms, coefficients out of exponents, no
+      unneeded root, square, padding or lossy reuse (A7)? A paper-shaped
+      statement beside its sharp sibling, a `Weakening:` corollary and a
+      recorded `deferred #N` loss pass; a bound loss goes to the ledger and
+      never withholds `\leanok`.
 
 A lemma that passes all of these is a proof. A lemma that fails one is
 scaffolding, and should be labelled and tracked as such (don't tag with
