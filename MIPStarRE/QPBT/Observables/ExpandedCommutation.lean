@@ -265,8 +265,8 @@ theorem twisted_commutator_avg_le_explicit :
           positivity
         nlinarith
 
-/-- Existential packaging of the fixed two-sided twisted-commutator
-coefficient used by the expanded point construction. -/
+/-- A universal coefficient bounds the average squared two-sided twisted
+commutator by a constant multiple of `sqrt ε`. -/
 theorem exists_twistedCommutator_avg_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)

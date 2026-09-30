@@ -118,8 +118,8 @@ theorem extracted_obs_self_consistent_of_global_pair_witness_explicit
   exact tilde_obs_self_consistent_of_global_pair_witness_explicit
     P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j
 
-/-- Existential packaging of
-`extracted_obs_self_consistent_of_global_pair_witness_explicit`. -/
+/-- A universal constant bounds the squared distance between the ideal Pauli
+observables on the two extracted registers in the swapped state. -/
 theorem extracted_obs_selfConsistent_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →

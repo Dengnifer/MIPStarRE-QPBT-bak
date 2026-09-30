@@ -214,8 +214,8 @@ theorem pasting_error_of_marginal_consistency_explicit :
           Real.rpow_le_rpow zero_le_one hδgt.le (by norm_num)
     nlinarith [mul_nonneg (show (0 : ℝ) ≤ 115 by norm_num) ha]
 
-/-- Existential packaging of the fixed one-sided pasting error
-`115 * (η^(1/4) + δ^(1/8))`. -/
+/-- The two-variable polynomial error `115 * (η^(1/4) + δ^(1/8))` bounds the
+one-sided pasted consistency defect. -/
 theorem exists_pasting_error_of_marginal_consistency :
     ∃ δp : ℝ → ℝ → ℝ, IsPolyErr₂ δp ∧
       ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ι : Type*}
@@ -363,7 +363,8 @@ theorem heterogeneous_pasting_error_is_poly_err₂ : IsPolyErr₂ heterogeneousP
       ⟨mul_nonneg (by norm_num)
         (add_nonneg (Real.rpow_nonneg hη _) (Real.rpow_nonneg hδ _)), le_rfl⟩⟩
 
-/-- Existential packaging of the fixed heterogeneous pasting error. -/
+/-- A two-variable polynomial error bounds the heterogeneous pasted consistency
+defect on distinct local spaces. -/
 theorem exists_pasting_error_heterogeneous :
     ∃ δp : ℝ → ℝ → ℝ, IsPolyErr₂ δp ∧
       ∀ {X Y₁ Y₂ R₁ R₂ Γ₁ Γ₂ ιA ιB : Type*}

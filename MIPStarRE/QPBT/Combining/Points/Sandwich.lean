@@ -166,8 +166,8 @@ theorem sandwich_point_ordered_dist_le_explicit :
       (S.place_conjTranspose_mul_self_le_one p
         (S.pointMeasExp_isProjective p.side .Z xz.2 ab.2)) _) 2
 
-/-- Existential packaging of the fixed sandwich-to-ordered-product
-coefficient. -/
+/-- A universal coefficient bounds the squared distance from the sandwich point
+measurement to the ordered Z--X product by a constant multiple of `sqrt ε`. -/
 theorem sandwichPoint_ordered_dist_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
@@ -280,8 +280,8 @@ theorem ordered_cross_dist_le_explicit :
     _ _ _ S.psiHat (172 * ε) (172 * ε) h₁ h₂
   linarith
 
-/-- Existential packaging of the fixed opposite-placement ordered-product
-coefficient. -/
+/-- A universal coefficient bounds the squared distance between opposite-placement
+ordered point products by a constant multiple of `ε`. -/
 theorem ordered_cross_dist_le :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)

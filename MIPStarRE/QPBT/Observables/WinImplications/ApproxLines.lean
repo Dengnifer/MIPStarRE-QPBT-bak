@@ -282,8 +282,8 @@ theorem win_low_degree_interchanged_explicit :
   norm_num at ha hd
   linarith
 
-/-- Existential packaging of the fixed factor-interchanged low-degree
-coefficient `86`. -/
+/-- The factor-interchanged low-degree line--point consistency defect is at most
+`86 * ε`. -/
 theorem win_low_degree_interchanged_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
@@ -456,7 +456,8 @@ theorem win_pauli_basis_cons_interchanged_explicit :
     _ ≤ (Fintype.card PauliEdge : ℝ) * ε := fixedEdgeRejection_le_error S _
     _ = 86 * ε := by rw [pauli_edge_card]; norm_num
 
-/-- Existential packaging of `win_pauli_basis_cons_interchanged_explicit`. -/
+/-- The factor-interchanged Pauli-evaluation--point consistency defect is at most
+`86 * ε`. -/
 theorem win_pauli_basis_cons_interchanged_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),

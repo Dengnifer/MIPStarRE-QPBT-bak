@@ -119,8 +119,8 @@ theorem combined_points_conditioned_line_marginal_defect_le_explicit
     simp only [Distribution.avgOver_map] at h ⊢
     exact h
 
-/-- Existential packaging of the fixed conditioned line-marginal coefficient
-`2080`. -/
+/-- The two conditioned line-marginal consistency defects are bounded with the
+universal coefficient `2080`. -/
 theorem exists_combinedPoints_conditioned_line_marginal_defect_le :
     ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ (P : AdmissibleParams) (ε δQ : ℝ) (S : ProjectiveSetting P ε)

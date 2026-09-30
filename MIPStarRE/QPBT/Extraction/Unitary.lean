@@ -232,8 +232,8 @@ theorem exists_extraction_witness_of_global_pair_witness_explicit
   · exact exists_extractionWitness_ofGlobalPairWitness_of_one_le_construct S w
       (by linarith) (le_of_lt (lt_of_not_ge hdelta_one))
 
-/-- Existential packaging of
-`exists_extraction_witness_of_global_pair_witness_explicit`. -/
+/-- A universal constant guarantees an extraction witness at the composed
+construction-and-extraction error. -/
 theorem exists_extractionWitness_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
@@ -390,7 +390,8 @@ theorem delta_extract_le_delta_qld_explicit (C a b : ℝ) (hC : 1 ≤ C) (ha : 1
         (mul_le_mul_of_nonneg_left
           (Real.rpow_le_rpow_of_exponent_le hdegree1 hconstant) (by positivity)) hrate0
 
-/-- Existential packaging of `delta_extract_le_delta_qld_explicit`. -/
+/-- Every admissible input coefficient and exponent yield new universal constants
+that bound the composed extraction error by an error of `deltaQld` form. -/
 theorem deltaExtract_le_deltaQld (C a b : ℝ) (hC : 1 ≤ C) (ha : 1 < a)
     (hb : 0 < b) (hb1 : b < 1) :
     ∃ a' b' : ℝ, 1 ≤ a' ∧ 0 < b' ∧ b' < 1 ∧

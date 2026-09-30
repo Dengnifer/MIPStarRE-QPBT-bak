@@ -53,6 +53,8 @@ soundness statement down to the combining and extraction layers:
   bounds, with internally constructed global and extraction witnesses.
 * `pauli_soundness_quantitative_mixed_components` and its exact qubit form —
   the capped squared-state and separate raw-operator component bounds.
+* `pauli_soundness_quantitative_fractional` and its exact qubit form — the
+  terminal fractional-dimensional common bound from the native estimates.
 * `pauli_soundness_quantitative_degree_two` and its exact qubit form — the
   sharper degree-two issue #729 bounds, reconstructed on their nonsaturated
   branch.
@@ -64,8 +66,8 @@ soundness statement down to the combining and extraction layers:
   what keeps the soundness hypothesis non-vacuous.
 * `exists_combinedLinesWitness`, `exists_extendedLinesWitness_established`,
   `exists_globalPairWitness`, `exists_actual_rounded_global_pair_error_bound`,
-  and the native quantitative global-pair constructor and comparison — the
-  combining layer.
+  and the native quantitative global-pair constructor, fractional comparison,
+  and legacy comparison — the combining layer.
 * `exists_projective_setting_isometry_bounds`,
   `exists_arbitrary_strategy_isometry_bounds`,
   `pauli_soundness_deltaQld_ofExtractionWitness` — the extraction layer.
@@ -126,10 +128,13 @@ audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_canonical
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_mixed_components
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_mixed_components
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_fractional
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_fractional
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_degree_two
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_gain_mul_baseline
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_pos
+audit_standard_axioms MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le
 audit_standard_axioms MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two
 audit_standard_axioms MIPStarRE.QPBT.quantitative_ratio_le_degree_two_base
 audit_standard_axioms MIPStarRE.QPBT.quantitative_error_le_degree_two_base
@@ -145,6 +150,8 @@ audit_standard_axioms
   MIPStarRE.QPBT.quantitative_operator_component_lt_degree_two_raw_error
 audit_standard_axioms
   MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_le_quantitative_error
+audit_standard_axioms
+  MIPStarRE.QPBT.pauli_soundness_quantitative_fractional_error_le_degree_two
 audit_standard_axioms
   MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_lt_quantitative_error_iff
 audit_standard_axioms
@@ -174,11 +181,22 @@ audit_standard_axioms MIPStarRE.QPBT.exists_combinedLinesWitness
 audit_standard_axioms MIPStarRE.QPBT.exists_extendedLinesWitness_established
 audit_standard_axioms MIPStarRE.QPBT.exists_globalPairWitness
 audit_standard_axioms MIPStarRE.QPBT.exists_actual_rounded_global_pair_error_bound
+audit_standard_axioms MIPStarRE.QPBT.quantitative_native_error_rpow_le_separated
+audit_standard_axioms MIPStarRE.QPBT.quantitative_native_global_pair_error_le_separated
+audit_standard_axioms MIPStarRE.QPBT.quantitative_native_global_pair_error_le_fractional
 audit_standard_axioms MIPStarRE.QPBT.quantitative_native_global_pair_error_bound
+audit_standard_axioms MIPStarRE.QPBT.exists_quantitative_global_pair_witness_native
 audit_standard_axioms MIPStarRE.QPBT.exists_quantitative_global_pair_witness_at_native_error
 
 /-! ### Extraction layer -/
 
+audit_standard_axioms MIPStarRE.QPBT.quantitative_native_extraction_scale_bounds
+audit_standard_axioms
+  MIPStarRE.QPBT.quantitative_native_error_one_sixteenth_le_fractional_base
+audit_standard_axioms
+  MIPStarRE.QPBT.quantitative_native_global_pair_sqrt_le_fractional_base
+audit_standard_axioms
+  MIPStarRE.QPBT.quantitative_native_extraction_sqrt_le_fractional_base
 audit_standard_axioms MIPStarRE.QPBT.exists_projective_setting_isometry_bounds
 audit_standard_axioms MIPStarRE.QPBT.exists_arbitrary_strategy_isometry_bounds
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_deltaQld_ofExtractionWitness

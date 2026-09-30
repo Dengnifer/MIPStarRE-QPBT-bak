@@ -144,8 +144,8 @@ theorem tilde_m_consistent_point_meas_of_global_pair_witness_explicit :
   have hroot : 0 ≤ Real.sqrt (172 : ℝ) := Real.sqrt_nonneg _
   nlinarith
 
-/-- Existential packaging of
-`tilde_m_consistent_point_meas_of_global_pair_witness_explicit`. -/
+/-- A universal constant bounds the consistency defect between Alice's supplied
+point measurement and Bob's extracted point measurement. -/
 theorem tildeM_consistent_pointMeas_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
@@ -284,8 +284,8 @@ theorem tilde_m_consistent_point_meas'_of_global_pair_witness_explicit :
   have hroot : 0 ≤ Real.sqrt (172 : ℝ) := Real.sqrt_nonneg _
   nlinarith
 
-/-- Existential packaging of
-`tilde_m_consistent_point_meas'_of_global_pair_witness_explicit`. -/
+/-- A universal constant bounds the consistency defect between Alice's extracted
+point measurement and Bob's supplied point measurement. -/
 theorem tildeM_consistent_pointMeas'_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),

@@ -632,8 +632,7 @@ theorem op_dist_sq_commutator_le_explicit :
     _ ≤ 16 * δ := hraw
 
 /-- Joint closeness to a projective refinement implies approximate
-commutation with one universal constant. The implementation uses the explicit
-constant `16`; the existential form is retained for the source-facing API. -/
+commutation with one universal constant, which may be taken to be `16`. -/
 theorem opDistSq_commutator_le :
     ∃ C₀ : ℝ, 1 ≤ C₀ ∧
       ∀ {X α β γ ιA ιB : Type*}
@@ -859,7 +858,7 @@ theorem op_dist_sq_commutator_right_le_explicit :
     _ ≤ 16 * δ := hraw
 
 /-- The right-factor form of the commutation analysis uses the same explicit
-constant `16`. The existential theorem below retains the established API. -/
+constant `16`. -/
 theorem opDistSq_commutator_right_le :
     ∃ C₀ : ℝ, 1 ≤ C₀ ∧
       ∀ {X α β γ ιA ιB : Type*}

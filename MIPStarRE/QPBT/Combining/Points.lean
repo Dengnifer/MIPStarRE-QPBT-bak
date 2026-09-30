@@ -231,8 +231,8 @@ theorem exists_combined_points_witness_explicit :
     · exact le_trans (opFamilyDistSq_uniform_le_four _ _ S.psiHat S.psiHat_norm
         (fun xz => hsqQ p₁ xz) (fun xz => hsqZX p₂ xz)) (hK8 hε1)
 
-/-- Existential packaging of the fixed combined-point error
-`pauliBaselinePointConstant * ε^(1/8)`. -/
+/-- The fixed polynomial error `pauliBaselinePointConstant * ε^(1/8)` produces a
+combined-point witness for every projective Pauli-test setting. -/
 theorem exists_combinedPointsWitness :
     ∃ deltaQ : ℝ -> ℝ, IsPolyErr deltaQ ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),

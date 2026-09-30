@@ -147,7 +147,8 @@ theorem subline_remove_x_factor_at_explicit
   rw [← hrew] at hX
   exact hX
 
-/-- Existential packaging of `subline_remove_x_factor_at_explicit`. -/
+/-- A universal constant bounds the change in paired subline overlap caused by
+removing the expanded X-point factor. -/
 theorem subline_remove_X_factor_at :
     ∃ C : ℝ, 0 < C ∧
       ∀ (P : AdmissibleParams) (ε δQ δP : ℝ)
@@ -269,7 +270,8 @@ theorem subline_z_term_near_one_at_explicit
         mul_nonneg (by norm_num) (Real.sqrt_nonneg _)
       nlinarith [mul_nonneg hsm hε]
 
-/-- Existential packaging of `subline_z_term_near_one_at_explicit`. -/
+/-- A universal constant bounds the deviation of the one-point Z subline overlap
+from one. -/
 theorem subline_Z_term_near_one_at :
     ∃ C : ℝ, 0 < C ∧
       ∀ (P : AdmissibleParams) (ε δQ δP : ℝ)
@@ -359,7 +361,8 @@ theorem subline_joint_overlap_near_one_at_explicit
   refine hchain.trans ?_
   nlinarith [mul_nonneg hdimension hsum, mul_nonneg hdimension hquarter]
 
-/-- Existential packaging of `subline_joint_overlap_near_one_at_explicit`. -/
+/-- A universal constant bounds the deviation of the paired subline overlap from
+one in terms of the point, line, and strategy errors. -/
 theorem subline_joint_overlap_near_one_at :
     ∃ constant : ℝ, 0 < constant ∧
       ∀ (params : AdmissibleParams) (error pointError lineError : ℝ)

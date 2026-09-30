@@ -736,8 +736,8 @@ theorem exp_point_self_cons_explicit :
   · convert ProjectiveSetting.expPointDist_abBb_le S W using 1 <;>
       simp only [Placement.side, pauli_edge_card, Nat.cast_ofNat] <;> ring
 
-/-- Existential packaging of the fixed expanded-point self-consistency
-coefficient. -/
+/-- Opposite-placement expanded point measurements have squared distance at most
+`172 * ε`. -/
 theorem expPoint_self_cons :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)

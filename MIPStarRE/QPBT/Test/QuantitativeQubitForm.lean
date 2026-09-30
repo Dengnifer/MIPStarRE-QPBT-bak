@@ -57,9 +57,33 @@ theorem pauli_soundness_qubit_quantitative_mixed_components
     rw [qubit_operator_distance_b_to_qubit P R w W]
     exact hB W
 
-/-- Exact qubit-coordinate transport of the degree-two quantitative Pauli
-soundness bound. The state norm and both raw summed-squared operator distances
-are preserved. -/
+/-- Exact qubit-coordinate transport of the fractional-dimensional common
+error. The state norm and both raw summed-squared operator distances are
+unchanged. -/
+theorem pauli_soundness_qubit_quantitative_fractional
+    (P : AdmissibleParams) (epsilon : ℝ) (hepsilon : 0 ≤ epsilon)
+    (R : Strategy (pauliBasisTest P)) (hwin : 1 - epsilon ≤ R.value) :
+    ∃ t : QubitSoundnessWitness P R,
+      ‖isometryTensor t.φA t.φB R.ψ - idealQubitState P t.aux‖ ≤
+          pauliSoundnessQuantitativeFractionalError P epsilon ∧
+      (∀ W : PauliKind, qubitOperatorDistanceA P R t W ≤
+        pauliSoundnessQuantitativeFractionalError P epsilon) ∧
+      ∀ W : PauliKind, qubitOperatorDistanceB P R t W ≤
+        pauliSoundnessQuantitativeFractionalError P epsilon := by
+  obtain ⟨w, hstate, hA, hB⟩ :=
+    pauli_soundness_quantitative_fractional P epsilon hepsilon R hwin
+  refine ⟨w.toQubit, ?_, ?_, ?_⟩
+  · exact (qubit_state_error_to_qubit P R w).trans_le hstate
+  · intro W
+    exact (qubit_operator_distance_a_to_qubit P R w W).trans_le (hA W)
+  · intro W
+    exact (qubit_operator_distance_b_to_qubit P R w W).trans_le (hB W)
+
+/-- Weakening: exact qubit-coordinate transport of the deferred degree-two
+quantitative Pauli soundness bound. The state norm and both raw summed-squared
+operator distances are preserved.
+
+Bound: deferred #727. -/
 theorem pauli_soundness_qubit_quantitative_degree_two
     (P : AdmissibleParams) (epsilon : ℝ) (hepsilon : 0 ≤ epsilon)
     (R : Strategy (pauliBasisTest P)) (hwin : 1 - epsilon ≤ R.value) :

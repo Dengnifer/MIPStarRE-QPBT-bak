@@ -178,7 +178,8 @@ theorem win_comm_explicit :
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _) (by norm_num)
 
-/-- Existential packaging of `win_comm_explicit`, preserving item 4 of
+/-- A universal coefficient bounds consistency between Alice's commuting-pair
+measurement and Bob's selected pair component, preserving item 4 of
 `lem:qld-win-implications`. -/
 theorem win_comm :
     ∃ C : ℝ, 1 ≤ C ∧
@@ -398,7 +399,8 @@ theorem win_comm_cons_explicit :
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _) (by norm_num)
 
-/-- Existential packaging of `win_comm_cons_explicit`, preserving item 5 of
+/-- A universal coefficient bounds consistency between Alice's selected point
+trace and Bob's commuting-pair measurement, preserving item 5 of
 `lem:qld-win-implications`. -/
 theorem win_comm_cons :
     ∃ C : ℝ, 1 ≤ C ∧

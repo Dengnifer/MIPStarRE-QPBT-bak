@@ -1959,7 +1959,8 @@ The statements of this section are not named results of the source article.  The
 
 The entries below are Lean-only quantitative specializations.  Conditional
 entries display the supplied global polynomial-pair witness explicitly.  The
-tracked source-facing discharge of that input is not claimed in this section.
+construction of that witness from the source theorem's hypotheses is not
+claimed in this section.
 For a construction coefficient $C$, write
 \[
  \Delta_S(C;\eps,\delta_G,m,d,q)
@@ -2412,9 +2413,84 @@ and
  D_{\rm mix}(P,e)=472X_{\rm native}(P,e)+24\frac nq
    +192\sqrt{X_{\rm native}(P,e)}+344e.
 \]
-These definitions are Lean-only sharper interfaces.  They do not replace the
-paper-labelled error family or the historical degree-four error.
+These definitions are auxiliary error functions retaining the separate powers
+in the estimates.  They do not replace the paper-labelled error family or the
+historical degree-four error.  The degree-two compatibility form is a deferred
+loss tracked by issue~\#727.
 \end{definition}
+
+\begin{definition}[Separated extraction and fractional terminal errors]
+\label{def:pauli-final-fractional-error}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeSeparatedScale}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeSeparatedRoot}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeFractionalDimension}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeFractionalRawError}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeFractionalError}
+\leanok
+\uses{def:qld-native-separated-errors,
+  def:pauli-final-degree-two-error}
+Let $G$ be the exact native global-pair error, $X=2800(G+\sqrt e+md/q)$,
+and let $B_G$ and $\bar S_s$ be as in
+Definition~\ref{def:qld-native-separated-errors}.  Define
+\[
+ Y=2800\left(B_G+\sqrt e+\frac{md}{q}\right)
+\]
+and
+\[
+\begin{split}
+ Z=\sqrt{2800}\biggl(&\sqrt{32}\,\bar S_{1/2}
+ +\sqrt{32\sqrt{220}}\,\bar S_{1/16}
+ +\sqrt{64\sqrt2}\,\bar S_{1/4}\\
+ &+8\sqrt{E_{\rm pt}(e)}
+ +\sqrt{\frac{12md+4d+14}{q}}+e^{1/4}
+ +\sqrt{\frac{md}{q}}\biggr).
+\end{split}
+\]
+The terminal dimension factor and common error are
+\[
+ M(P)=m^{20481/262144}d^{1/64},\qquad
+ H_{\rm raw}(P,e)=10769120\,M(P)E_b(P,e),
+\]
+\[
+ H(P,\eps)=\min\{4,H_{\rm raw}(P,\min\{\eps,1\})\}.
+\]
+\end{definition}
+
+\begin{theorem}[Separated extraction and fractional scalar certificates]
+\label{thm:pauli-final-fractional-scalar-support}
+\lean{MIPStarRE.QPBT.quantitative_native_extraction_scale_bounds}
+\lean{MIPStarRE.QPBT.quantitative_native_error_one_sixteenth_le_fractional_base}
+\lean{MIPStarRE.QPBT.quantitative_native_global_pair_sqrt_le_fractional_base}
+\lean{MIPStarRE.QPBT.quantitative_native_extraction_sqrt_le_fractional_base}
+\leanok
+\uses{def:pauli-final-fractional-error,
+  thm:qld-native-separated-scalar-support,
+  thm:pauli-final-envelope-support}
+For $e\geq0$, the exact native extraction scale satisfies
+\[
+ X\leq Y,\qquad \sqrt X\leq Z.
+\]
+If also $e\leq1$, then the direct native error $\lambda$, the exact native
+global-pair error $G$, and the extraction scale obey
+\[
+ \lambda^{1/16}\leq12M(P)E_b(P,e),\qquad
+ \sqrt G\leq304M(P)E_b(P,e).
+\]
+On the additional branch $md/q\leq1$,
+\[
+ \sqrt X\leq16218M(P)E_b(P,e).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:pauli-final-fractional-error,
+  thm:qld-native-separated-scalar-support,
+  thm:pauli-final-envelope-support}
+Split the square root of the native global-pair sum before estimating its
+terms.  Bound the six native contributions independently, and use the unit cap
+only in the terminal common-envelope conversion.  The point, collision,
+clipped-error, and field-ratio terms are then bounded directly by $M(P)E_b$.
+\end{proof}
 
 \begin{theorem}[Exponent and envelope comparisons]
 \label{thm:pauli-final-envelope-support}
@@ -2500,7 +2576,8 @@ same auxiliary state.
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:pauli-final-envelope-support}
+\uses{thm:pauli-final-envelope-support,
+  thm:pauli-final-degree-two-scalar-support}
 Use the bounds for $g$, $\sqrt e$, and $r$ to obtain the extraction-scale
 inequality.  For a nonnegative $x$ below that scale, taking a square root
 halves the envelope exponent, and $n\geq1$ permits the resulting $n^2$ factor
@@ -2508,6 +2585,60 @@ to be enlarged to $n^4$.  The numerical inequalities
 $4\cdot10^6<10^{14}$ and
 $472\cdot10^{11}+24+192\cdot10^6+344<10^{14}$ absorb the state and operator
 components into the common structured error.
+\end{proof}
+
+\begin{theorem}[Degree-two scalar estimates]
+\label{thm:pauli-final-degree-two-scalar-support}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_pos}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two}
+\lean{MIPStarRE.QPBT.quantitative_ratio_le_degree_two_base}
+\lean{MIPStarRE.QPBT.quantitative_error_le_degree_two_base}
+\lean{MIPStarRE.QPBT.quantitative_ratio_lt_four_billionth_of_degree_two_raw_lt_four}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_lt_four_thousandths}
+\lean{MIPStarRE.QPBT.quantitative_extraction_scale_lt_one_of_degree_two_raw_lt_four}
+\lean{MIPStarRE.QPBT.quantitative_state_component_lt_degree_two_raw_error}
+\lean{MIPStarRE.QPBT.quantitative_operator_component_lt_degree_two_raw_error}
+\leanok
+\uses{def:pauli-final-degree-two-error, thm:pauli-final-envelope-support}
+Let $P=(q,m,d)$ be admissible, put $n=md$, and let $e\geq0$.  Then
+$E_b(P,e)>0$.  If $x\geq0$ and
+\[
+ x\leq10^{11}n^4E_{\mathrm{pair}}(P,e),
+\]
+then
+\[
+ \sqrt{x}\leq10^6n^2E_b(P,e),
+ \qquad
+ 4\sqrt{x}<I_{\rm raw}(P,e).
+\]
+If in addition $I_{\rm raw}(P,e)<4$, then
+\[
+ \sqrt{x}<\frac4{1000},\qquad x<1.
+\]
+For $0\leq e\leq1$ one also has
+\[
+ \frac nq\leq n^2E_b(P,e),
+ \qquad
+ e\leq n^2E_b(P,e).
+\]
+On this probability domain, $I_{\rm raw}(P,e)<4$ further implies
+\[
+ \frac nq<\frac4{10^9}.
+\]
+Under the displayed extraction-scale bound, the same small branch also gives
+\[
+ 472x+24\frac nq+192\sqrt{x}+344e<I_{\rm raw}(P,e).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-envelope-support}
+The positive field term makes $E_b(P,e)$ strictly positive.  Taking the
+square root of the extraction-scale bound produces the factor $n^2$ and halves
+the envelope exponent.  The field ratio and the clipped error are absorbed by
+the same positive base.  On the nonsaturated branch, the inequality
+$I_{\rm raw}(P,e)<4$ gives the three strict numerical bounds, while positivity
+of the base makes the state-component comparison strict.
 \end{proof}
 
 \begin{theorem}[Full-domain and canonical scalar bounds]
@@ -2624,43 +2755,65 @@ and raw-family bounds.  The qubit statement follows from the exact coordinate
 reindexing identities.
 \end{proof}
 
-\begin{theorem}[Degree-two quantitative Pauli soundness]
-\label{thm:pauli-final-degree-two-soundness}
-\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two}
-\lean{MIPStarRE.QPBT.quantitative_operator_component_lt_degree_two_raw_error}
-\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two}
+\begin{theorem}[Fractional-dimensional quantitative Pauli soundness]
+\label{thm:pauli-final-fractional-soundness}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_fractional}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_fractional}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_fractional_error_le_degree_two}
 \leanok
-\uses{def:pauli-final-degree-two-error,
-thm:qld-native-small-regime-global-pair,
-thm:pauli-supplied-global-component-transfer-explicit,
-thm:pauli-universal-distance-caps-support}
+\uses{def:pauli-final-fractional-error,
+  thm:pauli-final-fractional-scalar-support,
+  thm:pauli-final-mixed-components,
+  thm:pauli-universal-distance-caps-support,
+  lem:pauli-binary}
 Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness for
 which the unsquared state norm and both raw prescribed-answer sums of squared
-operator norms are at most $I(P,\eps)$.
-
-On the branch $I_{\rm raw}(P,e)<4$, the proof constructs a fresh global-pair
-witness.  If $x=2800(G(P,e)+\sqrt e+n/q)$ is its extraction scale, then
+operator norms are at most
 \[
- \sqrt x\leq10^6n^2E_b(P,e),\qquad \frac nq<4\cdot10^{-9},
- \qquad \sqrt x<0.004,\qquad x<1.
+ H(P,\eps)=\min\left\{4,
+ 10769120\,m^{20481/262144}d^{1/64}
+ E_b(P,\min\{\eps,1\})\right\}.
 \]
-For the same auxiliary vector the squared state error is at most $16x$, and
-each raw operator error is at most
-$472x+24n/q+192\sqrt x+344e$.  Hence the state norm is at most
-$4\cdot10^6n^2E_b(P,e)$, while each raw operator error is at most
-$664000368n^2E_b(P,e)<I_{\rm raw}(P,e)$.  On the complementary branch the
-universal bounds $2$, $4$, and $4$ give the capped conclusion.
+The same three bounds hold in qubit coordinates without changing the witness
+errors.  Moreover
+\[
+ H(P,\eps)\leq I(P,\eps).
+\]
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:pauli-supplied-global-component-transfer-explicit,
-thm:pauli-universal-distance-caps-support}
-Take square roots without enlarging $n^2$ to $n^4$.  The strict small-branch
-bound forces the field ratio below one, so the global-pair constructor applies.
-Its common-envelope certificate is retained for this same witness. Use
-$x\leq\sqrt x$ when $x<1$ and retain the state and operator components
-separately. The saturated branch uses an existing soundness witness and the
-universal caps.
+\uses{thm:pauli-final-fractional-scalar-support,
+  thm:pauli-final-mixed-components,
+  thm:pauli-universal-distance-caps-support,
+  lem:pauli-binary}
+On the saturated branch use the universal state and operator bounds.  Otherwise
+the terminal error forces $md/q<1$; apply the exact mixed-component witness,
+bound its extraction scale by the fractional scalar certificate, and retain
+the same auxiliary vector for all three estimates.  Exact coordinate
+reindexing gives the qubit form.  Finally use
+$m^{20481/262144}d^{1/64}\leq(md)^2$ and $10769120\leq10^9$.
+\end{proof}
+
+\begin{theorem}[Degree-two quantitative Pauli soundness]
+\label{thm:pauli-final-degree-two-soundness}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two}
+\leanok
+\uses{def:pauli-final-degree-two-error,
+ thm:pauli-final-fractional-soundness}
+Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness for
+which the unsquared state norm and both raw prescribed-answer sums of squared
+operator norms are at most $I(P,\eps)$.
+This is the degree-two weakening of the fractional-dimensional theorem; it
+does not reconstruct a second witness or replace the native powers by a
+coefficient-$30$ common exponent.  Its retained degree-two padding is a
+deferred loss tracked by issue~\#727.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-fractional-soundness}
+Take the witness from
+Theorem~\ref{thm:pauli-final-fractional-soundness} and apply $H\leq I$ to its
+state norm and both operator-family errors.
 \end{proof}
 
 \begin{theorem}[Comparison of the degree-two error]
@@ -2697,7 +2850,8 @@ historical-baseline comparisons.
 \uses{thm:pauli-final-degree-two-soundness, lem:pauli-binary}
 The witness of Theorem~\ref{thm:pauli-final-degree-two-soundness} transports
 to qubit coordinates with the same state norm and the same two raw
-summed-squared operator-family errors, each bounded by $I(P,\eps)$.
+summed-squared operator-family errors, each bounded by $I(P,\eps)$.  This exact
+transport retains the deferred degree-two compatibility bound of issue~\#727.
 \end{corollary}
 \begin{proof}
 \leanok
@@ -2711,11 +2865,9 @@ Apply the exact field-basis coordinate reindexing to the degree-two witness.
 \lean{MIPStarRE.QPBT.pauli_soundness_quantitative_canonical}
 \leanok
 \uses{def:pauli-final-quantitative-error,
-thm:pauli-final-component-absorption,
 thm:pauli-final-full-domain-support,
-thm:qld-small-regime-global-pair,
-thm:pauli-supplied-global-component-transfer-explicit,
-thm:pauli-universal-distance-caps-support}
+thm:pauli-final-degree-two-soundness,
+thm:pauli-final-degree-two-comparison}
 Let $P=(q,m,d)$ be admissible, let $\eps\geq0$, and let an arbitrary strategy
 for the Pauli basis test have value at least $1-\eps$.  There are local
 isometries and one normalized auxiliary state such that
@@ -2737,29 +2889,23 @@ are at most $\Delta_{\mathrm{new}}(P,\eps)$.  Each operator distance is
 with the appropriate player placement.  The conjugated effects retain their
 isometry range projections; no range condition is imposed on the ideal state.
 
-The same witness satisfies all three conclusions with the larger canonical
-bound $\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  In particular
-$1\leq100$ and $0<b<1$, and neither form assumes a supplied global witness or
-a small-regime premise.
+This is the historical degree-four structured conclusion.  Separately, the
+degree-two soundness theorem supplies a witness whose three errors are bounded
+by $I(P,\eps)$; comparison with the canonical error shows that this witness
+satisfies all three conclusions with
+$\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  In particular $1\leq100$ and
+$0<b<1$, and neither form assumes a supplied global witness or a small-regime
+premise.
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:pauli-soundness-explicit-baseline,
-thm:pauli-universal-distance-caps-support,
-thm:qld-small-regime-global-pair,
-thm:pauli-supplied-global-component-transfer-explicit,
-thm:pauli-final-component-absorption,
-thm:pauli-final-full-domain-support}
-Put $e=\min\{\eps,1\}$.  If $B(P,e)\geq4$, retain the actual witness
-constructed by the fixed explicit-baseline theorem and apply the universal
-state and prescribed-family caps.  Otherwise the two saturation lemmas imply
-$md\geq2$ and $md/q<1$.  The questionwise Naimark setting then constructs its
-global polynomial-pair witness internally, and the componentwise transfer
-gives one soundness witness carrying the squared state estimate and both raw
-operator estimates for the same auxiliary state.  The preceding scalar
-absorption bounds its unsquared state norm and both summed squared operator
-distances by $B(P,e)$.  Finally apply the canonical scalar bound without
-changing the witness.
+\uses{thm:pauli-final-full-domain-support,
+thm:pauli-final-degree-two-soundness,
+thm:pauli-final-degree-two-comparison}
+Take the witness of Theorem~\ref{thm:pauli-final-degree-two-soundness}.  The
+degree-two-to-degree-four comparison gives the historical structured theorem,
+and the canonical comparison gives the $\delta_{\rm qld}^{100,b}$ theorem for
+the same three errors.
 \end{proof}
 
 \begin{corollary}[Exact quantitative qubit form]

@@ -1,4 +1,4 @@
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Bounds
+import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Fractional
 
 /-!
 # Canonical comparisons for quantitative Pauli soundness
@@ -15,6 +15,70 @@ This module compares the quantitative Pauli-soundness errors with the canonical
 namespace MIPStarRE.QPBT
 
 noncomputable section
+
+/-- Weakening: the terminal fractional-dimensional error is bounded by the
+degree-two compatibility error at the same exponent.
+
+Bound: deferred #727. -/
+theorem pauli_soundness_quantitative_fractional_error_le_degree_two
+    (P : AdmissibleParams) (epsilon : ℝ) (hepsilon : 0 ≤ epsilon) :
+    pauliSoundnessQuantitativeFractionalError P epsilon ≤
+      pauliSoundnessQuantitativeDegreeTwoError P epsilon := by
+  let e := min epsilon 1
+  let m : ℝ := P.m
+  let d : ℝ := P.d
+  let n : ℝ := ((P.m * P.d : ℕ) : ℝ)
+  let F := pauliSoundnessQuantitativeEnvelope P e
+  have he : 0 ≤ e := by dsimp [e]; exact le_min hepsilon zero_le_one
+  have hm : 1 ≤ m := by dsimp [m]; exact_mod_cast P.one_le_m
+  have hd : 1 ≤ d := by dsimp [d]; exact_mod_cast P.hd
+  have hF : 0 ≤ F := by
+    dsimp [F]
+    exact pauli_soundness_quantitative_envelope_nonneg P he
+  have hdimension : pauliSoundnessQuantitativeFractionalDimension P ≤ n ^ (2 : ℕ) := by
+    have hmPower : Real.rpow m (20481 / 262144 : ℝ) ≤ m ^ (2 : ℕ) := by
+      calc
+        Real.rpow m (20481 / 262144 : ℝ) ≤ Real.rpow m 2 :=
+          Real.rpow_le_rpow_of_exponent_le hm (by norm_num)
+        _ = m ^ (2 : ℕ) := Real.rpow_natCast m 2
+    have hdPower : Real.rpow d (1 / 64 : ℝ) ≤ d ^ (2 : ℕ) := by
+      calc
+        Real.rpow d (1 / 64 : ℝ) ≤ Real.rpow d 2 :=
+          Real.rpow_le_rpow_of_exponent_le hd (by norm_num)
+        _ = d ^ (2 : ℕ) := Real.rpow_natCast d 2
+    dsimp [pauliSoundnessQuantitativeFractionalDimension, m, d, n]
+    push_cast
+    calc
+      Real.rpow (P.m : ℝ) (20481 / 262144 : ℝ) *
+          Real.rpow (P.d : ℝ) (1 / 64 : ℝ) ≤
+          (P.m : ℝ) ^ (2 : ℕ) * Real.rpow (P.d : ℝ) (1 / 64 : ℝ) :=
+        mul_le_mul_of_nonneg_right hmPower (Real.rpow_nonneg (by positivity) _)
+      _ ≤ (P.m : ℝ) ^ (2 : ℕ) * (P.d : ℝ) ^ (2 : ℕ) :=
+        mul_le_mul_of_nonneg_left hdPower (by positivity)
+      _ = ((P.m : ℝ) * (P.d : ℝ)) ^ (2 : ℕ) := by ring
+  have hdimension0 : 0 ≤ pauliSoundnessQuantitativeFractionalDimension P := by
+    unfold pauliSoundnessQuantitativeFractionalDimension
+    exact mul_nonneg (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+      (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+  have hraw : pauliSoundnessQuantitativeFractionalRawError P e ≤
+      pauliSoundnessQuantitativeDegreeTwoRawError P e := by
+    unfold pauliSoundnessQuantitativeFractionalRawError
+      pauliSoundnessQuantitativeDegreeTwoRawError
+    change 10769120 * pauliSoundnessQuantitativeFractionalDimension P * F ≤
+      1000000000 * n ^ (2 : ℕ) * F
+    calc
+      10769120 * pauliSoundnessQuantitativeFractionalDimension P * F ≤
+          1000000000 * pauliSoundnessQuantitativeFractionalDimension P * F := by
+        exact mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_right (by norm_num) hdimension0) hF
+      _ ≤ 1000000000 * n ^ (2 : ℕ) * F :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hdimension (by norm_num)) hF
+  unfold pauliSoundnessQuantitativeFractionalError
+    pauliSoundnessQuantitativeDegreeTwoError
+  change min 4 (pauliSoundnessQuantitativeFractionalRawError P e) ≤
+    min 4 (pauliSoundnessQuantitativeDegreeTwoRawError P e)
+  exact min_le_min_left 4 hraw
 
 /-- The degree-four structured error is bounded by the canonical
 `deltaQld 100` error at the same exponent. -/

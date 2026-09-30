@@ -351,7 +351,7 @@ theorem rounded_polynomial_ordered_estimates_at_native_error :
 
 /-- Weakening: the native rounded construction implies the coefficient-`30`
 common-error route used to match paper `lem:ld-soundness`; this statement keeps
-the historical paper-form scalar interface. -/
+the common-error form of the paper estimate. -/
 theorem rounded_polynomial_ordered_estimates_quantitative :
     ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
         (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),

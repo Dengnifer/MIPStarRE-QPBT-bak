@@ -152,7 +152,8 @@ theorem win_comm_interchanged_explicit :
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _)
         (by norm_num)
 
-/-- Existential packaging of `win_comm_interchanged_explicit`. -/
+/-- A universal coefficient bounds the factor-interchanged consistency defect
+between Alice's pair component and Bob's commuting-pair measurement. -/
 theorem win_comm_interchanged_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
@@ -336,7 +337,8 @@ theorem win_comm_cons_interchanged_explicit :
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _)
         (by norm_num)
 
-/-- Existential packaging of `win_comm_cons_interchanged_explicit`. -/
+/-- A universal coefficient bounds the factor-interchanged consistency defect
+between Alice's commuting-pair measurement and Bob's selected point trace. -/
 theorem win_comm_cons_interchanged_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
@@ -553,7 +555,8 @@ theorem win_ms_cons_interchanged_explicit :
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _)
         (by norm_num)
 
-/-- Existential packaging of `win_ms_cons_interchanged_explicit`. -/
+/-- A universal coefficient bounds the factor-interchanged consistency defect
+between Alice's Magic Square variable and Bob's selected point trace. -/
 theorem win_ms_cons_interchanged_proof :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),

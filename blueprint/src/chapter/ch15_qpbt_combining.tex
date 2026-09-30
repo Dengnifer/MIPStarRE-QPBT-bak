@@ -7128,6 +7128,7 @@ alphabet.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-baseline-scalar-bounds}
 Use the expanded line--point comparison twice, condition on nonzero direction,
 apply Theorem~\ref{thm:qld-pasting-explicit}, and restore the discarded mass.
 The final scalar inequality is included in
@@ -7180,6 +7181,7 @@ bound.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-baseline-scalar-bounds}
 Use the subline measurement and the paired-overlap estimate, then absorb the
 result with the scalar combining inequality of
 Theorem~\ref{thm:qld-baseline-scalar-bounds}.
@@ -7239,25 +7241,32 @@ For supplied point and extended-line errors $\delta_Q,\delta_L$, put
  \end{split}
 \]
 There are projective rounded polynomial measurements for Alice and Bob whose
-two ordered errors are at most $E$.  For the same measurements, the scalar
-nonlinearity mass is at most
+ordered errors, in both orderings and on both player placements, are at most
+$E$.  There also exist such measurements satisfying, in addition, the two
+scalar-nonlinearity mass bounds
 \[
- 2E+2\frac{(2m+2)d+1}{q},
+ 2E+2\frac{(2m+2)d+1}{q}.
 \]
-each wrong-variable mass is at most
+There exist such measurements satisfying those ordered and scalar bounds and,
+for both orderings, the two wrong-variable mass bounds
 \[
- 2E+2\frac{2md+2}{q},
+ 2E+2\frac{2md+2}{q}.
 \]
-and the non-separated mass is at most
+Separately, there exist projective rounded measurements satisfying the ordered
+bounds and the two non-separated-mass bounds
 \[
  6E+\frac{12md+4d+10}{q}.
 \]
-They induce a projective global polynomial-pair witness with error
+Finally, the supplied point and extended-line witnesses determine a projective
+global polynomial-pair witness with error
 \[
  8E+\frac{12md+4d+14}{q}.
 \]
-All four estimates use the directly indexed, completed-answer extended-line
-witness; no unproved source-domain conversion is hidden in these statements.
+Each existential assertion concerns the measurements constructed in its own
+linked declaration; no conjunction between independently quantified witnesses
+is asserted.  All four estimates use the directly indexed, completed-answer
+extended-line witness; no unproved source-domain conversion is hidden in these
+statements.
 \end{theorem}
 \begin{proof}
 \leanok
@@ -7450,8 +7459,6 @@ dimension growth into the coefficient $C$.
 \label{thm:qld-global-pair-witness-explicit}
 \lean{MIPStarRE.QPBT.exists_global_pair_witness_explicit}
 \leanok
-\uses{thm:qld-combined-points-explicit, thm:qld-extended-lines-explicit,
-thm:qld-rounded-polynomials-explicit, thm:qld-baseline-scalar-bounds}
 Every projective Pauli-test setting has a projective global polynomial-pair
 witness with error
 \[
@@ -7463,6 +7470,8 @@ hypotheses of this statement.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-combined-points-explicit, thm:qld-extended-lines-explicit,
+thm:qld-rounded-polynomials-explicit, thm:qld-baseline-scalar-bounds}
 Construct the point and extended-line witnesses, apply the rounded pair
 construction, and use the final inequality of
 Theorem~\ref{thm:qld-baseline-scalar-bounds}.
@@ -7505,6 +7514,38 @@ the pre-rounding and post-rounding envelopes
  E_{\mathrm{pair}}(P,e)=e^b+q^{-b}+2^{-bmd}.
 \]
 All powers in these definitions are real powers.
+\end{definition}
+
+\begin{definition}[Native direct and rounded-pair errors]
+\label{def:qld-native-error-scales}
+\lean{MIPStarRE.QPBT.directNativeError}
+\lean{MIPStarRE.QPBT.nativeRoundingError}
+\lean{MIPStarRE.QPBT.nativeOrderedPolynomialError}
+\lean{MIPStarRE.QPBT.nativeGlobalPairRawError}
+\lean{MIPStarRE.QPBT.nativeGlobalPairError}
+\leanok
+\uses{def:qld-coefficient-thirty-scales}
+For direct low-degree parameters $D=(q,m,d,k)$ and $t\in\mathbb R$, define
+\[
+ \Lambda_D(t)=\min\!\left\{1,
+ 400000m^{5/4}d^{1/4}
+ \left((3t)^\tau+(d/q)^\tau+\exp(-4md)\right)\right\}.
+\]
+For admissible Pauli-test parameters $P=(q,m,d)$ and real numbers
+$\delta,\delta_Q$, define
+\[
+ \eta(\delta)=\delta+\sqrt{220}\,\delta^{1/8}
+   +2\sqrt2\,\delta^{1/2},
+ \qquad
+ J(\delta,\delta_Q)=4\eta(\delta)+8\delta_Q,
+\]
+\[
+ R_P(\delta,\delta_Q)=32\eta(\delta)+64\delta_Q
+   +\frac{12md+4d+14}{q},
+ \qquad
+ G_P(\delta,\delta_Q)=\min\{1,R_P(\delta,\delta_Q)\}.
+\]
+All powers are real powers.
 \end{definition}
 
 \begin{theorem}[Scalar bounds for the coefficient-30 direct LDT]
@@ -7562,6 +7603,48 @@ Substitute $N_D=2560000m^3d$ in the linear-triangle estimate, separate the
 field and exponential terms, and absorb the resulting quadratic factor into
 the coefficient-$30$ error. The cases $md=1$ and $md\geq2$ respectively use
 the unit cap and the power $(md)^{30}$.
+\end{proof}
+
+\begin{theorem}[Elementary properties of the native errors]
+\label{thm:qld-native-error-scalars}
+\lean{MIPStarRE.QPBT.direct_native_error_nonneg}
+\lean{MIPStarRE.QPBT.native_rounding_error_eq}
+\lean{MIPStarRE.QPBT.native_rounding_error_nonneg}
+\lean{MIPStarRE.QPBT.native_rounding_error_mono}
+\lean{MIPStarRE.QPBT.native_ordered_polynomial_error_nonneg}
+\lean{MIPStarRE.QPBT.native_global_pair_raw_error_nonneg}
+\lean{MIPStarRE.QPBT.native_global_pair_error_nonneg}
+\lean{MIPStarRE.QPBT.direct_native_error_le_delta_ld_quantitative}
+\leanok
+\uses{def:qld-native-error-scales,
+  thm:qld-coefficient-thirty-ldt-scalars}
+If $t\geq0$, then $\Lambda_D(t)\geq0$.  If
+$0\leq\delta\leq\delta'$, then
+\[
+ \delta+\sqrt{220\delta^{1/4}}+2\sqrt{2\delta}=\eta(\delta),
+ \qquad
+ 0\leq\eta(\delta)\leq\eta(\delta').
+\]
+If also $\delta_Q\geq0$, then
+\[
+ 0\leq J(\delta,\delta_Q),\qquad
+ 0\leq R_P(\delta,\delta_Q),\qquad
+ 0\leq G_P(\delta,\delta_Q).
+\]
+Finally, if $k=1$ and $t\geq0$, then
+\[
+ \Lambda_D(t)\leq
+ \delta_{\mathrm{ld}}(30,\tau,t,q,m,d,k).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:qld-native-error-scales,
+  thm:qld-coefficient-thirty-ldt-scalars}
+The square-root identity follows by separating the positive constants and
+halving the real-power exponents.  Nonnegativity and monotonicity then follow
+term by term.  The last inequality identifies $\Lambda_D(t)$ with the capped
+linear-triangle error and applies the coefficient-$30$ estimate.
 \end{proof}
 
 \begin{theorem}[Fixed numerical certificates and the uncapped passing bound]
@@ -7669,25 +7752,31 @@ the complementary range.
 \lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_at_native_error}
 \lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error}
 \leanok
-\uses{thm:main-formal-linear-triangle}
+\uses{def:qld-native-error-scales, thm:main-formal-linear-triangle}
 This is a Lean-only sharp sibling of the common-error presentation in
-Lemma~\ref{lem:ld-soundness}.  For direct parameters $D=(q,h,d,k)$ put
-$\tau=1/8192$, $N_D=2560000h^3d$, and
-\[
- \Lambda_D(t)=\min\!\left\{1,
- 400000h^{5/4}d^{1/4}
- \left((3t)^\tau+(d/q)^\tau+\exp(-4hd)\right)\right\}.
-\]
-Then $N_D^{1/4}=40h^{3/4}d^{1/4}$, and the complete-measurement
-linear-triangle error at $N_D$ is exactly $\Lambda_D(t)$.  If $k=1$, the
-coordinate, singleton-tuple, projective-strategy, and arbitrary-strategy
-soundness constructions all retain the same three defects at error
-$\Lambda_D(t)$.  Singleton relabelling and Naimark compression preserve the
-constructed polynomial measurements and do not enlarge the bound.
+Lemma~\ref{lem:ld-soundness}.  For direct parameters $D=(q,m,d,k)$ put
+$N_D=2560000m^3d$.  Then
+$N_D^{1/4}=40m^{3/4}d^{1/4}$, and the complete-measurement linear-triangle
+error at $N_D$ is exactly $\Lambda_D(t)$ from
+Definition~\ref{def:qld-native-error-scales}.
+
+For every real $t$, every projective direct-game strategy of value at least
+$1-t$, and every coordinate, there are projective polynomial measurements
+whose two point--polynomial defects and polynomial self-consistency defect are
+at most $\Lambda_D(t)$.  If $k=1$, relabelling the same measurements as
+singleton tuples preserves all three bounds; neither conclusion requires
+$t>0$.
+
+The separately stated projective direct-game soundness theorem assumes
+$k=1$, $t>0$, projectivity, and value at least $1-t$, and returns the same
+three tuple bounds.  Under $k=1$, $t>0$, and the same passing premise, but
+without projectivity of the input strategy, Naimark dilation and compression
+give tuple measurements with the same bounds; projectivity of the compressed
+measurements is not asserted.
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:main-formal-linear-triangle}
+\uses{def:qld-native-error-scales, thm:main-formal-linear-triangle}
 Substitute the exact fourth root of $N_D$ and the exact exponential argument
 into the linear-triangle estimate.  Apply the singleton-tuple relabelling and,
 for arbitrary strategies, the existing two-sided Naimark compression.
@@ -7726,7 +7815,9 @@ bounds; projectivity of these compressed measurements is not asserted.
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:qld-coefficient-thirty-ldt-scalars,
+\uses{thm:qld-native-direct-soundness,
+  thm:qld-native-error-scalars,
+  thm:qld-coefficient-thirty-ldt-scalars,
   thm:main-formal-linear-triangle}
 Apply the complete-measurement linear-triangle theorem to the unique
 coordinate and use the scalar absorption above. Constant-tuple relabelling
@@ -7769,15 +7860,15 @@ four point comparisons at the uncapped error
 \[
  32\eta(\lambda)+64Q+\frac{12md+4d+14}{q}.
 \]
-Each declaration constructs its measurements through the same native ordered
-constructor; no conjunction between independently quantified witnesses is
+Each declaration constructs its measurements through the same ordered-measurement
+construction; no conjunction between independently quantified witnesses is
 asserted.
 \end{theorem}
 \begin{proof}
 \leanok
 \uses{thm:qld-native-direct-soundness, thm:qld-rounded-polynomials-explicit}
 Use native arbitrary-strategy soundness in the existing projective-rounding
-constructor.  The scalar concentration, variable separation, and completion
+construction.  The scalar concentration, variable separation, and completion
 arguments preserve the displayed ordered error without a common-exponent
 replacement.
 \end{proof}
@@ -7846,15 +7937,70 @@ zero polynomial pair gives the two projective pair measurements and the four
 displayed defects.
 \end{proof}
 
-\begin{theorem}[Native small-regime global polynomial pair]
+\begin{definition}[Separated native scalar errors]
+\label{def:qld-native-separated-errors}
+\lean{MIPStarRE.QPBT.quantitativeNativeSeparatedRaw}
+\lean{MIPStarRE.QPBT.quantitativeNativeSeparatedError}
+\lean{MIPStarRE.QPBT.quantitativeNativeGlobalPairSeparatedError}
+\leanok
+\uses{def:qld-coefficient-thirty-scales}
+Let $h=2m+2$, $r=md/q$, and let $a$ denote the native direct low-degree
+exponent.  For $s\in\mathbb R$, define
+\[
+\begin{split}
+ S_s(P,e)={}&h^{5s/4}d^{s/4}\Bigl[800000^s\bigl(
+ e^{as/16}+m^{as/2}e^{as/512}+m^{as/2}r^{as/32}+r^{as}\bigr)\\
+ &\hspace{42mm}+400000^s\bigl((d/q)^{as}+\exp(-4hds)\bigr)\Bigr],
+ \qquad \bar S_s(P,e)=\min\{1,S_s(P,e)\}.
+\end{split}
+\]
+The separated global-pair bound is
+\[
+ B_G(P,e)=\min\left\{1,
+ 32\bar S_1+32\sqrt{220}\,\bar S_{1/8}
+ +64\sqrt2\,\bar S_{1/2}+64E_{\rm pt}(e)
+ +\frac{12md+4d+14}{q}\right\}.
+\]
+These quantities retain the six native contributions and do not replace a
+numerical coefficient by a parameter exponent.
+\end{definition}
+
+\begin{theorem}[Separated native scalar certificates]
+\label{thm:qld-native-separated-scalar-support}
+\lean{MIPStarRE.QPBT.quantitative_native_error_rpow_le_separated}
+\lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_le_separated}
+\leanok
+\uses{def:qld-native-separated-errors,
+  def:qld-native-error-scales,
+  thm:qld-native-error-scalars,
+  thm:qld-coefficient-thirty-passing-scalars}
+For $e\geq0$ and $0\leq s\leq1$, the $s$-th real power of the exact native
+direct low-degree error is at most $\bar S_s(P,e)$.  Consequently the exact
+native global-pair error, with its point and collision terms unchanged, is at
+most $B_G(P,e)$.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:qld-native-separated-errors,
+  def:qld-native-error-scales,
+  thm:qld-native-error-scalars,
+  thm:qld-coefficient-thirty-passing-scalars}
+Apply subadditivity of real powers separately to the four passing-error terms
+and the two direct low-degree terms.  Monotonicity through the unit cap then
+bounds the three powers occurring in the native rounding error.  Substitution
+in the exact global-pair expression proves the second inequality.
+\end{proof}
+
+\begin{theorem}[Native global polynomial pair and small-regime bounds]
 \label{thm:qld-native-small-regime-global-pair}
+\lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_le_fractional}
 \lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_bound}
+\lean{MIPStarRE.QPBT.exists_quantitative_global_pair_witness_native}
 \lean{MIPStarRE.QPBT.exists_quantitative_global_pair_witness_at_native_error}
 \leanok
 \uses{thm:qld-native-rounded-polynomials,
-  thm:qld-coefficient-thirty-rounding-scalars}
-Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  If
-$0\leq e\leq1$ and $\rho\leq1$, take
+  thm:pauli-final-fractional-scalar-support}
+Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  For $e\geq0$, take
 \[
  Q=E_{\rm pt}(e),\qquad
  L_{\rm ext}=mE_{\rm ext}(e,\rho),\qquad
@@ -7866,9 +8012,20 @@ and set
  G=\min\!\left\{1,
  32\eta(\lambda)+64Q+\frac{12n+4d+14}{q}\right\}.
 \]
-There are complete projective global polynomial-pair measurements whose four
-point defects are bounded by this concrete $G$.  The same witness also obeys
-the common-envelope consequence
+For every projective Pauli-test setting $S$ of value at least $1-e$, there is
+one global-pair witness at the exact error $G$.  Thus one common pair of
+complete projective polynomial-pair measurements realizes all four point
+comparisons, with defect at most $G$.  This assertion requires neither
+$e\leq1$ nor $\rho\leq1$.
+
+If in addition $e\leq1$, then, without any restriction on $\rho$, the exact
+native error satisfies
+\[
+ G\leq277248\,m^{20481/131072}d^{1/32}E_{\rm pair}(P,e).
+\]
+If also $\rho\leq1$, the restricted existential theorem records the same exact
+error, its nonnegativity, the global-pair witness, and the common-envelope
+consequence
 \[
  G\leq10^7n^4E_{\rm pair}(P,e).
 \]
@@ -7876,21 +8033,25 @@ the common-envelope consequence
 \begin{proof}
 \leanok
 \uses{thm:qld-native-rounded-polynomials,
-  thm:qld-coefficient-thirty-rounding-scalars}
-Construct the point and extended-line witnesses, apply the native pair
-constructor, and cap each defect by one.  Monotonicity of the separated-power
-rounding error and the native-to-coefficient-$30$ comparison give the final
-common-envelope inequality for these same measurements.
+  thm:pauli-final-fractional-scalar-support}
+For the unrestricted existence assertion, construct the point and extended-line
+witnesses and apply the native pair construction.  Under $e\leq1$, the
+fractional scalar certificate gives
+$\sqrt G\leq304m^{20481/262144}d^{1/64}E_b$, where
+$b=1/67108864$.  Square this estimate, use the exact dimension-power identity,
+and apply $(x+y+z)^2\leq3(x^2+y^2+z^2)$ to obtain the displayed bound with
+$E_{2b}=E_{\rm pair}$ and coefficient $304^2\cdot3=277248$.  When also
+$\rho\leq1$, the restricted existential theorem packages the same exact error
+and witness with the common-envelope consequence, which follows from
+$m^{20481/131072}d^{1/32}\leq(md)^4$ and $277248\leq10^7$; it does not use the
+coefficient-$30$ low-degree comparison.
 \end{proof}
 
 \begin{theorem}[Small-regime quantitative global polynomial pair]
 \label{thm:qld-small-regime-global-pair}
 \lean{MIPStarRE.QPBT.exists_quantitative_global_pair_witness}
 \leanok
-\uses{thm:qld-combined-points-explicit,
-  thm:qld-extended-lines-explicit,
-  thm:qld-coefficient-thirty-rounded-polynomials,
-  thm:qld-coefficient-thirty-rounding-scalars}
+\uses{thm:qld-native-small-regime-global-pair}
 Let $P=(q,m,d)$ be admissible, let $0\leq e\leq1$, suppose
 \[
  \frac{md}{q}\leq1,
@@ -7917,14 +8078,9 @@ unrestricted source result or as the final Pauli soundness theorem.
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:qld-combined-points-explicit,
-  thm:qld-extended-lines-explicit,
-  thm:qld-coefficient-thirty-rounded-polynomials,
-  thm:qld-coefficient-thirty-rounding-scalars}
-Construct the combined-point and extended-line witnesses, apply the
-coefficient-$30$ rounded-pair constructor, and set $g$ to the minimum of one
-and its uncapped error. The universal unit bound for a consistency defect
-gives the cap for each of the four constructed defects, and
-Theorem~\ref{thm:qld-coefficient-thirty-rounding-scalars} gives the displayed
-quantitative estimate.
+\uses{thm:qld-native-small-regime-global-pair}
+Take the real number and polynomial-pair measurements supplied by
+Theorem~\ref{thm:qld-native-small-regime-global-pair}.  Discard their
+identifying equality with the native capped error, and retain the
+nonnegativity, common-envelope bound, and four consistency estimates.
 \end{proof}

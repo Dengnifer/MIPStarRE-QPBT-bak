@@ -279,7 +279,8 @@ theorem combined_line_conditioned_defect_le_explicit
     simp only [if_neg hsame, if_neg hsame']
     congr 1
 
-/-- Existential packaging of the fixed conditioned line defect bound. -/
+/-- A two-variable polynomial error bounds the conditioned combined-line defect,
+with line-marginal coefficient `2080`. -/
 theorem exists_combinedLine_conditioned_defect_le :
     ∃ constant : ℝ, 1 ≤ constant ∧
       ∃ pastingError : ℝ → ℝ → ℝ, IsPolyErr₂ pastingError ∧
@@ -373,7 +374,8 @@ theorem combined_line_restored_defect_le_explicit
     (prod_linePointDist_nondegenerate_mass_pos params.toLdParams).le
   exact add_le_add (mul_le_mul_of_nonneg_left hnatural hmass) le_rfl
 
-/-- Existential packaging of the fixed restored line defect bound. -/
+/-- A two-variable polynomial error bounds the restored combined-line defect,
+including the degenerate-line contribution, with line-marginal coefficient `2080`. -/
 theorem exists_combinedLine_restored_defect_le :
     ∃ constant : ℝ, 1 ≤ constant ∧
       ∃ pastingError : ℝ → ℝ → ℝ, IsPolyErr₂ pastingError ∧

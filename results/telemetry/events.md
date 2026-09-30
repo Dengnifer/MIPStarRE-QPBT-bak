@@ -10039,3 +10039,66 @@ The owner relayed meta decision #27 comment5901583288 (`meta-decision-737-c8-fai
 ## 2026-09-29T23:12:07.079306+00:00 — owner decision: workflow-layer commit budget raised to 5000 lines
 
 Owner, 2026-09-30 (relayed by the Decoy project's meta session, confirmed in the QPBT meta session): the pre-commit workflow-layer budget goes from 1000 to 5000 lines, as in the Decoy project. Applied by the meta session on branch `owner-0930-workflow-budget-5000` (`.githooks/pre-commit`, its regression tests, `local/personas/main.md`, `local/protocols/EVOLUTION.md`). Override rules unchanged.
+
+### 2026-09-30T02:00:20.410107+00:00 — Kit bootstrap REST access and Git transport
+
+The owner-provided formalization-kit repository and bootstrapfile returnedHTTP404 throughgh_common. The explicitly authorized repository remained readable through this project's existingSSHGittransport; main verifiedv0.3 commit3860c1bc andread the syncmanual in an isolatedsourceclone. No credential/key/globalconfigurationchange was made. Treat the earlier404 as REST visibility for this access context, not proof that the release is missing; keep all kit publication withmeta and retainprojectadoption's queuedorder.
+
+### 2026-09-30T02:47:08.477475+00:00 — Scalar file limit and stale aggregate validation
+
+Checked-push stopped the locally proved quadratic packet before transport: its scalar file had1067lines. Per-line formatting checks did not establish the separate1000-line file limit. A bounded splitter preserved all42declarations behind a facade andtwochildren; the actualfile-sizeguard and29QPBTaxiomaudits passed. No override orfailedpublication occurred. Separately, nativecheckdecls loadedan oldcachedaggregate; sourceinspection showed the neededquantitativeimports alreadyexist. Integration must refresh the build, notaddredundantimports fromthatdiagnosis.
+
+- 2026-09-30T03:48:22.654486+00:00 — Main attempted PR736 body publication with gh_common.api(body=...) instead of payload=..., raising TypeError before any API mutation. The separately started review driver refused its exact body preflight before reviewer admission. Main corrected the existing API call, read back the published body, preserved refused-driver receipts and then admitted R2. No review round or CI evidence was reused; dependent admission must follow a checked mutation result.
+
+- 2026-09-30T03:49:19.987575+00:00 — PR736 R2 code prompt121234bytes exceeded dispatch120000cap after the complete bound-strength table was added. Code reviewer was not admitted; parallel prose reviewer was admitted at117406bytes. Gate correctly reports review failure. Preserve the active prose result, shorten duplicated description while retaining the mathematical rows, then retry normal review; do not raise the prompt cap or claim approval.
+
+- 2026-09-30T03:54:52.111276+00:00 — Corrected prompt-size diagnosis from direct review.sh inspection: the PR body is not injected, so shortening it does not fix admission. The full patch is818080bytes/15521lines; the default4000-line attachment is224943bytes, with21100-byte citations and1805-byte prior ledger. Dispatch clips aggregate attachments at100000bytes, then the code task/persona exceeds120000. Main will use existing MIPSTARRE_DIFF_MAX_LINES=1200: measured diff65488bytes plus all citations and prior findings fits below the cap, while full diff.patch and source remain available under the unchanged review contract. No protocol edit or cap override; compact PRbody remains a harmless reduction of duplicated description, with all33rows unchanged.
+
+
+## 2026-09-30T08:08:55.691141+00:00 — Space-3 provider balance failure; owner-requested cutoff
+
+At 04:52:44Z, independent code reviewer `reviewer-pr736-20260930-02` ended with exit 1 after six direct HTTP 403 "insufficient balance" responses. This is actual provider evidence in its archived JSONL, not the stale watcher's unrelated September 29 key-name error. No final code review was produced. `review.sh` correctly published failure and both gate drivers stopped. The parallel prose reviewer finished at 04:53:27Z with four unresolved findings. Main observed the terminal evidence at 08:07Z after the continuation gap. Under the authoritative briefing section 2, no new worker, retry, key switch or merge is admitted; preserve receipts, post one closing #27 comment, stop the keeper and pause. All prior work and costs remain recorded.
+
+- 2026-09-30T14:38:46.400176+00:00 — Owner explicitly resumed after provider balance cutoff; required single small Sol worker call succeeded in38seconds. No key/configuration changes were made. New useful work is the four-finding PR736 prose repair. A read-only latest-kit SSH tag lookup now returns repository-not-found although the earlier v0.3 read succeeded; no credential changes/probes are authorized. Verify publication/access at the queued adoption stage and retain existing immutable kit source.
+
+- 2026-09-30T14:45:23.200891+00:00 — Corrected kit lookup diagnosis without changing credentials: primary Git config has a QPBT-only core.sshCommand, while the existing authorized bare kit checkout uses its own normal transport. Running ls-remote there succeeded and verified published v0.4 peeled commit6fdec7e3e254ff9a44d377a7297f04fa4894d654 (tag object794d85ab29b46512980b7878f5f585c71513594e). The HTTPS failure was a129-second connection timeout. Use existing kit checkout transport for kit reads; no key/config change or access blocker remains.
+
+- 2026-09-30T15:10:17.831668+00:00 — PR736 prose repair `blueprint-729-20260930-02` reached its admitted1800-second hard timeout (exit124) after completing all source edits and all31focusedLeanchecks, webrender,2179directdeclarationchecks, blueprintsync and finalinvariants. It produced no finalmessage; failed-sessionusage staysunknown. Earlier validation-only failures were a naive apostrophe lexer, a list/string interface mistake, and an overlybroadLaTeXcheckroot; correctedrepositorychecks passed. Main did notextend/restartthewriter: read thecompletedpatch, verifiedactualterminalreceipts, rescanned31non-commenttokenstreams/frozenLDT/ownedpaths, andadoptedimmutablepatch632f9fb0c1f0fbe3e30924b4f5249193d566de13cd172f237ebefc68e8d1d57e. Normalhookedcommit isrunning; no CI/review/mergeclaimed.
+
+## 2026-09-30T16:33:28.997499+00:00 — Adopt bounded prose work; preserve unknown validation outcome
+
+The900s PR736 R2 prose worker reached its cap without a final answer, after producing the scoped3-file patch and passing non-comment Lean identity, direct-reference and dependency checks. MAIN adopted those actual bytes and checks, retained the failed-session charge, and did not count its unobserved second web-render outcome as passed. A987s Astra mathematical scout supplied the needed separate-power repair contract. One bounded Sol writer now owns the integrated packet (3600s work/4500s hard). All final source validation and independent R3 remain required; no gate evidence is carried from old2c9 to the mathematical repair. Receipt: `/tmp/qpbt-729-native-scalar-implementation-1001.json`.
+
+## 2026-09-30T17:26:24.321842+00:00 — Retain checked report draft from bounded timeout
+
+A1200s Sol report-preparation task timed out without final response. Its one-file patch contains the accepted conditional H/F comparison, explicit nonsaturated counterfamilies and public benchmark extension. MAIN verified actual scope/content and basic document invariants, preserved unknown usage and failed-session cost, and saved a local hooked draft commit with explicit final-source/wording follow-ups. No report publication or gate pass was inferred from the worker's progress message. Receipt: `/tmp/qpbt-730-comparison-prose-adopted-1001.json`.
+
+- 2026-09-30T19:06:58.611973+00:00 — A #27 comment readback detected a duplicated idempotency marker because main supplied the marker in both arguments to ensure_pr_comment. MAIN corrected the existing comment5917701520 through gh_common.api and verified exact readback; no second comment was created. Pass an unmarked body to the helper, which prepends the marker itself.
+
+- 2026-09-30T19:10:50.796020+00:00 — Residual comparison resume prover-729-20261001-03 failed locally after10s: thread/resume reported no rollout found for01a0f328, before any JSON model event. Actual source bytes are unchanged and the dispatcher is terminal. MAIN starts a fresh Sol thread from the saved5149s handoff/14path snapshot, retaining the original19:38:21Z/19:53:21Z deadlines and all charges. No auth/quota error, key/home/runtime change, silent retry of the missing thread or source restart occurred; no event-derived usage is available.
+
+- 2026-09-30T19:13:27.961433+00:00 — The normal telemetry pre-commit hook rejected a whitespace-only blank line in the new scout729-02 Markdown projection. MAIN removed trailing spaces before its first publication; the original model response remains unchanged in its JSONL capture and the immutable recipe copy, sha25609ca0fa54cd6d843e8b4e6fb45be05c414c33e77291a77779ce1f2b6d116d586. No mathematical text, historical record, hook or gate was changed.
+
+
+## 2026-09-30T21:03:50.039874+00:00 — R3 repair timeout after checked patch; three-site formatting cleanup
+
+Sol prover729-06 reached1800s hard timeout without final summary after all requested edits and captured focused/blueprint/import/integrity checks. No provider failure. MAIN preserved actual seven-file checkpoint with hashes, rather than infer an author handoff. Review findings are addressed in the actual diff; three new standalone-by placements violate AGENTS formatting. MAIN admits one additional90s work/180s hard Sol general cleanup limited to these whitespace sites, with unchanged public statements/numerical bounds, no unrelated revalidation and no commit/push. Source12284s plus actual cleanup cost stays charged; normal publication, freshCI and R4 remain pending. Lesson: leave final-report time inside a worker deadline; successful command evidence can be adopted explicitly even when the author summary is missing.
+
+At 2026-09-30T21:05:36.198301+00:00, cleanup3184555 was confirmed terminal at model-policy preflight: inherited Astra request conflicted with general classification. No model work or source change occurred. MAIN reissued the same cleanup with explicit MIPSTARRE_CODEX_MODEL=gpt-5.6-sol, preserving original21:06:50Z hard deadline (73s remaining), PID3189433. This is a local caller configuration failure, not provider/key failure, and grants no budget reset.
+
+
+## 2026-09-30T21:35:34.317312+00:00 — Fourth review approves mathematics; three editorial findings remain
+
+R4combined5372229944 at0e736185: codeAPPROVED505s,proseCHANGES_REQUESTED572s; three findings are missing proof-dependency annotations, five software-oriented docstring phrases, and definitional-equality jargon. Both reviewers found no remaining mathematical-equivalence mismatch; all prior findings were triaged. MAIN accepts corrections and admits one300s work/600s hard Sol comments/dependency-only repair at8specifiedpaths, PID3350757. Source12357s/review5987s remain charged. Fullreviewcap4 is exhausted; owner briefing requires exact-head approvingreview and forbids override merges. No fifthreview oradjudicatedmerge is admitted. Complete authorized editorialrepair andfreshCI first; only then resolve the remaining gateconstraint on concrete corrected bytes.
+
+
+## 2026-09-30T22:21:36.206858+00:00 — Review cap leaves a fully checked editorial patch awaiting a decision
+
+R4 approved the mathematical code but requested three editorial corrections. Those corrections are complete at6ea9f96b, with exact noncomment-code equality, fresh full CI and blueprint axiom checks green. Four full review rounds are exhausted and the owner briefing requires exact-head approval without an override merge. The prepared fifth-review exception request has no response after three consecutive goal-turn checks. Goal status was set to blocked; no review evidence was fabricated or cap bypassed. The pending report/ledger and full original objective are preserved.
+
+
+## 2026-09-30T22:29:10.001513+00:00 — Keeper automatically reactivated a blocked goal
+
+The project keeper, not the owner, reactivated the blocked goal: its existing log records `2026-09-30T22:23:36Z sent /goal resume`. Fresh reads of #27, #736 and #734 still contain no review exception. The automatic continuation therefore supplies neither owner approval nor a new source-review budget. The same previously established impasse remains.
+
+MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipstarre-dev/watchdog/goal-keeper.stop`, at22:27:19Z to prevent repeated automatic reactivation of this blocked goal, and restored goal status **blocked**. This is an interim control action preserving the required blocked status while awaiting the existing decision, not a claim that the mathematical goal is complete or that the owner's final pause has been reached. No keeper script, key, account or worker allocation was changed. The code, tests, pending report/ledger, and scoped review proposal are preserved. Owner decision remains #27 comment5920620649. Subsequent source work requires the actual exception; automation is not that exception.

@@ -330,9 +330,9 @@ theorem pair_witness_of_points_lines_at_native_error :
         (add_le_add hmassB (mul_le_mul_of_nonneg_left (horder true).2 (by norm_num)))
         le_rfl).trans_eq hbound)
 
-/-- The coefficient-`30` rounded pair constructor.  It returns the actual
-complete projective polynomial-pair measurements and proves all four point
-consistency bounds at the displayed uncapped error. -/
+/-- The coefficient-`30` construction of rounded polynomial-pair measurements.
+It returns the actual complete projective polynomial-pair measurements and proves
+all four point consistency bounds at the displayed uncapped error. -/
 theorem pair_witness_of_points_lines_quantitative :
     ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
         (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),

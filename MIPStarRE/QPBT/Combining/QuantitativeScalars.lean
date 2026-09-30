@@ -1,6 +1,4 @@
-import MIPStarRE.QPBT.Combining.ActualErrorBounds
-import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
-import MIPStarRE.QPBT.Combining.QuantitativeDirectScalars
+import MIPStarRE.QPBT.Combining.QuantitativeNativeFractionalScalars
 
 /-!
 # Quantitative global-pair scalar bounds for QPBT
@@ -9,8 +7,7 @@ This module records the fixed coefficient estimates, the uncapped direct-game
 passing bound, and the eighth-root projective-rounding calculation used to
 construct the quantitative global polynomial-pair witness.
 
-It re-exports `QuantitativeDirectScalars`, which contains the coefficient-`30`
-direct low-degree specialization and the shared quantitative powers.
+It provides the coefficient-`30` direct low-degree estimates and their exponents.
 
 ## References
 
@@ -25,56 +22,7 @@ open MIPStarRE.LDT
 
 noncomputable section
 
-/-! ## Fixed baseline coefficient certificates -/
-
-/-- The fixed combined-point coefficient is below `10^15`. -/
-theorem pauli_baseline_point_constant_le :
-    pauliBaselinePointConstant ≤ (1000000000000000 : ℝ) := by
-  have hsqrt : Real.sqrt 344 ≤ (19 : ℝ) := by
-    rw [Real.sqrt_le_left (by norm_num)]
-    norm_num
-  unfold pauliBaselinePointConstant pauliBaselineTwistedConstant
-    pauliBaselineCommutatorConstant
-  nlinarith
-
-/-- The fixed combined-line coefficient is below `10^5`. -/
-theorem pauli_baseline_line_constant_le :
-    pauliBaselineLineConstant ≤ (100000 : ℝ) := by
-  have hbase : 0 ≤ 16 * pauliBaselinePointConstant + 8320 := by
-    nlinarith [one_le_pauli_baseline_point_constant]
-  have hbaseBound : 16 * pauliBaselinePointConstant + 8320 ≤ (128 : ℝ) ^ (8 : ℕ) := by
-    nlinarith [pauli_baseline_point_constant_le]
-  have hroot : Real.rpow (16 * pauliBaselinePointConstant + 8320) (1 / 8 : ℝ) ≤
-      128 := by
-    simp only [Real.rpow_eq_pow]
-    rw [show (1 / 8 : ℝ) = (8 : ℝ)⁻¹ by norm_num,
-      Real.rpow_inv_le_iff_of_pos hbase (by norm_num) (by norm_num)]
-    exact hbaseBound.trans_eq (Real.rpow_natCast (128 : ℝ) 8).symm
-  unfold pauliBaselineLineConstant
-  nlinarith
-
-/-- The fixed extended-line coefficient is below `10^9`. -/
-theorem pauli_baseline_extended_line_constant_le :
-    pauliBaselineExtendedLineConstant ≤ (1000000000 : ℝ) := by
-  have hpoint0 : 0 ≤ pauliBaselinePointConstant :=
-    le_trans zero_le_one one_le_pauli_baseline_point_constant
-  have hline0 : 0 ≤ pauliBaselineLineConstant :=
-    le_trans zero_le_one one_le_pauli_baseline_line_constant
-  have hpointSqrt : Real.sqrt pauliBaselinePointConstant ≤ (40000000 : ℝ) := by
-    rw [Real.sqrt_le_left (by norm_num)]
-    nlinarith [pauli_baseline_point_constant_le]
-  have hlineRoot : Real.rpow pauliBaselineLineConstant (1 / 4 : ℝ) ≤ 32 := by
-    simp only [Real.rpow_eq_pow]
-    rw [show (1 / 4 : ℝ) = (4 : ℝ)⁻¹ by norm_num,
-      Real.rpow_inv_le_iff_of_pos hline0 (by norm_num) (by norm_num)]
-    exact pauli_baseline_line_constant_le.trans (by norm_num)
-  have hpointRoot : Real.rpow pauliBaselinePointConstant (1 / 4 : ℝ) ≤ 10000 := by
-    simp only [Real.rpow_eq_pow]
-    rw [show (1 / 4 : ℝ) = (4 : ℝ)⁻¹ by norm_num,
-      Real.rpow_inv_le_iff_of_pos hpoint0 (by norm_num) (by norm_num)]
-    exact pauli_baseline_point_constant_le.trans (by norm_num)
-  unfold pauliBaselineExtendedLineConstant
-  nlinarith
+/-! ## Remaining baseline coefficient certificate -/
 
 /-- The fixed coefficient in the direct passing estimate is below `10^8`. -/
 theorem pauli_baseline_passing_constant_le :
@@ -816,9 +764,12 @@ theorem quantitative_actual_rounded_global_pair_error_bound
           mul_le_mul_of_nonneg_right (by norm_num) (mul_nonneg hn4 hF)
         _ = 10000000 * n ^ (4 : ℕ) * F := by ring
 
-/-- The concrete native mixed error is bounded by the established common
-global-pair envelope.  This comparison retains the native witness and uses the
-coefficient-`30` expression only as a final weakening. -/
+/-- Weakening: `quantitative_native_global_pair_error_le_fractional` implies
+this historical degree-four common-envelope bound by enlarging the fractional
+dimension powers to `(m*d)^4` and `277248` to `10^7`. The ratio hypothesis is
+retained only for compatibility with the existing public statement.
+
+Bound: deferred #727. -/
 theorem quantitative_native_global_pair_error_bound
     (P : AdmissibleParams) (e : ℝ) (he : 0 ≤ e) (he1 : e ≤ 1)
     (hr1 : ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ) ≤ 1) :
@@ -832,42 +783,50 @@ theorem quantitative_native_global_pair_error_bound
       10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
         quantitativeGlobalPairEnvelope P e := by
   intro passing lambda
-  let delta := deltaLd 30 quantitativeLowDegreePower passing
-    P.q (2 * P.m + 2) P.d 1
-  let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
-    2 * Real.sqrt (2 * delta)
-  have hpassing : 0 ≤ passing := by
-    dsimp [passing, directPassingErrorEnvelope]
-    positivity
-  have hlambda : 0 ≤ lambda := by
-    dsimp [lambda]
-    exact direct_native_error_nonneg _ hpassing
-  have hdelta : 0 ≤ delta := by
-    dsimp [delta, deltaLd]
-    positivity
-  have hlambdaDelta : lambda ≤ delta := by
-    dsimp [lambda, delta]
-    exact direct_native_error_le_delta_ld_quantitative
-      P.extendedDirectLd hpassing rfl
-  have hetaMono := native_rounding_error_mono hlambda hlambdaDelta
-  have hetaEq : nativeRoundingError delta = eta :=
-    (native_rounding_error_eq hdelta).symm
-  rw [hetaEq] at hetaMono
-  have hraw : nativeGlobalPairRawError P lambda (pauliBaselinePointError e) ≤
-      8 * (4 * eta + 8 * pauliBaselinePointError e) +
-        (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q) := by
-    unfold nativeGlobalPairRawError
-    linarith
+  have _hr1 := hr1
+  let n : ℝ := ((P.m * P.d : ℕ) : ℝ)
+  let K : ℝ := Real.rpow (P.m : ℝ) (20481 / 131072 : ℝ) *
+    Real.rpow (P.d : ℝ) (1 / 32 : ℝ)
+  let E : ℝ := quantitativeGlobalPairEnvelope P e
+  have hm : (1 : ℝ) ≤ (P.m : ℝ) := by exact_mod_cast P.one_le_m
+  have hd : (1 : ℝ) ≤ (P.d : ℝ) := by exact_mod_cast P.hd
+  have hE : 0 ≤ E := by dsimp [E, quantitativeGlobalPairEnvelope]; positivity
+  have hmPower : Real.rpow (P.m : ℝ) (20481 / 131072 : ℝ) ≤
+      (P.m : ℝ) ^ (4 : ℕ) := by
+    calc
+      _ ≤ Real.rpow (P.m : ℝ) 4 :=
+        Real.rpow_le_rpow_of_exponent_le hm (by norm_num)
+      _ = _ := Real.rpow_natCast _ 4
+  have hdPower : Real.rpow (P.d : ℝ) (1 / 32 : ℝ) ≤
+      (P.d : ℝ) ^ (4 : ℕ) := by
+    calc
+      _ ≤ Real.rpow (P.d : ℝ) 4 :=
+        Real.rpow_le_rpow_of_exponent_le hd (by norm_num)
+      _ = _ := Real.rpow_natCast _ 4
+  have hK : K ≤ n ^ (4 : ℕ) := by
+    dsimp [K, n]
+    push_cast
+    calc
+      Real.rpow (P.m : ℝ) (20481 / 131072 : ℝ) *
+          Real.rpow (P.d : ℝ) (1 / 32 : ℝ) ≤
+          (P.m : ℝ) ^ (4 : ℕ) * Real.rpow (P.d : ℝ) (1 / 32 : ℝ) :=
+        mul_le_mul_of_nonneg_right hmPower (Real.rpow_nonneg (by positivity) _)
+      _ ≤ (P.m : ℝ) ^ (4 : ℕ) * (P.d : ℝ) ^ (4 : ℕ) :=
+        mul_le_mul_of_nonneg_left hdPower (by positivity)
+      _ = ((P.m : ℝ) * (P.d : ℝ)) ^ (4 : ℕ) := by ring
+  have hsharp := quantitative_native_global_pair_error_le_fractional P e he he1
+  have hsharp' : nativeGlobalPairError P lambda (pauliBaselinePointError e) ≤
+      277248 * K * E := by
+    simpa only [passing, lambda, K, E, mul_assoc] using hsharp
   calc
-    nativeGlobalPairError P lambda (pauliBaselinePointError e) =
-        min 1 (nativeGlobalPairRawError P lambda (pauliBaselinePointError e)) := rfl
-    _ ≤ min 1 (8 * (4 * eta + 8 * pauliBaselinePointError e) +
-        (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q)) :=
-      min_le_min_left 1 hraw
-    _ ≤ 10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
-        quantitativeGlobalPairEnvelope P e := by
-      dsimp [eta, delta, passing]
-      exact quantitative_actual_rounded_global_pair_error_bound P e he he1 hr1
+    nativeGlobalPairError P lambda (pauliBaselinePointError e) ≤
+        277248 * K * E := hsharp'
+    _ ≤ 277248 * n ^ (4 : ℕ) * E := by gcongr
+    _ ≤ 10000000 * n ^ (4 : ℕ) * E := by
+      exact mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right (by norm_num) (by positivity)) hE
+    _ = 10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
+        quantitativeGlobalPairEnvelope P e := by rfl
 
 end
 

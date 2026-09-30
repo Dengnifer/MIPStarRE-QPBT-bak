@@ -158,8 +158,8 @@ theorem directCoordinateMainFormal
 
 /-- The native complete-measurement linear-triangle LDT theorem applied to one
 coordinate at the exact capped error `directNativeError`.  The three relations
-use the same projective polynomial measurements returned by the imported LDT
-constructor. -/
+use the same projective polynomial measurements provided by the low individual
+degree theorem. -/
 theorem direct_coordinate_main_formal_at_native_error
     (D : DirectLdParams) (S : Strategy (directLdGame D))
     (hS : S.IsProjective) (r : Fin D.k) (ε : Error)

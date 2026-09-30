@@ -1,4 +1,6 @@
 import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Bounds
+import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.NativeSeparated
+import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Fractional
 import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Comparisons
 
 /-!

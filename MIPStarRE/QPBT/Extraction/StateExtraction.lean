@@ -158,8 +158,8 @@ theorem exists_extraction_aux_of_global_pair_witness_explicit
   change ‖theta - S.idealExpState aux‖ ^ 2 ≤ 16 * delta
   nlinarith
 
-/-- Existential packaging of
-`exists_extraction_aux_of_global_pair_witness_explicit`. -/
+/-- A universal constant yields a normalized auxiliary state whose squared
+extraction error is at most sixteen times the constructed Pauli error. -/
 theorem exists_extraction_aux_ofGlobalPairWitness :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
