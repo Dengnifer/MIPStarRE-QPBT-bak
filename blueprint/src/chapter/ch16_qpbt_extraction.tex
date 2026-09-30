@@ -2393,13 +2393,24 @@ Define
  I_{\rm raw}(P,e)=10^9n^2E_b(P,e),\qquad
  I(P,\eps)=\min\{4,I_{\rm raw}(P,e)\}.
 \]
-The deterministic mixed extraction scale and operator component are
+Let $Q=E_{\rm pt}(e)$, $L_{\rm ext}=mE_{\rm ext}(e,n/q)$, and use the native
+quantities from Theorem~\ref{thm:qld-native-small-regime-global-pair}:
 \[
- X(P,e)=2800\left(10^7n^4E_{2b}(P,e)+\sqrt e+\frac nq\right)
+ T=3\left(\sqrt{Q+L_{\rm ext}}+\frac nq\right),\qquad
+ \lambda=\Lambda_{2m+2}(T),
+\]
+\[
+ G(P,e)=\min\left\{1,
+ 32\eta(\lambda)+64Q+\frac{12n+4d+14}{q}\right\}.
+\]
+The native mixed extraction scale and operator component are
+\[
+ X_{\rm native}(P,e)=2800\left(G(P,e)+\sqrt e+\frac nq\right)
 \]
 and
 \[
- D_{\rm mix}(P,e)=472X(P,e)+24\frac nq+192\sqrt{X(P,e)}+344e.
+ D_{\rm mix}(P,e)=472X_{\rm native}(P,e)+24\frac nq
+   +192\sqrt{X_{\rm native}(P,e)}+344e.
 \]
 These definitions are Lean-only sharper interfaces.  They do not replace the
 paper-labelled error family or the historical degree-four error.
@@ -2590,26 +2601,27 @@ thm:pauli-universal-distance-caps-support}
 Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness
 whose squared state distance is at most
 \[
- \min\{4,16X(P,e)\}
+ \min\{4,16X_{\rm native}(P,e)\}
 \]
 and whose two raw prescribed-answer operator-family distances are each at most
 \[
  \min\{4,D_{\rm mix}(P,e)\}.
 \]
 The same bounds hold in qubit coordinates without changing any of the three
-errors.  When $n/q\leq1$, the proof constructs the quantitative global-pair
-witness and carries its component bounds to the displayed deterministic
-scale.  When $n/q>1$, both displayed right-hand sides equal the universal cap.
+errors.  When $n/q\leq1$, the proof constructs the native global-pair witness
+and uses the returned equality with $G(P,e)$, without passing through the
+polynomial envelope.  When $n/q>1$, both displayed right-hand sides equal the
+universal cap.
 \end{theorem}
 \begin{proof}
 \leanok
-\uses{thm:qld-small-regime-global-pair,
+\uses{thm:qld-native-small-regime-global-pair,
 thm:pauli-supplied-global-component-transfer-explicit,
 thm:pauli-universal-distance-caps-support, lem:pauli-binary}
-For $n/q\leq1$, substitute the constructed global-pair error into the
-component theorem and use monotonicity of the square root.  For $n/q>1$, use
-the universal state and raw-family bounds.  The qubit statement follows from
-the exact coordinate reindexing identities.
+For $n/q\leq1$, identify the constructed global-pair error with $G(P,e)$ and
+substitute it into the component theorem.  For $n/q>1$, use the universal state
+and raw-family bounds.  The qubit statement follows from the exact coordinate
+reindexing identities.
 \end{proof}
 
 \begin{theorem}[Degree-two quantitative Pauli soundness]
@@ -2619,7 +2631,7 @@ the exact coordinate reindexing identities.
 \lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two}
 \leanok
 \uses{def:pauli-final-degree-two-error,
-thm:qld-small-regime-global-pair,
+thm:qld-native-small-regime-global-pair,
 thm:pauli-supplied-global-component-transfer-explicit,
 thm:pauli-universal-distance-caps-support}
 Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness for
@@ -2627,7 +2639,7 @@ which the unsquared state norm and both raw prescribed-answer sums of squared
 operator norms are at most $I(P,\eps)$.
 
 On the branch $I_{\rm raw}(P,e)<4$, the proof constructs a fresh global-pair
-witness.  If $x=2800(\delta_G+\sqrt e+n/q)$ is its extraction scale, then
+witness.  If $x=2800(G(P,e)+\sqrt e+n/q)$ is its extraction scale, then
 \[
  \sqrt x\leq10^6n^2E_b(P,e),\qquad \frac nq<4\cdot10^{-9},
  \qquad \sqrt x<0.004,\qquad x<1.
@@ -2645,8 +2657,9 @@ universal bounds $2$, $4$, and $4$ give the capped conclusion.
 thm:pauli-universal-distance-caps-support}
 Take square roots without enlarging $n^2$ to $n^4$.  The strict small-branch
 bound forces the field ratio below one, so the global-pair constructor applies.
-Use $x\leq\sqrt x$ when $x<1$ and retain the state and operator components
-separately.  The saturated branch uses an existing soundness witness and the
+Its common-envelope certificate is retained for this same witness. Use
+$x\leq\sqrt x$ when $x<1$ and retain the state and operator components
+separately. The saturated branch uses an existing soundness witness and the
 universal caps.
 \end{proof}
 

@@ -63,8 +63,9 @@ soundness statement down to the combining and extraction layers:
 * `exists_spcc_value_one` and `honestStrategy_isSPCC` — completeness, which is
   what keeps the soundness hypothesis non-vacuous.
 * `exists_combinedLinesWitness`, `exists_extendedLinesWitness_established`,
-  `exists_globalPairWitness`, `exists_actual_rounded_global_pair_error_bound` —
-  the combining layer.
+  `exists_globalPairWitness`, `exists_actual_rounded_global_pair_error_bound`,
+  and the native quantitative global-pair constructor and comparison — the
+  combining layer.
 * `exists_projective_setting_isometry_bounds`,
   `exists_arbitrary_strategy_isometry_bounds`,
   `pauli_soundness_deltaQld_ofExtractionWitness` — the extraction layer.
@@ -173,6 +174,8 @@ audit_standard_axioms MIPStarRE.QPBT.exists_combinedLinesWitness
 audit_standard_axioms MIPStarRE.QPBT.exists_extendedLinesWitness_established
 audit_standard_axioms MIPStarRE.QPBT.exists_globalPairWitness
 audit_standard_axioms MIPStarRE.QPBT.exists_actual_rounded_global_pair_error_bound
+audit_standard_axioms MIPStarRE.QPBT.quantitative_native_global_pair_error_bound
+audit_standard_axioms MIPStarRE.QPBT.exists_quantitative_global_pair_witness_at_native_error
 
 /-! ### Extraction layer -/
 

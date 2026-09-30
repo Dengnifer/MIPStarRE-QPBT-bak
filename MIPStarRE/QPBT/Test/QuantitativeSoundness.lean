@@ -30,9 +30,8 @@ noncomputable section
 
 /-- Full-domain quantitative Pauli soundness retaining the squared state
 component and the two raw operator components separately. With
-`e = min epsilon 1` and
-`X = 2800 * (10^7 * (m*d)^4 * E_(2b) + sqrt e + (m*d)/q)`, one witness
-satisfies the capped bounds `min 4 (16*X)` and
+`e = min epsilon 1` and `X` the extraction scale at the concrete native
+global-pair error, one witness satisfies the capped bounds `min 4 (16*X)` and
 `min 4 (472*X + 24*(m*d)/q + 192*sqrt X + 344*e)`.
 
 This is a Lean-only component headline. It constructs the global polynomial
@@ -73,47 +72,54 @@ theorem pauli_soundness_quantitative_mixed_components
       rw [heq]
       simpa only [sub_self] using R.value_nonneg
   let r : ℝ := ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)
+  let passing := directPassingErrorEnvelope
+    (pauliBaselinePointError e + (P.m : ℝ) *
+      pauliBaselineExtendedLineError e r) r
+  let lambda := directNativeError P.extendedDirectLd passing
+  let G := nativeGlobalPairError P lambda (pauliBaselinePointError e)
   let X := pauliSoundnessQuantitativeMixedScale P e
   have hr0 : 0 ≤ r := by
     dsimp only [r]
     exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-  have hglobalEnvelope : 0 ≤ quantitativeGlobalPairEnvelope P e := by
-    unfold quantitativeGlobalPairEnvelope
-    exact add_nonneg
-      (add_nonneg (Real.rpow_nonneg he _)
-        (Real.rpow_nonneg (Nat.cast_nonneg _) _))
-      (Real.rpow_nonneg (by norm_num) _)
+  have hpassing0 : 0 ≤ passing := by
+    dsimp [passing, directPassingErrorEnvelope]
+    exact mul_nonneg (by norm_num) (add_nonneg (Real.sqrt_nonneg _) hr0)
+  have hlambda0 : 0 ≤ lambda := by
+    dsimp only [lambda]
+    exact direct_native_error_nonneg _ hpassing0
+  have hpoint0 : 0 ≤ pauliBaselinePointError e := by
+    unfold pauliBaselinePointError
+    exact mul_nonneg
+      (le_trans zero_le_one one_le_pauli_baseline_point_constant)
+      (Real.rpow_nonneg he _)
+  have hG0 : 0 ≤ G := by
+    dsimp only [G]
+    exact native_global_pair_error_nonneg P hlambda0 hpoint0
+  have hXEq : X = 2800 * (G + Real.sqrt e + r) := by
+    rfl
   have hX0 : 0 ≤ X := by
-    dsimp only [X, pauliSoundnessQuantitativeMixedScale]
+    rw [hXEq]
     exact mul_nonneg (by norm_num)
-      (add_nonneg
-        (add_nonneg
-          (mul_nonneg
-            (mul_nonneg (by norm_num)
-              (pow_nonneg (Nat.cast_nonneg _) (4 : ℕ)))
-            hglobalEnvelope)
-          (Real.sqrt_nonneg e))
-        hr0)
+      (add_nonneg (add_nonneg hG0 (Real.sqrt_nonneg e)) hr0)
   by_cases hr1 : r ≤ 1
   · let S := pauliNaimarkSetting P e R hwinE
-    obtain ⟨g, hg0, hgBound, hw⟩ :=
-      exists_quantitative_global_pair_witness P e he he1 (by simpa only [r] using hr1) S
+    obtain ⟨g, hgEq, hg0, _hgBound, hw⟩ :=
+      exists_quantitative_global_pair_witness_at_native_error
+        P e he he1 (by simpa only [r] using hr1) S
     obtain ⟨w⟩ := hw
     have w' : GlobalPairWitness (pauliNaimarkSetting P e R hwinE) g := by
       simpa only [S] using w
+    have hgG : g = G := by
+      simpa only [G, lambda, passing, r] using hgEq
     let x : ℝ := 2800 * (g + Real.sqrt e + r)
     have hx0 : 0 ≤ x := by
       dsimp only [x]
       exact mul_nonneg (by norm_num)
         (add_nonneg (add_nonneg hg0 (Real.sqrt_nonneg e)) hr0)
-    have hxX : x ≤ X := by
-      have hgBound' : g ≤
-          10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
-            quantitativeGlobalPairEnvelope P e := by
-        simpa only [quantitativeGlobalPairEnvelope] using hgBound
-      dsimp only [x, X, pauliSoundnessQuantitativeMixedScale, r]
-      exact mul_le_mul_of_nonneg_left
-        (add_le_add (add_le_add hgBound' le_rfl) le_rfl) (by norm_num)
+    have hxX : x = X := by
+      dsimp only [x]
+      rw [hgG]
+      exact hXEq.symm
     obtain ⟨t, hstateSq, hA, hB⟩ :=
       exists_pauli_soundness_witness_with_component_bounds
         P e he he1 R hwinE g hg0 w'
@@ -124,33 +130,32 @@ theorem pauli_soundness_quantitative_mixed_components
         (isometryTensor t.φA t.φB R.ψ - idealState P t.aux)]
     have hstateX :
         ‖isometryTensor t.φA t.φB R.ψ - idealState P t.aux‖ ^ 2 ≤ 16 * X :=
-      hstateSq.trans (mul_le_mul_of_nonneg_left hxX (by norm_num))
+      (show ‖isometryTensor t.φA t.φB R.ψ - idealState P t.aux‖ ^ 2 ≤ 16 * x by
+        simpa only [x, r] using hstateSq).trans_eq
+          (congrArg (fun y : ℝ => 16 * y) hxX)
     have hcomponent :
-        472 * x + 24 * r + 192 * Real.sqrt x + 344 * e ≤
+        472 * x + 24 * r + 192 * Real.sqrt x + 344 * e =
           pauliSoundnessQuantitativeMixedOperatorError P e := by
-      have hsqrt := Real.sqrt_le_sqrt hxX
       unfold pauliSoundnessQuantitativeMixedOperatorError
-      change 472 * x + 24 * r + 192 * Real.sqrt x + 344 * e ≤
+      change 472 * x + 24 * r + 192 * Real.sqrt x + 344 * e =
         472 * X + 24 * r + 192 * Real.sqrt X + 344 * e
-      nlinarith
+      rw [hxX]
     refine ⟨t, le_min hstateFour hstateX, ?_, ?_⟩
     · intro W
       exact le_min (raw_pauli_operator_distance_a_le_four P R t W)
-        ((hA W).trans hcomponent)
+        ((show rawPauliOperatorDistanceA P R t W ≤
+            472 * x + 24 * r + 192 * Real.sqrt x + 344 * e by
+          simpa only [x, r] using hA W).trans_eq hcomponent)
     · intro W
       exact le_min (raw_pauli_operator_distance_b_le_four P R t W)
-        ((hB W).trans hcomponent)
+        ((show rawPauliOperatorDistanceB P R t W ≤
+            472 * x + 24 * r + 192 * Real.sqrt x + 344 * e by
+          simpa only [x, r] using hB W).trans_eq hcomponent)
   · have hrLarge : 1 < r := lt_of_not_ge hr1
     obtain ⟨_, _, _, hbaseline⟩ := pauli_soundness_explicit_baseline
     obtain ⟨t, _, _, _⟩ := hbaseline P epsilon hepsilon R hwin
     have hXRatio : 2800 * r ≤ X := by
-      dsimp only [X, pauliSoundnessQuantitativeMixedScale, r]
-      have hglobal : 0 ≤ 10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
-          quantitativeGlobalPairEnvelope P e :=
-        mul_nonneg
-          (mul_nonneg (by norm_num)
-            (pow_nonneg (Nat.cast_nonneg _) (4 : ℕ)))
-          hglobalEnvelope
+      rw [hXEq]
       nlinarith [Real.sqrt_nonneg e]
     have hstateScale : 4 ≤ 16 * X := by nlinarith
     have hoperatorScale : 4 ≤ pauliSoundnessQuantitativeMixedOperatorError P e := by
@@ -225,8 +230,9 @@ theorem pauli_soundness_quantitative_degree_two
       (quantitative_ratio_lt_four_billionth_of_degree_two_raw_lt_four
         P e he he1 hsmall).trans (by norm_num)
     let S := pauliNaimarkSetting P e R hwinE
-    obtain ⟨g, hg0, hgBound, hw⟩ :=
-      exists_quantitative_global_pair_witness P e he he1 hratioLt.le S
+    obtain ⟨g, _hgEq, hg0, hgBound, hw⟩ :=
+      exists_quantitative_global_pair_witness_at_native_error
+        P e he he1 hratioLt.le S
     obtain ⟨w⟩ := hw
     have w' : GlobalPairWitness (pauliNaimarkSetting P e R hwinE) g := by
       simpa only [S] using w

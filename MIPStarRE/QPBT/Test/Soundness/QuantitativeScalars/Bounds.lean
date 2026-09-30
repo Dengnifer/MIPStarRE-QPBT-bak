@@ -51,16 +51,20 @@ def pauliSoundnessQuantitativeDegreeTwoError
     (P : AdmissibleParams) (epsilon : ℝ) : ℝ :=
   min 4 (pauliSoundnessQuantitativeDegreeTwoRawError P (min epsilon 1))
 
-/-- The deterministic extraction scale obtained by substituting the current
-quantitative global-pair upper bound while retaining the separate square-root
-and field-ratio terms. -/
+/-- The extraction scale at the concrete native global-pair error. The direct
+passing error, native low-degree error, and rounded-pair error are retained
+without replacing them by the common polynomial envelope. -/
 def pauliSoundnessQuantitativeMixedScale (P : AdmissibleParams) (e : ℝ) : ℝ :=
+  let r := ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)
+  let passing := directPassingErrorEnvelope
+    (pauliBaselinePointError e + (P.m : ℝ) *
+      pauliBaselineExtendedLineError e r) r
+  let lambda := directNativeError P.extendedDirectLd passing
   2800 *
-    (10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
-        quantitativeGlobalPairEnvelope P e +
-      Real.sqrt e + ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ))
+    (nativeGlobalPairError P lambda (pauliBaselinePointError e) +
+      Real.sqrt e + r)
 
-/-- The raw operator-family component expression at the deterministic mixed
+/-- The raw operator-family component expression at the native mixed
 extraction scale. -/
 def pauliSoundnessQuantitativeMixedOperatorError
     (P : AdmissibleParams) (e : ℝ) : ℝ :=

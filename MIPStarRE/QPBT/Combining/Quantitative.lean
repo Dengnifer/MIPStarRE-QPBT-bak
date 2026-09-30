@@ -4,10 +4,10 @@ import MIPStarRE.QPBT.Combining.QuantitativeScalars
 /-!
 # Quantitative global polynomial-pair construction
 
-This module combines the coefficient-`30` direct low-degree estimate with the
-existing point and extended-line constructions.  The resulting witness uses
-the actual rounded polynomial-pair measurements, with the final consistency
-error capped by one.
+This module combines the native direct low-degree estimate with the existing
+point and extended-line constructions. The resulting witness uses the actual
+rounded polynomial-pair measurements at their concrete capped error. A
+separate corollary records the polynomial envelope printed in the source.
 
 ## References
 
@@ -94,8 +94,9 @@ theorem exists_quantitative_global_pair_witness_at_native_error
       · simpa only [passing, lambda, Nat.cast_mul] using
           pair.point_consistent_bob W
 
-/-- Weakening: the concrete native-error witness implies this historical
-common-envelope formulation used by the final QPBT soundness argument. -/
+/-- Weakening: the concrete native-error witness implies this fixed
+polynomial-envelope form, matching the error shape printed in paper
+`lem:qld-4-7`. -/
 theorem exists_quantitative_global_pair_witness
     (P : AdmissibleParams) (e : ℝ) (he : 0 ≤ e) (he1 : e ≤ 1)
     (hr1 : ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ) ≤ 1)
