@@ -23,6 +23,62 @@ open MIPStarRE.Quantum
 
 noncomputable section
 
+/-- Exact qubit-coordinate transport of the full-domain mixed component
+headline. The squared state bound and both raw summed-squared operator bounds
+are unchanged. -/
+theorem pauli_soundness_qubit_quantitative_mixed_components
+    (P : AdmissibleParams) (epsilon : ℝ) (hepsilon : 0 ≤ epsilon)
+    (R : Strategy (pauliBasisTest P)) (hwin : 1 - epsilon ≤ R.value) :
+    let e := min epsilon 1
+    ∃ t : QubitSoundnessWitness P R,
+      ‖isometryTensor t.φA t.φB R.ψ - idealQubitState P t.aux‖ ^ 2 ≤
+          min 4 (16 * pauliSoundnessQuantitativeMixedScale P e) ∧
+      (∀ W : PauliKind, qubitOperatorDistanceA P R t W ≤
+        min 4 (pauliSoundnessQuantitativeMixedOperatorError P e)) ∧
+      ∀ W : PauliKind, qubitOperatorDistanceB P R t W ≤
+        min 4 (pauliSoundnessQuantitativeMixedOperatorError P e) := by
+  let e := min epsilon 1
+  change ∃ t : QubitSoundnessWitness P R,
+    ‖isometryTensor t.φA t.φB R.ψ - idealQubitState P t.aux‖ ^ 2 ≤
+        min 4 (16 * pauliSoundnessQuantitativeMixedScale P e) ∧
+    (∀ W : PauliKind, qubitOperatorDistanceA P R t W ≤
+      min 4 (pauliSoundnessQuantitativeMixedOperatorError P e)) ∧
+    ∀ W : PauliKind, qubitOperatorDistanceB P R t W ≤
+      min 4 (pauliSoundnessQuantitativeMixedOperatorError P e)
+  obtain ⟨w, hstate, hA, hB⟩ :=
+    pauli_soundness_quantitative_mixed_components P epsilon hepsilon R hwin
+  refine ⟨w.toQubit, ?_, ?_, ?_⟩
+  · rw [qubit_state_error_to_qubit P R w]
+    exact hstate
+  · intro W
+    rw [qubit_operator_distance_a_to_qubit P R w W]
+    exact hA W
+  · intro W
+    rw [qubit_operator_distance_b_to_qubit P R w W]
+    exact hB W
+
+/-- Exact qubit-coordinate transport of the degree-two quantitative Pauli
+soundness bound. The state norm and both raw summed-squared operator distances
+are preserved. -/
+theorem pauli_soundness_qubit_quantitative_degree_two
+    (P : AdmissibleParams) (epsilon : ℝ) (hepsilon : 0 ≤ epsilon)
+    (R : Strategy (pauliBasisTest P)) (hwin : 1 - epsilon ≤ R.value) :
+    ∃ t : QubitSoundnessWitness P R,
+      ‖isometryTensor t.φA t.φB R.ψ - idealQubitState P t.aux‖ ≤
+          pauliSoundnessQuantitativeDegreeTwoError P epsilon ∧
+      (∀ W : PauliKind, qubitOperatorDistanceA P R t W ≤
+        pauliSoundnessQuantitativeDegreeTwoError P epsilon) ∧
+      ∀ W : PauliKind, qubitOperatorDistanceB P R t W ≤
+        pauliSoundnessQuantitativeDegreeTwoError P epsilon := by
+  obtain ⟨w, hstate, hA, hB⟩ :=
+    pauli_soundness_quantitative_degree_two P epsilon hepsilon R hwin
+  refine ⟨w.toQubit, ?_, ?_, ?_⟩
+  · exact (qubit_state_error_to_qubit P R w).trans_le hstate
+  · intro W
+    exact (qubit_operator_distance_a_to_qubit P R w W).trans_le (hA W)
+  · intro W
+    exact (qubit_operator_distance_b_to_qubit P R w W).trans_le (hB W)
+
 /-- Exact qubit-coordinate transport of the structured quantitative Pauli
 soundness bound. The witness has the same clipped degree-four common error as
 `pauli_soundness_quantitative`. -/

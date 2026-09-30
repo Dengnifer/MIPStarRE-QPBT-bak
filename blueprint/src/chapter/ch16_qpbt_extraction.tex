@@ -2378,6 +2378,33 @@ the envelope, while the outer cap is the common universal bound for the state
 and prescribed operator families.
 \end{definition}
 
+\begin{definition}[Degree-two and mixed quantitative Pauli errors]
+\label{def:pauli-final-degree-two-error}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeDegreeTwoRawError}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeDegreeTwoError}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeMixedScale}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeMixedOperatorError}
+\leanok
+\uses{def:pauli-final-quantitative-error}
+For admissible $P=(q,m,d)$, put $n=md$, $e=\min\{\eps,1\}$, and retain
+$b$ and $E_b(P,e)$ from Definition~\ref{def:pauli-final-quantitative-error}.
+Define
+\[
+ I_{\rm raw}(P,e)=10^9n^2E_b(P,e),\qquad
+ I(P,\eps)=\min\{4,I_{\rm raw}(P,e)\}.
+\]
+The deterministic mixed extraction scale and operator component are
+\[
+ X(P,e)=2800\left(10^7n^4E_{2b}(P,e)+\sqrt e+\frac nq\right)
+\]
+and
+\[
+ D_{\rm mix}(P,e)=472X(P,e)+24\frac nq+192\sqrt{X(P,e)}+344e.
+\]
+These definitions are Lean-only sharper interfaces.  They do not replace the
+paper-labelled error family or the historical degree-four error.
+\end{definition}
+
 \begin{theorem}[Exponent and envelope comparisons]
 \label{thm:pauli-final-envelope-support}
 \lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_half_global_pair}
@@ -2550,6 +2577,119 @@ monotonicity.  The baseline coefficient is strictly larger than $100$, and
 the three-term bracket is positive, so the resulting prefactor comparison is
 strict.  Compose this with the canonical upper bound and then substitute
 $e=\min\{\eps,1\}$.
+\end{proof}
+
+\begin{theorem}[Capped mixed-component Pauli soundness]
+\label{thm:pauli-final-mixed-components}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_mixed_components}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_mixed_components}
+\leanok
+\uses{def:pauli-final-degree-two-error,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness
+whose squared state distance is at most
+\[
+ \min\{4,16X(P,e)\}
+\]
+and whose two raw prescribed-answer operator-family distances are each at most
+\[
+ \min\{4,D_{\rm mix}(P,e)\}.
+\]
+The same bounds hold in qubit coordinates without changing any of the three
+errors.  When $n/q\leq1$, the proof constructs the quantitative global-pair
+witness and carries its component bounds to the displayed deterministic
+scale.  When $n/q>1$, both displayed right-hand sides equal the universal cap.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:qld-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support, lem:pauli-binary}
+For $n/q\leq1$, substitute the constructed global-pair error into the
+component theorem and use monotonicity of the square root.  For $n/q>1$, use
+the universal state and raw-family bounds.  The qubit statement follows from
+the exact coordinate reindexing identities.
+\end{proof}
+
+\begin{theorem}[Degree-two quantitative Pauli soundness]
+\label{thm:pauli-final-degree-two-soundness}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two}
+\lean{MIPStarRE.QPBT.quantitative_operator_component_lt_degree_two_raw_error}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two}
+\leanok
+\uses{def:pauli-final-degree-two-error,
+thm:qld-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness for
+which the unsquared state norm and both raw prescribed-answer sums of squared
+operator norms are at most $I(P,\eps)$.
+
+On the branch $I_{\rm raw}(P,e)<4$, the proof constructs a fresh global-pair
+witness.  If $x=2800(\delta_G+\sqrt e+n/q)$ is its extraction scale, then
+\[
+ \sqrt x\leq10^6n^2E_b(P,e),\qquad \frac nq<4\cdot10^{-9},
+ \qquad \sqrt x<0.004,\qquad x<1.
+\]
+For the same auxiliary vector the squared state error is at most $16x$, and
+each raw operator error is at most
+$472x+24n/q+192\sqrt x+344e$.  Hence the state norm is at most
+$4\cdot10^6n^2E_b(P,e)$, while each raw operator error is at most
+$664000368n^2E_b(P,e)<I_{\rm raw}(P,e)$.  On the complementary branch the
+universal bounds $2$, $4$, and $4$ give the capped conclusion.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Take square roots without enlarging $n^2$ to $n^4$.  The strict small-branch
+bound forces the field ratio below one, so the global-pair constructor applies.
+Use $x\leq\sqrt x$ when $x<1$ and retain the state and operator components
+separately.  The saturated branch uses an existing soundness witness and the
+universal caps.
+\end{proof}
+
+\begin{theorem}[Comparison of the degree-two error]
+\label{thm:pauli-final-degree-two-comparison}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_le_quantitative_error}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_lt_quantitative_error_iff}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_le_deltaQld}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_lt_explicit_baseline_clipped}
+\leanok
+\uses{def:pauli-final-degree-two-error,
+thm:pauli-final-baseline-comparison}
+For every nonnegative source error,
+\[
+ I(P,\eps)\leq\Delta_{\rm new}(P,\eps).
+\]
+The inequality is strict exactly when $I_{\rm raw}(P,e)<4$; otherwise both
+sides are four.  Moreover $I(P,\eps)$ is bounded by the canonical
+$\delta_{\rm qld}^{100,b}(\eps,m,d,q)$ error and is strictly below the
+historical explicit baseline evaluated at the actual clipped error $e$.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-baseline-comparison}
+The historical uncapped error is $10^5n^2I_{\rm raw}$, with a strictly
+positive envelope.  Monotonicity of the cap proves the weak comparison and
+identifies its strict branch.  Compose with the existing canonical and
+historical-baseline comparisons.
+\end{proof}
+
+\begin{corollary}[Exact degree-two quantitative qubit form]
+\label{cor:pauli-final-degree-two-qubit}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_degree_two}
+\leanok
+\uses{thm:pauli-final-degree-two-soundness, lem:pauli-binary}
+The witness of Theorem~\ref{thm:pauli-final-degree-two-soundness} transports
+to qubit coordinates with the same state norm and the same two raw
+summed-squared operator-family errors, each bounded by $I(P,\eps)$.
+\end{corollary}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-degree-two-soundness, lem:pauli-binary}
+Apply the exact field-basis coordinate reindexing to the degree-two witness.
 \end{proof}
 
 \begin{theorem}[Unconditional structured and canonical Pauli soundness]

@@ -51,6 +51,11 @@ soundness statement down to the combining and extraction layers:
 * `pauli_soundness_quantitative` and
   `pauli_soundness_qubit_quantitative` — the structured degree-four issue #729
   bounds, with internally constructed global and extraction witnesses.
+* `pauli_soundness_quantitative_mixed_components` and its exact qubit form —
+  the capped squared-state and separate raw-operator component bounds.
+* `pauli_soundness_quantitative_degree_two` and its exact qubit form — the
+  sharper degree-two issue #729 bounds, reconstructed on their nonsaturated
+  branch.
 * `pauli_soundness_quantitative_canonical` and
   `pauli_soundness_qubit_quantitative_canonical` — the corresponding canonical
   `deltaQld 100` bounds at exponent `1 / 67108864`.
@@ -118,10 +123,36 @@ audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_canonical
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_canonical
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_mixed_components
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_mixed_components
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_degree_two
 audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_gain_mul_baseline
+audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_pos
+audit_standard_axioms MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two
+audit_standard_axioms MIPStarRE.QPBT.quantitative_ratio_le_degree_two_base
+audit_standard_axioms MIPStarRE.QPBT.quantitative_error_le_degree_two_base
+audit_standard_axioms
+  MIPStarRE.QPBT.quantitative_ratio_lt_four_billionth_of_degree_two_raw_lt_four
+audit_standard_axioms
+  MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_lt_four_thousandths
+audit_standard_axioms
+  MIPStarRE.QPBT.quantitative_extraction_scale_lt_one_of_degree_two_raw_lt_four
+audit_standard_axioms
+  MIPStarRE.QPBT.quantitative_state_component_lt_degree_two_raw_error
+audit_standard_axioms
+  MIPStarRE.QPBT.quantitative_operator_component_lt_degree_two_raw_error
+audit_standard_axioms
+  MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_le_quantitative_error
+audit_standard_axioms
+  MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_lt_quantitative_error_iff
+audit_standard_axioms
+  MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_le_deltaQld
 audit_standard_axioms MIPStarRE.QPBT.deltaQld_quantitative_lt_explicit_baseline
 audit_standard_axioms
   MIPStarRE.QPBT.pauli_soundness_quantitative_error_lt_explicit_baseline_clipped
+audit_standard_axioms
+  MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_lt_explicit_baseline_clipped
 
 /-! ### Quantum low-degree soundness -/
 
