@@ -3,10 +3,9 @@ import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars.Core
 /-!
 # Fractional native scalar bounds for QPBT
 
-This lower scalar module retains the fractional dimension powers in the exact
-native global-pair calculation. It is separated from the extraction layer so
-the legacy global-pair facade can consume the sharp comparison without an
-import cycle.
+This module retains the fractional dimension powers in the exact native
+global-pair calculation and proves the sharp scalar comparisons used in the
+global-pair and extraction estimates.
 
 ## References
 
@@ -103,12 +102,6 @@ private theorem min_one_le_rpow
     simpa only [Real.rpow_eq_pow, Real.one_rpow] using
       Real.rpow_le_rpow (by norm_num : (0 : ℝ) ≤ 1) (le_of_not_ge hx1) htheta
 
-private theorem sqrt_add_le_add_sqrt {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) :
-    Real.sqrt (x + y) ≤ Real.sqrt x + Real.sqrt y := by
-  apply (Real.sqrt_le_left (add_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg y))).2
-  nlinarith [Real.sq_sqrt hx, Real.sq_sqrt hy,
-    mul_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg y)]
-
 private theorem sqrt_min_one_le_rpow
     {x theta : ℝ} (hx : 0 ≤ x) (htheta : 0 ≤ theta) (hthetaHalf : theta ≤ 1 / 2) :
     Real.sqrt (min 1 x) ≤ Real.rpow x theta := by
@@ -120,11 +113,6 @@ private theorem sqrt_min_one_le_rpow
       Real.rpow_le_rpow_of_exponent_ge' hmin0 hmin1 htheta hthetaHalf
     _ ≤ Real.rpow x theta :=
       Real.rpow_le_rpow hmin0 (min_le_right _ _) htheta
-
-private theorem sqrt_rpow_eq {x a : ℝ} (hx : 0 ≤ x) :
-    Real.sqrt (Real.rpow x a) = Real.rpow x (a / 2) := by
-  rw [Real.sqrt_eq_rpow]
-  exact (Real.rpow_mul hx a (1 / 2 : ℝ)).symm.trans (by congr 1; ring)
 
 private theorem rpow_six_one_sixteenth_le_two :
     Real.rpow 6 (1 / 16 : ℝ) ≤ 2 := by
@@ -705,13 +693,18 @@ theorem quantitative_native_global_pair_sqrt_le_fractional_base
       Real.sqrt (min 1 (rounding + point + collision)) ≤
           Real.sqrt (min 1 rounding + min 1 point + min 1 collision) :=
         Real.sqrt_le_sqrt hmin
-      _ ≤ Real.sqrt (min 1 rounding + min 1 point) + Real.sqrt (min 1 collision) :=
-        sqrt_add_le_add_sqrt
-          (add_nonneg (by positivity) (by positivity)) (by positivity)
+      _ ≤ Real.sqrt (min 1 rounding + min 1 point) +
+          Real.sqrt (min 1 collision) := by
+        simpa only [Real.sqrt_eq_rpow] using
+          Real.rpow_add_le_add_rpow
+            (add_nonneg (by positivity) (by positivity)) (by positivity)
+            (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
       _ ≤ (Real.sqrt (min 1 rounding) + Real.sqrt (min 1 point)) +
           Real.sqrt (min 1 collision) := by
         gcongr
-        exact sqrt_add_le_add_sqrt (by positivity) (by positivity)
+        simpa only [Real.sqrt_eq_rpow] using
+          Real.rpow_add_le_add_rpow (by positivity) (by positivity)
+            (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
   have hlambdaBase := quantitative_native_error_one_sixteenth_le_fractional_base
     P e he he1
   have hlambdaBase' : Real.rpow lambda (1 / 16 : ℝ) ≤ 12 * M * F := by

@@ -13,7 +13,8 @@ field ratio as distinct summands.
 
 * Paper `lem:qld-unitary`,
   `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1666-1876`
-* Blueprint `thm:pauli-quantitative-mixed-components`
+* Blueprint `def:pauli-final-fractional-error`
+* Blueprint `thm:pauli-final-fractional-scalar-support`
 -/
 
 namespace MIPStarRE.QPBT
@@ -41,17 +42,6 @@ def pauliSoundnessQuantitativeSeparatedRoot
         quantitativeNativeSeparatedError P e (1 / 4 : ℝ) +
       8 * Real.sqrt (pauliBaselinePointError e) + Real.sqrt collision +
       Real.rpow e (1 / 4 : ℝ) + Real.sqrt r)
-
-private theorem sqrt_add_le_add_sqrt {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) :
-    Real.sqrt (x + y) ≤ Real.sqrt x + Real.sqrt y := by
-  apply (Real.sqrt_le_left (add_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg y))).2
-  nlinarith [Real.sq_sqrt hx, Real.sq_sqrt hy,
-    mul_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg y)]
-
-private theorem sqrt_rpow_eq {x a : ℝ} (hx : 0 ≤ x) :
-    Real.sqrt (Real.rpow x a) = Real.rpow x (a / 2) := by
-  rw [Real.sqrt_eq_rpow]
-  exact (Real.rpow_mul hx a (1 / 2 : ℝ)).symm.trans (by congr 1; ring)
 
 /-- The exact native extraction scale and its square root are bounded by the
 separated certificates `Y` and `Z`. -/
@@ -150,20 +140,28 @@ theorem quantitative_native_extraction_scale_bounds
         Real.sqrt collision := by
     calc
       Real.sqrt (a + b + c + d + collision) ≤
-          Real.sqrt (a + b + c + d) + Real.sqrt collision :=
-        sqrt_add_le_add_sqrt (add_nonneg (add_nonneg (add_nonneg ha hb) hc) hd)
-          hcollision
+          Real.sqrt (a + b + c + d) + Real.sqrt collision := by
+          simpa only [Real.sqrt_eq_rpow] using
+            Real.rpow_add_le_add_rpow
+              (add_nonneg (add_nonneg (add_nonneg ha hb) hc) hd) hcollision
+              (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
       _ ≤ (Real.sqrt (a + b + c) + Real.sqrt d) + Real.sqrt collision := by
         gcongr
-        exact sqrt_add_le_add_sqrt (add_nonneg (add_nonneg ha hb) hc) hd
+        simpa only [Real.sqrt_eq_rpow] using
+          Real.rpow_add_le_add_rpow (add_nonneg (add_nonneg ha hb) hc) hd
+            (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
       _ ≤ ((Real.sqrt (a + b) + Real.sqrt c) + Real.sqrt d) +
           Real.sqrt collision := by
         gcongr
-        exact sqrt_add_le_add_sqrt (add_nonneg ha hb) hc
+        simpa only [Real.sqrt_eq_rpow] using
+          Real.rpow_add_le_add_rpow (add_nonneg ha hb) hc
+            (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
       _ ≤ (((Real.sqrt a + Real.sqrt b) + Real.sqrt c) + Real.sqrt d) +
           Real.sqrt collision := by
         gcongr
-        exact sqrt_add_le_add_sqrt ha hb
+        simpa only [Real.sqrt_eq_rpow] using
+          Real.rpow_add_le_add_rpow ha hb
+            (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
       _ = _ := by ring
   have hrootG : Real.sqrt G ≤
       Real.sqrt 32 * quantitativeNativeSeparatedError P e (1 / 2 : ℝ) +
@@ -225,11 +223,15 @@ theorem quantitative_native_extraction_scale_bounds
     apply mul_le_mul_of_nonneg_left _ (Real.sqrt_nonneg 2800)
     calc
       Real.sqrt (G + Real.sqrt e + r) ≤
-          Real.sqrt (G + Real.sqrt e) + Real.sqrt r :=
-        sqrt_add_le_add_sqrt (add_nonneg hG (Real.sqrt_nonneg e)) hr
+          Real.sqrt (G + Real.sqrt e) + Real.sqrt r := by
+          simpa only [Real.sqrt_eq_rpow] using
+            Real.rpow_add_le_add_rpow (add_nonneg hG (Real.sqrt_nonneg e)) hr
+              (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
       _ ≤ Real.sqrt G + Real.sqrt (Real.sqrt e) + Real.sqrt r := by
         gcongr
-        exact sqrt_add_le_add_sqrt hG (Real.sqrt_nonneg e)
+        simpa only [Real.sqrt_eq_rpow] using
+          Real.rpow_add_le_add_rpow hG (Real.sqrt_nonneg e)
+            (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
       _ = Real.sqrt G + Real.rpow e (1 / 4 : ℝ) + Real.sqrt r := by
         rw [hsqrtSqrt]
       _ ≤ _ := by linarith

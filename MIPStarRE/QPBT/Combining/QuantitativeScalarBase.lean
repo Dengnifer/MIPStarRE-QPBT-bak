@@ -5,8 +5,8 @@ import MIPStarRE.QPBT.Combining.QuantitativeDirectScalars
 /-!
 # Baseline quantitative scalar certificates for QPBT
 
-This module records the three fixed coefficient estimates needed by both the
-native-power calculation and the legacy global-pair scalar bounds.
+This module records an elementary identity for square roots of real powers and
+the three fixed coefficient estimates used in the global-pair scalar bounds.
 
 ## References
 
@@ -19,6 +19,15 @@ namespace MIPStarRE.QPBT
 open MIPStarRE.LDT
 
 noncomputable section
+
+/-! ## Elementary real-power identity -/
+
+/-- For a nonnegative base, taking the square root of a real power halves its
+exponent. -/
+theorem sqrt_rpow_eq {x a : ℝ} (hx : 0 ≤ x) :
+    Real.sqrt (Real.rpow x a) = Real.rpow x (a / 2) := by
+  rw [Real.sqrt_eq_rpow]
+  exact (Real.rpow_mul hx a (1 / 2 : ℝ)).symm.trans (by congr 1; ring)
 
 /-! ## Fixed baseline coefficient certificates -/
 

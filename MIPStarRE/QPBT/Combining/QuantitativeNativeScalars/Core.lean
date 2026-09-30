@@ -56,17 +56,6 @@ private theorem rpow_add_four_le
         (add_le_add (Real.rpow_add_le_add_rpow ha hb hs0 hs1) le_rfl))
       le_rfl)
 
-private theorem sqrt_add_le_add_sqrt {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) :
-    Real.sqrt (x + y) ≤ Real.sqrt x + Real.sqrt y := by
-  apply (Real.sqrt_le_left (add_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg y))).2
-  nlinarith [Real.sq_sqrt hx, Real.sq_sqrt hy,
-    mul_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg y)]
-
-private theorem sqrt_rpow_eq {x a : ℝ} (hx : 0 ≤ x) :
-    Real.sqrt (Real.rpow x a) = Real.rpow x (a / 2) := by
-  rw [Real.sqrt_eq_rpow]
-  exact (Real.rpow_mul hx a (1 / 2 : ℝ)).symm.trans (by congr 1; ring)
-
 private theorem rpow_rpow_eq {x a b : ℝ} (hx : 0 ≤ x) :
     Real.rpow (Real.rpow x a) b = Real.rpow x (a * b) :=
   (Real.rpow_mul hx a b).symm
@@ -166,9 +155,10 @@ private theorem quantitative_native_passing_term_le
   have hsumRoot : Real.sqrt
       (Real.rpow e (1 / 256 : ℝ) + Real.rpow r (1 / 16 : ℝ)) ≤
       Real.rpow e (1 / 512 : ℝ) + Real.rpow r (1 / 32 : ℝ) := by
-    have h := sqrt_add_le_add_sqrt
+    have h := Real.rpow_add_le_add_rpow
       (Real.rpow_nonneg he (1 / 256 : ℝ))
       (Real.rpow_nonneg hr (1 / 16 : ℝ))
+      (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
     have heRoot : Real.sqrt (Real.rpow e (1 / 256 : ℝ)) =
         Real.rpow e (1 / 512 : ℝ) := by
       convert (sqrt_rpow_eq (x := e) (a := (1 / 256 : ℝ)) he) using 1
@@ -179,7 +169,7 @@ private theorem quantitative_native_passing_term_le
       convert (sqrt_rpow_eq (x := r) (a := (1 / 16 : ℝ)) hr) using 1
       all_goals simp only [Real.rpow_eq_pow]
       all_goals ring
-    simp only [Real.rpow_eq_pow] at heRoot hrRoot h ⊢
+    simp only [Real.sqrt_eq_rpow, Real.rpow_eq_pow] at heRoot hrRoot h ⊢
     rw [heRoot, hrRoot] at h
     exact h
   have hLroot : Real.sqrt L ≤
@@ -191,8 +181,10 @@ private theorem quantitative_native_passing_term_le
     simpa only [Real.rpow_eq_pow, mul_assoc] using mul_le_mul_of_nonneg_left hsumRoot
       (mul_nonneg (Real.sqrt_nonneg (P.m : ℝ))
         (Real.sqrt_nonneg pauliBaselineExtendedLineConstant))
-  have hQLroot : Real.sqrt (Q + L) ≤ Real.sqrt Q + Real.sqrt L :=
-    sqrt_add_le_add_sqrt hQ hL
+  have hQLroot : Real.sqrt (Q + L) ≤ Real.sqrt Q + Real.sqrt L := by
+    simpa only [Real.sqrt_eq_rpow] using
+      Real.rpow_add_le_add_rpow hQ hL
+        (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
   have hfirst : Real.rpow (9 * Real.sqrt Q) quantitativeLowDegreePower ≤
       2 * Real.rpow e (quantitativeLowDegreePower / 16) := by
     rw [hQroot]

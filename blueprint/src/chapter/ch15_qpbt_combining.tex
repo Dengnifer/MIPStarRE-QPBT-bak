@@ -7858,8 +7858,8 @@ four point comparisons at the uncapped error
 \[
  32\eta(\lambda)+64Q+\frac{12md+4d+14}{q}.
 \]
-Each declaration constructs its measurements through the same native ordered
-constructor; no conjunction between independently quantified witnesses is
+Each declaration constructs its measurements through the same ordered-measurement
+construction; no conjunction between independently quantified witnesses is
 asserted.
 \end{theorem}
 \begin{proof}
@@ -7948,7 +7948,7 @@ exponent.  For $s\in\mathbb R$, define
 \begin{split}
  S_s(P,e)={}&h^{5s/4}d^{s/4}\Bigl[800000^s\bigl(
  e^{as/16}+m^{as/2}e^{as/512}+m^{as/2}r^{as/32}+r^{as}\bigr)\\
- &\hspace{42mm}+400000^s\bigl((d/q)^{as}+e^{-4hds}\bigr)\Bigr],
+ &\hspace{42mm}+400000^s\bigl((d/q)^{as}+\exp(-4hds)\bigr)\Bigr],
  \qquad \bar S_s(P,e)=\min\{1,S_s(P,e)\}.
 \end{split}
 \]
@@ -7969,7 +7969,9 @@ numerical coefficient by a parameter exponent.
 \lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_le_separated}
 \leanok
 \uses{def:qld-native-separated-errors,
-  thm:qld-coefficient-thirty-direct-soundness}
+  def:qld-native-error-scales,
+  thm:qld-native-error-scalars,
+  thm:qld-coefficient-thirty-passing-scalars}
 For $e\geq0$ and $0\leq s\leq1$, the $s$-th real power of the exact native
 direct low-degree error is at most $\bar S_s(P,e)$.  Consequently the exact
 native global-pair error, with its point and collision terms unchanged, is at
@@ -7978,14 +7980,16 @@ most $B_G(P,e)$.
 \begin{proof}
 \leanok
 \uses{def:qld-native-separated-errors,
-  thm:qld-coefficient-thirty-direct-soundness}
+  def:qld-native-error-scales,
+  thm:qld-native-error-scalars,
+  thm:qld-coefficient-thirty-passing-scalars}
 Apply subadditivity of real powers separately to the four passing-error terms
 and the two direct low-degree terms.  Monotonicity through the unit cap then
 bounds the three powers occurring in the native rounding error.  Substitution
 in the exact global-pair expression proves the second inequality.
 \end{proof}
 
-\begin{theorem}[Native small-regime global polynomial pair]
+\begin{theorem}[Native global polynomial pair and small-regime bounds]
 \label{thm:qld-native-small-regime-global-pair}
 \lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_le_fractional}
 \lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_bound}
@@ -7994,8 +7998,7 @@ in the exact global-pair expression proves the second inequality.
 \leanok
 \uses{thm:qld-native-rounded-polynomials,
   thm:pauli-final-fractional-scalar-support}
-Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  Suppose
-$0\leq e\leq1$.  Take
+Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  For $e\geq0$, take
 \[
  Q=E_{\rm pt}(e),\qquad
  L_{\rm ext}=mE_{\rm ext}(e,\rho),\qquad
@@ -8007,19 +8010,20 @@ and set
  G=\min\!\left\{1,
  32\eta(\lambda)+64Q+\frac{12n+4d+14}{q}\right\}.
 \]
-Without any restriction on $\rho$, the exact native error satisfies
+For every projective Pauli-test setting $S$ of value at least $1-e$, there is
+one global-pair witness at the exact error $G$.  Thus one common pair of
+complete projective polynomial-pair measurements realizes all four point
+comparisons, with defect at most $G$.  This assertion requires neither
+$e\leq1$ nor $\rho\leq1$.
+
+If in addition $e\leq1$, then, without any restriction on $\rho$, the exact
+native error satisfies
 \[
  G\leq277248\,m^{20481/131072}d^{1/32}E_{\rm pair}(P,e).
 \]
-If in addition $\rho\leq1$ and $S$ is a projective Pauli-test strategy of
-value at least $1-e$, then on the two expanded local spaces of $S$, there are
-complete projective global
-polynomial-pair measurements such that, for each $W\in\{X,Z\}$, Alice's
-evaluated global measurement is consistent with Bob's expanded point
-measurement and Bob's evaluated global measurement is consistent with Alice's
-expanded point measurement, each with defect at most $G$.  These are the four
-defects of the global-pair witness.  The scalar error also obeys the
-common-envelope consequence
+If also $\rho\leq1$, the restricted existential theorem records the same exact
+error, its nonnegativity, the global-pair witness, and the common-envelope
+consequence
 \[
  G\leq10^7n^4E_{\rm pair}(P,e).
 \]
@@ -8028,13 +8032,15 @@ common-envelope consequence
 \leanok
 \uses{thm:qld-native-rounded-polynomials,
   thm:pauli-final-fractional-scalar-support}
-The fractional scalar certificate gives
+For the unrestricted existence assertion, construct the point and extended-line
+witnesses and apply the native pair construction.  Under $e\leq1$, the
+fractional scalar certificate gives
 $\sqrt G\leq304m^{20481/262144}d^{1/64}E_b$, where
 $b=1/67108864$.  Square this estimate, use the exact dimension-power identity,
 and apply $(x+y+z)^2\leq3(x^2+y^2+z^2)$ to obtain the displayed bound with
-$E_{2b}=E_{\rm pair}$ and coefficient $304^2\cdot3=277248$.
-Construct the point and extended-line witnesses and apply the native pair
-constructor.  The retained legacy consequence follows from
+$E_{2b}=E_{\rm pair}$ and coefficient $304^2\cdot3=277248$.  When also
+$\rho\leq1$, the restricted existential theorem packages the same exact error
+and witness with the common-envelope consequence, which follows from
 $m^{20481/131072}d^{1/32}\leq(md)^4$ and $277248\leq10^7$; it does not use the
 coefficient-$30$ low-degree comparison.
 \end{proof}

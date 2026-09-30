@@ -2,10 +2,10 @@ import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars.Core
 import MIPStarRE.QPBT.Combining.QuantitativeScalars
 
 /-!
-# Native quantitative scalar facade for QPBT
+# Quantitative global-pair scalar bounds for QPBT
 
-This facade preserves the original import surface while the cycle-free native
-power implementation lives in `QuantitativeNativeScalars.Core`.
+This module provides fractional-power estimates and polynomial bounds for the
+global-pair error.
 
 ## References
 
