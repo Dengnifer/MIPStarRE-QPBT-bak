@@ -21,10 +21,81 @@ open MIPStarRE.LDT
 
 noncomputable section
 
-/-- The quantitative rounded global-pair construction used by the final QPBT
-soundness argument.  It retains the complete projective measurements produced
-by the coefficient-`30` construction and caps each of their four consistency
-defects by the same explicit error `g`. -/
+/-- The quantitative global-pair witness at the concrete native mixed error.
+The returned equality identifies the witness error with `nativeGlobalPairError`,
+while the final inequality is only a common-envelope consequence. -/
+theorem exists_quantitative_global_pair_witness_at_native_error
+    (P : AdmissibleParams) (e : ℝ) (he : 0 ≤ e) (he1 : e ≤ 1)
+    (hr1 : ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ) ≤ 1)
+    (S : ProjectiveSetting P e) :
+    let passing := directPassingErrorEnvelope
+      (pauliBaselinePointError e + (P.m : ℝ) *
+        pauliBaselineExtendedLineError e
+          (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))
+      (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ))
+    let lambda := directNativeError P.extendedDirectLd passing
+    ∃ g : ℝ,
+      g = nativeGlobalPairError P lambda (pauliBaselinePointError e) ∧
+      0 ≤ g ∧
+      g ≤ 10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
+        quantitativeGlobalPairEnvelope P e ∧
+      Nonempty (GlobalPairWitness S g) := by
+  intro passing lambda
+  obtain ⟨points⟩ := exists_combined_points_witness_explicit P e S
+  obtain ⟨lines⟩ :=
+    exists_extended_lines_witness_established_of_points_witness_explicit
+      P e S points
+  obtain ⟨pair⟩ := ExtendedLineGame.pair_witness_of_points_lines_at_native_error P e
+    (pauliBaselinePointError e)
+    ((P.m : ℝ) * pauliBaselineExtendedLineError e
+      (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ))) S points lines
+  let g := nativeGlobalPairError P lambda (pauliBaselinePointError e)
+  have hpassing : 0 ≤ passing := by
+    dsimp [passing, directPassingErrorEnvelope]
+    positivity
+  have hlambda : 0 ≤ lambda := by
+    dsimp [lambda]
+    exact direct_native_error_nonneg _ hpassing
+  have hpoint : 0 ≤ pauliBaselinePointError e := by
+    unfold pauliBaselinePointError
+    exact mul_nonneg
+      (le_trans zero_le_one one_le_pauli_baseline_point_constant)
+      (Real.rpow_nonneg he _)
+  have hraw : 0 ≤ nativeGlobalPairRawError P lambda (pauliBaselinePointError e) :=
+    native_global_pair_raw_error_nonneg P hlambda hpoint
+  have hbound := quantitative_native_global_pair_error_bound P e he he1 hr1
+  refine ⟨g, rfl, native_global_pair_error_nonneg P hlambda hpoint, ?_, ?_⟩
+  · simpa only [g, passing, lambda] using hbound
+  · refine ⟨{ pair with point_consistent_alice := ?_, point_consistent_bob := ?_ }⟩
+    · intro W
+      change _ ≤ nativeGlobalPairError P lambda (pauliBaselinePointError e)
+      unfold nativeGlobalPairError
+      refine le_min ?_ ?_
+      · unfold consistencyDefect
+        calc
+          _ ≤ avgOver (uniformDistribution (Fin P.m → PauliScalar P)) (fun _ => 1) :=
+            avgOver_mono _ _ _ fun u => consistencyDefect_integrand_le_one
+              S .AA' .BA'' (by trivial) _ _
+          _ = 1 := avgOver_const_of_isProbability _
+            (uniformDistribution_isProbability _) 1
+      · simpa only [passing, lambda, Nat.cast_mul] using
+          pair.point_consistent_alice W
+    · intro W
+      change _ ≤ nativeGlobalPairError P lambda (pauliBaselinePointError e)
+      unfold nativeGlobalPairError
+      refine le_min ?_ ?_
+      · unfold consistencyDefect
+        calc
+          _ ≤ avgOver (uniformDistribution (Fin P.m → PauliScalar P)) (fun _ => 1) :=
+            avgOver_mono _ _ _ fun u => consistencyDefect_integrand_le_one
+              S .BB' .AB'' (by trivial) _ _
+          _ = 1 := avgOver_const_of_isProbability _
+            (uniformDistribution_isProbability _) 1
+      · simpa only [passing, lambda, Nat.cast_mul] using
+          pair.point_consistent_bob W
+
+/-- Weakening: the concrete native-error witness implies this historical
+common-envelope formulation used by the final QPBT soundness argument. -/
 theorem exists_quantitative_global_pair_witness
     (P : AdmissibleParams) (e : ℝ) (he : 0 ≤ e) (he1 : e ≤ 1)
     (hr1 : ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ) ≤ 1)
@@ -37,69 +108,10 @@ theorem exists_quantitative_global_pair_witness
           Real.rpow 2
             (-(quantitativeGlobalPairPower * ((P.m * P.d : ℕ) : ℝ)))) ∧
       Nonempty (GlobalPairWitness S g) := by
-  obtain ⟨points⟩ := exists_combined_points_witness_explicit P e S
-  obtain ⟨lines⟩ :=
-    exists_extended_lines_witness_established_of_points_witness_explicit
-      P e S points
-  obtain ⟨pair⟩ := ExtendedLineGame.pair_witness_of_points_lines_quantitative P e
-    (pauliBaselinePointError e)
-    ((P.m : ℝ) * pauliBaselineExtendedLineError e
-      (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ))) S points lines
-  let delta := deltaLd 30 quantitativeLowDegreePower
-    (directPassingErrorEnvelope
-      (pauliBaselinePointError e + (P.m : ℝ) *
-        pauliBaselineExtendedLineError e
-          (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))
-      (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))
-    P.q (2 * P.m + 2) P.d 1
-  let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
-    2 * Real.sqrt (2 * delta)
-  let pairError := 8 * (4 * eta + 8 * pauliBaselinePointError e) +
-    (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q)
-  let g := min 1 pairError
-  have hdelta : 0 ≤ delta := by
-    dsimp [delta, deltaLd, directPassingErrorEnvelope]
-    positivity
-  have hpoint : 0 ≤ pauliBaselinePointError e := by
-    unfold pauliBaselinePointError
-    exact mul_nonneg
-      (le_trans zero_le_one one_le_pauli_baseline_point_constant)
-      (Real.rpow_nonneg he _)
-  have heta : 0 ≤ eta := by
-    dsimp [eta]
-    positivity
-  have hpairError : 0 ≤ pairError := by
-    dsimp [pairError]
-    positivity
-  have hbound := quantitative_actual_rounded_global_pair_error_bound P e he he1 hr1
-  refine ⟨g, le_min (by norm_num) hpairError, ?_, ?_⟩
-  · simpa only [g, pairError, eta, delta, quantitativeGlobalPairEnvelope,
-      Nat.cast_mul] using hbound
-  · refine ⟨{ pair with point_consistent_alice := ?_, point_consistent_bob := ?_ }⟩
-    · intro W
-      change _ ≤ min 1 pairError
-      refine le_min ?_ ?_
-      · unfold consistencyDefect
-        calc
-          _ ≤ avgOver (uniformDistribution (Fin P.m → PauliScalar P)) (fun _ => 1) :=
-            avgOver_mono _ _ _ fun u => consistencyDefect_integrand_le_one
-              S .AA' .BA'' (by trivial) _ _
-          _ = 1 := avgOver_const_of_isProbability _
-            (uniformDistribution_isProbability _) 1
-      · simpa only [pairError, eta, delta, Nat.cast_mul] using
-          pair.point_consistent_alice W
-    · intro W
-      change _ ≤ min 1 pairError
-      refine le_min ?_ ?_
-      · unfold consistencyDefect
-        calc
-          _ ≤ avgOver (uniformDistribution (Fin P.m → PauliScalar P)) (fun _ => 1) :=
-            avgOver_mono _ _ _ fun u => consistencyDefect_integrand_le_one
-              S .BB' .AB'' (by trivial) _ _
-          _ = 1 := avgOver_const_of_isProbability _
-            (uniformDistribution_isProbability _) 1
-      · simpa only [pairError, eta, delta, Nat.cast_mul] using
-          pair.point_consistent_bob W
+  obtain ⟨g, _, hg0, hbound, hpair⟩ :=
+    exists_quantitative_global_pair_witness_at_native_error P e he he1 hr1 S
+  refine ⟨g, hg0, ?_, hpair⟩
+  simpa only [quantitativeGlobalPairEnvelope] using hbound
 
 end
 

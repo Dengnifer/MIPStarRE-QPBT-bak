@@ -357,11 +357,51 @@ theorem direct_ld_soundness_of_k_eq_one_any_strategy_explicit :
     (deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
       ε D.q D.m D.d D.k) GA GB h1 h2 h3
 
-/-- Quantitative one-coordinate direct-game soundness for arbitrary strategies.
-Both local question measurements are dilated, the coefficient-`30` projective
-theorem is applied, and the resulting polynomial POVMs are compressed back to
-the original carriers.  Ground-slice compression preserves all three defects
-exactly. -/
+/-- Native-error one-coordinate direct-game soundness for arbitrary strategies.
+Naimark dilation and ground-slice compression preserve all three defects and
+the compressed polynomial measurements exactly. -/
+theorem direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error :
+    ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ directNativeError D ε ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ directNativeError D ε ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ directNativeError D ε := by
+  intro D ε hk hε S hwin
+  have hwin' : 1 - ε ≤ (directLdNaimarkStrategy D S).value := by
+    rw [directLdNaimarkStrategy_value]
+    exact hwin
+  obtain ⟨GA, GB, h1, h2, h3⟩ :=
+    direct_ld_soundness_of_k_eq_one_at_native_error D ε hk hε
+      (directLdNaimarkStrategy D S) (directLdNaimarkStrategy_isProjective D S) hwin'
+  exact directLdNaimarkStrategy_compress_soundness D S
+    (directNativeError D ε) GA GB h1 h2 h3
+
+/-- Weakening: the native-error arbitrary-strategy theorem implies this
+coefficient-`30` common-error form, matching paper `lem:ld-soundness`.
+Ground-slice compression preserves the three defects exactly. -/
 theorem direct_ld_soundness_of_k_eq_one_any_strategy_quantitative :
     ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
         ∀ S : Strategy (directLdGame D), 1 - ε ≤ S.value →
@@ -395,14 +435,10 @@ theorem direct_ld_soundness_of_k_eq_one_any_strategy_quantitative :
                   S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
                     ε D.q D.m D.d D.k := by
   intro D ε hk hε S hwin
-  have hwin' : 1 - ε ≤ (directLdNaimarkStrategy D S).value := by
-    rw [directLdNaimarkStrategy_value]
-    exact hwin
   obtain ⟨GA, GB, h1, h2, h3⟩ :=
-    direct_ld_soundness_of_k_eq_one_quantitative D ε hk hε
-      (directLdNaimarkStrategy D S) (directLdNaimarkStrategy_isProjective D S) hwin'
-  exact directLdNaimarkStrategy_compress_soundness D S
-    (deltaLd 30 quantitativeLowDegreePower ε D.q D.m D.d D.k) GA GB h1 h2 h3
+    direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error D ε hk hε S hwin
+  have herr := direct_native_error_le_delta_ld_quantitative D hε.le hk
+  exact ⟨GA, GB, h1.trans herr, h2.trans herr, h3.trans herr⟩
 
 /-- There are universal constants bounding both point--polynomial consistency
 defects and the polynomial self-consistency defect for arbitrary strategies in

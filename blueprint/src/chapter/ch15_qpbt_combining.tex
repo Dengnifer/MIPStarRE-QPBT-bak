@@ -7660,6 +7660,39 @@ roots convert that envelope to $E_{\mathrm{pair}}$, while the unit cap handles
 the complementary range.
 \end{proof}
 
+\begin{theorem}[Native one-coordinate direct soundness]
+\label{thm:qld-native-direct-soundness}
+\lean{MIPStarRE.QPBT.direct_ld_aux_parameter_quarter_eq}
+\lean{MIPStarRE.QPBT.main_formal_linear_triangle_error_eq_direct_native_error}
+\lean{MIPStarRE.QPBT.direct_coordinate_main_formal_at_native_error}
+\lean{MIPStarRE.QPBT.exists_direct_simultaneous_polynomial_measurements_at_native_error_of_k_eq_one}
+\lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_at_native_error}
+\lean{MIPStarRE.QPBT.direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error}
+\leanok
+\uses{thm:main-formal-linear-triangle}
+This is a Lean-only sharp sibling of the common-error presentation in
+Lemma~\ref{lem:ld-soundness}.  For direct parameters $D=(q,h,d,k)$ put
+$\tau=1/8192$, $N_D=2560000h^3d$, and
+\[
+ \Lambda_D(t)=\min\!\left\{1,
+ 400000h^{5/4}d^{1/4}
+ \left((3t)^\tau+(d/q)^\tau+\exp(-4hd)\right)\right\}.
+\]
+Then $N_D^{1/4}=40h^{3/4}d^{1/4}$, and the complete-measurement
+linear-triangle error at $N_D$ is exactly $\Lambda_D(t)$.  If $k=1$, the
+coordinate, singleton-tuple, projective-strategy, and arbitrary-strategy
+soundness constructions all retain the same three defects at error
+$\Lambda_D(t)$.  Singleton relabelling and Naimark compression preserve the
+constructed polynomial measurements and do not enlarge the bound.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:main-formal-linear-triangle}
+Substitute the exact fourth root of $N_D$ and the exact exponential argument
+into the linear-triangle estimate.  Apply the singleton-tuple relabelling and,
+for arbitrary strategies, the existing two-sided Naimark compression.
+\end{proof}
+
 \begin{theorem}[Coefficient-30 one-coordinate direct soundness]
 \label{thm:qld-coefficient-thirty-direct-soundness}
 \lean{MIPStarRE.QPBT.direct_coordinate_main_formal_quantitative}
@@ -7700,6 +7733,53 @@ coordinate and use the scalar absorption above. Constant-tuple relabelling
 preserves all three defects. For an arbitrary strategy, dilate every answer
 measurement, apply the projective result, and compress at the distinguished
 ancillary outcome.
+\end{proof}
+
+\begin{theorem}[Native rounded polynomial and pair witnesses]
+\label{thm:qld-native-rounded-polynomials}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_ordered_estimates_at_native_error}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_scalar_mass_at_native_error}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_wrong_variable_mass_at_native_error}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.rounded_polynomial_separated_mass_at_native_error}
+\lean{MIPStarRE.QPBT.ExtendedLineGame.pair_witness_of_points_lines_at_native_error}
+\leanok
+\uses{thm:qld-native-direct-soundness, thm:qld-rounded-polynomials-explicit}
+Let $P=(q,m,d)$ be admissible, put $n=md$ and $\rho=n/q$, and suppose that
+combined-point and extended-line witnesses have errors $Q$ and $L_{\rm ext}$.
+Set
+\[
+ T=3\bigl(\sqrt{Q+L_{\rm ext}}+\rho\bigr),\qquad
+ \lambda=\Lambda_{P_{\rm ext}}(T),
+\]
+where the extended direct dimension is $2m+2$, and define
+\[
+ \eta(\lambda)=\lambda+\sqrt{220}\,\lambda^{1/8}
+   +2\sqrt2\,\lambda^{1/2},\qquad
+ J=4\eta(\lambda)+8Q.
+\]
+There are rounded projective polynomial measurements with both ordered errors
+at most $J$.  There are such measurements retaining the scalar-nonlinear and
+wrong-variable mass bounds.  Separately, there are rounded measurements with
+the two ordered bounds and non-separated mass at most
+\[
+ 6J+\frac{12md+4d+10}{q}.
+\]
+Their completion gives projective polynomial-pair measurements satisfying all
+four point comparisons at the uncapped error
+\[
+ 32\eta(\lambda)+64Q+\frac{12md+4d+14}{q}.
+\]
+Each declaration constructs its measurements through the same native ordered
+constructor; no conjunction between independently quantified witnesses is
+asserted.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:qld-native-direct-soundness, thm:qld-rounded-polynomials-explicit}
+Use native arbitrary-strategy soundness in the existing projective-rounding
+constructor.  The scalar concentration, variable separation, and completion
+arguments preserve the displayed ordered error without a common-exponent
+replacement.
 \end{proof}
 
 \begin{theorem}[Coefficient-30 rounded polynomial witnesses]
@@ -7764,6 +7844,43 @@ ordered estimates. The scalar, wrong-variable, and separated-mass bounds are
 the corresponding finite-field root-counting estimates. Completion at the
 zero polynomial pair gives the two projective pair measurements and the four
 displayed defects.
+\end{proof}
+
+\begin{theorem}[Native small-regime global polynomial pair]
+\label{thm:qld-native-small-regime-global-pair}
+\lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_bound}
+\lean{MIPStarRE.QPBT.exists_quantitative_global_pair_witness_at_native_error}
+\leanok
+\uses{thm:qld-native-rounded-polynomials,
+  thm:qld-coefficient-thirty-rounding-scalars}
+Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  If
+$0\leq e\leq1$ and $\rho\leq1$, take
+\[
+ Q=E_{\rm pt}(e),\qquad
+ L_{\rm ext}=mE_{\rm ext}(e,\rho),\qquad
+ \lambda=\Lambda_{P_{\rm ext}}
+   \bigl(3(\sqrt{Q+L_{\rm ext}}+\rho)\bigr),
+\]
+and set
+\[
+ G=\min\!\left\{1,
+ 32\eta(\lambda)+64Q+\frac{12n+4d+14}{q}\right\}.
+\]
+There are complete projective global polynomial-pair measurements whose four
+point defects are bounded by this concrete $G$.  The same witness also obeys
+the common-envelope consequence
+\[
+ G\leq10^7n^4E_{\rm pair}(P,e).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:qld-native-rounded-polynomials,
+  thm:qld-coefficient-thirty-rounding-scalars}
+Construct the point and extended-line witnesses, apply the native pair
+constructor, and cap each defect by one.  Monotonicity of the separated-power
+rounding error and the native-to-coefficient-$30$ comparison give the final
+common-envelope inequality for these same measurements.
 \end{proof}
 
 \begin{theorem}[Small-regime quantitative global polynomial pair]

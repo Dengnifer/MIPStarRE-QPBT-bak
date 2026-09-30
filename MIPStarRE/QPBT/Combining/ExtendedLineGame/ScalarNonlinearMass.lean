@@ -201,6 +201,35 @@ theorem rounded_polynomial_scalar_mass_explicit :
       (add_le_add
         (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
 
+/-- The native rounded measurements retain both ordered comparisons and the
+two scalar-nonlinear mass estimates at their concrete mixed error. -/
+theorem rounded_polynomial_scalar_mass_at_native_error :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := directNativeError P.extendedDirectLd
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+      let orderedError := nativeOrderedPolynomialError delta δQ
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        (∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ orderedError ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ orderedError) ∧
+        scalarNonlinearMass S .AA' RA ≤ 2 * orderedError +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q ∧
+        scalarNonlinearMass S .BB' RB ≤ 2 * orderedError +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q := by
+  intro P ε δQ δL S points lines delta orderedError
+  obtain ⟨RA, RB, hRA, hRB, horder⟩ :=
+    rounded_polynomial_ordered_estimates_at_native_error P ε δQ δL S points lines
+  refine ⟨RA, RB, hRA, hRB, horder, ?_, ?_⟩
+  · exact (scalarNonlinearMass_le_ordered_error S .AA' .BA'' (by trivial) RA hRA).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).1 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+  · exact (scalarNonlinearMass_le_ordered_error S .BB' .AB'' (by trivial) RB hRB).trans
+      (add_le_add
+        (mul_le_mul_of_nonneg_left (horder false).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+
 /-- The coefficient-`30` rounded witnesses satisfy the same scalar-linearity
 concentration estimate from `eq:qld-g-prime-bound`; the measurements are
 those constructed by `rounded_polynomial_ordered_estimates_quantitative`. -/

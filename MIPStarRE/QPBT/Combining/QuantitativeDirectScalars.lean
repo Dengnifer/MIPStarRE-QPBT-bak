@@ -38,6 +38,34 @@ def directQuantitativeEnvelope (D : DirectLdParams) (ε : ℝ) : ℝ :=
     Real.rpow 2
       (-(quantitativeLowDegreePower * ((D.m * D.d : ℕ) : ℝ)))
 
+/-- The exact capped error obtained by applying the complete-measurement
+linear-triangle theorem at the direct-game auxiliary sample count. -/
+def directNativeError (D : DirectLdParams) (ε : ℝ) : ℝ :=
+  min 1 (400000 * Real.rpow (D.m : ℝ) (5 / 4 : ℝ) *
+    Real.rpow (D.d : ℝ) (1 / 4 : ℝ) *
+      (Real.rpow (3 * ε) quantitativeLowDegreePower +
+        Real.rpow ((D.d : ℝ) / (D.q : ℝ)) quantitativeLowDegreePower +
+        Real.exp (-(4 * (D.m : ℝ) * (D.d : ℝ)))))
+
+/-- The error introduced by same-space projective rounding at a supplied
+direct low-degree error. -/
+def nativeRoundingError (delta : ℝ) : ℝ :=
+  delta + Real.sqrt 220 * Real.rpow delta (1 / 8 : ℝ) +
+    2 * Real.sqrt 2 * Real.rpow delta (1 / 2 : ℝ)
+
+/-- The common ordered polynomial error after projective rounding. -/
+def nativeOrderedPolynomialError (delta deltaQ : ℝ) : ℝ :=
+  4 * nativeRoundingError delta + 8 * deltaQ
+
+/-- The uncapped error of the completed global polynomial-pair measurements. -/
+def nativeGlobalPairRawError (P : AdmissibleParams) (delta deltaQ : ℝ) : ℝ :=
+  32 * nativeRoundingError delta + 64 * deltaQ +
+    (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q)
+
+/-- The unit-capped error of the completed global polynomial-pair measurements. -/
+def nativeGlobalPairError (P : AdmissibleParams) (delta deltaQ : ℝ) : ℝ :=
+  min 1 (nativeGlobalPairRawError P delta deltaQ)
+
 /-- The three-term QPBT envelope before projective rounding. -/
 def quantitativePreRoundingEnvelope (P : AdmissibleParams) (e : ℝ) : ℝ :=
   Real.rpow e quantitativePreRoundingPower +
@@ -83,6 +111,44 @@ theorem direct_ld_aux_parameter_linear_triangle_exp_arg (D : DirectLdParams) :
   push_cast
   rw [div_eq_iff hne]
   ring
+
+/-- The auxiliary sample count has exact fourth root
+`40 * m^(3/4) * d^(1/4)`. -/
+theorem direct_ld_aux_parameter_quarter_eq (D : DirectLdParams) :
+    Real.rpow (directLdAuxParameter D : ℝ) (1 / 4 : ℝ) =
+      40 * Real.rpow (D.m : ℝ) (3 / 4 : ℝ) *
+        Real.rpow (D.d : ℝ) (1 / 4 : ℝ) := by
+  have hm0 : (0 : ℝ) ≤ (D.m : ℝ) := by positivity
+  have hd0 : (0 : ℝ) ≤ (D.d : ℝ) := by positivity
+  unfold directLdAuxParameter
+  push_cast
+  calc
+    Real.rpow ((2560000 : ℝ) * (D.m : ℝ) ^ (3 : ℕ) * (D.d : ℝ))
+        (1 / 4 : ℝ) =
+        Real.rpow ((2560000 : ℝ) * (D.m : ℝ) ^ (3 : ℕ)) (1 / 4 : ℝ) *
+          Real.rpow (D.d : ℝ) (1 / 4 : ℝ) :=
+      Real.mul_rpow (mul_nonneg (by norm_num) (pow_nonneg hm0 3)) hd0
+    _ = Real.rpow (2560000 : ℝ) (1 / 4 : ℝ) *
+          Real.rpow ((D.m : ℝ) ^ (3 : ℕ)) (1 / 4 : ℝ) *
+          Real.rpow (D.d : ℝ) (1 / 4 : ℝ) := by
+      congr 1
+      exact Real.mul_rpow (by norm_num) (pow_nonneg hm0 3)
+    _ = 40 * Real.rpow (D.m : ℝ) (3 / 4 : ℝ) *
+          Real.rpow (D.d : ℝ) (1 / 4 : ℝ) := by
+      have h40 : Real.rpow (2560000 : ℝ) (1 / 4 : ℝ) = 40 := by
+        rw [show (2560000 : ℝ) = (40 : ℝ) ^ (4 : ℕ) by norm_num]
+        convert Real.pow_rpow_inv_natCast
+          (show (0 : ℝ) ≤ 40 by norm_num) (show (4 : ℕ) ≠ 0 by norm_num) using 1
+        norm_num
+      have hm : Real.rpow ((D.m : ℝ) ^ (3 : ℕ)) (1 / 4 : ℝ) =
+          Real.rpow (D.m : ℝ) (3 / 4 : ℝ) := by
+        rw [← Real.rpow_natCast]
+        calc
+          Real.rpow (Real.rpow (D.m : ℝ) (3 : ℝ)) (1 / 4 : ℝ) =
+              Real.rpow (D.m : ℝ) ((3 : ℝ) * (1 / 4 : ℝ)) :=
+            (Real.rpow_mul hm0 _ _).symm
+          _ = _ := by norm_num
+      rw [h40, hm]
 
 /-- The fourth root of the auxiliary sample count is bounded by
 `40 * m * d`. -/
@@ -207,6 +273,139 @@ theorem direct_quantitative_envelope_nonneg
       (Real.rpow_nonneg (Nat.cast_nonneg _) _))
     (Real.rpow_nonneg (by norm_num) _)
 
+/-- The native direct low-degree error is nonnegative on nonnegative inputs. -/
+theorem direct_native_error_nonneg
+    (D : DirectLdParams) {ε : ℝ} (hε : 0 ≤ ε) :
+    0 ≤ directNativeError D ε := by
+  unfold directNativeError
+  apply le_min zero_le_one
+  have hinner : 0 ≤
+      Real.rpow (3 * ε) quantitativeLowDegreePower +
+        Real.rpow ((D.d : ℝ) / (D.q : ℝ)) quantitativeLowDegreePower +
+        Real.exp (-(4 * (D.m : ℝ) * (D.d : ℝ))) := by
+    exact add_nonneg
+      (add_nonneg
+        (Real.rpow_nonneg (mul_nonneg (by norm_num) hε) _)
+        (Real.rpow_nonneg (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)) _))
+      (Real.exp_nonneg _)
+  exact mul_nonneg
+    (mul_nonneg
+      (mul_nonneg (by norm_num) (Real.rpow_nonneg (Nat.cast_nonneg _) _))
+      (Real.rpow_nonneg (Nat.cast_nonneg _) _)) hinner
+
+/-- The square-root presentation used by the rounding theorem equals the
+separated-power expression `nativeRoundingError`. -/
+theorem native_rounding_error_eq
+    {delta : ℝ} (hdelta : 0 ≤ delta) :
+    delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta) = nativeRoundingError delta := by
+  have hrootQuarter : Real.sqrt (Real.rpow delta (1 / 4 : ℝ)) =
+      Real.rpow delta (1 / 8 : ℝ) := by
+    rw [Real.sqrt_eq_rpow]
+    calc
+      Real.rpow (Real.rpow delta (1 / 4 : ℝ)) (1 / 2 : ℝ) =
+          Real.rpow delta ((1 / 4 : ℝ) * (1 / 2 : ℝ)) :=
+        (Real.rpow_mul hdelta _ _).symm
+      _ = _ := by norm_num
+  have hroot : Real.sqrt delta = Real.rpow delta (1 / 2 : ℝ) :=
+    Real.sqrt_eq_rpow delta
+  unfold nativeRoundingError
+  rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 220), hrootQuarter,
+    Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 2), hroot]
+  ring
+
+/-- The separated-power rounding error is nonnegative. -/
+theorem native_rounding_error_nonneg {delta : ℝ} (hdelta : 0 ≤ delta) :
+    0 ≤ nativeRoundingError delta := by
+  unfold nativeRoundingError
+  exact add_nonneg
+    (add_nonneg hdelta
+      (mul_nonneg (Real.sqrt_nonneg _) (Real.rpow_nonneg hdelta _)))
+    (mul_nonneg
+      (mul_nonneg (by norm_num) (Real.sqrt_nonneg _))
+      (Real.rpow_nonneg hdelta _))
+
+/-- The separated-power rounding error is monotone on nonnegative inputs. -/
+theorem native_rounding_error_mono {delta delta' : ℝ}
+    (hdelta : 0 ≤ delta) (h : delta ≤ delta') :
+    nativeRoundingError delta ≤ nativeRoundingError delta' := by
+  have h18 := Real.rpow_le_rpow hdelta h (by norm_num : (0 : ℝ) ≤ 1 / 8)
+  have h12 := Real.rpow_le_rpow hdelta h (by norm_num : (0 : ℝ) ≤ 1 / 2)
+  unfold nativeRoundingError
+  exact add_le_add
+    (add_le_add h (mul_le_mul_of_nonneg_left h18 (Real.sqrt_nonneg _)))
+    (mul_le_mul_of_nonneg_left h12
+      (mul_nonneg (by norm_num) (Real.sqrt_nonneg _)))
+
+/-- The ordered polynomial error is nonnegative when both inputs are. -/
+theorem native_ordered_polynomial_error_nonneg
+    {delta deltaQ : ℝ} (hdelta : 0 ≤ delta) (hdeltaQ : 0 ≤ deltaQ) :
+    0 ≤ nativeOrderedPolynomialError delta deltaQ := by
+  unfold nativeOrderedPolynomialError
+  exact add_nonneg
+    (mul_nonneg (by norm_num) (native_rounding_error_nonneg hdelta))
+    (mul_nonneg (by norm_num) hdeltaQ)
+
+/-- The uncapped global-pair error is nonnegative when both inputs are. -/
+theorem native_global_pair_raw_error_nonneg
+    (P : AdmissibleParams) {delta deltaQ : ℝ}
+    (hdelta : 0 ≤ delta) (hdeltaQ : 0 ≤ deltaQ) :
+    0 ≤ nativeGlobalPairRawError P delta deltaQ := by
+  unfold nativeGlobalPairRawError
+  exact add_nonneg
+    (add_nonneg
+      (mul_nonneg (by norm_num) (native_rounding_error_nonneg hdelta))
+      (mul_nonneg (by norm_num) hdeltaQ))
+    (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
+
+/-- The capped global-pair error is nonnegative when both inputs are. -/
+theorem native_global_pair_error_nonneg
+    (P : AdmissibleParams) {delta deltaQ : ℝ}
+    (hdelta : 0 ≤ delta) (hdeltaQ : 0 ≤ deltaQ) :
+    0 ≤ nativeGlobalPairError P delta deltaQ := by
+  unfold nativeGlobalPairError
+  exact le_min zero_le_one
+    (native_global_pair_raw_error_nonneg P hdelta hdeltaQ)
+
+/-- At the direct-game auxiliary sample count, the named native error is
+definitionally the capped complete-measurement linear-triangle error. -/
+theorem main_formal_linear_triangle_error_eq_direct_native_error
+    (D : DirectLdParams) (ε : ℝ) :
+    Test.mainFormalLinearTriangleError D.toLDTParameters
+        (directLdAuxParameter D) (3 * ε) = directNativeError D ε := by
+  have hmpos : (0 : ℝ) < (D.m : ℝ) := by
+    exact_mod_cast D.toLDTParameters.hm
+  have hmPower : Real.rpow (D.m : ℝ) (3 / 4 : ℝ) *
+      Real.rpow (D.m : ℝ) (1 / 2 : ℝ) =
+      Real.rpow (D.m : ℝ) (5 / 4 : ℝ) := by
+    calc
+      _ = Real.rpow (D.m : ℝ) ((3 / 4 : ℝ) + (1 / 2 : ℝ)) :=
+        (Real.rpow_add hmpos _ _).symm
+      _ = _ := by norm_num
+  have hprefactor :
+      10000 *
+          (40 * Real.rpow (D.m : ℝ) (3 / 4 : ℝ) *
+            Real.rpow (D.d : ℝ) (1 / 4 : ℝ)) *
+          Real.rpow (D.m : ℝ) (1 / 2 : ℝ) =
+        400000 * Real.rpow (D.m : ℝ) (5 / 4 : ℝ) *
+          Real.rpow (D.d : ℝ) (1 / 4 : ℝ) := by
+    calc
+      _ = 400000 *
+          (Real.rpow (D.m : ℝ) (3 / 4 : ℝ) *
+            Real.rpow (D.m : ℝ) (1 / 2 : ℝ)) *
+          Real.rpow (D.d : ℝ) (1 / 4 : ℝ) := by ring
+      _ = _ := by rw [hmPower]
+  unfold Test.mainFormalLinearTriangleError Test.mainFormalLinearTriangleRawError
+    Test.stepEnvelope directNativeError
+  rw [direct_ld_aux_parameter_quarter_eq,
+    direct_ld_aux_parameter_linear_triangle_exp_arg]
+  unfold quantitativeLowDegreePower
+  change min 1 (10000 *
+      (40 * Real.rpow (D.m : ℝ) (3 / 4 : ℝ) *
+        Real.rpow (D.d : ℝ) (1 / 4 : ℝ)) *
+      Real.rpow (D.m : ℝ) (1 / 2 : ℝ) * _) = _
+  rw [hprefactor]
+
 /-- Before applying the unit cap, the native linear-triangle LDT error is
 bounded by a quadratic parameter factor times the direct envelope. -/
 theorem direct_ld_linear_triangle_raw_error_le
@@ -305,8 +504,9 @@ theorem direct_ld_linear_triangle_raw_error_le
       · exact mul_le_mul_of_nonneg_right (by norm_num) (sq_nonneg _)
       · exact direct_quantitative_envelope_nonneg D hε
 
-/-- At simultaneity parameter one, the capped native LDT error is absorbed by
-the coefficient-`30` error function used by quantitative direct soundness. -/
+/-- Weakening: `directNativeError` implies the coefficient-`30` common error
+form, because paper `lem:ld-soundness` prints one `deltaLd` bound for all three
+consistency conclusions. -/
 theorem main_formal_linear_triangle_error_le_delta_ld_quantitative
     (D : DirectLdParams) {ε : ℝ} (hε : 0 ≤ ε) (hk : D.k = 1) :
     Test.mainFormalLinearTriangleError D.toLDTParameters
@@ -383,6 +583,15 @@ theorem main_formal_linear_triangle_error_le_delta_ld_quantitative
       _ ≤ 30 * Real.rpow (((D.m * D.d : ℕ) : ℝ)) 30 *
           directQuantitativeEnvelope D ε :=
         mul_le_mul_of_nonneg_right hcoefficient henv
+
+/-- The explicit native direct error is bounded by the paper-form
+coefficient-`30` error at simultaneity parameter one. -/
+theorem direct_native_error_le_delta_ld_quantitative
+    (D : DirectLdParams) {ε : ℝ} (hε : 0 ≤ ε) (hk : D.k = 1) :
+    directNativeError D ε ≤
+      deltaLd 30 quantitativeLowDegreePower ε D.q D.m D.d D.k := by
+  rw [← main_formal_linear_triangle_error_eq_direct_native_error]
+  exact main_formal_linear_triangle_error_le_delta_ld_quantitative D hε hk
 
 end
 
