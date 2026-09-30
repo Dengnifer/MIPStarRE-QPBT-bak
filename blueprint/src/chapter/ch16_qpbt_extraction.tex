@@ -1953,3 +1953,837 @@ The statements of this section are not named results of the source article.  The
 	\uses{lem:extraction-register-transport-support}
 	Each placement is a permutation of coordinates applied to a heterogeneous tensor product of the two block operators, so the multiplicative, adjoint and unit identities reduce to the corresponding identities for tensor products, and conjugation splits accordingly.  The two comparisons between player placements and block placements are proved entrywise, after inserting the identity on the registers that the coarser placement leaves untouched.  The one-sided conjugation identity follows from the split form of conjugation, because conjugating the identity by an operator with $UU^\dagger = \Id$ returns the identity on the other block.  The last three statements follow from the intertwining identity of Lemma~\ref{lem:extraction-register-transport-support} together with the existing norm statement for matrices satisfying $U^\dagger U = \Id$.
 \end{proof}
+
+\section{Closed quantitative extraction and soundness baseline}
+\label{sec:qld-extraction-explicit}
+
+The entries below are Lean-only quantitative specializations.  Conditional
+entries display the supplied global polynomial-pair witness explicitly.  The
+tracked source-facing discharge of that input is not claimed in this section.
+For a construction coefficient $C$, write
+\[
+ \Delta_S(C;\eps,\delta_G,m,d,q)
+   =C\left(\delta_G+\sqrt\eps+\frac{md}{q}\right),
+ \qquad
+ \Delta_E(C;\delta_S,m,d,q)
+   =C\left(\delta_S^{1/4}+\frac{md}{q}\right).
+\]
+
+\begin{definition}[Constants of the extraction and soundness baseline]
+\label{def:qld-extraction-baseline-constants}
+\lean{MIPStarRE.QPBT.pauliBaselineExtractionConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineProjectiveConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineProjectivePower}
+\lean{MIPStarRE.QPBT.pauliSoundnessBaselineConstant}
+\lean{MIPStarRE.QPBT.pauliSoundnessBaselinePower}
+\leanok
+\uses{def:qld-baseline-scalar-functions}
+Set
+\[
+ \begin{aligned}
+ C_{\mathrm{extract}}&=2800,\\
+ C_{\mathrm{proj}}&=16C_{\mathrm{extract}}^2C_{\mathrm{pair}},
+ &b_{\mathrm{proj}}&=b_{\mathrm{pair}}/16,\\
+ C_{\mathrm{sound}}&=346\,21^3C_{\mathrm{proj}}^4,
+ &b_{\mathrm{sound}}&=1/5242880000.
+ \end{aligned}
+\]
+In particular $b_{\mathrm{proj}}=b_{\mathrm{sound}}$.
+\end{definition}
+
+\begin{theorem}[Explicit supplied-witness consistency estimates]
+\label{thm:qld-supplied-global-consistency-explicit}
+\lean{MIPStarRE.QPBT.global_marginal_encoding_consistency_explicit}
+\lean{MIPStarRE.QPBT.tilde_m_consistent_point_meas_of_global_pair_witness_explicit}
+\lean{MIPStarRE.QPBT.tilde_m_consistent_point_meas'_of_global_pair_witness_explicit}
+\lean{MIPStarRE.QPBT.evaluated_pauli_tilde_consistency_of_global_pair_witness_explicit}
+\lean{MIPStarRE.QPBT.tilde_obs_self_consistent_of_global_pair_witness_card}
+\lean{MIPStarRE.QPBT.tilde_obs_self_consistent_of_global_pair_witness_explicit}
+\lean{MIPStarRE.QPBT.extracted_obs_self_consistent_of_global_pair_witness_explicit}
+\leanok
+\uses{lem:qld-construct-the-paulis-given-global-pair,
+def:qld-extraction-baseline-constants}
+Let $\eps\geq0$, and suppose a projective setting $S$ is supplied with a global
+polynomial-pair witness of error $\delta_G$.  For either basis, each evaluated
+global marginal is consistent with the opposite encoding-supported reference
+at error
+\[
+ \delta_G+(1+2\sqrt{172})\sqrt\eps.
+\]
+If moreover $\eps\leq1$ and $\delta_G\geq0$, the original point measurement
+and the opposite pulled-apart measurement are consistent in both player
+orientations at scale
+\[
+ \Delta_S(2+2\sqrt{172};\eps,\delta_G,m,d,q).
+\]
+The two evaluated total-Pauli measurements are consistent with the opposite
+pulled-apart measurements at scale
+\[
+ \Delta_S(2+4\sqrt{172};\eps,\delta_G,m,d,q).
+\]
+
+For every basis coordinate $j$, the two pulled-apart observables have squared
+distance at most
+\[
+ \Delta_S(48+32\lvert\mathcal E_{\mathrm{Pauli}}\rvert;
+   \eps,\delta_G,m,d,q)
+ =\Delta_S(C_{\mathrm{extract}};\eps,\delta_G,m,d,q).
+\]
+After conjugation by the concrete swap unitaries, the same bound holds for the
+canonical Pauli observables on the extracted registers.  Every assertion in
+this theorem retains the supplied global witness as a load-bearing hypothesis;
+it is not a replacement for Lemma~\ref{lem:qld-construct-the-paulis}.
+\end{theorem}
+\begin{proof}
+Compare the global marginals with the encoding-supported references, bound
+the mass outside the encoding by Schwartz--Zippel, and chain the point and
+Pauli-basis consistency estimates.  Summing the fixed-edge terms gives
+$48+32\cdot86=2800$, and unitary conjugation preserves the squared distance.
+\end{proof}
+
+\begin{theorem}[Explicit extraction from a supplied global witness]
+\label{thm:qld-extraction-witness-explicit}
+\lean{MIPStarRE.QPBT.exists_extraction_aux_of_global_pair_witness_explicit}
+\lean{MIPStarRE.QPBT.exists_extraction_witness_of_global_pair_witness_explicit}
+\lean{MIPStarRE.QPBT.delta_extract_le_delta_qld_explicit}
+\lean{MIPStarRE.QPBT.exists_extraction_witness_explicit}
+\leanok
+\uses{thm:qld-supplied-global-consistency-explicit,
+thm:qld-global-pair-witness-explicit, lem:qld-unitary}
+Suppose $0\leq\eps\leq1$, $\delta_G\geq0$, and a projective setting is
+supplied with a global polynomial-pair witness of error $\delta_G$.  There is
+a unit auxiliary state for which the squared distance from the swapped state
+to the ideal state is at most
+\[
+ 16\Delta_S(C_{\mathrm{extract}};\eps,\delta_G,m,d,q).
+\]
+The two swap unitaries, this auxiliary state, and both Pauli-family estimates
+form an extraction witness at error
+\[
+ \Delta_E\left(C_{\mathrm{extract}};
+   \Delta_S(C_{\mathrm{extract}};\eps,\delta_G,m,d,q),m,d,q\right).
+\]
+
+For $C\geq1$, $a>1$, $0<b<1$, and $0\leq\eps\leq1$, the scalar extraction
+error obeys
+\[
+ \Delta_E\bigl(C;\Delta_S(C;\eps,
+   \delta_{\mathrm{qld}}(a,b,\eps,m,d,q),m,d,q),m,d,q\bigr)
+ \leq\delta_{\mathrm{qld}}(4C^2a,b/8,\eps,m,d,q).
+\]
+There is also a formal composition that substitutes the global witness of
+Theorem~\ref{thm:qld-global-pair-witness-explicit}, with
+$C=C_{\mathrm{extract}}$ and
+$\delta_G=\delta_{\mathrm{qld}}(C_{\mathrm{pair}},b_{\mathrm{pair}},
+\eps,m,d,q)$.  The supplied-witness estimates are conditional statements, but
+the composition constructs the global witness internally and is complete.
+The separately tracked source-game correspondence and direct-carrier
+restrictions remain open; the conditional helpers are not promoted to
+source-labelled results.
+\end{theorem}
+\begin{proof}
+Project the swapped state onto the EPR factor, normalize the resulting
+auxiliary vector, and use the explicit Pauli consistency estimate.  The scalar
+comparison follows by subadditivity of the fourth root and admissibility
+$md,q\geq1$.
+\end{proof}
+
+\begin{theorem}[Explicit projective and arbitrary-strategy isometry bounds]
+\label{thm:qld-isometry-baselines-explicit}
+\lean{MIPStarRE.QPBT.pauli_soundness_delta_qld_of_extraction_witness_explicit}
+\lean{MIPStarRE.QPBT.projective_setting_isometry_bounds_explicit_baseline}
+\lean{MIPStarRE.QPBT.arbitrary_strategy_isometry_bounds_explicit_baseline}
+\leanok
+\uses{thm:qld-extraction-witness-explicit,
+def:qld-extraction-baseline-constants}
+For a projective setting with $0\leq\eps\leq1$, suppose a supplied global-pair
+witness has error $\delta_{\mathrm{qld}}(a,b,\eps,m,d,q)$ and a supplied
+extraction witness has coefficient $C$, where $C\geq1$, $a>1$, and
+$0<b<1$.  Then the state distance and both complete Pauli-family squared
+distances are bounded by
+\[
+ \delta_{\mathrm{qld}}(16C^2a,b/16,\eps,m,d,q).
+\]
+Therefore every projective setting in this error range satisfies all three
+bounds with $(C_{\mathrm{proj}},b_{\mathrm{proj}})$.  For an arbitrary
+strategy of value at least $1-\eps$, questionwise Naimark dilation gives the
+same three complete-family conclusions with coefficient
+$21C_{\mathrm{proj}}^2$ and power $b_{\mathrm{proj}}$.
+\end{theorem}
+\begin{proof}
+\leanok
+Pass from the swap unitaries to their range isometries, absorb the state square
+root and the operator factor four, and then apply the Naimark reduction.  The
+coefficient $21C_{\mathrm{proj}}^2$ absorbs the completed-family transfer.
+\end{proof}
+
+\begin{theorem}[Explicit raw-effect and qubit soundness]
+\label{thm:pauli-soundness-explicit-baseline}
+\lean{MIPStarRE.QPBT.arbitrary_strategy_raw_isometry_bounds_explicit_baseline}
+\lean{MIPStarRE.QPBT.pauli_soundness_explicit_baseline}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_explicit_baseline}
+\leanok
+\uses{thm:qld-isometry-baselines-explicit, lem:pauli-edge-card-explicit}
+Let $\eps\geq0$ and let an arbitrary strategy for the Pauli basis test have
+value at least $1-\eps$.  There are local isometries and one normalized
+auxiliary state for which the state distance and both squared distances of the
+raw prescribed-answer Pauli effect families are bounded by
+\[
+ \delta_{\mathrm{qld}}(C_{\mathrm{sound}},b_{\mathrm{sound}},
+   \eps,m,d,q).
+\]
+Here $C_{\mathrm{sound}}\geq1$ and $0<b_{\mathrm{sound}}<1$.
+The constant is obtained from the exact raw-effect factor
+$2+4\lvert\mathcal E_{\mathrm{Pauli}}\rvert=346$ and the completed-family
+coefficient of Theorem~\ref{thm:qld-isometry-baselines-explicit}.  The same
+coefficient and power give the qubit-coordinate state and raw operator-family
+bounds after the exact field-basis reindexing.  Both conclusions hold on the
+full source domain $\eps\geq0$ and introduce no witness hypothesis.
+\end{theorem}
+\begin{proof}
+\leanok
+Transfer the completed families to the prescribed raw effects and absorb the
+resulting scalar factor into $C_{\mathrm{sound}}$.  For the qubit statement,
+reindex the extracted field register along the fixed basis; the state norm and
+both operator-family distances are preserved exactly.
+\end{proof}
+
+\subsection{Componentwise quantitative bounds}
+
+The following statements are formalization-only estimates supporting the
+quantitative extraction argument.  They are not separately named results of
+the source article.  In this subsection every complete or prescribed Pauli
+operator-family distance is a sum of squared state norms over
+$h\in\F_q^M$; the state distance itself is left unsquared unless a square is
+displayed.
+
+\begin{theorem}[Separate components in the isometry transfer]
+\label{thm:pauli-component-isometry-transfer-support}
+\lean{MIPStarRE.QPBT.ExtractionWitness.pauli_distance_alice_le_components}
+\lean{MIPStarRE.QPBT.ExtractionWitness.pauli_distance_bob_le_components}
+\leanok
+\uses{thm:pauli-isometry-transfer-alice-support,
+thm:pauli-isometry-transfer-bob-support,
+thm:pauli-extraction-isometry-construction-support}
+Let $S$ be a projective Pauli-test setting, let $w$ be a supplied global
+polynomial-pair witness, and let $v$ be extraction data with auxiliary vector
+$\ket{\mathrm{aux}}$.  For $W\in\{X,Z\}$, write
+$D_{\mathrm{swap},\mathrm A}^W$ and
+$D_{\mathrm{swap},\mathrm B}^W$ for the squared distances, on the ideal
+expanded state determined by this same auxiliary vector, between the
+swap-conjugated complete Pauli families and the corresponding ideal Pauli
+projectors.  Also put
+\[
+ s^2=\left\|(V_{\mathrm A}\otimes V_{\mathrm B})\ket{\hat\psi}
+   -\ket{\mathrm{aux}}\otimes\ket{\mathrm{EPR}_q}^{\otimes M}\right\|^2.
+\]
+For the local isometries obtained from the actual swap unitaries and EPR
+ancillas, the complete Pauli-family distances satisfy
+\[
+ D_{\mathrm A}^W\leq2D_{\mathrm{swap},\mathrm A}^W+2s^2,
+ \qquad
+ D_{\mathrm B}^W\leq2D_{\mathrm{swap},\mathrm B}^W+2s^2.
+\]
+The operators in $D_{\mathrm A}^W$ and $D_{\mathrm B}^W$ are the genuine
+isometry conjugates $\phi M_h\phi^\dagger$, with their range projections;
+the ideal state is not assumed to lie in either isometry range.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-isometry-transfer-alice-support,
+thm:pauli-isometry-transfer-bob-support,
+thm:pauli-ancilla-intertwining-support,
+thm:pauli-extraction-isometry-construction-support}
+Apply the two range-projection estimates to the complete swapped families.
+The exact ancilla intertwining identities identify the first term with the
+corresponding swap-conjugated distance, while the extraction register
+identities identify the second term with the actual squared state error.
+\end{proof}
+
+\begin{lemma}[Square-sum contraction for prescribed Pauli effects]
+\label{lem:pauli-raw-effects-square-sum-support}
+\lean{MIPStarRE.QPBT.raw_pauli_effects_sum_adjoint_mul_le_one}
+\leanok
+\uses{def:pauli-win-predicate}
+Let $\{M_a\}_{a\in\mathcal A}$ be any Pauli-answer POVM, and retain only the
+effects $M_{\mathsf{Pauli}(u)}$ attached to prescribed Pauli answers
+$u\in\F_q^M$.  Then
+\[
+ \sum_{u\in\F_q^M}
+   M_{\mathsf{Pauli}(u)}^\dagger M_{\mathsf{Pauli}(u)}\leq I.
+\]
+No strategy, projectivity, or success hypothesis is required.
+\end{lemma}
+\begin{proof}
+\leanok
+The prescribed outcomes form an injectively indexed subfamily of the full
+POVM.  Positivity bounds its square sum by the square sum over all outcomes,
+which is at most the identity for a POVM.
+\end{proof}
+
+\begin{theorem}[Universal state and prescribed-family caps]
+\label{thm:pauli-universal-distance-caps-support}
+\lean{MIPStarRE.QPBT.pauli_soundness_state_distance_le_two}
+\lean{MIPStarRE.QPBT.raw_pauli_operator_distance_a_le_four}
+\lean{MIPStarRE.QPBT.raw_pauli_operator_distance_b_le_four}
+\leanok
+\uses{lem:pauli-raw-effects-square-sum-support, def:EPR,
+def:povm-distance}
+Let $S$ be any strategy for the Pauli basis test and let $t$ consist of local
+isometries and a normalized auxiliary vector.  Then the extracted strategy
+state and its ideal comparison state are unit vectors, and hence
+\[
+ \left\|(\phi_{\mathrm A}\otimes\phi_{\mathrm B})\ket\psi
+   -\ket{\mathrm{aux}}\otimes\ket{\mathrm{EPR}_q}^{\otimes M}\right\|
+ \leq2.
+\]
+For every $W\in\{X,Z\}$, the squared prescribed-answer Pauli-family distance
+is at most $4$ for Alice and at most $4$ for Bob.  These bounds assume neither
+a lower bound on the strategy value nor projectivity of its measurements.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{lem:pauli-raw-effects-square-sum-support}
+The state estimate is the triangle inequality for two unit vectors.  For each
+player, transfer the square-sum contraction through the local isometry and
+the appropriate tensor placement.  The ideal Pauli projectors form a complete
+projective measurement, so the general squared-distance estimate for two
+contractive families gives the bound $4$.
+\end{proof}
+
+% tracked in issue #123
+\begin{theorem}[Fixed extraction components from a supplied global witness]
+\label{thm:qld-supplied-extraction-components-explicit}
+\lean{MIPStarRE.QPBT.exists_extraction_witness_with_component_bounds}
+\leanok
+\uses{thm:qld-supplied-global-consistency-explicit,
+thm:qld-extraction-witness-explicit,
+def:qld-extraction-baseline-constants}
+Let $0\leq\eps\leq1$ and $\delta_G\geq0$, let $S$ be a projective
+Pauli-test setting, and suppose that one global polynomial-pair witness of
+error $\delta_G$ is supplied for $S$.  Set
+\[
+ r=\frac{md}{q},
+ \qquad
+ x=2800\left(\delta_G+\sqrt\eps+r\right).
+\]
+There is one extraction witness at the scale
+$18(x+\sqrt{x}+r)$ whose auxiliary vector simultaneously satisfies
+\[
+ \left\|(V_{\mathrm A}\otimes V_{\mathrm B})\ket{\hat\psi}
+   -\ket{\mathrm{aux}}\otimes\ket{\mathrm{EPR}_q}^{\otimes M}\right\|^2
+ \leq16x
+\]
+and, for each player and each $W\in\{X,Z\}$,
+\[
+ D_{\mathrm{swap}}^W\leq2x+2r+16\sqrt{x}.
+\]
+The displayed estimates use the same auxiliary vector.  The supplied global
+witness remains an explicit, load-bearing hypothesis; this theorem does not
+construct the witness required by the source statement.
+\end{theorem}
+\begin{proof}
+\uses{thm:qld-supplied-global-consistency-explicit,
+thm:qld-extraction-witness-explicit, lem:qld-unitary}
+Use the normalized auxiliary vector obtained by projecting the swapped state
+onto the EPR factor.  Its squared state error is at most $16x$.  The evaluated
+Pauli defect is at most $x$, and the swap comparison contributes twice that
+defect, twice the Schwartz--Zippel term $r$, and four times the state norm;
+taking the square root of the state estimate gives the displayed bound.
+\end{proof}
+
+% tracked in issue #123
+\begin{theorem}[Prescribed-family transfer from one supplied global witness]
+\label{thm:pauli-supplied-global-component-transfer-explicit}
+\lean{MIPStarRE.QPBT.exists_pauli_soundness_witness_with_component_bounds}
+\leanok
+\uses{thm:qld-supplied-extraction-components-explicit,
+thm:pauli-component-isometry-transfer-support,
+thm:pauli-naimark-reduction-support,
+thm:pauli-naimark-operator-transfer-support,
+thm:pauli-prescribed-answer-transfer-support}
+Let $0\leq\eps\leq1$, let $R$ be an arbitrary strategy for the Pauli basis
+test with value at least $1-\eps$, let $\delta_G\geq0$, and suppose that one
+global polynomial-pair witness of error $\delta_G$ is supplied for the
+questionwise Naimark dilation of $R$.  With
+\[
+ r=\frac{md}{q},
+ \qquad
+ x=2800\left(\delta_G+\sqrt\eps+r\right),
+\]
+there are local isometries and one normalized auxiliary vector such that
+simultaneously
+\[
+ \left\|(\phi_{\mathrm A}\otimes\phi_{\mathrm B})\ket\psi
+   -\ket{\mathrm{aux}}\otimes\ket{\mathrm{EPR}_q}^{\otimes M}\right\|^2
+ \leq16x
+\]
+and, for every $W\in\{X,Z\}$, both players' squared distances for the raw
+effects attached to the prescribed Pauli answers are at most
+\[
+ 472x+24r+192\sqrt{x}+344\eps.
+\]
+The existential quantifier is shared by the state estimate and both raw
+operator-family estimates.  The supplied global witness is not discharged,
+so this conditional result is not the source soundness theorem.
+\end{theorem}
+\begin{proof}
+\uses{thm:qld-supplied-extraction-components-explicit,
+thm:pauli-component-isometry-transfer-support,
+thm:pauli-naimark-operator-transfer-support,
+thm:pauli-prescribed-answer-transfer-support,
+lem:pauli-edge-card-explicit}
+Use the fixed extraction witness and its auxiliary vector from the preceding
+theorem.  The separate isometry estimates first give
+$36x+4r+32\sqrt{x}$ for each complete family.  The actual squared state error
+remains $16x$ through the state identity and the Naimark pullback, while the
+complete-family Naimark estimate becomes
+$204x+12r+96\sqrt{x}$.  Finally the prescribed-effect transfer gives twice
+this last quantity, four times the actual squared state error, and
+$4\lvert\mathcal E_{\mathrm{Pauli}}\rvert\eps$; using
+$\lvert\mathcal E_{\mathrm{Pauli}}\rvert=86$ yields the stated coefficient.
+\end{proof}
+
+
+\section{Final explicit quantitative soundness}
+\label{sec:pauli-final-quantitative-soundness}
+
+The statements in this section are Lean-only quantitative specializations of
+Theorem~\ref{thm:pauli} and Corollary~\ref{cor:pauli-binary}.  They do not
+replace either source-labelled statement.  All operator errors below are sums
+of squared action norms over the prescribed answers $u\in\F_q^M$, whereas the
+state error is an unsquared norm.
+
+\begin{definition}[Final quantitative Pauli error]
+\label{def:pauli-final-quantitative-error}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativePower}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeEnvelope}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeRawError}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeError}
+\leanok
+\uses{def:qld-coefficient-thirty-scales}
+For admissible $P=(q,m,d)$, put $n=md$ and
+\[
+ b=\frac1{67108864},\qquad
+ E_b(P,e)=e^b+q^{-b}+2^{-bn}.
+\]
+Define the uncapped structured error and the final error by
+\[
+ B(P,e)=10^{14}n^4E_b(P,e),\qquad
+ \Delta_{\mathrm{new}}(P,\eps)
+   =\min\{4,B(P,\min\{\eps,1\})\}.
+\]
+All powers are real powers.  Thus the source error is clipped before entering
+the envelope, while the outer cap is the common universal bound for the state
+and prescribed operator families.
+\end{definition}
+
+\begin{definition}[Degree-two and mixed quantitative Pauli errors]
+\label{def:pauli-final-degree-two-error}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeDegreeTwoRawError}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeDegreeTwoError}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeMixedScale}
+\lean{MIPStarRE.QPBT.pauliSoundnessQuantitativeMixedOperatorError}
+\leanok
+\uses{def:pauli-final-quantitative-error}
+For admissible $P=(q,m,d)$, put $n=md$, $e=\min\{\eps,1\}$, and retain
+$b$ and $E_b(P,e)$ from Definition~\ref{def:pauli-final-quantitative-error}.
+Define
+\[
+ I_{\rm raw}(P,e)=10^9n^2E_b(P,e),\qquad
+ I(P,\eps)=\min\{4,I_{\rm raw}(P,e)\}.
+\]
+Let $Q=E_{\rm pt}(e)$, $L_{\rm ext}=mE_{\rm ext}(e,n/q)$, and use the native
+quantities from Theorem~\ref{thm:qld-native-small-regime-global-pair}:
+\[
+ T=3\left(\sqrt{Q+L_{\rm ext}}+\frac nq\right),\qquad
+ \lambda=\Lambda_{2m+2}(T),
+\]
+\[
+ G(P,e)=\min\left\{1,
+ 32\eta(\lambda)+64Q+\frac{12n+4d+14}{q}\right\}.
+\]
+The native mixed extraction scale and operator component are
+\[
+ X_{\rm native}(P,e)=2800\left(G(P,e)+\sqrt e+\frac nq\right)
+\]
+and
+\[
+ D_{\rm mix}(P,e)=472X_{\rm native}(P,e)+24\frac nq
+   +192\sqrt{X_{\rm native}(P,e)}+344e.
+\]
+These definitions are Lean-only sharper interfaces.  They do not replace the
+paper-labelled error family or the historical degree-four error.
+\end{definition}
+
+\begin{theorem}[Exponent and envelope comparisons]
+\label{thm:pauli-final-envelope-support}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_half_global_pair}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_pos}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_lt_one}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_power_eq_gain_mul_baseline}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_nonneg}
+\lean{MIPStarRE.QPBT.quantitative_global_pair_envelope_le_pauli_soundness}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_global_pair_envelope_le_pauli_soundness}
+\lean{MIPStarRE.QPBT.sqrt_error_le_quantitative_global_pair_envelope}
+\lean{MIPStarRE.QPBT.quantitative_ratio_le_global_pair_envelope}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+def:qld-coefficient-thirty-scales,
+def:qld-extraction-baseline-constants}
+Let $b_{\mathrm{pair}}=1/33554432$ be the rounded global-pair exponent and
+let $b_{\mathrm{sound}}=1/5242880000$ be the fixed explicit-baseline
+exponent.  Then
+\[
+ b=\frac{b_{\mathrm{pair}}}{2},\qquad
+ 0<b<1,\qquad
+ b=\frac{625}{8}b_{\mathrm{sound}}.
+\]
+In particular the exponent improves by the exact factor $625/8=78.125$.
+For every $e\geq0$, the envelope $E_b(P,e)$ is nonnegative and
+\[
+ \sqrt{E_{\mathrm{pair}}(P,e)}\leq E_b(P,e),\qquad
+ \frac{n}{q}\leq nE_{\mathrm{pair}}(P,e).
+\]
+If also $e\leq1$, then
+\[
+ E_{\mathrm{pair}}(P,e)\leq E_b(P,e),\qquad
+ \sqrt e\leq E_{\mathrm{pair}}(P,e).
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+def:qld-coefficient-thirty-scales,
+def:qld-extraction-baseline-constants}
+The identities between exponents are numerical.  Monotonicity of real powers
+on $[0,1]$ compares the error terms, while monotonicity at bases at least one
+compares the field and exponential tails.  Subadditivity of the square root
+gives the square-root estimate term by term, and the field term absorbs
+$n/q$ after multiplication by $n$.
+\end{proof}
+
+\begin{theorem}[Absorption of the extraction components]
+\label{thm:pauli-final-component-absorption}
+\lean{MIPStarRE.QPBT.quantitative_extraction_scale_le}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le}
+\lean{MIPStarRE.QPBT.quantitative_state_component_le_raw_error}
+\lean{MIPStarRE.QPBT.quantitative_operator_component_le_raw_error}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-envelope-support}
+Let $0\leq e\leq1$ and put $r=n/q$.  For every $g\in\mathbb R$ satisfying
+\[
+ g\leq10^7n^4E_{\mathrm{pair}}(P,e),
+\]
+the extraction scale satisfies
+\[
+ 2800(g+\sqrt e+r)\leq10^{11}n^4E_{\mathrm{pair}}(P,e).
+\]
+More generally, let $e\geq0$ and $x\geq0$ satisfy
+\[
+ x\leq10^{11}n^4E_{\mathrm{pair}}(P,e).
+\]
+Then
+\[
+ \sqrt{x}\leq10^6n^4E_b(P,e),\qquad
+ 4\sqrt{x}\leq B(P,e).
+\]
+If in addition $e\leq1$, the prescribed-family component bound is also
+absorbed:
+\[
+ 472x+24r+192\sqrt{x}+344e\leq B(P,e).
+\]
+The first quantity is the unsquared state estimate obtained from a squared
+state error $16x$; the second is the sum-of-squares operator estimate for the
+same auxiliary state.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-envelope-support}
+Use the bounds for $g$, $\sqrt e$, and $r$ to obtain the extraction-scale
+inequality.  For a nonnegative $x$ below that scale, taking a square root
+halves the envelope exponent, and $n\geq1$ permits the resulting $n^2$ factor
+to be enlarged to $n^4$.  The numerical inequalities
+$4\cdot10^6<10^{14}$ and
+$472\cdot10^{11}+24+192\cdot10^6+344<10^{14}$ absorb the state and operator
+components into the common structured error.
+\end{proof}
+
+\begin{theorem}[Full-domain and canonical scalar bounds]
+\label{thm:pauli-final-full-domain-support}
+\lean{MIPStarRE.QPBT.four_le_pauli_soundness_quantitative_raw_error_of_md_eq_one}
+\lean{MIPStarRE.QPBT.four_le_pauli_soundness_quantitative_raw_error_of_one_le_ratio}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_envelope_mono_error}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_error_le_deltaQld}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-envelope-support}
+For $e\geq0$, either of the conditions $md=1$ or $1\leq md/q$ implies
+\[
+ 4\leq B(P,e).
+\]
+The envelope is monotone in its nonnegative error argument: if
+$0\leq e\leq e'$, then $E_b(P,e)\leq E_b(P,e')$.  Consequently, for every
+$\eps\geq0$,
+\[
+ \Delta_{\mathrm{new}}(P,\eps)
+ \leq\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q).
+\]
+No small-regime hypothesis is present in this canonical consequence.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-envelope-support}
+When $md=1$, the base-two tail already makes the uncapped error exceed four;
+when $md/q\geq1$, the field term does so.  Otherwise $md\geq2$, and
+$10^{14}(md)^4\leq100(md)^{100}$ follows from
+$10^{14}\leq100\cdot2^{96}$.  Monotonicity from the clipped error to $\eps$
+then gives the canonical bound.
+\end{proof}
+
+\begin{theorem}[Strict comparison with the fixed explicit baseline]
+\label{thm:pauli-final-baseline-comparison}
+\lean{MIPStarRE.QPBT.one_hundred_lt_pauli_soundness_baseline_constant}
+\lean{MIPStarRE.QPBT.deltaQld_quantitative_lt_explicit_baseline}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_error_lt_explicit_baseline_of_le_one}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_error_lt_explicit_baseline_clipped}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-full-domain-support,
+def:qld-extraction-baseline-constants,
+lem:delta-qld-mono-support}
+Let $C_{\mathrm{sound}}$ and $b_{\mathrm{sound}}=1/5242880000$ be the
+coefficient and exponent of the fixed explicit baseline.  Then
+$100<C_{\mathrm{sound}}$.  For every admissible $P$ and every
+$0\leq e\leq1$,
+\[
+ \delta_{\mathrm{qld}}^{100,b}(e,m,d,q)
+ <\delta_{\mathrm{qld}}^{C_{\mathrm{sound}},b_{\mathrm{sound}}}
+    (e,m,d,q)
+\]
+and
+\[
+ \Delta_{\mathrm{new}}(P,e)
+ <\delta_{\mathrm{qld}}^{C_{\mathrm{sound}},b_{\mathrm{sound}}}
+    (e,m,d,q).
+\]
+For an arbitrary $\eps\geq0$, the exact full-domain comparison is
+\[
+ \Delta_{\mathrm{new}}(P,\eps)
+ <\delta_{\mathrm{qld}}^{C_{\mathrm{sound}},b_{\mathrm{sound}}}
+    (\min\{\eps,1\},m,d,q).
+\]
+Thus strictness is asserted on the actual clipped domain; it is not inferred
+by comparing two universally saturated caps.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-full-domain-support,
+def:qld-extraction-baseline-constants,
+lem:delta-qld-mono-support}
+First enlarge the improved exponent down to the baseline exponent by
+monotonicity.  The baseline coefficient is strictly larger than $100$, and
+the three-term bracket is positive, so the resulting prefactor comparison is
+strict.  Compose this with the canonical upper bound and then substitute
+$e=\min\{\eps,1\}$.
+\end{proof}
+
+\begin{theorem}[Capped mixed-component Pauli soundness]
+\label{thm:pauli-final-mixed-components}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_mixed_components}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_mixed_components}
+\leanok
+\uses{def:pauli-final-degree-two-error,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness
+whose squared state distance is at most
+\[
+ \min\{4,16X_{\rm native}(P,e)\}
+\]
+and whose two raw prescribed-answer operator-family distances are each at most
+\[
+ \min\{4,D_{\rm mix}(P,e)\}.
+\]
+The same bounds hold in qubit coordinates without changing any of the three
+errors.  When $n/q\leq1$, the proof constructs the native global-pair witness
+and uses the returned equality with $G(P,e)$, without passing through the
+polynomial envelope.  When $n/q>1$, both displayed right-hand sides equal the
+universal cap.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:qld-native-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support, lem:pauli-binary}
+For $n/q\leq1$, identify the constructed global-pair error with $G(P,e)$ and
+substitute it into the component theorem.  For $n/q>1$, use the universal state
+and raw-family bounds.  The qubit statement follows from the exact coordinate
+reindexing identities.
+\end{proof}
+
+\begin{theorem}[Degree-two quantitative Pauli soundness]
+\label{thm:pauli-final-degree-two-soundness}
+\lean{MIPStarRE.QPBT.sqrt_quantitative_extraction_scale_le_degree_two}
+\lean{MIPStarRE.QPBT.quantitative_operator_component_lt_degree_two_raw_error}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two}
+\leanok
+\uses{def:pauli-final-degree-two-error,
+thm:qld-native-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Under the full hypotheses of Theorem~\ref{thm:pauli}, there is one witness for
+which the unsquared state norm and both raw prescribed-answer sums of squared
+operator norms are at most $I(P,\eps)$.
+
+On the branch $I_{\rm raw}(P,e)<4$, the proof constructs a fresh global-pair
+witness.  If $x=2800(G(P,e)+\sqrt e+n/q)$ is its extraction scale, then
+\[
+ \sqrt x\leq10^6n^2E_b(P,e),\qquad \frac nq<4\cdot10^{-9},
+ \qquad \sqrt x<0.004,\qquad x<1.
+\]
+For the same auxiliary vector the squared state error is at most $16x$, and
+each raw operator error is at most
+$472x+24n/q+192\sqrt x+344e$.  Hence the state norm is at most
+$4\cdot10^6n^2E_b(P,e)$, while each raw operator error is at most
+$664000368n^2E_b(P,e)<I_{\rm raw}(P,e)$.  On the complementary branch the
+universal bounds $2$, $4$, and $4$ give the capped conclusion.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Take square roots without enlarging $n^2$ to $n^4$.  The strict small-branch
+bound forces the field ratio below one, so the global-pair constructor applies.
+Its common-envelope certificate is retained for this same witness. Use
+$x\leq\sqrt x$ when $x<1$ and retain the state and operator components
+separately. The saturated branch uses an existing soundness witness and the
+universal caps.
+\end{proof}
+
+\begin{theorem}[Comparison of the degree-two error]
+\label{thm:pauli-final-degree-two-comparison}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_le_quantitative_error}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_lt_quantitative_error_iff}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_le_deltaQld}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_degree_two_error_lt_explicit_baseline_clipped}
+\leanok
+\uses{def:pauli-final-degree-two-error,
+thm:pauli-final-baseline-comparison}
+For every nonnegative source error,
+\[
+ I(P,\eps)\leq\Delta_{\rm new}(P,\eps).
+\]
+The inequality is strict exactly when $I_{\rm raw}(P,e)<4$; otherwise both
+sides are four.  Moreover $I(P,\eps)$ is bounded by the canonical
+$\delta_{\rm qld}^{100,b}(\eps,m,d,q)$ error and is strictly below the
+historical explicit baseline evaluated at the actual clipped error $e$.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-baseline-comparison}
+The historical uncapped error is $10^5n^2I_{\rm raw}$, with a strictly
+positive envelope.  Monotonicity of the cap proves the weak comparison and
+identifies its strict branch.  Compose with the existing canonical and
+historical-baseline comparisons.
+\end{proof}
+
+\begin{corollary}[Exact degree-two quantitative qubit form]
+\label{cor:pauli-final-degree-two-qubit}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_degree_two}
+\leanok
+\uses{thm:pauli-final-degree-two-soundness, lem:pauli-binary}
+The witness of Theorem~\ref{thm:pauli-final-degree-two-soundness} transports
+to qubit coordinates with the same state norm and the same two raw
+summed-squared operator-family errors, each bounded by $I(P,\eps)$.
+\end{corollary}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-degree-two-soundness, lem:pauli-binary}
+Apply the exact field-basis coordinate reindexing to the degree-two witness.
+\end{proof}
+
+\begin{theorem}[Unconditional structured and canonical Pauli soundness]
+\label{thm:pauli-final-quantitative-soundness}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative}
+\lean{MIPStarRE.QPBT.pauli_soundness_quantitative_canonical}
+\leanok
+\uses{def:pauli-final-quantitative-error,
+thm:pauli-final-component-absorption,
+thm:pauli-final-full-domain-support,
+thm:qld-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-universal-distance-caps-support}
+Let $P=(q,m,d)$ be admissible, let $\eps\geq0$, and let an arbitrary strategy
+for the Pauli basis test have value at least $1-\eps$.  There are local
+isometries and one normalized auxiliary state such that
+\[
+ \left\|(\phi_{\mathrm A}\otimes\phi_{\mathrm B})\ket\psi
+   -\ket{\mathrm{aux}}\otimes\ket{\mathrm{EPR}_q}^{\otimes M}\right\|
+ \leq\Delta_{\mathrm{new}}(P,\eps),
+\]
+and, for each $W\in\{X,Z\}$, both players' distances between the conjugated
+raw effects attached to the prescribed answers and the ideal Pauli projectors
+are at most $\Delta_{\mathrm{new}}(P,\eps)$.  Each operator distance is
+\[
+ \sum_{u\in\F_q^M}
+ \left\|\bigl(\phi M^{(\mathsf{Pauli},W)}_{\mathsf{Pauli}(u)}
+       \phi^\dagger-\tau_u^W\bigr)
+       \bigl(\ket{\mathrm{aux}}\otimes
+         \ket{\mathrm{EPR}_q}^{\otimes M}\bigr)\right\|^2,
+\]
+with the appropriate player placement.  The conjugated effects retain their
+isometry range projections; no range condition is imposed on the ideal state.
+
+The same witness satisfies all three conclusions with the larger canonical
+bound $\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  In particular
+$1\leq100$ and $0<b<1$, and neither form assumes a supplied global witness or
+a small-regime premise.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{thm:pauli-soundness-explicit-baseline,
+thm:pauli-universal-distance-caps-support,
+thm:qld-small-regime-global-pair,
+thm:pauli-supplied-global-component-transfer-explicit,
+thm:pauli-final-component-absorption,
+thm:pauli-final-full-domain-support}
+Put $e=\min\{\eps,1\}$.  If $B(P,e)\geq4$, retain the actual witness
+constructed by the fixed explicit-baseline theorem and apply the universal
+state and prescribed-family caps.  Otherwise the two saturation lemmas imply
+$md\geq2$ and $md/q<1$.  The questionwise Naimark setting then constructs its
+global polynomial-pair witness internally, and the componentwise transfer
+gives one soundness witness carrying the squared state estimate and both raw
+operator estimates for the same auxiliary state.  The preceding scalar
+absorption bounds its unsquared state norm and both summed squared operator
+distances by $B(P,e)$.  Finally apply the canonical scalar bound without
+changing the witness.
+\end{proof}
+
+\begin{corollary}[Exact quantitative qubit form]
+\label{cor:pauli-final-quantitative-qubit}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative}
+\lean{MIPStarRE.QPBT.pauli_soundness_qubit_quantitative_canonical}
+\leanok
+\uses{thm:pauli-final-quantitative-soundness, lem:pauli-binary}
+Under the hypotheses of
+Theorem~\ref{thm:pauli-final-quantitative-soundness}, there are local
+isometries into qubit registers and the same normalized auxiliary state for
+which the unsquared state norm and both prescribed-answer sums of squared
+operator norms are bounded by $\Delta_{\mathrm{new}}(P,\eps)$.  The same
+witness also satisfies the canonical bound
+$\delta_{\mathrm{qld}}^{100,b}(\eps,m,d,q)$.  The field-basis coordinate
+change preserves each of the three distances exactly, so the qubit forms
+introduce no additional constant, exponent loss, hypothesis, or change of
+witness.
+\end{corollary}
+\begin{proof}
+\leanok
+\uses{thm:pauli-final-quantitative-soundness, lem:pauli-binary}
+Transport the witness of
+Theorem~\ref{thm:pauli-final-quantitative-soundness} through the fixed
+self-dual field basis.  Simultaneous reindexing preserves the state norm and
+both prescribed operator-family distances term by term.
+\end{proof}

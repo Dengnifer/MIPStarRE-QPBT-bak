@@ -173,9 +173,8 @@ Magic Square variables 1 and 5. This is item 7 of
 `lem:qld-win-implications`, paper
 `14_analysis_of_the_pauli_basis_test.tex:250-263`, blueprint
 `lem:qld-win-implications`. -/
-theorem win_ms_cons :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_ms_cons_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (anticommTupleDist P)
         (fun ω a => heteroKron
@@ -184,11 +183,7 @@ theorem win_ms_cons :
             (match W with | .X => ω.2.2.1 | .Z => ω.2.2.2)).effect a) 1)
         (fun ω a => heteroKron 1
           ((S.msVarBitMeas .bob (match W with | .X => 0 | .Z => 4) ω).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨16 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
+        S.toStrategy.ψ ≤ 16 * (Fintype.card PauliEdge : ℝ) * ε := by
   intro P ε S _ W
   change consistencyDefect (anticommTupleDist P)
       (fun ω a => heteroKron
@@ -231,6 +226,25 @@ theorem win_ms_cons :
     _ ≤ 16 * (Fintype.card PauliEdge : ℝ) * ε := by
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _) (by norm_num)
+
+/-- Existential packaging of `win_ms_cons_explicit`, preserving item 7 of
+`lem:qld-win-implications`. -/
+theorem win_ms_cons :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (anticommTupleDist P)
+        (fun ω a => heteroKron
+          ((S.pointTraceMeas .alice W
+            (match W with | .X => ω.1 | .Z => ω.2.1)
+            (match W with | .X => ω.2.2.1 | .Z => ω.2.2.2)).effect a) 1)
+        (fun ω a => heteroKron 1
+          ((S.msVarBitMeas .bob (match W with | .X => 0 | .Z => 4) ω).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  refine ⟨16 * (Fintype.card PauliEdge : ℝ), ?_, win_ms_cons_explicit⟩
+  have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+  linarith
 
 /-- Relabeling both Pauli answer measurements gives the induced Magic Square event mass. -/
 theorem msRejection_eq_source {P : AdmissibleParams} {ε : ℝ}
@@ -466,15 +480,11 @@ to one on anticommuting tuples. This is item 6 of
 `lem:qld-win-implications`, paper
 `14_analysis_of_the_pauli_basis_test.tex:240-249`, blueprint
 `lem:qld-win-implications`. -/
-theorem win_magic_square :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_magic_square_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε →
-      |1 - avgOver (anticommTupleDist P) S.msValueAt| ≤ C * ε := by
-  refine ⟨16 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
+      |1 - avgOver (anticommTupleDist P) S.msValueAt| ≤
+        16 * (Fintype.card PauliEdge : ℝ) * ε := by
   intro P ε S _
   let ν := graphDistribution msEdges msEdges_nonempty
   have hpoint (ω : PauliTuple P) :
@@ -541,6 +551,18 @@ theorem win_magic_square :
   · exact avgOver_nonneg (anticommTupleDist P) _ fun ω =>
       avgOver_nonneg ν _ fun xy =>
         outcome_event_weight_nonneg (S.msStrategyAt ω) xy.1 xy.2 _
+
+/-- Existential packaging of `win_magic_square_explicit`, preserving item 6
+of `lem:qld-win-implications`. -/
+theorem win_magic_square :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε →
+      |1 - avgOver (anticommTupleDist P) S.msValueAt| ≤ C * ε := by
+  refine ⟨16 * (Fintype.card PauliEdge : ℝ), ?_, win_magic_square_explicit⟩
+  have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+  linarith
 
 
 end WinImplications

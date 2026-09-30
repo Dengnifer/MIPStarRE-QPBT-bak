@@ -1,5 +1,6 @@
 import MIPStarRE.QPBT.Extraction.Consistency
 import MIPStarRE.QPBT.Extraction.PullingDefect
+import MIPStarRE.QPBT.ExplicitConstants
 
 /-!
 # Self-consistency of the pulled-apart observables
@@ -46,9 +47,8 @@ together with the two point-consistency estimates to the same witness.
 The completed composition is in `Extraction.Construction`; this theorem proves
 only the supplied-witness estimate. The remaining extraction obligations are
 recorded in `docs/paper-gaps/qpbt_extraction-transfer.tex` under issue #123. -/
-theorem tildeObs_selfConsistent_ofGlobalPairWitness :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+theorem tilde_obs_self_consistent_of_global_pair_witness_card :
+    ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
         0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
           ∀ (S : ProjectiveSetting P epsilon)
             (w : GlobalPairWitness S deltaG) (W : PauliKind)
@@ -57,9 +57,10 @@ theorem tildeObs_selfConsistent_ofGlobalPairWitness :
               (fun u => S.placeSide .alice (tildeObs w .alice W u j))
               (fun u => S.placeSide .bob (tildeObs w .bob W u j))
               S.psiHat ≤
-                deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
+                deltaConstructPaulis
+                  (48 + 32 * (Fintype.card PauliEdge : ℝ))
+                  epsilon deltaG P.m P.d P.q := by
   have hcard : 0 ≤ (Fintype.card PauliEdge : ℝ) := Nat.cast_nonneg _
-  refine ⟨48 + 32 * (Fintype.card PauliEdge : ℝ), by linarith, ?_⟩
   intro P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j
   have hbound := (tildeObs_opDistSq_le_pulling_eval_add w W j).trans
     (mul_le_mul_of_nonneg_left
@@ -75,6 +76,42 @@ theorem tildeObs_selfConsistent_ofGlobalPairWitness :
   unfold deltaConstructPaulis
   rw [Nat.cast_mul]
   nlinarith [mul_nonneg hcard hdeltaG, mul_nonneg hcard hratio]
+
+/-- The pulled-apart observable consistency bound at the closed extraction
+coefficient `2800`. -/
+theorem tilde_obs_self_consistent_of_global_pair_witness_explicit
+    (P : AdmissibleParams) (epsilon deltaG : ℝ)
+    (hepsilon : 0 ≤ epsilon) (hepsilon_one : epsilon ≤ 1) (hdeltaG : 0 ≤ deltaG)
+    (S : ProjectiveSetting P epsilon) (w : GlobalPairWitness S deltaG)
+    (W : PauliKind) (j : Fin P.model.basisDim) :
+    opDistSq (uniformDistribution (PauliRegister P))
+      (fun u => S.placeSide .alice (tildeObs w .alice W u j))
+      (fun u => S.placeSide .bob (tildeObs w .bob W u j))
+      S.psiHat ≤ deltaConstructPaulis pauliBaselineExtractionConstant
+        epsilon deltaG P.m P.d P.q := by
+  have h := tilde_obs_self_consistent_of_global_pair_witness_card
+    P epsilon deltaG hepsilon hepsilon_one hdeltaG S w W j
+  norm_num [pauliBaselineExtractionConstant, pauli_edge_card] at h ⊢
+  exact h
+
+/-- Existential packaging of
+`tilde_obs_self_consistent_of_global_pair_witness_explicit`. -/
+theorem tildeObs_selfConsistent_ofGlobalPairWitness :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+        0 ≤ epsilon → epsilon ≤ 1 → 0 ≤ deltaG →
+          ∀ (S : ProjectiveSetting P epsilon)
+            (w : GlobalPairWitness S deltaG) (W : PauliKind)
+            (j : Fin P.model.basisDim),
+            opDistSq (uniformDistribution (PauliRegister P))
+              (fun u => S.placeSide .alice (tildeObs w .alice W u j))
+              (fun u => S.placeSide .bob (tildeObs w .bob W u j))
+              S.psiHat ≤
+                deltaConstructPaulis C epsilon deltaG P.m P.d P.q := by
+  refine ⟨pauliBaselineExtractionConstant, ?_, ?_⟩
+  · unfold pauliBaselineExtractionConstant
+    norm_num
+  · exact tilde_obs_self_consistent_of_global_pair_witness_explicit
 
 end
 

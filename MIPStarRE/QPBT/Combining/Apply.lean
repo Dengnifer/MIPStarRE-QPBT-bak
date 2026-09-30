@@ -2,6 +2,7 @@ import MIPStarRE.QPBT.Combining.Points
 import MIPStarRE.QPBT.Combining.PairCompletion
 import MIPStarRE.QPBT.Combining.ExtendedLines.Estimates
 import MIPStarRE.QPBT.Combining.ActualErrorBounds
+import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
 import MIPStarRE.QPBT.Combining.ExtendedLineGame.PairPointConsistency
 import MIPStarRE.QPBT.Combining.PointErrorObstruction
 import MIPStarRE.QPBT.Combining.ErrorObstruction
@@ -210,6 +211,55 @@ theorem exists_extendedLinesWitness_established_ofPointsWitness
   · simp only [one_mul]
     with_unfolding_all exact hplaced .BB' .AB'' trivial
 
+/-- The directly indexed extended-line construction with the closed baseline
+error from issue #729. This is a Lean-only quantitative specialization of the
+current proof supporting paper `lem:qld-4-13`, lines 1020--1246; it exposes the
+proved witnesses `L`, `6`, and `H` without changing the source-facing theorem. -/
+theorem exists_extended_lines_witness_established_of_points_witness_explicit
+    (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+    (points : CombinedPointsWitness S (pauliBaselinePointError ε)) :
+    Nonempty (ExtendedLinesWitness S points
+      ((P.m : ℝ) * pauliBaselineExtendedLineError ε
+        (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))) := by
+  classical
+  obtain ⟨lines⟩ := exists_combined_lines_witness_of_points_witness_explicit P ε S points
+  obtain ⟨sublines⟩ := exists_subLineWitness P
+  have hplaced (first second : Placement) (hopposite : first.IsOpposite second) :
+      consistencyDefect (directLinePointDist P.extendedDirectLd)
+        (fun sample answer => S.place first
+          (((sublines.extendedMeasurement lines first.side sample.1).postprocess
+            (fun polynomial => (directEvalOpt sample.1 sample.2 polynomial).map
+              (extendedDirectScalarEquiv P))).effect answer))
+        (fun sample answer => S.place second
+          (((points.Q second.side (projX (directPointToPauli P sample.2))
+            (projZ (directPointToPauli P sample.2))).postprocess (fun values => some
+              ((directPointToPauli P sample.2) (alphaVar P.m) * values.1 +
+                (directPointToPauli P sample.2) (betaVar P.m) * values.2))).effect answer))
+        S.psiHat ≤ (P.m : ℝ) * pauliBaselineExtendedLineError ε
+          (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)) := by
+    refine (le_min ?_ ?_).trans
+      (pauli_baseline_combining_bound ε (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ))
+        (P.m : ℝ) S.eps_nonneg (by positivity) (by exact_mod_cast P.one_le_m))
+    · unfold consistencyDefect
+      calc
+        _ ≤ avgOver (directLinePointDist P.extendedDirectLd) (fun _ => 1) :=
+          avgOver_mono _ _ _ fun sample =>
+            consistencyDefect_integrand_le_one S first second hopposite _ _
+        _ = 1 := avgOver_const_of_isProbability _ (directLinePointDist_isProbability _) 1
+    · refine (sublines.extended_consistencyDefect_le lines first second hopposite).trans ?_
+      exact (le_abs_self _).trans (by
+        simpa only [abs_sub_comm, Real.rpow_eq_pow] using
+          subline_joint_overlap_near_one_at_explicit P ε
+            (pauliBaselinePointError ε)
+            (pauliBaselineLineError ε (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))
+            S points lines sublines first second hopposite)
+  exact ⟨{
+    Qline := sublines.extendedMeasurement lines
+    axis_degree := sublines.extendedMeasurement_axis_degree lines
+    consistent_alice := by with_unfolding_all exact hplaced .AA' .BA'' trivial
+    consistent_bob := by with_unfolding_all exact hplaced .BB' .AB'' trivial
+  }⟩
+
 /-- Directly indexed construction for the auxiliary estimate
 `C * m * poly(epsilon, md / q)`. This has the same directly indexed estimate as
 `exists_extendedLinesWitness_established_ofPointsWitness`, with the point witness
@@ -251,6 +301,43 @@ theorem exists_extendedLinesWitness_established :
   intro P ε S
   obtain ⟨points⟩ := hpoints P ε S
   exact ⟨points, hlines P ε S points⟩
+
+/-- The rounded global polynomial-pair witness at the closed baseline constants.
+This is a Lean-only quantitative specialization of the construction supporting
+paper `lem:qld-4-7`, lines 1267--1404. -/
+theorem exists_global_pair_witness_explicit
+    (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε) :
+    Nonempty (GlobalPairWitness S
+      (deltaQld pauliBaselineGlobalPairConstant pauliBaselineGlobalPairPower
+        ε P.m P.d P.q)) := by
+  obtain ⟨points⟩ := exists_combined_points_witness_explicit P ε S
+  obtain ⟨lines⟩ :=
+    exists_extended_lines_witness_established_of_points_witness_explicit P ε S points
+  obtain ⟨pair⟩ := ExtendedLineGame.pair_witness_of_points_lines_explicit P ε
+    (pauliBaselinePointError ε)
+    ((P.m : ℝ) * pauliBaselineExtendedLineError ε
+      (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ))) S points lines
+  have hbound := pauli_baseline_actual_rounded_global_pair_error_bound P ε S.eps_nonneg
+  simp only [Nat.cast_mul] at hbound
+  refine ⟨{ pair with point_consistent_alice := ?_, point_consistent_bob := ?_ }⟩
+  · intro W
+    refine (le_min (show _ ≤ (1 : ℝ) from ?_) (pair.point_consistent_alice W)).trans ?_
+    · unfold consistencyDefect
+      calc
+        _ ≤ avgOver (uniformDistribution (Fin P.m → PauliScalar P)) (fun _ => 1) :=
+          avgOver_mono _ _ _ fun u => consistencyDefect_integrand_le_one
+            S .AA' .BA'' (by trivial) _ _
+        _ = 1 := avgOver_const_of_isProbability _ (uniformDistribution_isProbability _) 1
+    · with_unfolding_all simpa only [Nat.cast_mul, Real.rpow_eq_pow] using hbound
+  · intro W
+    refine (le_min (show _ ≤ (1 : ℝ) from ?_) (pair.point_consistent_bob W)).trans ?_
+    · unfold consistencyDefect
+      calc
+        _ ≤ avgOver (uniformDistribution (Fin P.m → PauliScalar P)) (fun _ => 1) :=
+          avgOver_mono _ _ _ fun u => consistencyDefect_integrand_le_one
+            S .BB' .AB'' (by trivial) _ _
+        _ = 1 := avgOver_const_of_isProbability _ (uniformDistribution_isProbability _) 1
+    · with_unfolding_all simpa only [Nat.cast_mul, Real.rpow_eq_pow] using hbound
 
 /-- Construction of the projective global polynomial-pair measurements from
 `lem:qld-4-7`, paper lines 1267--1274.  The statement has the source's universal

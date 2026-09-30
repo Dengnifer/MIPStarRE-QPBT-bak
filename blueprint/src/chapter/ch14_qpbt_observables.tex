@@ -1971,3 +1971,166 @@ The expanded point and line measurements constructed in this section, being
 approximately consistent and approximately commuting, are combined into a
 single strategy for the classical low individual degree test in
 Chapter~\ref{chap:qpbt-combining}.
+
+\section{Explicit quantitative observable estimates}
+\label{sec:qld-observables-explicit}
+
+This section records the numerical witnesses used by the current formal proof.
+They are Lean-only quantitative refinements of the preceding source-facing
+statements.  In particular, none of the asymptotic statements above is replaced
+by one of the specializations below.
+
+\begin{definition}[Observable constants of the quantitative baseline]
+\label{def:pauli-observable-baseline-constants}
+\lean{MIPStarRE.QPBT.pauliBaselineCommutatorConstant}
+\lean{MIPStarRE.QPBT.pauliBaselineTwistedConstant}
+\leanok
+\uses{lem:pauli-edge-card-explicit}
+Put
+\[
+ C_{\mathrm{comm}}=1024(172+\sqrt{344})
+ \quad\text{and}\quad
+ C_{\mathrm{tw}}=2(2C_{\mathrm{comm}}+4886363136+4).
+\]
+The factor two in $C_{\mathrm{tw}}$ is the loss incurred when the
+phase-signed commutator is transferred to either expanded-space placement.
+\end{definition}
+
+\begin{theorem}[Explicit winning implications]
+\label{thm:qld-win-implications-explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_low_degree_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_low_degree_interchanged_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_pauli_basis_cons_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_pauli_basis_cons_interchanged_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_comm_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_comm_interchanged_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_comm_swapped_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_comm_cons_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_comm_cons_interchanged_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_comm_cons_swapped_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_magic_square_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_ms_cons_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_ms_cons_interchanged_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.win_ms_cons_swapped_explicit}
+\leanok
+\uses{lem:qld-win-implications, lem:pauli-edge-card-explicit}
+Let $S$ be a projective strategy of value at least $1-\eps$, where
+$\eps\geq0$.  The low-degree and point--Pauli consistency defects, in either
+question orientation, are at most $86\eps$.  The commuting Pair consistency
+defects and the commuting point-trace consistency defects are at most
+$172\eps$ in the forward, interchanged, and swapped orientations.  The three
+Magic Square variable-consistency defects are at most $1376\eps$, and
+\[
+ \left|1-\E_{\omega\sim\mathcal D_{\mathrm{anti}}}
+   \operatorname{val}(S_{\omega}^{\mathrm{MS}})\right|
+ \leq1376\eps.
+\]
+Each defect here is the corresponding defect displayed in
+Lemma~\ref{lem:qld-win-implications}; the statement fixes its coefficient and
+also records the two factor-interchanged forms used below.
+\end{theorem}
+\begin{proof}
+\leanok
+Each bad event is charged to one fixed verifier edge.  Conditioning on a
+commuting tuple costs a factor $2$, conditioning on an anticommuting tuple
+costs a factor $16$, and Lemma~\ref{lem:pauli-edge-card-explicit} supplies the
+edge count $86$.
+\end{proof}
+
+\begin{theorem}[Explicit commutator and anticommutator estimates]
+\label{thm:qld-point-observable-halves-explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_trace_commutator_comm_le_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_obs_commutator_comm_le_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_obs_commutator_comm_le_alice_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_obs_commutator_comm_le_bob_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_obs_anticommutator_anticomm_le_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_obs_anticommutator_anticomm_le_bob_explicit}
+\leanok
+\uses{thm:qld-win-implications-explicit, fact:agreement}
+Suppose two binary measurements are each within squared operator-family
+distance $\delta$ of the corresponding marginal of one joint projective
+measurement.  The average squared norm of their effect commutator is at
+most $16\delta$.
+
+More generally, let $\chi$ be a unit state, let $c_1\geq0$, let the joint
+measurement be projective, and put $O_W=I-2M_W(1)$ for $W\in\{X,Z\}$.
+If the two direct consistency defects are at
+most $c_1$, the two detour defects are at most $c_2$, and the two defects from
+the detour measurements to the joint marginals are at most $c_3$, then the
+observable commutator has bound
+\[
+  1024\bigl(c_1+\sqrt{c_2+c_3}\bigr).
+\]
+For the concrete Pauli strategy, on Alice's state and on the swapped Bob
+state, respectively, this gives
+\[
+ \E_{\mathcal D_{\mathrm{comm}}}\|[X,Z]\ket\psi\|^2
+ \leq C_{\mathrm{comm}}(\eps+\sqrt\eps).
+\]
+On the anticommuting distribution, in the same two orientations,
+\[
+ \E_{\mathcal D_{\mathrm{anti}}}\|\{X,Z\}\ket\psi\|^2
+ \leq4886363136\eps.
+\]
+\end{theorem}
+\begin{proof}
+\leanok
+Apply the explicit joint-measurement commutator estimate, pass from
+projections to reflections, and substitute the constants of
+Theorem~\ref{thm:qld-win-implications-explicit}.  The anticommuting estimate
+uses the robust Magic Square relation and the same consistency bounds.
+\end{proof}
+
+\begin{theorem}[Explicit phase-signed commutation]
+\label{thm:qld-twisted-commutation-explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_obs_twisted_commutation_explicit}
+\lean{MIPStarRE.QPBT.WinImplications.point_obs_twisted_commutation_interchanged_explicit}
+\lean{MIPStarRE.QPBT.ProjectiveSetting.twisted_commutator_avg_le_explicit}
+\leanok
+\uses{def:pauli-observable-baseline-constants,
+thm:qld-point-observable-halves-explicit}
+For either player, the average squared distance between $XZ$ and
+$(-1)^{\gamma(\omega)}ZX$ is at most
+\[
+ (2C_{\mathrm{comm}}+4886363136+4)\sqrt\eps
+\]
+in the original strategy order, where
+$\gamma(\omega)=\operatorname{tr}((r_X\operatorname{ind}_m(u_X))
+\cdot(r_Z\operatorname{ind}_m(u_Z)))$ as in
+Equation~\eqref{eq:pts-obs-commutation}.  After placement on any one of the
+four expanded registers, the corresponding twisted-commutator average is at
+most $C_{\mathrm{tw}}\sqrt\eps$.
+\end{theorem}
+\begin{proof}
+\leanok
+Split the uniform tuple distribution into its commuting and anticommuting
+parts, use Theorem~\ref{thm:qld-point-observable-halves-explicit}, and use the
+universal bound $4$ outside the range $\eps\leq1$.  Reindexing the swapped
+state proves the second player orientation.
+\end{proof}
+
+\begin{theorem}[Explicit expanded point and line comparisons]
+\label{thm:qld-expanded-comparisons-explicit}
+\lean{MIPStarRE.QPBT.exp_point_self_cons_explicit}
+\lean{MIPStarRE.QPBT.exp_line_point_cons_explicit'}
+\leanok
+\uses{lem:qld-comm-cons, lem:qld-comm-line-cons,
+thm:qld-twisted-commutation-explicit}
+For every basis and every directed pair of opposite placements, the expanded
+point measurements have squared operator-family distance at most $172\eps$.
+On average over the line--point distribution, the sum over completed answers
+of the squared operator-action distances between the expanded line-evaluation
+family and the opposite expanded point family is at most
+\[
+ 348\,\delta_{\mathrm{Line}}(\eps)=348\sqrt\eps.
+\]
+The answer domain in the second estimate is the completed field alphabet, so
+the undefined-evaluation outcome is included.
+\end{theorem}
+\begin{proof}
+\leanok
+The point bound is twice the fixed-edge rejection estimate.  For the line
+bound, combine the low-degree winning implication with the universal distance
+bound $4$ and weaken the resulting linear estimate to the common square-root
+error.
+\end{proof}

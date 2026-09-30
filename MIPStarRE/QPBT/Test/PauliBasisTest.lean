@@ -458,6 +458,16 @@ theorem pauliEdge_nonempty : Nonempty PauliEdge := by
   refine ⟨⟨(.point .X, .point .X), ?_⟩⟩
   simp [pauliEdges]
 
+set_option maxRecDepth 10000 in
+set_option maxHeartbeats 4000000 in
+-- Deciding the cardinality unfolds the nested finite sum and product alphabets.
+/-- The ordered carrier of the Pauli question graph has `86` edges: its
+`26` loops occur once, while its `30` non-loop undirected edges occur in both
+orientations. This finite computation supports the explicit quantitative
+baseline for `thm:pauli`; the graph itself is unchanged. -/
+theorem pauli_edge_card : Fintype.card PauliEdge = 86 := by
+  decide
+
 /-- The Pauli question distribution from blueprint
 `def:pauli-question-distribution`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1070-1120`.

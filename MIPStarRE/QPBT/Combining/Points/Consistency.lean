@@ -367,16 +367,16 @@ theorem sandwich_offDiagonal_le_sandwichDefectBound (S : ProjectiveSetting P ε)
 small: at most a universal constant times `ε + √ε`.  The `X`- and
 `Z`-distances are the self-consistency of item 1 of `lem:qld-comm-cons`, and
 the two commutator sums are the field-valued commutation estimate. -/
-theorem avg_sandwichDefectBound_le :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
-        (p₁ p₂ : Placement), p₁.IsOpposite p₂ →
-        avgOver (uniformDistribution (PointPair P)) (S.sandwichDefectBound p₁ p₂) ≤
-          C * (ε + Real.sqrt ε) := by
-  obtain ⟨C₁, hC₁, h₁⟩ := expPoint_self_cons
-  obtain ⟨C₂, hC₂, h₂⟩ := expPoint_comm
-  refine ⟨2 * C₁ + 3 * C₂, by linarith, ?_⟩
+theorem avg_sandwich_defect_bound_le_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+      (p₁ p₂ : Placement), p₁.IsOpposite p₂ →
+      avgOver (uniformDistribution (PointPair P)) (S.sandwichDefectBound p₁ p₂) ≤
+        (344 + 3 * pauliBaselineTwistedConstant) * (ε + Real.sqrt ε) := by
   intro P ε S p₁ p₂ hopp
+  have hC₁ : (1 : ℝ) ≤ 172 := by norm_num
+  have hC₂ : (1 : ℝ) ≤ pauliBaselineTwistedConstant := by
+    simp only [pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant]
+    nlinarith [Real.sqrt_nonneg (344 : ℝ)]
   have hε : (0 : ℝ) ≤ ε := by
     have hv := WinImplications.strategy_value_le_one S.toStrategy
     have hw := S.win
@@ -385,30 +385,42 @@ theorem avg_sandwichDefectBound_le :
       ∑ b : PauliScalar P, ‖applyOperatorToState
         (S.place p₁ ((S.pointMeasExp p₁.side .Z xz.2).effect b) -
           S.place p₂ ((S.pointMeasExp p₂.side .Z xz.2).effect b)) S.psiHat‖ ^ 2) ≤
-      C₁ * ε := by
+      172 * ε := by
     rw [avgOver_uniform_snd (α := Fin P.m → PauliScalar P)
       (fun z => ∑ b : PauliScalar P, ‖applyOperatorToState
         (S.place p₁ ((S.pointMeasExp p₁.side .Z z).effect b) -
           S.place p₂ ((S.pointMeasExp p₂.side .Z z).effect b)) S.psiHat‖ ^ 2)]
-    exact h₁ P ε S p₁ p₂ hopp .Z
+    exact exp_point_self_cons_explicit P ε S p₁ p₂ hopp .Z
   have hX : avgOver (uniformDistribution (PointPair P)) (fun xz =>
       ∑ a : PauliScalar P, ‖applyOperatorToState
         (S.place p₁ ((S.pointMeasExp p₁.side .X xz.1).effect a) -
           S.place p₂ ((S.pointMeasExp p₂.side .X xz.1).effect a)) S.psiHat‖ ^ 2) ≤
-      C₁ * ε := by
+      172 * ε := by
     rw [avgOver_uniform_fst (β := Fin P.m → PauliScalar P)
       (fun x => ∑ a : PauliScalar P, ‖applyOperatorToState
         (S.place p₁ ((S.pointMeasExp p₁.side .X x).effect a) -
           S.place p₂ ((S.pointMeasExp p₂.side .X x).effect a)) S.psiHat‖ ^ 2)]
-    exact h₁ P ε S p₁ p₂ hopp .X
-  have hK₁ := h₂ P ε S p₁
-  have hK₂ := h₂ P ε S p₂
+    exact exp_point_self_cons_explicit P ε S p₁ p₂ hopp .X
+  have hK₁ := exp_point_comm_explicit P ε S p₁
+  have hK₂ := exp_point_comm_explicit P ε S p₂
   unfold opFamilyDistSq at hK₁ hK₂
   unfold sandwichDefectBound
   rw [avgOver_add, avgOver_const_mul, avgOver_const_mul, avgOver_add,
     avgOver_add]
   have hs : (0 : ℝ) ≤ Real.sqrt ε := Real.sqrt_nonneg ε
   nlinarith [hZ, hX, hK₁, hK₂, hs, hε, hC₁, hC₂]
+
+/-- Existential packaging of the fixed average sandwich-defect coefficient. -/
+theorem avg_sandwichDefectBound_le :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε)
+        (p₁ p₂ : Placement), p₁.IsOpposite p₂ →
+        avgOver (uniformDistribution (PointPair P)) (S.sandwichDefectBound p₁ p₂) ≤
+          C * (ε + Real.sqrt ε) := by
+  refine ⟨344 + 3 * pauliBaselineTwistedConstant, ?_,
+    avg_sandwich_defect_bound_le_explicit⟩
+  simp only [pauliBaselineTwistedConstant, pauliBaselineCommutatorConstant]
+  nlinarith [Real.sqrt_nonneg (344 : ℝ)]
 
 end ProjectiveSetting
 

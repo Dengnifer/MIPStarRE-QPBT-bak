@@ -133,19 +133,14 @@ private theorem commConsistency_eq_mismatch {P : AdmissibleParams} {ε : ℝ}
 component of Pair answers. This is item 4 of `lem:qld-win-implications`, paper
 `14_analysis_of_the_pauli_basis_test.tex:210-231`, blueprint
 `lem:qld-win-implications`. -/
-theorem win_comm :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_comm_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (commTupleDist P)
         (fun ω a => heteroKron
           ((S.pairWMeas .alice W ω.1 ω.2.1 ω.2.2.1 ω.2.2.2).effect a) 1)
         (fun ω a => heteroKron 1 ((S.pairComponentMeas .bob W ω).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
+        S.toStrategy.ψ ≤ 2 * (Fintype.card PauliEdge : ℝ) * ε := by
   intro P ε S _ W
   rw [commConsistency_eq_mismatch]
   calc
@@ -182,6 +177,22 @@ theorem win_comm :
     _ ≤ 2 * (Fintype.card PauliEdge : ℝ) * ε := by
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _) (by norm_num)
+
+/-- Existential packaging of `win_comm_explicit`, preserving item 4 of
+`lem:qld-win-implications`. -/
+theorem win_comm :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron
+          ((S.pairWMeas .alice W ω.1 ω.2.1 ω.2.2.1 ω.2.2.2).effect a) 1)
+        (fun ω a => heteroKron 1 ((S.pairComponentMeas .bob W ω).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, win_comm_explicit⟩
+  have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+  linarith
 
 /-- Select the point coordinate of a shared Pauli tuple in one basis. -/
 def selectedTuplePoint (W : PauliKind) {P : AdmissibleParams}
@@ -332,9 +343,8 @@ theorem commConsConsistency_eq_mismatch {P : AdmissibleParams} {ε : ℝ}
 answers. This is item 5 of `lem:qld-win-implications`, paper
 `14_analysis_of_the_pauli_basis_test.tex:232-239`, blueprint
 `lem:qld-win-implications`. -/
-theorem win_comm_cons :
-    ∃ C : ℝ, 1 ≤ C ∧
-      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+theorem win_comm_cons_explicit :
+    ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
       0 ≤ ε → ∀ W : PauliKind,
       consistencyDefect (commTupleDist P)
         (fun ω a => heteroKron
@@ -343,11 +353,7 @@ theorem win_comm_cons :
             (match W with | .X => ω.2.2.1 | .Z => ω.2.2.2)).effect a) 1)
         (fun ω a => heteroKron 1
           ((S.pairWMeas .bob W ω.1 ω.2.1 ω.2.2.1 ω.2.2.2).effect a))
-        S.toStrategy.ψ ≤ C * ε := by
-  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, ?_⟩
-  · have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
-      exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
-    linarith
+        S.toStrategy.ψ ≤ 2 * (Fintype.card PauliEdge : ℝ) * ε := by
   intro P ε S _ W
   change consistencyDefect (commTupleDist P)
       (fun ω a => heteroKron
@@ -391,6 +397,25 @@ theorem win_comm_cons :
     _ ≤ 2 * (Fintype.card PauliEdge : ℝ) * ε := by
       rw [mul_assoc]
       exact mul_le_mul_of_nonneg_left (fixedEdgeRejection_le_error S _) (by norm_num)
+
+/-- Existential packaging of `win_comm_cons_explicit`, preserving item 5 of
+`lem:qld-win-implications`. -/
+theorem win_comm_cons :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ (P : AdmissibleParams) (ε : ℝ) (S : ProjectiveSetting P ε),
+      0 ≤ ε → ∀ W : PauliKind,
+      consistencyDefect (commTupleDist P)
+        (fun ω a => heteroKron
+          ((S.pointTraceMeas .alice W
+            (match W with | .X => ω.1 | .Z => ω.2.1)
+            (match W with | .X => ω.2.2.1 | .Z => ω.2.2.2)).effect a) 1)
+        (fun ω a => heteroKron 1
+          ((S.pairWMeas .bob W ω.1 ω.2.1 ω.2.2.1 ω.2.2.2).effect a))
+        S.toStrategy.ψ ≤ C * ε := by
+  refine ⟨2 * (Fintype.card PauliEdge : ℝ), ?_, win_comm_cons_explicit⟩
+  have hcard : (1 : ℝ) ≤ Fintype.card PauliEdge := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card PauliEdge)
+  linarith
 
 
 end WinImplications

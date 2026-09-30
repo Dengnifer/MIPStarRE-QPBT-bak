@@ -154,54 +154,46 @@ private theorem placed_consistency_pairState {P : AdmissibleParams} {ε : ℝ}
       exact (stateQForm_pairState_eq_AB''_BB' S _ _ (hA x a) (hB x b)).symm
 
 set_option maxHeartbeats 800000 in
-/-- Direct soundness and same-space rounding construct extended-polynomial
-projective measurements satisfying both ordered estimates on `AA'|BA''` and
-`BB'|AB''`. The actual passing error is
-`3 * (sqrt (deltaQ + deltaL) + m*d/q)`. All three compressed soundness
-conclusions are used; in particular the polynomial consistency error is `delta`,
-not the weaker point-derived estimate. The rounded point error is
-`eta = delta + sqrt (220 * delta^(1/4)) + 2 * sqrt (2 * delta)`.
-
-This proves the calculation `eq:qld-g-42/43` from the directly indexed extended
-line witness with its completed-answer domain. It does not construct that line
-witness, prove polynomial separation, or certify source lemma `lem:qld-4-7`.
-The remaining source obligations are tracked by issues #515 and #598 and the
-module's paper-gap references. -/
-theorem exists_rounded_polynomial_ordered_estimates :
-    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
-      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
-        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
-      let delta := deltaLd a b
-        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
-        P.q (2 * P.m + 2) P.d 1
-      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
-        2 * Real.sqrt (2 * delta)
-      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
-      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
-        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
-        ∀ reverse : Bool,
-          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
-          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
+/-- Round concrete polynomial measurements satisfying the three direct
+soundness bounds and transport them to the two ordered point comparisons. -/
+private theorem rounded_polynomial_ordered_estimates_of_soundness
+    {P : AdmissibleParams} {ε δQ δL : ℝ} (S : ProjectiveSetting P ε)
+    (points : CombinedPointsWitness S δQ) (lines : ExtendedLinesWitness S points δL)
+    (delta : ℝ)
+    (A : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice))
+    (B : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob))
+    (hB : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u outcome => heteroKron
+        ((((strategy lines).A
+          (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+            (directLdPointValuesOrZero P.extendedDirectLd)).effect outcome) 1)
+      (fun u outcome => heteroKron 1
+        ((B.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+      (pairState S) ≤ delta)
+    (hA : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u outcome => heteroKron
+        ((A.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+      (fun u outcome => heteroKron 1
+        ((((strategy lines).B
+          (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+            (directLdPointValuesOrZero P.extendedDirectLd)).effect outcome))
+      (pairState S) ≤ delta)
+    (hAB : consistencyDefect (uniformDistribution Unit)
+      (fun _ g => heteroKron (A.effect g) 1)
+      (fun _ g => heteroKron 1 (B.effect g)) (pairState S) ≤ delta)
+    (hdelta : 0 ≤ delta) :
+    let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+      2 * Real.sqrt (2 * delta)
+    ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+    ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+      Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+      ∀ reverse : Bool,
+        extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+        extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
   classical
-  obtain ⟨a, b, ha, hb, hb1, hsound⟩ :=
-    exists_direct_ld_soundness_of_k_eq_one_any_strategy
-  refine ⟨a, b, ha, hb, hb1, ?_⟩
-  intro P ε δQ δL S points lines delta eta
-  have hm := P.one_le_m
-  have hd := P.hd
-  have hq : 0 < P.q := by
-    obtain ⟨k, _, hk⟩ := P.hq
-    rw [hk]
-    positivity
-  have hpos : 0 < directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q) :=
-    directPassingErrorEnvelope_pos _ _ (by positivity)
-  obtain ⟨A, B, hB, hA, hAB⟩ := hsound P.extendedDirectLd _ rfl hpos
-    (strategy lines) (strategy_value_ge_directPassingErrorEnvelope lines)
-  change consistencyDefect _ _ _ _ ≤ delta at hA hB hAB
-  have hdelta : 0 ≤ delta := by
-    dsimp [delta, deltaLd]
-    have ha0 : 0 ≤ a := le_trans (by norm_num) ha
-    positivity
+  intro eta
   obtain ⟨RA, RB, hRA, hRB, _, _, htransport⟩ :=
     projective_rounding_preserves_postprocessed_consistency
       (pairState S) (pairState_norm S) A B delta hdelta hAB
@@ -263,6 +255,162 @@ theorem exists_rounded_polynomial_ordered_estimates :
   exact ⟨RA, RB, hRA, hRB, fun reverse =>
     ⟨ordered_error_le points .AA' .BA'' (by trivial) RA hRA eta hAplaced reverse,
       ordered_error_le points .BB' .AB'' (by trivial) RB hRB eta hBplaced reverse⟩⟩
+
+set_option maxHeartbeats 800000 in
+-- The proof elaborates both ordered finite-sum estimates and their rounded witnesses.
+/-- Direct soundness and same-space rounding construct extended-polynomial
+projective measurements satisfying both ordered estimates on `AA'|BA''` and
+`BB'|AB''`. The actual passing error is
+`3 * (sqrt (deltaQ + deltaL) + m*d/q)`. All three compressed soundness
+conclusions are used; in particular the polynomial consistency error is `delta`,
+not the weaker point-derived estimate. The rounded point error is
+`eta = delta + sqrt (220 * delta^(1/4)) + 2 * sqrt (2 * delta)`.
+
+This proves the calculation `eq:qld-g-42/43` from the directly indexed extended
+line witness with its completed-answer domain. It does not construct that line
+witness, prove polynomial separation, or certify source lemma `lem:qld-4-7`.
+The remaining source obligations are tracked by issues #515 and #598 and the
+module's paper-gap references. -/
+theorem rounded_polynomial_ordered_estimates_explicit :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd pauliBaselineLowDegreeConstant pauliBaselineLowDegreePower
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        ∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
+  classical
+  let a := pauliBaselineLowDegreeConstant
+  have ha : 1 ≤ a := by
+    dsimp only [a, pauliBaselineLowDegreeConstant]
+    norm_num
+  intro P ε δQ δL S points lines delta eta
+  have hm := P.one_le_m
+  have hd := P.hd
+  have hq : 0 < P.q := by
+    obtain ⟨k, _, hk⟩ := P.hq
+    rw [hk]
+    positivity
+  have hpos : 0 < directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q) :=
+    directPassingErrorEnvelope_pos _ _ (by positivity)
+  obtain ⟨A, B, hB, hA, hAB⟩ :=
+    direct_ld_soundness_of_k_eq_one_any_strategy_explicit P.extendedDirectLd _ rfl hpos
+      (strategy lines) (strategy_value_ge_directPassingErrorEnvelope lines)
+  change consistencyDefect _ _ _ _ ≤ delta at hA hB hAB
+  have hdelta : 0 ≤ delta := by
+    dsimp [delta, deltaLd]
+    have ha0 : 0 ≤ a := le_trans (by norm_num) ha
+    positivity
+  exact rounded_polynomial_ordered_estimates_of_soundness
+    S points lines delta A B hB hA hAB hdelta
+
+/-- Native-error rounded polynomial measurements with the exact separated
+rounding orders retained in `nativeRoundingError`. -/
+theorem rounded_polynomial_ordered_estimates_at_native_error :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := directNativeError P.extendedDirectLd
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        ∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤
+              nativeOrderedPolynomialError delta δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤
+              nativeOrderedPolynomialError delta δQ := by
+  classical
+  intro P ε δQ δL S points lines delta
+  have hm := P.one_le_m
+  have hd := P.hd
+  have hq : 0 < P.q := by
+    obtain ⟨k, _, hk⟩ := P.hq
+    rw [hk]
+    positivity
+  have hpos : 0 < directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q) :=
+    directPassingErrorEnvelope_pos _ _ (by positivity)
+  obtain ⟨A, B, hB, hA, hAB⟩ :=
+    direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error
+      P.extendedDirectLd _ rfl hpos (strategy lines)
+      (strategy_value_ge_directPassingErrorEnvelope lines)
+  change consistencyDefect _ _ _ _ ≤ delta at hA hB hAB
+  have hdelta : 0 ≤ delta := direct_native_error_nonneg _ hpos.le
+  obtain ⟨RA, RB, hRA, hRB, horder⟩ :=
+    rounded_polynomial_ordered_estimates_of_soundness
+      S points lines delta A B hB hA hAB hdelta
+  refine ⟨RA, RB, hRA, hRB, ?_⟩
+  intro reverse
+  simpa only [nativeOrderedPolynomialError, native_rounding_error_eq hdelta] using
+    horder reverse
+
+/-- Weakening: the native rounded construction implies the coefficient-`30`
+common-error route used to match paper `lem:ld-soundness`; this statement keeps
+the historical paper-form scalar interface. -/
+theorem rounded_polynomial_ordered_estimates_quantitative :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd 30 quantitativeLowDegreePower
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        ∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
+  classical
+  intro P ε δQ δL S points lines delta eta
+  have hm := P.one_le_m
+  have hd := P.hd
+  have hq : 0 < P.q := by
+    obtain ⟨k, _, hk⟩ := P.hq
+    rw [hk]
+    positivity
+  have hpos : 0 < directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q) :=
+    directPassingErrorEnvelope_pos _ _ (by positivity)
+  obtain ⟨A, B, hB, hA, hAB⟩ :=
+    direct_ld_soundness_of_k_eq_one_any_strategy_quantitative P.extendedDirectLd _ rfl hpos
+      (strategy lines) (strategy_value_ge_directPassingErrorEnvelope lines)
+  change consistencyDefect _ _ _ _ ≤ delta at hA hB hAB
+  have hdelta : 0 ≤ delta := by
+    dsimp [delta, deltaLd]
+    positivity
+  exact rounded_polynomial_ordered_estimates_of_soundness
+    S points lines delta A B hB hA hAB hdelta
+
+/-- There are universal low-degree constants for which the rounded polynomial
+measurements are projective and satisfy both ordered point-comparison bounds. -/
+theorem exists_rounded_polynomial_ordered_estimates :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
+      ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := deltaLd a b
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+        P.q (2 * P.m + 2) P.d 1
+      let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+        2 * Real.sqrt (2 * delta)
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        ∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
+  refine ⟨pauliBaselineLowDegreeConstant, pauliBaselineLowDegreePower, ?_, ?_, ?_,
+    rounded_polynomial_ordered_estimates_explicit⟩
+  · unfold pauliBaselineLowDegreeConstant
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
+  · unfold pauliBaselineLowDegreePower
+    norm_num
 
 end ExtendedLineGame
 

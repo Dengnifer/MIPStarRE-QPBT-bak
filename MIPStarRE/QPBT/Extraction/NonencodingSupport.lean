@@ -172,8 +172,8 @@ marginals are consistent with the opposite encoding-supported reference.
 The universal square-root coefficient comes from the two Pauli-basis checks
 and point self-consistency. This estimate neither assumes a separate
 non-encoding support bound nor constructs the global witness. -/
-theorem global_marginal_encoding_consistency :
-    ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+theorem global_marginal_encoding_consistency_explicit :
+    ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
       0 ≤ epsilon → ∀ (S : ProjectiveSetting P epsilon)
         (w : GlobalPairWitness S deltaG) (W : PauliKind),
       consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
@@ -181,18 +181,13 @@ theorem global_marginal_encoding_consistency :
             (fun g => evalPoly g u)).effect a) 1)
           (fun u a => heteroKron 1 (((S.encodingPauliMeas .bob W).postprocess
             (fun g => evalPoly g u)).effect a)) (ExtendedLineGame.pairState S) ≤
-        deltaG + C * Real.sqrt epsilon ∧
+        deltaG + (1 + 2 * Real.sqrt 172) * Real.sqrt epsilon ∧
       consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
           (fun u a => heteroKron (((S.encodingPauliMeas .alice W).postprocess
             (fun g => evalPoly g u)).effect a) 1)
           (fun u a => heteroKron 1 (((w.marginalPoly .bob W).postprocess
             (fun g => evalPoly g u)).effect a)) (ExtendedLineGame.pairState S) ≤
-        deltaG + C * Real.sqrt epsilon := by
-  obtain ⟨C1, hC1, hforward⟩ := win_pauli_basis_cons
-  obtain ⟨C2, hC2, hreverse⟩ := WinImplications.win_pauli_basis_cons_interchanged_proof
-  let E : ℝ := Fintype.card PauliEdge
-  let K : ℝ := max C1 C2
-  refine ⟨1 + 2 * Real.sqrt (E + K), by linarith [Real.sqrt_nonneg (E + K)], ?_⟩
+        deltaG + (1 + 2 * Real.sqrt 172) * Real.sqrt epsilon := by
   intro P epsilon deltaG hepsilon S w W
   let mu := uniformDistribution (Fin P.m → PauliScalar P)
   let psi := ExtendedLineGame.pairState S
@@ -236,29 +231,28 @@ theorem global_marginal_encoding_consistency :
         exact S.place_comm .AB'' .BB' trivial _ _)]
     simpa only [hpost] using w.point_consistent_bob W
   have hpoints : consistencyDefect mu (fun u a => (pointA u).effect a)
-      (fun u a => (pointB u).effect a) psi ≤ E * epsilon := by
+      (fun u a => (pointB u).effect a) psi ≤ 86 * epsilon := by
     change consistencyDefect mu
       (fun u a => heteroKron ((S.pointMeasExp .alice W u).effect a) 1)
       (fun u a => heteroKron 1 ((S.pointMeasExp .bob W u).effect a)) psi ≤ _
     rw [S.expanded_point_consistency_eq]
-    exact point_self_consistency_le S W
+    simpa only [pauli_edge_card, Nat.cast_ofNat] using point_self_consistency_le S W
   have hpoints' : consistencyDefect mu (fun u a => (pointB u).effect a)
-      (fun u a => (pointA u).effect a) psi ≤ E * epsilon := by
+      (fun u a => (pointA u).effect a) psi ≤ 86 * epsilon := by
     rw [consistencyDefect_comm_of_commute _ _ _ _ (by
       intro u a b
       exact (WinImplications.heteroKron_left_right_comm _ _).symm)]
     exact hpoints
   have hpb : consistencyDefect mu (fun u a => (pointA u).effect a)
-      (fun u a => (refB u).effect a) psi ≤ K * epsilon := by
+      (fun u a => (refB u).effect a) psi ≤ 86 * epsilon := by
     change consistencyDefect mu
       (fun u a => heteroKron ((S.pointMeasExp .alice W u).effect a) 1)
       (fun u a => heteroKron 1 (((S.encodingPauliMeas .bob W).postprocess
         (fun g => evalPoly g u)).effect a)) psi ≤ _
     rw [S.point_encodingPauli_consistency_eq]
-    exact (hforward P epsilon S hepsilon W).trans
-      (mul_le_mul_of_nonneg_right (le_max_left _ _) hepsilon)
+    exact WinImplications.win_pauli_basis_cons_explicit P epsilon S hepsilon W
   have hpa : consistencyDefect mu (fun u a => (pointB u).effect a)
-      (fun u a => (refA u).effect a) psi ≤ K * epsilon := by
+      (fun u a => (refA u).effect a) psi ≤ 86 * epsilon := by
     rw [consistencyDefect_comm_of_commute _ _ _ _ (by
       intro u a b
       exact (WinImplications.heteroKron_left_right_comm _ _).symm)]
@@ -267,25 +261,44 @@ theorem global_marginal_encoding_consistency :
         (fun g => evalPoly g u)).effect a) 1)
       (fun u a => heteroKron 1 ((S.pointMeasExp .bob W u).effect a)) psi ≤ _
     rw [S.encodingPauli_point_consistency_eq]
-    exact (hreverse P epsilon S hepsilon W).trans
-      (mul_le_mul_of_nonneg_right (le_max_right _ _) hepsilon)
-  have hscalar : deltaG + 2 * Real.sqrt (E * epsilon + K * epsilon) ≤
-      deltaG + (1 + 2 * Real.sqrt (E + K)) * Real.sqrt epsilon := by
-    have hEK : 0 ≤ E + K := add_nonneg (Nat.cast_nonneg _)
-      (le_trans (by linarith : 0 ≤ C1) (le_max_left _ _))
-    rw [← add_mul, Real.sqrt_mul hEK]
+    exact WinImplications.win_pauli_basis_cons_interchanged_explicit
+      P epsilon S hepsilon W
+  have hscalar : deltaG + 2 * Real.sqrt (86 * epsilon + 86 * epsilon) ≤
+      deltaG + (1 + 2 * Real.sqrt 172) * Real.sqrt epsilon := by
+    rw [← add_mul, show (86 : ℝ) + 86 = 172 by norm_num,
+      Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 172)]
     nlinarith [Real.sqrt_nonneg epsilon]
   constructor
   · exact (consistencyDefect_trans_le mu margA pointB pointA refB psi
-      deltaG (E * epsilon) (K * epsilon) (uniformDistribution_isProbability _)
+      deltaG (86 * epsilon) (86 * epsilon) (uniformDistribution_isProbability _)
       (ExtendedLineGame.pairState_norm S) hab hpoints hpb).trans hscalar
   · have h := (consistencyDefect_trans_le mu margB pointA pointB refA psi
-      deltaG (E * epsilon) (K * epsilon) (uniformDistribution_isProbability _)
+      deltaG (86 * epsilon) (86 * epsilon) (uniformDistribution_isProbability _)
       (ExtendedLineGame.pairState_norm S) hba hpoints' hpa).trans hscalar
     rw [consistencyDefect_comm_of_commute _ _ _ _ (by
       intro u a b
       exact (WinImplications.heteroKron_left_right_comm _ _).symm)] at h
     exact h
+
+/-- Existential packaging of `global_marginal_encoding_consistency_explicit`. -/
+theorem global_marginal_encoding_consistency :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
+      0 ≤ epsilon → ∀ (S : ProjectiveSetting P epsilon)
+        (w : GlobalPairWitness S deltaG) (W : PauliKind),
+      consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
+          (fun u a => heteroKron (((w.marginalPoly .alice W).postprocess
+            (fun g => evalPoly g u)).effect a) 1)
+          (fun u a => heteroKron 1 (((S.encodingPauliMeas .bob W).postprocess
+            (fun g => evalPoly g u)).effect a)) (ExtendedLineGame.pairState S) ≤
+        deltaG + C * Real.sqrt epsilon ∧
+      consistencyDefect (uniformDistribution (Fin P.m → PauliScalar P))
+          (fun u a => heteroKron (((S.encodingPauliMeas .alice W).postprocess
+            (fun g => evalPoly g u)).effect a) 1)
+          (fun u a => heteroKron 1 (((w.marginalPoly .bob W).postprocess
+            (fun g => evalPoly g u)).effect a)) (ExtendedLineGame.pairState S) ≤
+        deltaG + C * Real.sqrt epsilon := by
+  refine ⟨1 + 2 * Real.sqrt 172, ?_, global_marginal_encoding_consistency_explicit⟩
+  nlinarith [Real.sqrt_nonneg (172 : ℝ)]
 
 /-- A marginal acting on `AA'` has the same mass in the extraction-block
 notation and the two-player expanded state. The unused registers carry identities. -/
