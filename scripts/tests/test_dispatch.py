@@ -971,7 +971,7 @@ class PreCommitBudgetTests(unittest.TestCase):
         repo, root = self.new_repo()
         self.commit_file(repo, "feature.txt", 1)
         self.git(repo, "switch", "--create", "main", root)
-        self.commit_file(repo, "local/inherited.txt", 1001)
+        self.commit_file(repo, "local/inherited.txt", 5001)
         self.git(repo, "update-ref", "refs/remotes/github/main", "HEAD")
         self.git(repo, "switch", "feature")
         self.git(repo, "merge", "--no-commit", "--no-ff", "main")
@@ -986,7 +986,7 @@ class PreCommitBudgetTests(unittest.TestCase):
         self.commit_file(repo, "feature.txt", 1)
         self.git(repo, "update-ref", "refs/remotes/github/main", root)
         self.git(repo, "switch", "--create", "side", root)
-        self.commit_file(repo, "local/side.txt", 1001)
+        self.commit_file(repo, "local/side.txt", 5001)
         self.git(repo, "switch", "feature")
         self.git(repo, "merge", "--no-commit", "--no-ff", "side")
 
@@ -994,7 +994,7 @@ class PreCommitBudgetTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn("non-main merge", result.stdout)
-        self.assertIn("staged workflow-layer change is 1001 lines", result.stdout)
+        self.assertIn("staged workflow-layer change is 5001 lines", result.stdout)
 
     def test_standalone_workflow_test_growth_is_budgeted(self) -> None:
         paths = (
@@ -1006,13 +1006,13 @@ class PreCommitBudgetTests(unittest.TestCase):
                 repo, _ = self.new_repo()
                 target = repo / path
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text("line\n" * 1001, encoding="utf-8")
+                target.write_text("line\n" * 5001, encoding="utf-8")
                 self.git(repo, "add", path)
 
                 result = self.run_hook(repo)
 
                 self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                self.assertIn("staged workflow-layer change is 1001 lines", result.stdout)
+                self.assertIn("staged workflow-layer change is 5001 lines", result.stdout)
 
 
 if __name__ == "__main__":

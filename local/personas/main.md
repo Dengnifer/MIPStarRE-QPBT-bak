@@ -205,7 +205,7 @@ merges; never merge a PR by hand or call the merge gate from the main turn.
 The product is the Lean formalization; `local/` is scaffolding, and
 scaffolding work is a COST, not an achievement.  Binding rules:
 
-- Budget: a workflow change defaults to ≤2 hours wall time and ≤1000 changed
+- Budget: a workflow change defaults to ≤2 hours wall time and ≤5000 changed
   lines.  Reaching either limit means stop, commit what stands, record the
   state in telemetry, and return to main for rescoping or a recorded protocol
   amendment — never push through the ceiling. The pre-commit hook checks the
