@@ -10095,3 +10095,10 @@ R4combined5372229944 at0e736185: codeAPPROVED505s,proseCHANGES_REQUESTED572s; th
 ## 2026-09-30T22:21:36.206858+00:00 — Review cap leaves a fully checked editorial patch awaiting a decision
 
 R4 approved the mathematical code but requested three editorial corrections. Those corrections are complete at6ea9f96b, with exact noncomment-code equality, fresh full CI and blueprint axiom checks green. Four full review rounds are exhausted and the owner briefing requires exact-head approval without an override merge. The prepared fifth-review exception request has no response after three consecutive goal-turn checks. Goal status was set to blocked; no review evidence was fabricated or cap bypassed. The pending report/ledger and full original objective are preserved.
+
+
+## 2026-09-30T22:29:10.001513+00:00 — Keeper automatically reactivated a blocked goal
+
+The project keeper, not the owner, reactivated the blocked goal: its existing log records `2026-09-30T22:23:36Z sent /goal resume`. Fresh reads of #27, #736 and #734 still contain no review exception. The automatic continuation therefore supplies neither owner approval nor a new source-review budget. The same previously established impasse remains.
+
+MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipstarre-dev/watchdog/goal-keeper.stop`, at22:27:19Z to prevent repeated automatic reactivation of this blocked goal, and restored goal status **blocked**. This is an interim control action preserving the required blocked status while awaiting the existing decision, not a claim that the mathematical goal is complete or that the owner's final pause has been reached. No keeper script, key, account or worker allocation was changed. The code, tests, pending report/ledger, and scoped review proposal are preserved. Owner decision remains #27 comment5920620649. Subsequent source work requires the actual exception; automation is not that exception.
