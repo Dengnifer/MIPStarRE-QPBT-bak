@@ -821,6 +821,14 @@ THEMATIC_BREAK_RE = re.compile(
     r"^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,})$"
 )
 FENCE_RE = re.compile(r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<tail>.*)$")
+# These block starts can own following unindented lines as lazy continuation
+# text.  Keep that context until a definite top-level boundary instead of
+# mistaking a later thematic break for a Setext underline.
+CONTAINER_BLOCK_RE = re.compile(
+    r"^ {0,3}(?:>[ \t]?|(?:[*+-]|\d{1,9}[.)])(?:[ \t]+|$))"
+)
+REFERENCE_DEFINITION_RE = re.compile(r"^ {0,3}\[[^]\n]+\]:")
+HTML_BLOCK_CANDIDATE_RE = re.compile(r"^ {0,3}<")
 # A table delimiter cell, and a pipe that separates two cells. A pipe preceded
 # by a backslash is text in its cell, so `\|x\|` is a norm.
 LEDGER_DELIMITER_CELL_RE = re.compile(r":?-{2,}:?")
@@ -856,15 +864,34 @@ def _fence_state(line: str, opened: tuple[str, int] | None) -> tuple[str, int] |
     return opened
 
 
-def _is_ledger_table_row(
-    lines: list[str], start: int, end: int, row_index: int
-) -> bool:
-    """Whether ``row_index`` is a body row under the ledger table parser."""
+def _ledger_table_header(
+    lines: list[str], index: int, end: int
+) -> tuple[list[str], list[str]] | None:
+    """Return parsed cells when ``index`` opens a ledger-style table."""
 
-    return any(
-        number == row_index + 1
-        for _, _, _, _, rows in _ledger_tables(lines, start, end)
-        for number, _ in rows
+    if index + 1 >= end:
+        return None
+    header_text, delimiter_text = lines[index], lines[index + 1]
+    delimiter = _cells(delimiter_text)
+    if not (
+        not _code_indented(header_text)
+        and not _code_indented(delimiter_text)
+        and UNESCAPED_PIPE_RE.search(header_text)
+        and UNESCAPED_PIPE_RE.search(delimiter_text)
+        and all(LEDGER_DELIMITER_CELL_RE.fullmatch(cell) for cell in delimiter)
+    ):
+        return None
+    return _cells(header_text), delimiter
+
+
+def _starts_nonparagraph_context(line: str) -> bool:
+    """Whether ``line`` definitely or conservatively opens a nonparagraph block."""
+
+    return (
+        CONTAINER_BLOCK_RE.match(line) is not None
+        or REFERENCE_DEFINITION_RE.match(line) is not None
+        or HTML_BLOCK_CANDIDATE_RE.match(line) is not None
+        or _code_indented(line)
     )
 
 
@@ -873,37 +900,74 @@ def _ledger_section(lines: list[str]) -> tuple[int, int] | None:
 
     The section runs to the next heading of the same or a higher level, so a
     table under a later heading can never stand in for a missing ledger table.
-    Headings inside fenced code blocks are not headings.
+    Headings inside fenced code blocks are not headings.  A Setext underline
+    closes the section only after an unambiguous top-level paragraph; tables,
+    container blocks and their lazy continuations are not paragraph headings.
     """
 
     fence: tuple[str, int] | None = None
     start: int | None = None
     level = 0
+    paragraph: tuple[str, int] | None = None
+    table = False
     for index, line in enumerate(lines):
         previous = fence
         fence = _fence_state(line, fence)
         if previous is not None or fence is not None:
+            paragraph = None
+            table = False
             continue
         match = HEADING_RE.match(line)
-        if match is None:
-            prior = lines[index - 1] if index else ""
-            setext = SETEXT_RE.match(line)
-            if (
-                start is not None
-                and setext
-                and prior.strip()
-                and HEADING_RE.match(prior) is None
-                and not _code_indented(prior)
-                and not _is_ledger_table_row(lines, start, index, index - 1)
-                and (setext.group("marker")[0] == "=" or level >= 2)
-            ):
-                return start, index - 1
+        if match is not None:
+            paragraph = None
+            table = False
+            heading_level = len(match.group("hashes"))
+            if start is None:
+                if (match.group("text") or "") == LEDGER_HEADING:
+                    start, level = index, heading_level
+            elif heading_level <= level:
+                return start, index
             continue
-        if start is None:
-            if (match.group("text") or "") == LEDGER_HEADING:
-                start, level = index, len(match.group("hashes"))
-        elif len(match.group("hashes")) <= level:
-            return start, index
+
+        if table:
+            if not _table_body_boundary(line):
+                continue
+            table = False
+            paragraph = None
+        if not line.strip():
+            paragraph = None
+            continue
+        if _ledger_table_header(lines, index, len(lines)) is not None:
+            paragraph = None
+            table = True
+            continue
+
+        setext = SETEXT_RE.match(line)
+        if setext is not None:
+            if paragraph is not None and paragraph[0] == "plain":
+                heading_level = 1 if setext.group("marker")[0] == "=" else 2
+                heading_start = paragraph[1]
+                paragraph = None
+                if start is not None and heading_level <= level:
+                    return start, heading_start
+            elif THEMATIC_BREAK_RE.match(line) is not None:
+                paragraph = None
+            elif paragraph is None:
+                # An equals run without preceding paragraph text is ordinary
+                # text.  Keeping it as paragraph context also handles a later
+                # genuine Setext underline without guessing at a block type.
+                paragraph = ("plain", index)
+            # Otherwise the line is lazy continuation text in a container or
+            # opaque block, and that context remains deliberately conservative.
+            continue
+
+        if THEMATIC_BREAK_RE.match(line) is not None:
+            paragraph = None
+        elif _starts_nonparagraph_context(line):
+            if paragraph is None or paragraph[0] == "plain":
+                paragraph = ("opaque", index)
+        elif paragraph is None:
+            paragraph = ("plain", index)
     return None if start is None else (start, len(lines))
 
 
@@ -981,18 +1045,12 @@ def _ledger_tables(
     ] = []
     index = start + 1
     while index + 1 < end:
-        header_text, delimiter_text = lines[index], lines[index + 1]
-        delimiter = _cells(lines[index + 1])
-        if not (
-            not _code_indented(header_text)
-            and not _code_indented(delimiter_text)
-            and UNESCAPED_PIPE_RE.search(header_text)
-            and UNESCAPED_PIPE_RE.search(delimiter_text)
-            and all(LEDGER_DELIMITER_CELL_RE.fullmatch(cell) for cell in delimiter)
-        ):
+        parsed = _ledger_table_header(lines, index, end)
+        if parsed is None:
             index += 1
             continue
-        header_line, header = index + 1, _cells(lines[index])
+        header, delimiter = parsed
+        header_line = index + 1
         delimiter_line = index + 2
         rows: list[tuple[int, list[str]]] = []
         index += 2

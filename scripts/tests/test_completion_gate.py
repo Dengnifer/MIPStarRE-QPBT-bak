@@ -953,6 +953,108 @@ class BoundLedgerTests(GateFixture):
                     self.assertEqual(crit.status, status, crit.evidence)
                     self.assertIn(expected, " ".join((crit.summary, *crit.evidence)))
 
+    def test_nonparagraph_blocks_do_not_form_setext_section_boundaries(self) -> None:
+        def table(stage: str, disposition: str) -> str:
+            return (
+                "| Stage | Stated bound | Proved bound | Disposition |\n"
+                "|---|---|---|---|\n"
+                f"| {stage} | x | x | {disposition} |"
+            )
+
+        separators = (
+            ("thematic break", "---"),
+            ("bullet list", "- Additional stages follow.\n---"),
+            ("ordered list", "1. Additional stages follow.\n---"),
+            ("blockquote", "> Additional stages follow.\n---"),
+            ("consecutive thematic breaks", "---\n---"),
+            (
+                "bullet lazy continuation",
+                "- Additional stages follow.\nLazy continuation.\n---",
+            ),
+            (
+                "ordered lazy continuation",
+                "1. Additional stages follow.\nLazy continuation.\n---",
+            ),
+            (
+                "blockquote lazy continuation",
+                "> Additional stages follow.\nLazy continuation.\n---",
+            ),
+            ("indented code", "    example\n---"),
+            ("reference definition", "[reference]: /target\n---"),
+            ("HTML block candidate", "<div></div>\n---"),
+            ("nested blockquote heading", "> Appendix\n> --------"),
+        )
+        for outer_pipes, method in (
+            ("both", None),
+            ("trailing only", "lstrip"),
+            ("leading only", "rstrip"),
+            ("neither", "strip"),
+        ):
+            for separator_name, separator in separators:
+                for disposition, status, expected in (
+                    ("invalid", gate.FAIL, "1 of 2 stage row(s)"),
+                    ("sharp", gate.DELEGATED, "all 2 stage row(s)"),
+                ):
+                    with self.subTest(
+                        separator=separator_name,
+                        disposition=disposition,
+                        outer_pipes=outer_pipes,
+                    ):
+                        text = (
+                            "## Stage ledger\n\n"
+                            + table("Good", "sharp")
+                            + "\n\n"
+                            + separator
+                            + "\n\n"
+                            + table("Bad", disposition)
+                            + "\n"
+                        )
+                        if method is not None:
+                            text = "\n".join(
+                                getattr(line, method)("|")
+                                if line.startswith("|") else line
+                                for line in text.splitlines()
+                            )
+                        crit = self.check(text)
+                        self.assertEqual(crit.status, status, crit.evidence)
+                        report = " ".join((crit.summary, *crit.evidence))
+                        self.assertIn(expected, report)
+                        if disposition == "invalid":
+                            self.assertIn("disposition 'invalid' for Bad", report)
+
+    def test_plain_text_setext_heading_still_ends_the_section(self) -> None:
+        table = (
+            "| Stage | Stated bound | Proved bound | Disposition |\n"
+            "|---|---|---|---|\n"
+            "| Good | x | x | sharp |"
+        )
+        invalid = table.replace("Good | x | x | sharp", "Bad | x | x | invalid")
+        for heading in (
+            "Appendix\n--------",
+            "Appendix\n========",
+            "Appendix notes\ncontinued here\n--------",
+        ):
+            for outer_pipes, method in (("both", None), ("neither", "strip")):
+                with self.subTest(heading=heading, outer_pipes=outer_pipes):
+                    text = (
+                        "## Stage ledger\n\n"
+                        + table
+                        + "\n\n"
+                        + heading
+                        + "\n\n"
+                        + invalid
+                        + "\n"
+                    )
+                    if method is not None:
+                        text = "\n".join(
+                            getattr(line, method)("|")
+                            if line.startswith("|") else line
+                            for line in text.splitlines()
+                        )
+                    crit = self.check(text)
+                    self.assertEqual(crit.status, gate.DELEGATED, crit.evidence)
+                    self.assertIn("all 1 stage row(s)", crit.summary)
+
     def test_a_table_under_a_later_heading_does_not_count(self) -> None:
         table = "\n".join(GOOD_LEDGER.splitlines()[6:9])
         for heading in ("## Appendix", "Appendix\n--------"):
