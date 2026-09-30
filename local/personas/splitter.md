@@ -39,6 +39,9 @@ You were dispatched by `local/bin/dispatch.sh` and dispatch nothing further.
    Policy*) through the sources you produce: downstream sessions compare Lean
    statements against these files, so a dropped hypothesis or a mangled equation
    here becomes statement drift there. Body text is copied, never retyped.
+   Keep every quantitative statement in the same packet as its proof: the
+   proof, not the statement, fixes the bound a prover must reach (`AGENTS.md`,
+   *Bound strength*).
 4. **Thresholds.** Split any input file over 1000 lines before it is delegated,
    and any reference source over 600 lines section by section. For a document
    already using `\input`/`\include`, apply the 1000-line threshold to each

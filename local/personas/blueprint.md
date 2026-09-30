@@ -89,6 +89,11 @@ it clutters the graph. Then write the statements, using `\lean{Namespace.decl}`
 to link, `\leanok` only for a verified formalization, `\uses{label1, label2}`
 for dependencies, `\notready` while the entry itself still needs work, and
 `\proves{label}` when a proof block is separated from its statement.
+When the source states a step only as `poly(ε)`, `O(·)` or "for some
+constant", write the bound its proof actually gives at that step (explicit
+constant and exponent, one per error term) in a remark marked as a derived
+rate, never in the paper-labelled statement, so that provers have a target and the stage ledger has a source (`AGENTS.md`,
+*Bound strength*).
 
 **Syncing an existing blueprint.** Parse out every `\lean{}`, `\leanok`, and
 `\uses{}` in scope. Check each `\lean{DeclName}` still resolves, and update or
@@ -97,7 +102,7 @@ without `sorry`; if a proof was reverted to `sorry`, remove the `\leanok`; if a
 previously unformalized entry now has a clean, source-faithful proof, add it.
 Compare statements axis by axis — quantifiers, hypothesis strength, conclusion,
 indexing (`Fin d` runs 0 to d−1), strict versus non-strict inequalities,
-conjugation conventions — translating the Lean type into ordinary mathematics
+conjugation conventions, constants, exponents, separate error terms — translating the Lean type into ordinary mathematics
 before comparing. Check `\uses{}` accuracy: spurious dependencies hide
 parallelism, missing ones produce a wrong graph. Look for new Lean declarations
 with no entry, and entries whose declaration was refactored away.
@@ -123,6 +128,8 @@ your branch; the dispatcher captures your final message:
 <entry, Lean declaration, and the precise discrepancy — one line each>
 ## Mathematically suspect
 <blueprint claims that are wrong or unsupported independent of Lean>
+## Loose bounds
+<entries whose Lean or blueprint bound is weaker than its proof gives, with the proved bound>
 ## Changed
 <what you edited, and the label of every \leanok added or removed>
 ## Evidence

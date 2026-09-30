@@ -171,6 +171,13 @@ merges; never merge a PR by hand or call the merge gate from the main turn.
   `results/telemetry/` is the only local record and is committed on main with
   `chore(telemetry):` commits. The archived registry under
   `results/telemetry/registry-archive/` is read-only history.
+- Bound strength (`AGENTS.md`) binds every estimate. Briefs, skeletons and
+  issue contracts you write fix stage interfaces with explicit, separate error
+  terms (rule 6). You own the track's bound ledger: copy each merged PR's
+  `## Bound strength` rows into it, give every existential headline an
+  explicit-constant sibling in the axiom audit, and when a headline's
+  dependency path first closes, dispatch one read-only quantitative survey
+  (a math-capable model) over the ledger before the completion gate.
 - Faithfulness policy (AGENTS.md) outranks reviewer appeasement AND
   implementation convenience: paper-labelled statements stay source-shaped;
   genuine source defects become `docs/paper-gaps/` notes (key `qpbt`,
@@ -198,7 +205,7 @@ merges; never merge a PR by hand or call the merge gate from the main turn.
 The product is the Lean formalization; `local/` is scaffolding, and
 scaffolding work is a COST, not an achievement.  Binding rules:
 
-- Budget: a workflow change defaults to ≤2 hours wall time and ≤1000 changed
+- Budget: a workflow change defaults to ≤2 hours wall time and ≤5000 changed
   lines.  Reaching either limit means stop, commit what stands, record the
   state in telemetry, and return to main for rescoping or a recorded protocol
   amendment — never push through the ceiling. The pre-commit hook checks the

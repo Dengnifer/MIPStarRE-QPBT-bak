@@ -9978,6 +9978,20 @@ Repair03 is terminal exit124/1261s, usage unknown, no pending command handles. S
 
 Checked publication refused before network access because main supplied the absent remote `origin`. Read-only inspection confirmed the configured publication remote is `github`, as used by primary `github-sync.sh`. Retry uses that existing remote with the same normal checked-push gate. No remote, credential, model key, or hook was changed; an `origin/main` tracking ref does not imply a configured `origin` remote.
 
+## 2026-09-29T00:20:33Z — Protocol blind spot: bound strength
+
+The error-bound surveys on #727 (comments `error-bounds-survey-qpbt`, `error-bounds-survey-ldt`,
+`error-bounds-survey-comparison`, `error-bounds-final-selection`) found the QPBT and LDT chains faithful and sorry-free, yet
+weaker than their own proofs: the extraction step states one merged bound for a squared state error of order `x` and a
+squared operator error of order `√x`; coefficients are absorbed into the degree of `a(md)^a`; consistency triangles take a
+square root the complete-measurement case does not need; the `k = 1` case goes through a general √-helper; the internal
+envelope `mainFormalError` is pinned to the printed constants; pasting uses an additive Hoeffding tail. The QPBT witness
+exponent is `1/5,242,880,000` where the same proofs support `1/327,680,000`. Diagnosis: every protocol rule measures
+"weakened" against the paper, whose `poly(ε)`/`O(·)` statements admit any polynomial loss; nothing compared a statement with
+its own proof; the skeleton briefs fixed a one-parameter `a(md)^a` class with `∃ a b` at every interface; `mathfix.md`
+selected the weakest sufficient statement; review item 7 rewarded lossy reuse. Owner, 2026-09-29: fix the protocol kit and
+workflow design so this does not recur. Fix: issue #732, `local/protocols/EVOLUTION.md` 2026-09-29. Lesson: a gate that
+compares only with the source cannot see losses the source's qualitative wording permits; compare with the proof too.
 ## 2026-09-29T00:51:08.146699+00:00 — baseline blueprint proof tags blocked by existing unfaithful markers
 
 The D author passed web, sync, declaration resolution and axiom checks, but main's normal commit hook rejected proof-level leanok on two new conditional nodes linking four existing Unfaithful-marked helpers. The stronger mathematical conditional statements and clean kernel closures do not override the repository's marker policy. Main preserved all five staged files plus a binary patch/hash manifest in /tmp/qpbt-baseline-blueprint-checkpoint-729-d1, then fast-forwarded the idle worktree to completed B88436c45; hashes confirm every draft byte survived. Fresh sole Sol D2 (PID3642561,1200s/1500s) must correct only the affected new proof-status tags, explain the withheld status, and run the actual marker gate, while documenting the8 completed B public declarations. It also owns the necessary ComponentBounds re-export and one new private definition naming fix. No hook/checker override, old marker deletion, old source-node weakening or proof change. Lesson: include the existing unfaithful-marker audit alongside blueprint sync before declaring a documentation handoff gate-ready.
@@ -9985,3 +9999,43 @@ The D author passed web, sync, declaration resolution and axiom checks, but main
 ## 2026-09-29T00:59:45.432302+00:00 — prepare private Lake configuration for the read-only mathematical scout
 
 Scout733 reported that lake env lean could not create its missing .lake/config in the read-only sandbox. Main verified the scout checkout was clean at frozen45268868 and .lake was a private nonsymlink directory, then ran lake env printenv LEAN_PATH there to prepare the normal configuration cache. The command passed, .lake/config now exists, and the source remains clean at the exact same commit. No model/sandbox/key setting, source file, toolchain, package version or shared cache was changed by an operator command. The mathematical probe itself is still the scout's responsibility; this environment preparation alone does not verify the proposed pasting improvement.
+
+- 2026-09-29T02:19:53.627215+00:00: Pinned owner findings issue734 ended mid-sentence in its final details block (actual GitHub body5403 characters). Cause of the earlier truncation is not established. Main preserved the fetched body, appended the missing fixed-input/source-route qualification and closing block through gh_common, then checked exact read-back6486 characters and balanced details. Existing pins168/500/734 were verified. Lesson: inspect the complete published issue body, including its ending, after an update; an API success alone does not establish complete prose.
+
+- 2026-09-29T02:21:14.854564+00:00: Normal telemetry commit rejected one two-space Markdown hard break in the unpublished generated blueprint729-03.last.md. Main verified the complete original receipt is retained verbatim in the immutable JSONL capture, removed only those two trailing spaces from the presentation file, and preserved raw capture SHA2564bf394042e0087b149739f9e445b51e4de193197b34b50b8f69ed6253c6637f6. Normal hooks will be retried; no bypass or mathematical text change.
+
+- 2026-09-29T02:50:44.956793+00:00: Issue735 acceptance criteria were truncated mid-word by issue_new.py applying wf_util.BODY_LIMIT=5000. Published text was verified as an exact5000characterprefix of the retained full specification. Main restored the complete body with gh_common.api, preserved its issuekey, clarified the already-required sixforms and verified exact6074characterreadback. This identifies the concrete issue-creation truncation mechanism also relevant to the earlier734incident. No lifecycle/gate tooling changed; future long issue bodies need complete read-after-write verification.
+
+- 2026-09-29T04:13:06.623280+00:00: PR736 canonical buildstep failed after successful fullLeanbuild and bothAxiomAudits because the existing QPBT comparison snapshot embedded17source-line ranges shifted by an additive10-line lemma in PauliBasisTest.lean. Main isolated a source-location-only regeneration repair; its worker must prove all nonlocatorbytes and the four-target challenge unchanged. The separate comparatorrepository and challengeextension remain outside scope. No gateoverride or source-statement change; freshcanonicalCI afterrepair.
+
+## 2026-09-29T04:32:29.749408+00:00 — post-push GitHub head propagation
+
+PR736 checked-push succeeded, but the immediate pr_for_branch read still exposed its old head and the operator tail stopped before CI. A fresh REST pull read confirmed b9cf0757; a new driver began at canonical CI without republishing or bypassing a gate. Inspect the actual remote head after a successful push; an assertion failure is not evidence that publication failed.
+
+## 2026-09-29T16:22:41.361683+00:00 — owner resumes after stale watcher cutoff
+
+The owner reports that an obsolete September22 watcher misread the pane, probed an obsolete main key and stopped the session at20260929T05:04Z. The interrupted prover729-07 also recorded terminal API_KEY_DISABLED401; its672seconds and rawcapture remain preserved, without fabricated finalusage. The owner has verified qpbt-space3 availability and restored three primaryslots. Main resumes authorized work without changing runtime, keys or otherprojects; priority737gets canonicalCI and independentreview before merge. Recover729fromits actualuncommittedfiles afterthat amendment, preserving earlierchecks and chargingvalidationstilloutstanding.
+
+## 2026-09-29T16:33:17.534711+00:00 — missing authorized QPBT worker registration
+
+CI737passed, but reviewer01 exited75beforeanymodelrequest because the owner-bin shim found no keyrotationdirectory. Accountcaps were primary3/second0 and main-key qpbt-space3, with the expectedhomepresent; keyrotcontainedonly.lock. Underthatlock mainrestoredonlyqpbt-space3/.limit=3, implementingtheowner20260930explicitallocation withoutnewkeys,credentialchanges orshimchanges. Retryusescanonicalreview.sh atthesamegreenhead. The0s/nullthreadattemptremainsrecorded; itwasnotaproviderauthfailure.
+
+## 2026-09-29T23:08:33.338862+00:00 — C8 round-two disposition
+
+R2of737resolvedallfirst-roundfindingsbutdemonstratedtwoadditionalfalseacceptancesunderthesameC8shapecontract: HTML-commentedledgersandtablesafterSetextsectionboundaries. Mainacceptsbothandassignsoneboundedrepair. review.md9 explicitlypermitsanotherreviewwhenheadchangeswithinfourroundceiling; thisisthe recordedexceptionto normaltwo-roundworkflowdisposition, withnocapreset, noadjudicatedmerge andnoothermechanismadded. Acleannormalexact-headreviewisrequiredbytheowner; donotwaiveafailinggate. Preserve974-linecompletePRbudgetduringtherepair.
+
+## 2026-09-29T23:38:23.029972+00:00 — C8 third-review table-boundary regression
+
+Review 5359790580 at `5a903c7c633558e6c6f44b1e62429187b8ff8ee6` resolves the earlier findings but shows that the new Setext check can treat the final table row before a thematic break as heading text, hiding an invalid disposition. Main accepts the finding and admits one 600-second Sol repair (900-second hard timeout), followed by the fourth and final full review under review.md §9/§12. The owner requires normal clean gates; no override or fifth review is authorized. Prior author cost is 2,095 seconds, and prior CI cost is 1,232 seconds. The owner-authorized 5,000-line budget supersedes the old line ceiling; the separate budget amendment remains queued after #737. This is a regression repair within the existing C8 contract, not a new mechanism.
+
+## 2026-09-30T00:04:57.666878+00:00 — C8 fourth-review disposition: gate remains blocked
+
+Review5359941916 at `d05015ecf4bd1f3a1fc7b1dd3c6468e237e8dbd0` resolves the table-row reproduction but identifies the general paragraph-context defect: list items, blockquotes or consecutive thematic breaks can be mistaken for Setext heading text and hide a later invalid ledger table. Main accepts the finding. The four-full-review cap in review.md §12 is now reached. The authoritative owner briefing additionally forbids an override merge and requires clean exact-head CI/review. Terminal disposition: keep the merge gate blocked, prepare and test a complete correction under a bounded600s/900s Sol assignment, and resolve the review-authority condition only after the correction is concrete. No fifth review, cap reset, fabricated approval, or adjudicated merge is admitted. The owner5000-line patch remains queued after737; no downstream mathematical writer is activated before that priority merge.
+
+## 2026-09-30T00:27:01.148306+00:00 — Explicit canonical C8 and fifth-review decision
+
+The owner relayed meta decision #27 comment5901583288 (`meta-decision-737-c8-fail-closed-20260930`): stop emulating Markdown rendering. C8 must accept only canonical `## Stage ledger`, optional blank lines and one pipe table with required columns; other constructs in the section fail with a named diagnostic. Keep applicable tests, remove rendering-behavior tests, and run fresh CI. Exactly one fifth independent review is expressly admitted for the canonical parser and amendment text; rejecting exotic valid Markdown is not a defect. If that fifth review still identifies a parsing case, an override merge is expressly authorized with an EVOLUTION record citing the note and independent human/agent inspection of the ledger as C8's delegated half. This later instruction supersedes the prior four-round/no-override constraint only as stated; no sixth review or unrelated override is granted. The ordered successors remain the5000budgetamendment,736,report/ledger. Current paragraph-context CI is allowed to finish on6d7d7bd3 before another writer changes that worktree.
+
+## 2026-09-29T23:12:07.079306+00:00 — owner decision: workflow-layer commit budget raised to 5000 lines
+
+Owner, 2026-09-30 (relayed by the Decoy project's meta session, confirmed in the QPBT meta session): the pre-commit workflow-layer budget goes from 1000 to 5000 lines, as in the Decoy project. Applied by the meta session on branch `owner-0930-workflow-budget-5000` (`.githooks/pre-commit`, its regression tests, `local/personas/main.md`, `local/protocols/EVOLUTION.md`). Override rules unchanged.

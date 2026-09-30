@@ -59,7 +59,9 @@ that determines whether the PR can be approved with outstanding issues.
    Mathlib? Are there lemmas that are overly specialized to the local context but could be
    stated more generally? Is the file structure consistent with the existing module hierarchy?
    Flag duplicated logic or lemmas that restate existing Mathlib results.
-   Modularity and duplication issues must be fixed before approval.
+   Modularity and duplication issues must be fixed before approval. A special-case lemma that
+   proves a sharper bound than the general lemma it parallels is not duplication; never ask to
+   route it through the general lemma (item 11).
 8. 🟡 **Documentation**: Do new definitions and key theorems have docstrings? Are module-level
    doc comments present for new files? Do docstrings explain mathematical meaning, not just
    Lean syntax? Missing documentation must be added before approval.
@@ -88,6 +90,25 @@ that determines whether the PR can be approved with outstanding issues.
    a paper, blueprint, or project source file, inspect the cited passage and flag unsupported,
    overstated, or ambiguous claims. Paper-gap notes must be written for third-party
    mathematical readers, not as issue logs or implementation diaries.
+
+11. 🟡 **Bound strength**: For every new or changed lemma, error-function `def` or
+   witness-structure field that states or fixes an estimate, compare the stated bound with what
+   the argument establishes, checking every step and not only the last (`AGENTS.md`, *Bound
+   strength*; `docs/anti_patterns.md` A7). Look for: error terms of different orders merged into
+   one (`max`, a common weaker exponent, one `delta` field); a numerical coefficient absorbed into
+   an exponent or a degree; a root or a square the argument did not need; padding such as `d` to
+   `m·d`; a proved bound enlarged to fit a shared lemma or interface; a special case routed
+   through a general lemma at the cost of an exponent; an additive concentration bound where a
+   multiplicative one holds; an existential-constant statement with no explicit sibling. File a
+   finding only for a loss the PR introduces (a new estimate stating less than its argument
+   gives, or a changed estimate weaker than on the base branch) in an exponent or a polynomial
+   degree on a headline's dependency path that the diff does not record as
+   `necessary: <reason>` with a `Weakening:` corollary, or as `Bound: deferred #N.` in the
+   declaration's docstring when the repair needs results absent from Mathlib and the project or
+   an interface change the PR may not make. Mention a coefficient-only loss in `## Review`
+   only. A sharp sibling beside an unchanged paper-labelled statement is not a changed error
+   parameter under item 3, and a special-case lemma proving a sharper bound than the general
+   lemma it parallels is not duplication under item 7.
 
 **Out of scope** (handled by the dedicated `Blueprint Sync & Prose Review` workflow — do
 NOT comment on these here, to avoid duplicate review threads):

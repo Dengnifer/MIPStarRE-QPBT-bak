@@ -409,7 +409,8 @@ Every PR touching Lean code should be reviewed against these criteria:
    `Fin 1000`). Watch for timeout-prone proof terms.
 
 7. **Modularity** -- Are new lemmas general enough to be reused? Could any be
-   upstreamed to Mathlib?
+   upstreamed to Mathlib? Reuse must not cost an exponent or a degree
+   (`AGENTS.md`, *Bound strength*, rule 4).
 
 8. **Documentation** -- Every new `def` and major `theorem` must have a docstring.
    Module files should have a header comment with `## References` citing the
@@ -447,7 +448,9 @@ Every PR touching Lean code should be reviewed against these criteria:
    to prove the claimed mathematics: conclusion-shaped hypotheses (A1),
    `:= rfl` definitional sleight-of-hand (A2), zero-fallback branches
    hiding preconditions (A3), trivial default witnesses (A4),
-   Mathlib-bypass castles (A5), and external `*Statement` smuggles (A6).
+   Mathlib-bypass castles (A5), external `*Statement` smuggles (A6), and
+   lossy restatements of a proved bound (A7), judged against the proof as well
+   as the paper (`AGENTS.md`, *Bound strength*).
    Use the reviewer checklist at the end of that file.
 
 12. **Proof frontier integrity** -- If the PR introduces or threads structure
