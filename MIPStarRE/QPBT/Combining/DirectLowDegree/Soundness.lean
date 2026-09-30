@@ -328,10 +328,45 @@ theorem direct_ld_soundness_of_k_eq_one_explicit :
     rw [one_mul]
     exact le_trans h3 (hmature hT)
 
-/-- Projective one-coordinate direct-game soundness with the quantitative
-coefficient `30` and exponent `1/8192`.  The witnesses and all three
-consistency expressions are those constructed from the native
-complete-measurement linear-triangle LDT theorem. -/
+/-- Projective one-coordinate direct-game soundness at the exact native
+complete-measurement error.  Singleton relabeling preserves all three defects
+and the polynomial measurements. -/
+theorem direct_ld_soundness_of_k_eq_one_at_native_error :
+    ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
+        ∀ S : Strategy (directLdGame D), S.IsProjective → 1 - ε ≤ S.value →
+          ∃ GA : DirectPolyMeasTuple D S.ιA,
+            ∃ GB : DirectPolyMeasTuple D S.ιB,
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      (((S.A (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      ((GB.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+                  S.ψ ≤ directNativeError D ε ∧
+              consistencyDefect
+                  (uniformDistribution (Fin D.m → DirectScalarQ D))
+                  (fun u outcome =>
+                    heteroKron
+                      ((GA.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+                  (fun u outcome =>
+                    heteroKron 1
+                      (((S.B (directLdPointQuestionOf D u)).postprocess
+                        (directLdPointValuesOrZero D)).effect outcome))
+                  S.ψ ≤ directNativeError D ε ∧
+              consistencyDefect (uniformDistribution Unit)
+                  (fun _ g => heteroKron (GA.effect g) 1)
+                  (fun _ g => heteroKron 1 (GB.effect g))
+                  S.ψ ≤ directNativeError D ε := by
+  intro D ε hk _ S hS hwin
+  exact exists_direct_simultaneous_polynomial_measurements_at_native_error_of_k_eq_one
+    D hk S hS ε hwin
+
+/-- Weakening: `direct_ld_soundness_of_k_eq_one_at_native_error` implies this
+coefficient-`30`, exponent-`1/8192` common-error form, as printed in paper
+`lem:ld-soundness`. -/
 theorem direct_ld_soundness_of_k_eq_one_quantitative :
     ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →
         ∀ S : Strategy (directLdGame D), S.IsProjective → 1 - ε ≤ S.value →
@@ -365,8 +400,10 @@ theorem direct_ld_soundness_of_k_eq_one_quantitative :
                   S.ψ ≤ deltaLd 30 quantitativeLowDegreePower
                     ε D.q D.m D.d D.k := by
   intro D ε hk hε S hS hwin
-  exact exists_direct_simultaneous_polynomial_measurements_quantitative_of_k_eq_one
-    D hk S hS ε hε.le hwin
+  obtain ⟨GA, GB, h1, h2, h3⟩ :=
+    direct_ld_soundness_of_k_eq_one_at_native_error D ε hk hε S hS hwin
+  have herr := direct_native_error_le_delta_ld_quantitative D hε.le hk
+  exact ⟨GA, GB, h1.trans herr, h2.trans herr, h3.trans herr⟩
 
 /-- There are universal constants bounding both point--polynomial consistency
 defects and the polynomial self-consistency defect for projective strategies

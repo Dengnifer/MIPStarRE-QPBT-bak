@@ -310,9 +310,48 @@ theorem rounded_polynomial_ordered_estimates_explicit :
   exact rounded_polynomial_ordered_estimates_of_soundness
     S points lines delta A B hB hA hAB hdelta
 
-/-- The actual rounded polynomial measurements obtained from coefficient-`30`
-one-coordinate direct soundness.  This preserves both ordered estimates and
-the projective rounded witnesses while changing only the low-degree error. -/
+/-- Native-error rounded polynomial measurements with the exact separated
+rounding orders retained in `nativeRoundingError`. -/
+theorem rounded_polynomial_ordered_estimates_at_native_error :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := directNativeError P.extendedDirectLd
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        ∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤
+              nativeOrderedPolynomialError delta δQ ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤
+              nativeOrderedPolynomialError delta δQ := by
+  classical
+  intro P ε δQ δL S points lines delta
+  have hm := P.one_le_m
+  have hd := P.hd
+  have hq : 0 < P.q := by
+    obtain ⟨k, _, hk⟩ := P.hq
+    rw [hk]
+    positivity
+  have hpos : 0 < directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q) :=
+    directPassingErrorEnvelope_pos _ _ (by positivity)
+  obtain ⟨A, B, hB, hA, hAB⟩ :=
+    direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error
+      P.extendedDirectLd _ rfl hpos (strategy lines)
+      (strategy_value_ge_directPassingErrorEnvelope lines)
+  change consistencyDefect _ _ _ _ ≤ delta at hA hB hAB
+  have hdelta : 0 ≤ delta := direct_native_error_nonneg _ hpos.le
+  obtain ⟨RA, RB, hRA, hRB, horder⟩ :=
+    rounded_polynomial_ordered_estimates_of_soundness
+      S points lines delta A B hB hA hAB hdelta
+  refine ⟨RA, RB, hRA, hRB, ?_⟩
+  intro reverse
+  simpa only [nativeOrderedPolynomialError, native_rounding_error_eq hdelta] using
+    horder reverse
+
+/-- Weakening: the native rounded construction implies the coefficient-`30`
+common-error route used to match paper `lem:ld-soundness`; this statement keeps
+the historical paper-form scalar interface. -/
 theorem rounded_polynomial_ordered_estimates_quantitative :
     ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
         (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),

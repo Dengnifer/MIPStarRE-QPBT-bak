@@ -816,6 +816,59 @@ theorem quantitative_actual_rounded_global_pair_error_bound
           mul_le_mul_of_nonneg_right (by norm_num) (mul_nonneg hn4 hF)
         _ = 10000000 * n ^ (4 : ℕ) * F := by ring
 
+/-- The concrete native mixed error is bounded by the established common
+global-pair envelope.  This comparison retains the native witness and uses the
+coefficient-`30` expression only as a final weakening. -/
+theorem quantitative_native_global_pair_error_bound
+    (P : AdmissibleParams) (e : ℝ) (he : 0 ≤ e) (he1 : e ≤ 1)
+    (hr1 : ((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ) ≤ 1) :
+    let passing := directPassingErrorEnvelope
+      (pauliBaselinePointError e + (P.m : ℝ) *
+        pauliBaselineExtendedLineError e
+          (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ)))
+      (((P.m * P.d : ℕ) : ℝ) / (P.q : ℝ))
+    let lambda := directNativeError P.extendedDirectLd passing
+    nativeGlobalPairError P lambda (pauliBaselinePointError e) ≤
+      10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
+        quantitativeGlobalPairEnvelope P e := by
+  intro passing lambda
+  let delta := deltaLd 30 quantitativeLowDegreePower passing
+    P.q (2 * P.m + 2) P.d 1
+  let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+    2 * Real.sqrt (2 * delta)
+  have hpassing : 0 ≤ passing := by
+    dsimp [passing, directPassingErrorEnvelope]
+    positivity
+  have hlambda : 0 ≤ lambda := by
+    dsimp [lambda]
+    exact direct_native_error_nonneg _ hpassing
+  have hdelta : 0 ≤ delta := by
+    dsimp [delta, deltaLd]
+    positivity
+  have hlambdaDelta : lambda ≤ delta := by
+    dsimp [lambda, delta]
+    exact direct_native_error_le_delta_ld_quantitative
+      P.extendedDirectLd hpassing rfl
+  have hetaMono := native_rounding_error_mono hlambda hlambdaDelta
+  have hetaEq : nativeRoundingError delta = eta :=
+    (native_rounding_error_eq hdelta).symm
+  rw [hetaEq] at hetaMono
+  have hraw : nativeGlobalPairRawError P lambda (pauliBaselinePointError e) ≤
+      8 * (4 * eta + 8 * pauliBaselinePointError e) +
+        (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q) := by
+    unfold nativeGlobalPairRawError
+    linarith
+  calc
+    nativeGlobalPairError P lambda (pauliBaselinePointError e) =
+        min 1 (nativeGlobalPairRawError P lambda (pauliBaselinePointError e)) := rfl
+    _ ≤ min 1 (8 * (4 * eta + 8 * pauliBaselinePointError e) +
+        (((12 * P.m * P.d + 4 * P.d + 14 : ℕ) : ℝ) / P.q)) :=
+      min_le_min_left 1 hraw
+    _ ≤ 10000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
+        quantitativeGlobalPairEnvelope P e := by
+      dsimp [eta, delta, passing]
+      exact quantitative_actual_rounded_global_pair_error_bound P e he he1 hr1
+
 end
 
 end MIPStarRE.QPBT

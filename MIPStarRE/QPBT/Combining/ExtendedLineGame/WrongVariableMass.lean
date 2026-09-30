@@ -231,6 +231,42 @@ theorem rounded_polynomial_wrong_variable_mass_explicit :
       (by trivial) RB hRB reverse).trans (add_le_add
         (mul_le_mul_of_nonneg_left (horder reverse).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
 
+/-- The native rounded measurements retain scalar-nonlinear concentration and
+both wrong-variable estimates at the exact ordered error. -/
+theorem rounded_polynomial_wrong_variable_mass_at_native_error :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := directNativeError P.extendedDirectLd
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+      let orderedError := nativeOrderedPolynomialError delta δQ
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        (∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ orderedError ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ orderedError) ∧
+        scalarNonlinearMass S .AA' RA ≤ 2 * orderedError +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q ∧
+        scalarNonlinearMass S .BB' RB ≤ 2 * orderedError +
+          2 * (((2 * P.m + 2) * P.d + 1 : ℕ) : ℝ) / P.q ∧
+        (∀ reverse : Bool,
+          scalarWrongVariableMass S .AA' RA reverse ≤ 2 * orderedError +
+            2 * (((P.m * P.d + P.m * P.d + 2 : ℕ) : ℝ) / P.q) ∧
+          scalarWrongVariableMass S .BB' RB reverse ≤ 2 * orderedError +
+            2 * (((P.m * P.d + P.m * P.d + 2 : ℕ) : ℝ) / P.q)) := by
+  intro P ε δQ δL S points lines delta orderedError
+  obtain ⟨RA, RB, hRA, hRB, horder, hNA, hNB⟩ :=
+    rounded_polynomial_scalar_mass_at_native_error P ε δQ δL S points lines
+  refine ⟨RA, RB, hRA, hRB, horder, hNA, hNB, ?_⟩
+  intro reverse
+  constructor
+  · exact (scalarWrongVariableMass_le_ordered_error S .AA' .BA''
+      (by trivial) RA hRA reverse).trans (add_le_add
+        (mul_le_mul_of_nonneg_left (horder reverse).1 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+  · exact (scalarWrongVariableMass_le_ordered_error S .BB' .AB''
+      (by trivial) RB hRB reverse).trans (add_le_add
+        (mul_le_mul_of_nonneg_left (horder reverse).2 (by norm_num : (0 : ℝ) ≤ 2)) le_rfl)
+
 /-- The coefficient-`30` rounded witnesses satisfy both wrong-variable mass
 bounds while retaining the scalar-nonlinear and ordered estimates used in
 `lem:qld-4-7`. -/
@@ -401,6 +437,37 @@ theorem rounded_polynomial_separated_mass_explicit :
   have h := rounded_polynomial_ordered_estimates_explicit
   intro P ε δQ δL S points lines delta eta
   obtain ⟨RA, RB, hRA, hRB, horder⟩ := h P ε δQ δL S points lines
+  refine ⟨RA, RB, hRA, hRB, horder, ?_, ?_⟩
+  · have hA := separatedPolynomialMass_le_ordered_errors S .AA' .BA'' (by trivial) RA hRA
+    have h0 := (horder false).1
+    have h1 := (horder true).1
+    linarith
+  · have hB := separatedPolynomialMass_le_ordered_errors S .BB' .AB'' (by trivial) RB hRB
+    have h0 := (horder false).2
+    have h1 := (horder true).2
+    linarith
+
+/-- The native rounded measurements concentrate on the faithful separated
+polynomial-pair image while retaining both ordered comparisons. -/
+theorem rounded_polynomial_separated_mass_at_native_error :
+    ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)
+        (points : CombinedPointsWitness S δQ) (_lines : ExtendedLinesWitness S points δL),
+      let delta := directNativeError P.extendedDirectLd
+        (directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q))
+      let orderedError := nativeOrderedPolynomialError delta δQ
+      ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+      ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+        Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+        (∀ reverse : Bool,
+          extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ orderedError ∧
+          extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ orderedError) ∧
+        separatedPolynomialMass S .AA' RA ≤ 6 * orderedError +
+          (((12 * P.m * P.d + 4 * P.d + 10 : ℕ) : ℝ) / P.q) ∧
+        separatedPolynomialMass S .BB' RB ≤ 6 * orderedError +
+          (((12 * P.m * P.d + 4 * P.d + 10 : ℕ) : ℝ) / P.q) := by
+  intro P ε δQ δL S points lines delta orderedError
+  obtain ⟨RA, RB, hRA, hRB, horder⟩ :=
+    rounded_polynomial_ordered_estimates_at_native_error P ε δQ δL S points lines
   refine ⟨RA, RB, hRA, hRB, horder, ?_, ?_⟩
   · have hA := separatedPolynomialMass_le_ordered_errors S .AA' .BA'' (by trivial) RA hRA
     have h0 := (horder false).1
