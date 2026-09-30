@@ -18,16 +18,6 @@ namespace MIPStarRE.QPBT
 
 noncomputable section
 
-/-- The final quantitative Pauli-soundness exponent. -/
-def pauliSoundnessQuantitativePower : ℝ := 1 / 67108864
-
-/-- The three-term error envelope at the final Pauli-soundness exponent. -/
-def pauliSoundnessQuantitativeEnvelope (P : AdmissibleParams) (e : ℝ) : ℝ :=
-  Real.rpow e pauliSoundnessQuantitativePower +
-    Real.rpow (P.q : ℝ) (-pauliSoundnessQuantitativePower) +
-    Real.rpow 2
-      (-(pauliSoundnessQuantitativePower * ((P.m * P.d : ℕ) : ℝ)))
-
 /-- The uncapped degree-four quantitative Pauli-soundness error. -/
 def pauliSoundnessQuantitativeRawError (P : AdmissibleParams) (e : ℝ) : ℝ :=
   100000000000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
@@ -38,15 +28,19 @@ range and the universal state/operator cap applied. -/
 def pauliSoundnessQuantitativeError (P : AdmissibleParams) (epsilon : ℝ) : ℝ :=
   min 4 (pauliSoundnessQuantitativeRawError P (min epsilon 1))
 
-/-- The uncapped degree-two Pauli-soundness error retained by the component
-calculation. -/
+/-- The uncapped degree-two Pauli-soundness error retained for compatibility
+with the issue #729 quantitative interface.
+
+Bound: deferred #727. -/
 def pauliSoundnessQuantitativeDegreeTwoRawError
     (P : AdmissibleParams) (e : ℝ) : ℝ :=
   1000000000 * (((P.m * P.d : ℕ) : ℝ) ^ (2 : ℕ)) *
     pauliSoundnessQuantitativeEnvelope P e
 
 /-- The degree-two common error, with the source error clipped to the
-probability range and the universal cap applied. -/
+probability range and the universal cap applied.
+
+Bound: deferred #727. -/
 def pauliSoundnessQuantitativeDegreeTwoError
     (P : AdmissibleParams) (epsilon : ℝ) : ℝ :=
   min 4 (pauliSoundnessQuantitativeDegreeTwoRawError P (min epsilon 1))
@@ -97,16 +91,6 @@ theorem pauli_soundness_quantitative_power_eq_gain_mul_baseline :
       (625 / 8 : ℝ) * pauliSoundnessBaselinePower := by
   unfold pauliSoundnessQuantitativePower pauliSoundnessBaselinePower
   norm_num
-
-/-- The final three-term envelope is nonnegative. -/
-theorem pauli_soundness_quantitative_envelope_nonneg
-    (P : AdmissibleParams) {e : ℝ} (he : 0 ≤ e) :
-    0 ≤ pauliSoundnessQuantitativeEnvelope P e := by
-  unfold pauliSoundnessQuantitativeEnvelope
-  exact add_nonneg
-    (add_nonneg (Real.rpow_nonneg he _)
-      (Real.rpow_nonneg (Nat.cast_nonneg _) _))
-    (Real.rpow_nonneg (by norm_num) _)
 
 /-- The final three-term envelope is strictly positive on the nonnegative
 error domain. -/
@@ -350,8 +334,11 @@ theorem sqrt_quantitative_extraction_scale_le_degree_two
     (mul_le_mul hconstant le_rfl (by positivity) (by norm_num)) hEF
     (Real.sqrt_nonneg E) (mul_nonneg (by norm_num) (by positivity)))
 
-/-- Taking the square root of the extraction-scale bound costs at most the
-displayed factor `10^6` and halves the envelope exponent. -/
+/-- Weakening: `sqrt_quantitative_extraction_scale_le_degree_two` implies this
+degree-four form because the historical structured theorem retains the older
+parameter factor.
+
+Bound: deferred #727. -/
 theorem sqrt_quantitative_extraction_scale_le
     (P : AdmissibleParams) (e x : ℝ) (he : 0 ≤ e) (_hx : 0 ≤ x)
     (hbound : x ≤
@@ -361,41 +348,20 @@ theorem sqrt_quantitative_extraction_scale_le
       1000000 * (((P.m * P.d : ℕ) : ℝ) ^ (4 : ℕ)) *
         pauliSoundnessQuantitativeEnvelope P e := by
   let n : ℝ := ((P.m * P.d : ℕ) : ℝ)
-  let E := quantitativeGlobalPairEnvelope P e
   let F := pauliSoundnessQuantitativeEnvelope P e
   have hn : 1 ≤ n := by
     dsimp [n]
     exact_mod_cast Nat.mul_pos P.one_le_m P.hd
-  have hn0 : 0 ≤ n := zero_le_one.trans hn
   have hn2 : n ^ (2 : ℕ) ≤ n ^ (4 : ℕ) :=
     pow_le_pow_right₀ hn (by norm_num)
-  have hE : 0 ≤ E := by dsimp [E, quantitativeGlobalPairEnvelope]; positivity
   have hF : 0 ≤ F := by
     dsimp [F]
     exact pauli_soundness_quantitative_envelope_nonneg P he
-  have hEF : Real.sqrt E ≤ F := by
-    dsimp [E, F]
-    exact sqrt_quantitative_global_pair_envelope_le_pauli_soundness P e he
-  have hconstant : Real.sqrt (100000000000 : ℝ) ≤ 1000000 := by
-    rw [Real.sqrt_le_left (by norm_num)]
-    norm_num
-  have hnRoot : Real.sqrt (n ^ (4 : ℕ)) = n ^ (2 : ℕ) := by
-    rw [show n ^ (4 : ℕ) = (n ^ (2 : ℕ)) ^ (2 : ℕ) by ring,
-      Real.sqrt_sq (sq_nonneg n)]
-  have hfactor : Real.sqrt (100000000000 * (n ^ (4 : ℕ) * E)) =
-      Real.sqrt 100000000000 * n ^ (2 : ℕ) * Real.sqrt E := by
-    rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 100000000000),
-      Real.sqrt_mul (by positivity : 0 ≤ n ^ (4 : ℕ)), hnRoot]
-    ring
-  have hroot := Real.sqrt_le_sqrt hbound
-  have hroot' : Real.sqrt x ≤
-      Real.sqrt (100000000000 * (n ^ (4 : ℕ) * E)) := by
-    simpa only [n, E, mul_assoc] using hroot
+  have hsharp := sqrt_quantitative_extraction_scale_le_degree_two
+    P e x he _hx hbound
   change Real.sqrt x ≤ 1000000 * n ^ (4 : ℕ) * F
-  rw [hfactor] at hroot'
-  exact hroot'.trans (mul_le_mul
-    (mul_le_mul hconstant hn2 (by positivity) (by norm_num)) hEF
-    (Real.sqrt_nonneg E) (mul_nonneg (by norm_num) (by positivity)))
+  exact hsharp.trans (mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hn2 (by norm_num)) hF)
 
 /-- The field ratio is bounded by the degree-two final-envelope factor. -/
 theorem quantitative_ratio_le_degree_two_base

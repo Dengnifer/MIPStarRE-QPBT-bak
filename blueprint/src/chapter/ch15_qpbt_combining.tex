@@ -7128,6 +7128,7 @@ alphabet.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-baseline-scalar-bounds}
 Use the expanded line--point comparison twice, condition on nonzero direction,
 apply Theorem~\ref{thm:qld-pasting-explicit}, and restore the discarded mass.
 The final scalar inequality is included in
@@ -7180,6 +7181,7 @@ bound.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-baseline-scalar-bounds}
 Use the subline measurement and the paired-overlap estimate, then absorb the
 result with the scalar combining inequality of
 Theorem~\ref{thm:qld-baseline-scalar-bounds}.
@@ -7457,8 +7459,6 @@ dimension growth into the coefficient $C$.
 \label{thm:qld-global-pair-witness-explicit}
 \lean{MIPStarRE.QPBT.exists_global_pair_witness_explicit}
 \leanok
-\uses{thm:qld-combined-points-explicit, thm:qld-extended-lines-explicit,
-thm:qld-rounded-polynomials-explicit, thm:qld-baseline-scalar-bounds}
 Every projective Pauli-test setting has a projective global polynomial-pair
 witness with error
 \[
@@ -7470,6 +7470,8 @@ hypotheses of this statement.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-combined-points-explicit, thm:qld-extended-lines-explicit,
+thm:qld-rounded-polynomials-explicit, thm:qld-baseline-scalar-bounds}
 Construct the point and extended-line witnesses, apply the rounded pair
 construction, and use the final inequality of
 Theorem~\ref{thm:qld-baseline-scalar-bounds}.
@@ -7864,7 +7866,7 @@ asserted.
 \leanok
 \uses{thm:qld-native-direct-soundness, thm:qld-rounded-polynomials-explicit}
 Use native arbitrary-strategy soundness in the existing projective-rounding
-constructor.  The scalar concentration, variable separation, and completion
+construction.  The scalar concentration, variable separation, and completion
 arguments preserve the displayed ordered error without a common-exponent
 replacement.
 \end{proof}
@@ -7933,16 +7935,67 @@ zero polynomial pair gives the two projective pair measurements and the four
 displayed defects.
 \end{proof}
 
+\begin{definition}[Separated native scalar errors]
+\label{def:qld-native-separated-errors}
+\lean{MIPStarRE.QPBT.quantitativeNativeSeparatedRaw}
+\lean{MIPStarRE.QPBT.quantitativeNativeSeparatedError}
+\lean{MIPStarRE.QPBT.quantitativeNativeGlobalPairSeparatedError}
+\leanok
+\uses{def:qld-coefficient-thirty-scales}
+Let $h=2m+2$, $r=md/q$, and let $a$ denote the native direct low-degree
+exponent.  For $s\in\mathbb R$, define
+\[
+\begin{split}
+ S_s(P,e)={}&h^{5s/4}d^{s/4}\Bigl[800000^s\bigl(
+ e^{as/16}+m^{as/2}e^{as/512}+m^{as/2}r^{as/32}+r^{as}\bigr)\\
+ &\hspace{42mm}+400000^s\bigl((d/q)^{as}+e^{-4hds}\bigr)\Bigr],
+ \qquad \bar S_s(P,e)=\min\{1,S_s(P,e)\}.
+\end{split}
+\]
+The separated global-pair bound is
+\[
+ B_G(P,e)=\min\left\{1,
+ 32\bar S_1+32\sqrt{220}\,\bar S_{1/8}
+ +64\sqrt2\,\bar S_{1/2}+64E_{\rm pt}(e)
+ +\frac{12md+4d+14}{q}\right\}.
+\]
+These quantities retain the six native contributions and do not replace a
+numerical coefficient by a parameter exponent.
+\end{definition}
+
+\begin{theorem}[Separated native scalar certificates]
+\label{thm:qld-native-separated-scalar-support}
+\lean{MIPStarRE.QPBT.quantitative_native_error_rpow_le_separated}
+\lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_le_separated}
+\leanok
+\uses{def:qld-native-separated-errors,
+  thm:qld-coefficient-thirty-direct-soundness}
+For $e\geq0$ and $0\leq s\leq1$, the $s$-th real power of the exact native
+direct low-degree error is at most $\bar S_s(P,e)$.  Consequently the exact
+native global-pair error, with its point and collision terms unchanged, is at
+most $B_G(P,e)$.
+\end{theorem}
+\begin{proof}
+\leanok
+\uses{def:qld-native-separated-errors,
+  thm:qld-coefficient-thirty-direct-soundness}
+Apply subadditivity of real powers separately to the four passing-error terms
+and the two direct low-degree terms.  Monotonicity through the unit cap then
+bounds the three powers occurring in the native rounding error.  Substitution
+in the exact global-pair expression proves the second inequality.
+\end{proof}
+
 \begin{theorem}[Native small-regime global polynomial pair]
 \label{thm:qld-native-small-regime-global-pair}
+\lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_le_fractional}
 \lean{MIPStarRE.QPBT.quantitative_native_global_pair_error_bound}
+\lean{MIPStarRE.QPBT.exists_quantitative_global_pair_witness_native}
 \lean{MIPStarRE.QPBT.exists_quantitative_global_pair_witness_at_native_error}
 \leanok
 \uses{thm:qld-native-rounded-polynomials,
-  thm:qld-coefficient-thirty-rounding-scalars}
+  thm:pauli-final-fractional-scalar-support}
 Let $P=(q,m,d)$ be admissible, $n=md$, and $\rho=n/q$.  Suppose
-$0\leq e\leq1$ and $\rho\leq1$, and let $S$ be a projective Pauli-test
-strategy of value at least $1-e$.  Take
+$0\leq e\leq1$.  Take
 \[
  Q=E_{\rm pt}(e),\qquad
  L_{\rm ext}=mE_{\rm ext}(e,\rho),\qquad
@@ -7954,7 +8007,13 @@ and set
  G=\min\!\left\{1,
  32\eta(\lambda)+64Q+\frac{12n+4d+14}{q}\right\}.
 \]
-On the two expanded local spaces of $S$, there are complete projective global
+Without any restriction on $\rho$, the exact native error satisfies
+\[
+ G\leq277248\,m^{20481/131072}d^{1/32}E_{\rm pair}(P,e).
+\]
+If in addition $\rho\leq1$ and $S$ is a projective Pauli-test strategy of
+value at least $1-e$, then on the two expanded local spaces of $S$, there are
+complete projective global
 polynomial-pair measurements such that, for each $W\in\{X,Z\}$, Alice's
 evaluated global measurement is consistent with Bob's expanded point
 measurement and Bob's evaluated global measurement is consistent with Alice's
@@ -7968,11 +8027,16 @@ common-envelope consequence
 \begin{proof}
 \leanok
 \uses{thm:qld-native-rounded-polynomials,
-  thm:qld-coefficient-thirty-rounding-scalars}
-Construct the point and extended-line witnesses, apply the native pair
-constructor, and cap each defect by one.  Monotonicity of the separated-power
-rounding error and the native-to-coefficient-$30$ comparison give the final
-common-envelope inequality for these same measurements.
+  thm:pauli-final-fractional-scalar-support}
+The fractional scalar certificate gives
+$\sqrt G\leq304m^{20481/262144}d^{1/64}E_b$, where
+$b=1/67108864$.  Square this estimate, use the exact dimension-power identity,
+and apply $(x+y+z)^2\leq3(x^2+y^2+z^2)$ to obtain the displayed bound with
+$E_{2b}=E_{\rm pair}$ and coefficient $304^2\cdot3=277248$.
+Construct the point and extended-line witnesses and apply the native pair
+constructor.  The retained legacy consequence follows from
+$m^{20481/131072}d^{1/32}\leq(md)^4$ and $277248\leq10^7$; it does not use the
+coefficient-$30$ low-degree comparison.
 \end{proof}
 
 \begin{theorem}[Small-regime quantitative global polynomial pair]
