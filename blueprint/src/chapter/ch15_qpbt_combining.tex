@@ -7114,10 +7114,17 @@ and restoring the discarded zero direction gives
  rH\left(\rho,\frac{8\delta_Q+2080(\eps+\sqrt\eps)}{r}\right)
    +\frac1{2q}.
 \]
-For $\delta_Q=E_{\mathrm{pt}}(\eps)$ this is at most
-$E_{\mathrm{line}}(\eps,\rho)$, and hence there is a combined-line witness
-with precisely that error.  All measurement outcomes in these comparisons
-belong to the completed field alphabet.
+The consistency defect is independently at most one.  Consequently, for
+$\delta_Q=E_{\mathrm{pt}}(\eps)$,
+\[
+ \min\!\left\{1,
+ rH\!\left(\rho,\frac{8E_{\mathrm{pt}}(\eps)
+   +2080(\eps+\sqrt\eps)}{r}\right)+\frac1{2q}\right\}
+ \leq E_{\mathrm{line}}(\eps,\rho),
+\]
+and hence there is a combined-line witness with precisely that error.  All
+measurement outcomes in these comparisons belong to the completed field
+alphabet.
 \end{theorem}
 \begin{proof}
 \leanok
@@ -7327,7 +7334,9 @@ b_{\mathrm{pair}}=\frac1{327680000}.
 \lean{MIPStarRE.QPBT.pauli_baseline_actual_rounded_global_pair_error_bound}
 \leanok
 \uses{def:qld-baseline-scalar-functions,
-thm:qld-rounded-polynomials-explicit}
+thm:qld-global-pair-bound-explicit,
+thm:qld-actual-rounded-error-bound,
+thm:pauli-error-square-root-support}
 The four coefficients $C_{\mathrm{pt}},C_{\mathrm{line}},C_{\mathrm{ext}}$
 and $C_{\mathrm{pass}}$ are at least one.  Their error functions are
 polynomially small on the nonnegative domain with the coefficients and powers

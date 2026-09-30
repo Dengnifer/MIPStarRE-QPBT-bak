@@ -154,6 +154,109 @@ private theorem placed_consistency_pairState {P : AdmissibleParams} {ε : ℝ}
       exact (stateQForm_pairState_eq_AB''_BB' S _ _ (hA x a) (hB x b)).symm
 
 set_option maxHeartbeats 800000 in
+/-- Round concrete polynomial measurements satisfying the three direct
+soundness bounds and transport them to the two ordered point comparisons. -/
+private theorem rounded_polynomial_ordered_estimates_of_soundness
+    {P : AdmissibleParams} {ε δQ δL : ℝ} (S : ProjectiveSetting P ε)
+    (points : CombinedPointsWitness S δQ) (lines : ExtendedLinesWitness S points δL)
+    (delta : ℝ)
+    (A : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice))
+    (B : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob))
+    (hB : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u outcome => heteroKron
+        ((((strategy lines).A
+          (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+            (directLdPointValuesOrZero P.extendedDirectLd)).effect outcome) 1)
+      (fun u outcome => heteroKron 1
+        ((B.postprocess (evalDirectPolyTupleAt u)).effect outcome))
+      (pairState S) ≤ delta)
+    (hA : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u outcome => heteroKron
+        ((A.postprocess (evalDirectPolyTupleAt u)).effect outcome) 1)
+      (fun u outcome => heteroKron 1
+        ((((strategy lines).B
+          (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+            (directLdPointValuesOrZero P.extendedDirectLd)).effect outcome))
+      (pairState S) ≤ delta)
+    (hAB : consistencyDefect (uniformDistribution Unit)
+      (fun _ g => heteroKron (A.effect g) 1)
+      (fun _ g => heteroKron 1 (B.effect g)) (pairState S) ≤ delta)
+    (hdelta : 0 ≤ delta) :
+    let eta := delta + Real.sqrt (220 * Real.rpow delta (1 / 4 : ℝ)) +
+      2 * Real.sqrt (2 * delta)
+    ∃ RA : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .alice),
+    ∃ RB : DirectPolyMeasTuple P.extendedDirectLd (S.ExpandedLocalSpace .bob),
+      Measurement.IsProjective RA ∧ Measurement.IsProjective RB ∧
+      ∀ reverse : Bool,
+        extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
+        extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
+  classical
+  intro eta
+  obtain ⟨RA, RB, hRA, hRB, _, _, htransport⟩ :=
+    projective_rounding_preserves_postprocessed_consistency
+      (pairState S) (pairState_norm S) A B delta hdelta hAB
+  have hround := htransport
+    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+    (uniformDistribution_isProbability _) (fun u => evalDirectPolyTupleAt u)
+  have hRApoint := hround.1
+    (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+      (directLdPointValuesOrZero P.extendedDirectLd)) delta hA
+  have hRBpoint := hround.2
+    (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+      (directLdPointValuesOrZero P.extendedDirectLd)) delta hB
+  rw [← two_mul delta] at hRApoint hRBpoint
+  change consistencyDefect _ _ _ _ ≤ eta at hRApoint hRBpoint
+  have hAscalar := (consistencyDefect_postprocess_question_le
+    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+    (fun u => RA.postprocess (evalDirectPolyTupleAt u))
+    (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+      (directLdPointValuesOrZero P.extendedDirectLd)) (pairState S)
+    (fun _ values => extendedDirectScalarEquiv P (values (0 : Fin 1)))).trans hRApoint
+  have hBscalar := (consistencyDefect_postprocess_question_le
+    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+    (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+      (directLdPointValuesOrZero P.extendedDirectLd))
+    (fun u => RB.postprocess (evalDirectPolyTupleAt u)) (pairState S)
+    (fun _ values => extendedDirectScalarEquiv P (values (0 : Fin 1)))).trans hRBpoint
+  change consistencyDefect _ _ _ (pairState S) ≤ eta at hAscalar hBscalar
+  dsimp only [strategy] at hAscalar hBscalar
+  conv at hAscalar =>
+    lhs; arg 3; ext u c; arg 2; arg 1
+    erw [point_scalar_measurement lines .bob u]
+  conv at hBscalar =>
+    lhs; arg 2; ext u c; arg 1; arg 1
+    erw [point_scalar_measurement lines .alice u]
+  simp only [MIPStarRE.Quantum.Measurement.postprocess_comp] at hAscalar hBscalar
+  have hAquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
+      (fun x c => heteroKron ((RA.postprocess (extendedPolynomialRead P x)).effect c) 1)
+      (fun x c => heteroKron 1
+        ((points.extendedQ .bob x.1.1 x.1.2 x.2.1 x.2.2).effect c)) (pairState S) ≤ eta := by
+    rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
+    simp only [extendedPolynomialRead_equiv]
+    exact hAscalar
+  have hBquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
+      (fun x c => heteroKron
+        ((points.extendedQ .alice x.1.1 x.1.2 x.2.1 x.2.2).effect c) 1)
+      (fun x c => heteroKron 1 ((RB.postprocess (extendedPolynomialRead P x)).effect c))
+      (pairState S) ≤ eta := by
+    rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
+    simp only [extendedPolynomialRead_equiv]
+    exact hBscalar
+  have hAplaced := (placed_consistency_pairState S
+    (uniformDistribution (ExtendedPointQuestion P))
+    (fun x => RA.postprocess (extendedPolynomialRead P x))
+    (fun x => points.extendedQ .bob x.1.1 x.1.2 x.2.1 x.2.2)).1.trans_le hAquestion
+  have hBplaced := (placed_consistency_pairState S
+    (uniformDistribution (ExtendedPointQuestion P))
+    (fun x => points.extendedQ .alice x.1.1 x.1.2 x.2.1 x.2.2)
+    (fun x => RB.postprocess (extendedPolynomialRead P x))).2.trans_le hBquestion
+  exact ⟨RA, RB, hRA, hRB, fun reverse =>
+    ⟨ordered_error_le points .AA' .BA'' (by trivial) RA hRA eta hAplaced reverse,
+      ordered_error_le points .BB' .AB'' (by trivial) RB hRB eta hBplaced reverse⟩⟩
+
+set_option maxHeartbeats 800000 in
 -- The proof elaborates both ordered finite-sum estimates and their rounded witnesses.
 /-- Direct soundness and same-space rounding construct extended-polynomial
 projective measurements satisfying both ordered estimates on `AA'|BA''` and
@@ -184,11 +287,9 @@ theorem rounded_polynomial_ordered_estimates_explicit :
           extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
   classical
   let a := pauliBaselineLowDegreeConstant
-  let b := pauliBaselineLowDegreePower
   have ha : 1 ≤ a := by
     dsimp only [a, pauliBaselineLowDegreeConstant]
     norm_num
-  have hsound := direct_ld_soundness_of_k_eq_one_any_strategy_explicit
   intro P ε δQ δL S points lines delta eta
   have hm := P.one_le_m
   have hd := P.hd
@@ -198,74 +299,16 @@ theorem rounded_polynomial_ordered_estimates_explicit :
     positivity
   have hpos : 0 < directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q) :=
     directPassingErrorEnvelope_pos _ _ (by positivity)
-  obtain ⟨A, B, hB, hA, hAB⟩ := hsound P.extendedDirectLd _ rfl hpos
-    (strategy lines) (strategy_value_ge_directPassingErrorEnvelope lines)
+  obtain ⟨A, B, hB, hA, hAB⟩ :=
+    direct_ld_soundness_of_k_eq_one_any_strategy_explicit P.extendedDirectLd _ rfl hpos
+      (strategy lines) (strategy_value_ge_directPassingErrorEnvelope lines)
   change consistencyDefect _ _ _ _ ≤ delta at hA hB hAB
   have hdelta : 0 ≤ delta := by
     dsimp [delta, deltaLd]
     have ha0 : 0 ≤ a := le_trans (by norm_num) ha
     positivity
-  obtain ⟨RA, RB, hRA, hRB, _, _, htransport⟩ :=
-    projective_rounding_preserves_postprocessed_consistency
-      (pairState S) (pairState_norm S) A B delta hdelta hAB
-  have hround := htransport
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    (uniformDistribution_isProbability _) (fun u => evalDirectPolyTupleAt u)
-  have hRApoint := hround.1
-    (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd)) delta hA
-  have hRBpoint := hround.2
-    (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd)) delta hB
-  rw [← two_mul delta] at hRApoint hRBpoint
-  change consistencyDefect _ _ _ _ ≤ eta at hRApoint hRBpoint
-  have hAscalar := (consistencyDefect_postprocess_question_le
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    (fun u => RA.postprocess (evalDirectPolyTupleAt u))
-    (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd)) (pairState S)
-    (fun _ values => extendedDirectScalarEquiv P (values (0 : Fin 1)))).trans hRApoint
-  have hBscalar := (consistencyDefect_postprocess_question_le
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd))
-    (fun u => RB.postprocess (evalDirectPolyTupleAt u)) (pairState S)
-    (fun _ values => extendedDirectScalarEquiv P (values (0 : Fin 1)))).trans hRBpoint
-  change consistencyDefect _ _ _ (pairState S) ≤ eta at hAscalar hBscalar
-  dsimp only [strategy] at hAscalar hBscalar
-  conv at hAscalar =>
-    lhs; arg 3; ext u c; arg 2; arg 1
-    erw [point_scalar_measurement lines .bob u]
-  conv at hBscalar =>
-    lhs; arg 2; ext u c; arg 1; arg 1
-    erw [point_scalar_measurement lines .alice u]
-  simp only [MIPStarRE.Quantum.Measurement.postprocess_comp] at hAscalar hBscalar
-  have hAquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
-      (fun x c => heteroKron ((RA.postprocess (extendedPolynomialRead P x)).effect c) 1)
-      (fun x c => heteroKron 1
-        ((points.extendedQ .bob x.1.1 x.1.2 x.2.1 x.2.2).effect c)) (pairState S) ≤ eta := by
-    rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
-    simp only [extendedPolynomialRead_equiv]
-    exact hAscalar
-  have hBquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
-      (fun x c => heteroKron
-        ((points.extendedQ .alice x.1.1 x.1.2 x.2.1 x.2.2).effect c) 1)
-      (fun x c => heteroKron 1 ((RB.postprocess (extendedPolynomialRead P x)).effect c))
-      (pairState S) ≤ eta := by
-    rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
-    simp only [extendedPolynomialRead_equiv]
-    exact hBscalar
-  have hAplaced := (placed_consistency_pairState S
-    (uniformDistribution (ExtendedPointQuestion P))
-    (fun x => RA.postprocess (extendedPolynomialRead P x))
-    (fun x => points.extendedQ .bob x.1.1 x.1.2 x.2.1 x.2.2)).1.trans_le hAquestion
-  have hBplaced := (placed_consistency_pairState S
-    (uniformDistribution (ExtendedPointQuestion P))
-    (fun x => points.extendedQ .alice x.1.1 x.1.2 x.2.1 x.2.2)
-    (fun x => RB.postprocess (extendedPolynomialRead P x))).2.trans_le hBquestion
-  exact ⟨RA, RB, hRA, hRB, fun reverse =>
-    ⟨ordered_error_le points .AA' .BA'' (by trivial) RA hRA eta hAplaced reverse,
-      ordered_error_le points .BB' .AB'' (by trivial) RB hRB eta hBplaced reverse⟩⟩
+  exact rounded_polynomial_ordered_estimates_of_soundness
+    S points lines delta A B hB hA hAB hdelta
 
 /-- The actual rounded polynomial measurements obtained from coefficient-`30`
 one-coordinate direct soundness.  This preserves both ordered estimates and
@@ -285,7 +328,6 @@ theorem rounded_polynomial_ordered_estimates_quantitative :
           extendedPolynomialOrderedError S .AA' .BA'' RA reverse ≤ 4 * eta + 8 * δQ ∧
           extendedPolynomialOrderedError S .BB' .AB'' RB reverse ≤ 4 * eta + 8 * δQ := by
   classical
-  have hsound := direct_ld_soundness_of_k_eq_one_any_strategy_quantitative
   intro P ε δQ δL S points lines delta eta
   have hm := P.one_le_m
   have hd := P.hd
@@ -295,77 +337,18 @@ theorem rounded_polynomial_ordered_estimates_quantitative :
     positivity
   have hpos : 0 < directPassingErrorEnvelope (δQ + δL) ((P.m * P.d : ℝ) / P.q) :=
     directPassingErrorEnvelope_pos _ _ (by positivity)
-  obtain ⟨A, B, hB, hA, hAB⟩ := hsound P.extendedDirectLd _ rfl hpos
-    (strategy lines) (strategy_value_ge_directPassingErrorEnvelope lines)
+  obtain ⟨A, B, hB, hA, hAB⟩ :=
+    direct_ld_soundness_of_k_eq_one_any_strategy_quantitative P.extendedDirectLd _ rfl hpos
+      (strategy lines) (strategy_value_ge_directPassingErrorEnvelope lines)
   change consistencyDefect _ _ _ _ ≤ delta at hA hB hAB
   have hdelta : 0 ≤ delta := by
     dsimp [delta, deltaLd]
     positivity
-  obtain ⟨RA, RB, hRA, hRB, _, _, htransport⟩ :=
-    projective_rounding_preserves_postprocessed_consistency
-      (pairState S) (pairState_norm S) A B delta hdelta hAB
-  have hround := htransport
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    (uniformDistribution_isProbability _) (fun u => evalDirectPolyTupleAt u)
-  have hRApoint := hround.1
-    (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd)) delta hA
-  have hRBpoint := hround.2
-    (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd)) delta hB
-  rw [← two_mul delta] at hRApoint hRBpoint
-  change consistencyDefect _ _ _ _ ≤ eta at hRApoint hRBpoint
-  have hAscalar := (consistencyDefect_postprocess_question_le
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    (fun u => RA.postprocess (evalDirectPolyTupleAt u))
-    (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd)) (pairState S)
-    (fun _ values => extendedDirectScalarEquiv P (values (0 : Fin 1)))).trans hRApoint
-  have hBscalar := (consistencyDefect_postprocess_question_le
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-      (directLdPointValuesOrZero P.extendedDirectLd))
-    (fun u => RB.postprocess (evalDirectPolyTupleAt u)) (pairState S)
-    (fun _ values => extendedDirectScalarEquiv P (values (0 : Fin 1)))).trans hRBpoint
-  change consistencyDefect _ _ _ (pairState S) ≤ eta at hAscalar hBscalar
-  dsimp only [strategy] at hAscalar hBscalar
-  conv at hAscalar =>
-    lhs; arg 3; ext u c; arg 2; arg 1
-    erw [point_scalar_measurement lines .bob u]
-  conv at hBscalar =>
-    lhs; arg 2; ext u c; arg 1; arg 1
-    erw [point_scalar_measurement lines .alice u]
-  simp only [MIPStarRE.Quantum.Measurement.postprocess_comp] at hAscalar hBscalar
-  have hAquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
-      (fun x c => heteroKron ((RA.postprocess (extendedPolynomialRead P x)).effect c) 1)
-      (fun x c => heteroKron 1
-        ((points.extendedQ .bob x.1.1 x.1.2 x.2.1 x.2.2).effect c)) (pairState S) ≤ eta := by
-    rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
-    simp only [extendedPolynomialRead_equiv]
-    exact hAscalar
-  have hBquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
-      (fun x c => heteroKron
-        ((points.extendedQ .alice x.1.1 x.1.2 x.2.1 x.2.2).effect c) 1)
-      (fun x c => heteroKron 1 ((RB.postprocess (extendedPolynomialRead P x)).effect c))
-      (pairState S) ≤ eta := by
-    rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
-    simp only [extendedPolynomialRead_equiv]
-    exact hBscalar
-  have hAplaced := (placed_consistency_pairState S
-    (uniformDistribution (ExtendedPointQuestion P))
-    (fun x => RA.postprocess (extendedPolynomialRead P x))
-    (fun x => points.extendedQ .bob x.1.1 x.1.2 x.2.1 x.2.2)).1.trans_le hAquestion
-  have hBplaced := (placed_consistency_pairState S
-    (uniformDistribution (ExtendedPointQuestion P))
-    (fun x => points.extendedQ .alice x.1.1 x.1.2 x.2.1 x.2.2)
-    (fun x => RB.postprocess (extendedPolynomialRead P x))).2.trans_le hBquestion
-  exact ⟨RA, RB, hRA, hRB, fun reverse =>
-    ⟨ordered_error_le points .AA' .BA'' (by trivial) RA hRA eta hAplaced reverse,
-      ordered_error_le points .BB' .AB'' (by trivial) RB hRB eta hBplaced reverse⟩⟩
+  exact rounded_polynomial_ordered_estimates_of_soundness
+    S points lines delta A B hB hA hAB hdelta
 
-
-/-- Existential packaging of `rounded_polynomial_ordered_estimates_explicit`,
-preserving the established rounded-polynomial API. -/
+/-- There are universal low-degree constants for which the rounded polynomial
+measurements are projective and satisfy both ordered point-comparison bounds. -/
 theorem exists_rounded_polynomial_ordered_estimates :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)

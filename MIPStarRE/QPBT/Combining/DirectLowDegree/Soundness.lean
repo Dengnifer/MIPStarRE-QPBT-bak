@@ -368,8 +368,9 @@ theorem direct_ld_soundness_of_k_eq_one_quantitative :
   exact exists_direct_simultaneous_polynomial_measurements_quantitative_of_k_eq_one
     D hk S hS ε hε.le hwin
 
-/-- Existential packaging of `direct_ld_soundness_of_k_eq_one_explicit`,
-preserving the established auxiliary API. -/
+/-- There are universal constants bounding both point--polynomial consistency
+defects and the polynomial self-consistency defect for projective strategies
+in the one-coordinate directly indexed low-degree game. -/
 theorem exists_direct_ld_soundness_of_k_eq_one :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (D : DirectLdParams) (ε : ℝ), D.k = 1 → 0 < ε →

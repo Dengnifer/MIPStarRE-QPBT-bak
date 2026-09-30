@@ -650,8 +650,8 @@ theorem global_pair_error_bound_explicit (pointError : ℝ → ℝ)
     simpa only [one_mul] using mul_le_mul hprefactorOne henvOne
       (by norm_num : (0 : ℝ) ≤ 1) (zero_le_one.trans hprefactorOne)
 
-/-- Existential packaging of `global_pair_error_bound_explicit`, preserving the
-established scalar API. -/
+/-- Polynomial point and combined-error estimates admit universal constants
+that bound the capped global polynomial-pair expression by `deltaQld`. -/
 theorem exists_global_pair_error_bound (pointError : ℝ → ℝ)
     (hpoint : IsPolyErr pointError) (combinedError : ℝ → ℝ → ℝ)
     (hcombined : IsPolyErr₂ combinedError)

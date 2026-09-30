@@ -333,8 +333,9 @@ theorem pair_witness_of_points_lines_quantitative :
         le_rfl).trans_eq hbound)
 
 
-/-- Existential packaging of `pair_witness_of_points_lines_explicit`, preserving
-the established global-pair constructor API. -/
+/-- There are universal low-degree constants for which supplied point and
+extended-line witnesses determine complete projective polynomial-pair
+measurements satisfying all four point-consistency bounds. -/
 theorem exists_pairWitness_of_points_lines :
     ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧
       ∀ (P : AdmissibleParams) (ε δQ δL : ℝ) (S : ProjectiveSetting P ε)

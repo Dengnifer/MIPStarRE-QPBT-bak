@@ -2075,9 +2075,11 @@ There is also a formal composition that substitutes the global witness of
 Theorem~\ref{thm:qld-global-pair-witness-explicit}, with
 $C=C_{\mathrm{extract}}$ and
 $\delta_G=\delta_{\mathrm{qld}}(C_{\mathrm{pair}},b_{\mathrm{pair}},
-\eps,m,d,q)$.  The supplied-witness estimates used by that composition retain
-a tracked proof obligation, so this node does not certify the source-facing
-discharge.
+\eps,m,d,q)$.  The supplied-witness estimates are conditional statements, but
+the composition constructs the global witness internally and is complete.
+The separately tracked source-game correspondence and direct-carrier
+restrictions remain open; the conditional helpers are not promoted to
+source-labelled results.
 \end{theorem}
 \begin{proof}
 Project the swapped state onto the EPR factor, normalize the resulting
