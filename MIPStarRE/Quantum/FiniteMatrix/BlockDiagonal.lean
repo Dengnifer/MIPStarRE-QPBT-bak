@@ -1,4 +1,6 @@
-import MIPStarRE.Quantum.FiniteMatrix.Order
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix.Order
 
 /-!
 # Block-diagonal finite matrix operators
@@ -8,6 +10,8 @@ for finite complex matrices.  The canonical SDP block algebra in Section 9 uses
 these lemmas to compare the paper's block form with Mathlib's
 `Matrix.blockDiagonal`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise
 open WithLp

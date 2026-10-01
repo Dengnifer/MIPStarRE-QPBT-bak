@@ -17,7 +17,7 @@ open scoped Matrix.Norms.Elementwise
 open WithLp
 variable {d : Type*} [Fintype d]
 
--- source: MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean:82-83  (MIPStarRE.Quantum.IsProj)
+-- source: MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean:86-87  (MIPStarRE.Quantum.IsProj)
 /-- Paper-facing name for Mathlib's predicate that a matrix is a self-adjoint idempotent. -/
 abbrev IsProj (P : Op d) : Prop := IsStarProjection P
 end  -- module scope

@@ -50,7 +50,7 @@ structure Parameters where
 end MIPStarRE.LDT
 namespace MIPStarRE.Quantum
 
--- source: MIPStarRE/Quantum/FiniteMatrix/Basic.lean:78-79  (MIPStarRE.Quantum.Op)
+-- source: MIPStarRE/Quantum/FiniteMatrix/Basic.lean:82-83  (MIPStarRE.Quantum.Op)
 /-- Square complex matrices as the finite-dimensional operator algebra. -/
 abbrev Op (d : Type*) := Matrix d d ℂ
 end MIPStarRE.Quantum
@@ -163,7 +163,7 @@ open scoped Matrix.Norms.Elementwise
 open WithLp
 variable {d : Type*} [Fintype d]
 
--- source: MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean:20-22  (MIPStarRE.Quantum.normalizedTrace)
+-- source: MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean:24-26  (MIPStarRE.Quantum.normalizedTrace)
 /-- The normalized trace `τ(A) = tr(A) / |d|`. -/
 noncomputable def normalizedTrace (A : Op d) : ℂ :=
   A.trace / (Fintype.card d : ℂ)

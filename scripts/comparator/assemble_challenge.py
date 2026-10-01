@@ -94,11 +94,16 @@ class Assembler:
 
     def imports_of(self, path: str) -> list[str]:
         # imports are only legal at the top of a Lean file, so scanning the
-        # whole file for ^import is safe and robust against comment headers
+        # whole file is safe and robust against comment and module headers
         return [
             m.group(1).replace(".", "/") + ".lean"
             for raw in self.get_lines(path)
-            if (m := re.match(r"import\s+([\w.]+)", raw))
+            if (
+                m := re.match(
+                    r"(?:public\s+)?(?:meta\s+)?import(?:\s+all)?\s+([\w.]+)",
+                    raw,
+                )
+            )
         ]
 
     def local_closure(self, path: str) -> set[str]:

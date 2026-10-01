@@ -78,12 +78,17 @@ would report a challenge that states nothing as current.
 
 The regeneration guard and the LDT preservation regression answer different
 questions.  Regeneration checks that the fixture agrees with the current
-library.  `ComparatorChallengeDriftTests.test_ldt_expected_matches_original_baseline`
-also hashes `expected/Challenge.lean.expected` and requires the original LDT
+library.  `ComparatorChallengeDriftTests.test_ldt_expected_matches_baseline`
+also hashes `expected/Challenge.lean.expected` and requires the preserved LDT
 digest
-`cbe5642bb88db75f86bd79936896e684aa407a02108d8259ead71a0738783e73`.
+`e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b`.
 Consequently, a QPBT-only change cannot silently update both the library and the
 generated LDT fixture.
+
+The module-conversion pilot changed the previous digest only because the
+`FiniteMatrix` module and public-section headers shifted two generated source
+line comments. The LDT challenge declarations and target statement were
+unchanged.
 
 For an intentional future LDT change, first regenerate from fresh built
 metadata, audit the exact fixture diff, and verify it in LDT-comparator.  Then

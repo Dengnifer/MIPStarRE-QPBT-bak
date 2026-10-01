@@ -1,4 +1,13 @@
+module
+
 import Lean
+
+/-!
+# Blueprint declaration checker
+
+This executable imports the project root and verifies that every declaration
+listed in `blueprint/lean_decls` resolves in the resulting environment.
+-/
 
 open Lean
 
@@ -36,7 +45,7 @@ private def missingDecls
 private def usage : String :=
   "Usage: lake exe checkdecls blueprint/lean_decls"
 
-unsafe def main (args : List String) : IO UInt32 := do
+public unsafe def main (args : List String) : IO UInt32 := do
   match args with
   | [pathStr] =>
       let path := System.FilePath.mk pathStr
