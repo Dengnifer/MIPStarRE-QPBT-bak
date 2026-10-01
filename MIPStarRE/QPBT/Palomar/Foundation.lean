@@ -20,7 +20,7 @@ open scoped BigOperators ComplexOrder
 namespace MIPStarRE.QPBT.Palomar
 
 /-- A finite two-player one-round game with a Mathlib probability mass function. -/
-structure Game (X Y A B : Type*) [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+structure Game (X Y A B : Type) [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     [DecidableEq X] [DecidableEq Y] [DecidableEq A] [DecidableEq B] where
   μ : PMF (X × Y)
   decide : X → Y → A → B → Bool
@@ -32,7 +32,7 @@ structure POVM (A I : Type*) [Fintype A] [Fintype I] [DecidableEq I] where
   sum_eq_one : ∑ a, effect a = 1
 
 /-- A finite-dimensional pure unit-state tensor-product strategy. -/
-structure Strategy (X Y A B : Type*) [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
+structure Strategy (X Y A B : Type) [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     where
   ιA : Type
   ιB : Type
@@ -55,13 +55,13 @@ noncomputable def reindexState {I J : Type*} [Fintype I] [DecidableEq I]
   (EuclideanSpace.equiv J ℂ).symm (fun j => (EuclideanSpace.equiv I ℂ ψ) (e.symm j))
 
 /-- A symmetric finite game. -/
-structure SymmetricGame (X A : Type*) [Fintype X] [Fintype A]
+structure SymmetricGame (X A : Type) [Fintype X] [Fintype A]
     [DecidableEq X] [DecidableEq A] extends Game X X A A where
   μ_symm : ∀ x y, μ (x, y) = μ (y, x)
   decide_symm : ∀ x y a b, decide x y a b = decide y x b a
 
 /-- A swap-invariant strategy using one local space and one measurement family. -/
-structure SymmetricStrategy (X A : Type*) [Fintype X] [Fintype A] where
+structure SymmetricStrategy (X A : Type) [Fintype X] [Fintype A] where
   ι : Type
   [ιFintype : Fintype ι]
   [ιDecidableEq : DecidableEq ι]
@@ -73,7 +73,7 @@ structure SymmetricStrategy (X A : Type*) [Fintype X] [Fintype A] where
 attribute [instance] SymmetricStrategy.ιFintype SymmetricStrategy.ιDecidableEq
 
 /-- Regard a symmetric strategy as a general tensor-product strategy. -/
-def SymmetricStrategy.toStrategy {X A : Type*} [Fintype X] [Fintype A]
+def SymmetricStrategy.toStrategy {X A : Type} [Fintype X] [Fintype A]
     (S : SymmetricStrategy X A) : Strategy X X A A where
   ιA := S.ι
   ιB := S.ι
@@ -83,14 +83,14 @@ def SymmetricStrategy.toStrategy {X A : Type*} [Fintype X] [Fintype A]
   bob := S.meas
 
 /-- The Born weight of a fixed question and answer tuple. -/
-noncomputable def Strategy.outcomeWeight {X Y A B : Type*}
+noncomputable def Strategy.outcomeWeight {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
   (S : Strategy X Y A B) (x : X) (y : Y) (a : A) (b : B) : ℝ :=
   (inner ℂ S.ψ (Matrix.toEuclideanLin
     (Matrix.kronecker ((S.alice x).effect a) ((S.bob y).effect b)) S.ψ)).re
 
 /-- The tensor-product Born value of a strategy in a finite game. -/
-noncomputable def Strategy.value {X Y A B : Type*} [Fintype X] [Fintype Y]
+noncomputable def Strategy.value {X Y A B : Type} [Fintype X] [Fintype Y]
     [Fintype A] [Fintype B] [DecidableEq X] [DecidableEq Y]
     [DecidableEq A] [DecidableEq B] (S : Strategy X Y A B) (G : Game X Y A B) : ℝ :=
   ∑ xy, (G.μ xy).toReal * ∑ a, ∑ b,
@@ -102,19 +102,20 @@ def POVM.IsProjective {A I : Type*} [Fintype A] [Fintype I] [DecidableEq I]
   ∀ a, IsStarProjection (M.effect a)
 
 /-- Projectivity of both measurement families of a strategy. -/
-def Strategy.IsProjective {X Y A B : Type*}
+def Strategy.IsProjective {X Y A B : Type}
     [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
     (S : Strategy X Y A B) : Prop :=
   (∀ x, (S.alice x).IsProjective) ∧ ∀ y, (S.bob y).IsProjective
 
 /-- State-dependent consistency of one POVM with itself across the two tensor factors. -/
-def POVM.IsConsistentOn {A I : Type*} [Fintype A] [Fintype I] [DecidableEq I]
+def POVM.IsConsistentOn {A I : Type*} [Fintype A] [DecidableEq A]
+    [Fintype I] [DecidableEq I]
     (M : POVM A I) (ψ : EuclideanSpace ℂ (I × I)) : Prop :=
   ∀ a, (Matrix.kronecker (M.effect a) 1).mulVec ψ =
     (Matrix.kronecker 1 (M.effect a)).mulVec ψ
 
 /-- Consistency of every measurement in a symmetric strategy. -/
-def SymmetricStrategy.IsConsistent {X A : Type*} [Fintype X] [Fintype A]
+def SymmetricStrategy.IsConsistent {X A : Type} [Fintype X] [Fintype A] [DecidableEq A]
     (S : SymmetricStrategy X A) : Prop :=
   ∀ x, (S.meas x).IsConsistentOn S.ψ
 
@@ -125,7 +126,7 @@ def IsCommutingOn {X Y A B I : Type*} [Fintype X] [Fintype Y]
   ∀ x y, 0 < μ (x, y) → ∀ a b, Commute ((alice x).effect a) ((bob y).effect b)
 
 /-- Symmetric, projective, consistent, and support-wise commuting strategy. -/
-def SymmetricStrategy.IsSPCC {X A : Type*} [Fintype X] [Fintype A]
+def SymmetricStrategy.IsSPCC {X A : Type} [Fintype X] [Fintype A]
     [DecidableEq X] [DecidableEq A] (S : SymmetricStrategy X A)
     (G : SymmetricGame X A) : Prop :=
   (∀ x, (S.meas x).IsProjective) ∧ S.IsConsistent ∧ IsCommutingOn G.μ S.meas S.meas
