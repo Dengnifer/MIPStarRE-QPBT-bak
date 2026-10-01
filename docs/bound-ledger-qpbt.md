@@ -1,5 +1,7 @@
 # QPBT bound ledger
 
+> **UNFINISHED CHECKPOINT — October 1, 2026.** This is the preserved historical 114-row draft. Reconciliation with all 57 bound rows in merged PR #736 is unfinished; the planned 152-row ledger has not been produced. PR #731 and PR #736 are merged, but these documents have not passed their own final CI or independent review. This draft is published for inspection under the owner deadline fallback; it is not a completion claim.
+
 > **Proof-source status, September 30, 2026.** This ledger is reconciled against
 > the implemented quantitative QPBT proof at commit
 > `2ad0a5c12b28bbef8ba54b7bef22d786778a09e9`. The native-LDT transport, concrete

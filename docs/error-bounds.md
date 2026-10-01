@@ -1,23 +1,31 @@
 # Error bounds in the low individual degree and Pauli basis tests
 
-> **Draft status, September 30, 2026 (Asia/Tokyo).** The bounded two-improvement
-> scope consists of the native LDT improvement from issue [#728][issue-728] and
-> the quantitative QPBT improvement from issue [#729][issue-729]. The LDT result
-> is proved and merged by [PR #731][pr-731] as
-> [`fac99fdf22bbdbb83a2376ca48cd679dc7d13750`][ldt-merge]. The QPBT declarations
-> at [`2ad0a5c12b28bbef8ba54b7bef22d786778a09e9`][qpbt-proof-source] remain
-> immutable historical proof evidence. [PR #736][pr-736] is still open, and its
-> pending native six-term scalar and fractional common headline have not yet
-> been Lean-proved, independently reviewed, or merged. The stronger structural
-> candidate in issue [#735][issue-735] remains mathematically accepted and
-> unimplemented under the owner's stopping rule; it is not being dismissed as
-> less significant.
+> **UNFINISHED CHECKPOINT — October 1, 2026.** The final report writer stopped on a provider quota error after partially updating this report. Its formulas, inventory statuses and source links still need reconciliation and independent review. PR #731 and PR #736 are merged, but these documents have not passed their own final CI or independent review. This draft is published for inspection under the owner deadline fallback; it is not a completion claim.
 
-> **QPBT publication gates.** Canonical CI: `QPBT_FINAL_CI`; independent review:
-> `QPBT_FINAL_REVIEW`; merge commit: `QPBT_MERGE_COMMIT`. These placeholders
-> remain deliberately unfilled. Source completion, final review, merge, report
-> reconciliation, and the QPBT ledger update are still outstanding, so this
-> draft makes no publication claim.
+> **Final report status, September 30, 2026.** The bounded two-improvement scope
+> consists of the native LDT improvement from issue [#728][issue-728] and the
+> quantitative QPBT improvement from issue [#729][issue-729]. The LDT result was
+> proved and merged by [PR #731][pr-731] as
+> [`fac99fdf22bbdbb83a2376ca48cd679dc7d13750`][ldt-merge]. The final QPBT source
+> head [`6ea9f96bd86aaaad613130dea49eefdf6e80c5a9`][qpbt-final-head] was proved,
+> reviewed, and merged normally by [PR #736][pr-736] as
+> [`0b847308c30769be983bbd05c297e1014db76590`][qpbt-merge]. The stronger
+> source-argument candidate in issue [#735][issue-735] remains mathematically
+> accepted and unimplemented under the owner's stopping rule; this is a scope
+> decision, not a ranking against the implemented result.
+
+> **QPBT publication evidence.** Exact-head CI passed all eight steps and all
+> nine contexts in 567 summed step-seconds. The canonical declaration check
+> resolved 2,198 Lean references, and the blueprint axiom closure checked 2,187
+> declarations across 407 modules with zero failures: 403 statement-only and
+> 1,784 proof-level placements. Review
+> [#5372229944][qpbt-mathematical-review] approved the mathematics and requested
+> only prose and dependency repairs; review
+> [#5372895844][qpbt-final-review] approved the final editorial patch after
+> independently checking that code and formulas were unchanged. The ordinary
+> seven-gate merge had no override. This report and its ledger have not
+> themselves yet passed normal CI, `review.sh`, or the separate independent
+> mathematical review.
 
 In plain terms, the merged LDT theorem changes both the asymptotic error decay
 and the parameter dependence. It replaces the baseline powers
@@ -26,33 +34,33 @@ and the parameter dependence. It replaces the baseline powers
 \(k^{1/4}m^{1/2}\), while improving the exponential-tail denominator from
 \(2560000m^2\) to \(640000m^2\).
 
-The historical pinned QPBT proof keeps the same exponent gain already obtained
-by the degree-four route, from the exact baseline exponent
-\(1/5242880000\) to \(1/67108864\), while retaining the polynomial factor
-proved at that source:
+The merged QPBT theorem improves the exact baseline exponent from
+\(1/5242880000\) to \(1/67108864\), a factor of \(625/8=78.125\), while
+retaining the fractional dimension factor established by its scalar argument:
 
 \[
- \boxed{\min\{4,10^9(md)^2E_{1/67108864}\}}.
+ \boxed{H=\min\{4,10769120\,
+ m^{20481/262144}d^{1/64}E_{1/67108864}\}}.
 \]
 
-Thus the historical structured degree is two, not four, and the coefficient is
-\(10^9\), not \(10^{14}\). One witness controls the unsquared state norm and
-both raw summed-squared operator errors, and the historical qubit theorem
-preserves all three quantities exactly. These remain proved facts at the pinned
-source, not the final #736 headline.
+One witness controls the unsquared state norm and both raw summed-squared
+prescribed-answer operator errors, and the exact qubit theorem preserves all
+three metrics. The older common bounds
+\(I=\min\{4,10^9(md)^2E_b\}\) and
+\(C=\min\{4,10^{14}(md)^4E_b\}\) remain available as compatibility
+corollaries, with the proved chain \(H\le I\le C\); they are not the strongest
+implemented common headline.
 
 Separately, the source-argument survey with the LDT input frozen found a
 stronger structural candidate
 \(\min\{4,10^{10}(md)^{15/4+5/262144}E_{1/1048576}\}\). Its exponent is
 64 times larger than \(1/67108864\). That gain remains important, but issue
-#735 is deferred by scope rather than by mathematical ranking. The #736 policy
-correction is intended to preserve the native capped LDT error and the mixed
-rounding/extraction terms before a common envelope. Its proposed common target
-is
-\(\min\{4,10769120m^{20481/262144}d^{1/64}E_{1/67108864}\}\).
-The exact scalar comparisons below are accepted conditional algebra for this
-displayed function; they do not establish the pending Lean soundness theorem or
-order it against the exact native mixed-component bounds.
+#735 is deferred by scope rather than by mathematical ranking. The merged #736
+proof preserves the native capped LDT error and the mixed rounding/extraction
+terms before deriving \(H\). The exact mixed construction remains a distinct
+theorem; the common headline does not replace it. The scalar comparisons below
+rank common envelopes only and do not order them against the native mixed
+state/operator estimates.
 
 The main gains below concern powers and scaling, not only numerical
 coefficients. For a small number `x`, replacing `x^(1/40000)` by
@@ -105,12 +113,11 @@ The report uses the following status terms.
 - **IMPLEMENTED (selected; proved and merged)** means that the selected LDT
   declaration, its baseline, and its comparison evidence are present on the
   merged branch.
-- **IMPLEMENTED (historical; proved at the pinned source)** means that the QPBT
-  declaration and its stated comparisons compile at the immutable 2ad source.
-  It does not identify the final #736 result.
-- **CONDITIONAL IMPLEMENTATION TARGET** means that the displayed scalar formula
-  and its algebraic comparisons have been checked, but the Lean construction,
-  theorem, review, and merge are still pending.
+- **IMPLEMENTED (proved and merged)** means that the QPBT declaration and its
+  stated comparisons are present at final source head `6ea9f96b` and merge
+  commit `0b847308`, with exact-head CI and independent review evidence.
+- **IMPLEMENTED (retained compatibility result)** means that an older common
+  envelope remains proved but is now a weakening of a sharper merged theorem.
 - **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED** means that an author derived
   the complete mathematical target and an independent referee accepted it, but
   the required Lean declarations do not yet exist.
@@ -519,23 +526,23 @@ calculation also supplied the simpler padded upper bound
 This exceeds \(a_0\), but it is not the exact theorem constant. The declarations
 [`pauli_soundness_explicit_baseline`][qpbt-baseline-proved] and
 [`pauli_soundness_qubit_explicit_baseline`][qpbt-qubit-baseline-proved] occur in
-the pinned QPBT proof source. Their assumptions match the source strategy and
+the merged QPBT proof source. Their assumptions match the source strategy and
 nonnegative-error domain, and each produces one common normalized auxiliary
 state with the unsquared state estimate and both raw prescribed-answer
 summed-squared operator estimates. The padded \(a_{\mathrm{base}}\) remains a
 scalar comparison only, and the source-facing `pauli_soundness` theorem remains
 existential.
 
-### Historical issue #729 implementation
+### Merged issue #729 implementation
 
-The earlier published branch proves the historical structured error
+The merged proof retains the historical structured error
 
 \[
  C=\min\{4,10^{14}n^4E_b\},
  \qquad b=\frac1{67108864}.
 \]
 
-Its retained four declarations are `pauli_soundness_quantitative`,
+Its retained compatibility declarations are `pauli_soundness_quantitative`,
 `pauli_soundness_quantitative_canonical`,
 `pauli_soundness_qubit_quantitative`, and
 `pauli_soundness_qubit_quantitative_canonical`. The bound-strength audit found
@@ -561,16 +568,16 @@ degree. Relative to the exact fixed-witness baseline, the exponent gain is
  \frac{5242880000}{67108864}=78.125.
 \]
 
-The pinned source proves the structured field-coordinate theorem
+The merged source proves the structured field-coordinate theorem
 [`pauli_soundness_quantitative_degree_two`][qpbt-quantitative-proved], its exact
 qubit transport, the mixed component theorem and its exact qubit transport, and
 the comparisons with \(C\) and the historical baseline. On the enlarged
 nonsaturated branch it constructs the actual witness rather than tightening an
 arbitrary witness selected by the saturated historical theorem.
 
-#### The historical low-degree route
+#### The native low-degree route
 
-The 2ad QPBT headline uses the one-coordinate Lean theorem
+The merged QPBT headline uses the one-coordinate Lean theorem
 [`exists_direct_ld_soundness_of_k_eq_one`][direct-one-coordinate], not the
 general simultaneous theorem or the seed-indexed theorem
 `exists_ld_soundness`. It specializes the [source low-degree theorem
@@ -595,9 +602,9 @@ bound. If the direct-game dimension is denoted by \(h\), substitution of
 
 The factor follows from the equality
 \(N^{1/4}=40h^{3/4}d^{1/4}\), not from padding that root to \(40hd\).
-The historical quantitative branch weakens \(\Lambda_h(t)\) to the printed
+The compatibility branch weakens \(\Lambda_h(t)\) to the printed
 common form \(\delta_{\mathrm{LD}}(30,\tau)\) before constructing and rounding
-the polynomial measurements. The native route proved at 2ad carries
+the polynomial measurements. The merged native route carries
 \(\Lambda_h(t)\) through the direct-coordinate theorem, singleton transport,
 arbitrary-strategy compression, and the rounded polynomial-pair construction
 for the same measurements. The common \(\delta_{\mathrm{LD}}\) theorem remains
@@ -621,12 +628,59 @@ The existing rounded-measurement calculation then supports the concrete error
 \]
 
 The theorem
-[`exists_quantitative_global_pair_witness_at_native_error`][qpbt-native-global]
+[`exists_quantitative_global_pair_witness_native`][qpbt-native-global]
 constructs the witness with
-\(g=G(\Lambda_{2m+2}(T_{\mathrm{pass}}),Q)\). This retains the exact exponential
-tail and the distinct error orders instead of making
-\(10^7n^4E_{2b}\) the only construction interface. The latter bound is proved
-separately for the same witness as the paper-shaped common-envelope consequence.
+\(g=G(\Lambda_{2m+2}(T_{\mathrm{pass}}),Q)\) under the sole scalar premise
+\(e\ge0\). It does not assume \(e\le1\) or \(r\le1\). The older
+`exists_quantitative_global_pair_witness_at_native_error` packages the same
+equality together with the compatibility comparison
+\(g\le10^7n^4E_{2b}\) on the restricted scalar branch; that bundled comparison
+is not the construction interface.
+
+The merged proof also exports the separated scalar route. For \(0\le s\le1\),
+let
+
+\[
+\begin{aligned}
+ U_s={}&h^{5s/4}d^{s/4}\Bigl[800000^s\bigl(
+ e^{\tau s/16}+m^{\tau s/2}e^{\tau s/512}
+ +m^{\tau s/2}r^{\tau s/32}+r^{\tau s}\bigr)\\
+ &\hspace{8em}+400000^s\bigl((d/q)^{\tau s}
+ +\exp(-4hds)\bigr)\Bigr],\qquad L_s=\min\{1,U_s\}.
+\end{aligned}
+\]
+
+Then \(\lambda^s\le L_s\). With
+\(c=(12n+4d+14)/q\), define
+
+\[
+ B_G=\min\{1,32L_1+32\sqrt{220}L_{1/8}
+       +64\sqrt2L_{1/2}+64Q+c\}.
+\]
+
+The exact pair error satisfies \(G\le B_G\). The separated extraction
+certificates are
+
+\[
+ Y_{\mathrm{sep}}=2800(B_G+\sqrt e+r)
+\]
+
+and
+
+\[
+\begin{aligned}
+ Z_{\mathrm{sep}}=\sqrt{2800}\bigl(&\sqrt{32}L_{1/2}
+ +\sqrt{32\sqrt{220}}L_{1/16}
+ +\sqrt{64\sqrt2}L_{1/4}\\
+ &+8\sqrt Q+\sqrt c+e^{1/4}+\sqrt r\bigr).
+\end{aligned}
+\]
+
+The merged theorems retain the two conclusions separately:
+\(X_{\mathrm{native}}\le Y_{\mathrm{sep}}\) and
+\(\sqrt{X_{\mathrm{native}}}\le Z_{\mathrm{sep}}\). These symbols are distinct
+from the earlier extraction identity
+\(Y_{\mathrm{old}}=48g+2752e+4r\).
 
 The distinction from other nearby theorems is important. The general direct
 transport and the seed-indexed theorem are valid, but they are off the Pauli
@@ -639,7 +693,7 @@ separately proved quantum-linearity theorem.
 
 #### Retaining the existing stronger estimates
 
-At the extended dimension \(M=2m+2\le4m\), the existing passing calculation in
+At the extended dimension \(h=2m+2\le4m\), the existing passing calculation in
 the route to [source lemma `lem:qld-4-7`][qpbt-paper-composition] gives, on the
 small-parameter branch,
 
@@ -659,7 +713,7 @@ subadditivity supports the mixed estimate
 
 \[
  \begin{aligned}
- L_{\mathrm{mix}}=30(Md)^{30}\bigl[&(10^8m)^\tau
+ L_{\mathrm{mix}}=30(hd)^{30}\bigl[&(10^8m)^\tau
    (e^u+r^{\tau/32})\\
    &+q^{-\tau}+2^{-\tau Md}\bigr].
  \end{aligned}
@@ -676,7 +730,7 @@ interface instead pads that stage to
 \]
 
 The native-error route is more informative than \(L_{\mathrm{mix}}\): it carries
-\(\Lambda_M(T_{\mathrm{pass}})\) itself into \(G\). The coefficient-30
+\(\Lambda_h(T_{\mathrm{pass}})\) itself into \(G\). The coefficient-30
 expression remains a separate source-shaped weakening rather than the native
 construction interface.
 
@@ -695,8 +749,7 @@ which
  D_{\mathrm{swap}}\le2x+2r+16\sqrt x.
 \]
 
-The earlier published proof keeps these estimates attached to the same
-auxiliary state
+The merged proof keeps these estimates attached to the same auxiliary state
 instead of enlarging them immediately to a common fourth-root error. The
 transfer inequalities then give
 
@@ -724,20 +777,20 @@ operator-family distance is at most four. The cases \(r\ge1\) and \(n=1\)
 already make the common envelope at least four. Zero error is supported, and
 no divisibility condition on \(2m+2\) is introduced.
 
-The earlier published headlines retain the source-facing **raw prescribed-answer
+The merged headlines retain the source-facing **raw prescribed-answer
 effects**, not only the internally completed Pauli measurements. They also
 retain the range projections used by the existing isometry and Naimark
 arguments.
 
-### Historical proved native mixed component envelope
+### Proved native mixed component envelope
 
-Before its common-envelope comparison, the 2ad proof keeps the different
+Before its common-envelope comparison, the merged proof keeps the different
 state and operator orders visible. With
 
 \[
- M=2m+2,\qquad
+ h=2m+2,\qquad
  T_{\mathrm{pass}}=3\left(\sqrt{Q+L_{\mathrm{ext}}}+r\right),\qquad
- \lambda=\Lambda_M(T_{\mathrm{pass}}),
+ \lambda=\Lambda_h(T_{\mathrm{pass}}),
 \]
 
 put
@@ -765,9 +818,9 @@ estimates, and
 transports them exactly. No scalar ordering between this native mixed function
 and \(F\), \(I\), or \(C\) is asserted.
 
-### Historical proved degree-two envelope
+### Retained degree-two envelope
 
-The 2ad implementation, building on the accepted
+The merged implementation, building on the accepted
 [bound-strength audit][bound-audit] and earlier
 [quadratic-candidate calculation][qpbt-quadratic-candidate], retains the
 degree-two factor that the historical published #729 headline enlarges to
@@ -861,12 +914,12 @@ argument gives \(F\le I\). For that calculation,
 
 Saturation completes the source-argument comparison, and \(F<I\) holds exactly
 when \(F_{\mathrm{raw}}<4\). These are capped comparisons; no uncapped uniform
-domination is asserted. The function \(I\) is the historical #729 correction
-proved at 2ad. It sharpens the earlier formalization envelope by retaining
+domination is asserted. The function \(I\) is the retained #729 compatibility
+bound proved in the merged source. It sharpens the earlier formalization envelope by retaining
 existing component information, rather than adding a new source-paper
 measurement argument. The comparison with \(F\) ranks those
 fixed-numerical-LDT candidates; it does not compare \(F\) with the native mixed
-route, and it does not imply \(F\le H\) for the pending #736 target below.
+route, and it does not imply \(F\le H\) for the merged fractional headline below.
 
 ### Deferred structural fixed-LDT candidate
 
@@ -953,9 +1006,9 @@ rounding gives the largest justified common-headline improvement. The smaller
 coefficient and the fractional dimension power are secondary. Its deferral is
 a scope decision, not a claim that the gain is less significant than #729.
 
-### Conditional #736 headline and exact comparison with the deferred candidate
+### Merged fractional headline and exact comparison with the deferred candidate
 
-The fractional common-envelope target supplied for the current #736 repair is
+The fractional common envelope proved by #736 is
 
 \[
  \boxed{
@@ -964,12 +1017,48 @@ The fractional common-envelope target supplied for the current #736 repair is
  \qquad b=\frac1{67108864}=2^{-26}.}
 \]
 
-This is a **CONDITIONAL IMPLEMENTATION TARGET**, not a proved theorem. The
-pending source is intended to derive it from a six-term native scalar while
-retaining the separate state and operator estimates. That source has not yet
-stabilized, so this report assigns no new Lean declaration name, sharp ledger
-row, or proof-completion claim. The algebra below was independently checked for
-issue #730; its immutable published session attribution is still pending.
+The field-coordinate theorem
+[`MIPStarRE.QPBT.pauli_soundness_quantitative_fractional`][qpbt-fractional-proved]
+and its [exact qubit transport][qpbt-qubit-fractional-proved] prove this bound
+for the same common auxiliary state and isometries. They are derived from the
+six-term native scalar certificates and the mixed component theorem, while the
+separate squared-state and raw-operator estimates remain available. The
+incomparability calculation below is independent accepted mathematics; it is
+not needed by the Lean proof of \(H\).
+
+For the terminal scalar conversion, put
+
+\[
+ M=m^{20481/262144}d^{1/64},\qquad K=M^2.
+\]
+
+On \(0\le e\le1\), the merged source proves
+
+\[
+ \lambda^{1/16}\le12ME_b,\qquad
+ \sqrt G\le304ME_b.
+\]
+
+The extraction certificate additionally assumes \(r\le1\) and gives
+
+\[
+ \sqrt{X_{\mathrm{native}}}\le16218ME_b.
+\]
+
+Squaring the checked global-pair root estimate yields
+
+\[
+ \boxed{G\le277248K E_{2b}}
+\]
+
+for \(0\le e\le1\), with no ratio assumption. The preserved
+\(10^7n^4E_{2b}\) comparison follows from this sharper result and does not use
+the coefficient-30 `deltaLd` interface. The separately derived coefficient
+14596 is an unimplemented coefficient-only refinement, not the proved
+coefficient. The exact witness construction itself is more general than these
+scalar estimates: it needs only \(e\ge0\). The fractional headline clips the
+source error to \(e=\min(\varepsilon,1)\), derives \(r<1\) on its nonsaturated
+branch, and uses the universal state/operator caps on the complementary branch.
 
 The actual admissible domain for this comparison is
 
@@ -1134,7 +1223,7 @@ projective-rounding transport concern the checked Lean realization. The paper
 invokes the constructed low-degree strategy and an ancillary Naimark route
 rather than printing those two extra losses.
 
-At a fixed numerical LDT output \(\lambda\), the historical checked route has
+At a fixed numerical LDT output \(\lambda\), the implemented checked route has
 dominant common dependence \(\lambda^{1/16}\), while the deferred structural
 route has \(\lambda^{1/8}\). This does **not** beat the literal source Naimark
 route, whose displayed dependence is \(\lambda^{1/4}\). The 64-fold statement
@@ -1154,11 +1243,11 @@ same estimate.
 
 | Candidate and source | Baseline to calculated target | Headline effect | Cost and risk | Status and decision |
 |---|---|---|---|---|
-| Explicit fixed witnesses, from [`deltaQld`][delta-qld] and [`pauli_soundness`][pauli-soundness] | Existential \((a,b)\) to exact \((a_0,1/5242880000)\), with \(a_0=346\cdot21^3\operatorname{pauliBaselineProjectiveConstant}^4\); \(a_{\mathrm{base}}\) remains a padded scalar comparison | Establishes the numerical raw/qubit baseline, including the enormous polynomial degree | High formal plumbing through opaque existential interfaces | **IMPLEMENTED (proved at the pinned source)** by [`pauli_soundness_explicit_baseline`][qpbt-baseline-proved] and its [exact qubit form][qpbt-qubit-baseline-proved] |
-| Historical degree-four #729 composition, using the improved one-coordinate LDT import and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransfer.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to C=\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\), but a common fourth-degree envelope discards the sharper extraction scaling; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **IMPLEMENTED (retained historical result)**. The degree-four declarations remain available beside the sharper siblings |
-| **Carry the native LDT error through QPBT** | Replace the early `deltaLd` absorption by \(\Lambda_h(t)\), then use \(g=G(\Lambda_{2m+2}(T_{\mathrm{pass}}),Q)\) | Retains the exact tail, dimension factor, and distinct error orders through direct transport, compression, rounding, and global-pair construction | High cross-stage interface work; every sibling must preserve the same measurements and quantifier order | **IMPLEMENTED (historical; proved at the pinned source)** through the native direct, rounding, separation, and global-witness declarations recorded in the [QPBT bound ledger](bound-ledger-qpbt.md); #736 source reconciliation is pending |
-| **Expose the mixed state/operator headline** | Replace the one common fourth-degree bound by \(s^2\le\min(4,16X_{\mathrm{native}})\) and raw errors \(\le\min(4,472X_{\mathrm{native}}+24r+192\sqrt{X_{\mathrm{native}}}+344e)\) | Keeps the squared state order separate from both raw summed-squared operator errors for one witness and transports all three exactly to qubits | Medium interface work; full-domain caps, range projections, and raw wrong-answer terms remain attached to the same witness | **IMPLEMENTED (historical; proved at the pinned source)** by the field and exact qubit mixed-component theorems; the repaired native interface is pending in #736 |
-| **Historical degree-two envelope and pending #736 fractional headline** | The 2ad source proves \(I=\min(4,10^9n^2E_b)\); the conditional target is \(H=\min(4,10769120m^{20481/262144}d^{1/64}E_b)\), with the same \(b=1/67108864\) | Retains the historical exponent while replacing degree two by separate fractional powers of \(m\) and \(d\); the six-term native scalar and exact mixed bounds must remain distinct from the common envelope | Bounded but load-bearing scalar and branch repair; preserve the witness, full domain, raw effects, range projections, and separate state/operator estimates | **CONDITIONAL IMPLEMENTATION TARGET** under [PR #736][pr-736]. The 2ad theorem proves \(I\le C\); accepted algebra proves \(H\le I\le C\) and shows \(H\) and \(F\) are incomparable. The new source is not yet proved, reviewed, merged, or entered as sharp in the ledger |
+| Explicit fixed witnesses, from [`deltaQld`][delta-qld] and [`pauli_soundness`][pauli-soundness] | Existential \((a,b)\) to exact \((a_0,1/5242880000)\), with \(a_0=346\cdot21^3\operatorname{pauliBaselineProjectiveConstant}^4\); \(a_{\mathrm{base}}\) remains a padded scalar comparison | Establishes the numerical raw/qubit baseline, including the enormous polynomial degree | High formal plumbing through opaque existential interfaces | **IMPLEMENTED (proved and merged)** by [`pauli_soundness_explicit_baseline`][qpbt-baseline-proved] and its [exact qubit form][qpbt-qubit-baseline-proved] |
+| Historical degree-four #729 composition, using the improved one-coordinate LDT import and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransfer.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to C=\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\), but a common fourth-degree envelope discards the sharper extraction scaling; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **IMPLEMENTED (retained compatibility result)**. The degree-four declarations remain available beside the sharper siblings; their loss is recorded as deferred #727 |
+| **Carry the native LDT error through QPBT** | Replace the early `deltaLd` absorption by \(\Lambda_h(t)\), then use \(g=G(\Lambda_{2m+2}(T_{\mathrm{pass}}),Q)\) | Retains the exact tail, dimension factor, and distinct error orders through direct transport, compression, rounding, and global-pair construction | High cross-stage interface work; every sibling must preserve the same measurements and quantifier order | **IMPLEMENTED (proved and merged)** through the native direct, rounding, separation, and global-witness declarations recorded in the [QPBT bound ledger](bound-ledger-qpbt.md) |
+| **Expose the mixed state/operator headline** | Replace the one common fourth-degree bound by \(s^2\le\min(4,16X_{\mathrm{native}})\) and raw errors \(\le\min(4,472X_{\mathrm{native}}+24r+192\sqrt{X_{\mathrm{native}}}+344e)\) | Keeps the squared state order separate from both raw summed-squared operator errors for one witness and transports all three exactly to qubits | Medium interface work; full-domain caps, range projections, and raw wrong-answer terms remain attached to the same witness | **IMPLEMENTED (proved and merged)** by the field and exact qubit mixed-component theorems; this remains separate from the common headline |
+| **Fractional common headline and retained degree-two/four comparisons** | \(C=\min(4,10^{14}n^4E_b)\) and \(I=\min(4,10^9n^2E_b)\) to \(H=\min(4,10769120m^{20481/262144}d^{1/64}E_b)\), with the same \(b=1/67108864\) | Replaces degree two by separate fractional powers of \(m\) and \(d\), while keeping the six-term native scalar and exact mixed bounds distinct | Bounded but load-bearing scalar and branch proof; preserve the witness, full domain, raw effects, range projections, and separate state/operator estimates | **IMPLEMENTED (selected; proved and merged in [PR #736][pr-736])**. Lean proves \(H\le I\le C\); independent accepted algebra shows \(H\) and deferred \(F\) are incomparable |
 | Superseded pre-selection quantitative envelopes from the same mechanisms | Earlier calculations included \(\Delta_{100,1/2621440000}\), then \(\Delta_{100,1/327680000}\); extraction alone gave exponent \(1/655360000\), and an earlier joint LDT/extraction estimate gave \((a,b)=(10^{740},1/268435456)\) | Each improved the traced baseline, but all are weaker than the proved degree-two result | Similar or greater plumbing, with worse retained constants | **NOT IMPLEMENTED (superseded)**. Recorded to preserve the survey history; not separate scopes |
 | **Deferred complete-measurement and squared-failure calculus** | #729 target to \(F=\min(4,10^{10}n^{15/4+5/262144}E_{1/1048576})\), then the \(n^4\) bound, canonical-100 form, and the exact qubit counterpart of each | Additional 64-fold exponent gain with the same LDT function and sample | Medium/high end-to-end QPBT work; preserve completeness hypotheses, placements, collision terms, witnesses, range projections, and raw effects | **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED** under [#735][issue-735]; accepted by the [author][survey-733-author] and [referee][survey-733-referee] reports, and deferred solely by the two-improvement stopping rule |
 | Linear consistency calculus in commutation, starting from [`consistencyDefect_trans_le`][consistency-calculus] and [`CommutingObs.lean`][point-commutation] | Squared twisted-commutator error \(O(\sqrt e)\to O(e)\); joint-point error \(O(e^{1/8})\to O(e^{1/4})\) | Twofold final exponent gain by itself | Medium/broad; completeness is load-bearing and every directed comparison must survive | **Deferred component of #735; mathematically checked, not Lean-implemented** |
@@ -1361,14 +1450,14 @@ degree-four #729 bound, let
  I=\min\{4,10^9n^2E_{1/67108864}\}
 \]
 
-be the historical degree-two #729 result, let
+be the retained degree-two #729 result, let
 
 \[
  H=\min\!\left\{4,
  10769120m^{20481/262144}d^{1/64}E_{1/67108864}\right\}
 \]
 
-be the conditional #736 target, write
+be the merged #736 fractional headline, write
 \(F=B_{\mathrm{QPBT}}^{\mathrm{struct}}\) for the accepted but deferred #735
 fractional-power bound already displayed above, and set
 
@@ -1382,15 +1471,15 @@ On the entire common domain,
  \boxed{H\le I\le C,\qquad F\le I\le C,\qquad F\le F_4\le C.}
 \]
 
-The first chain is the accepted conditional #736 algebra. The second is the
+The first chain is Lean-proved in the merged #736 source. The second is the
 capped comparison in the accepted quadratic-candidate calculation. For the
 third, \(n\ge1\), the exponent
 \(p=15/4+5/262144\) is smaller than four, and every base in \(E_b\) lies in
 \([0,1]\). Increasing the common exponent therefore decreases each summand,
 and the coefficient also decreases from \(10^{14}\) to \(10^{10}\). The
-native LDT theorem remains merged and frozen. The historical \(C,I\) route and
+native LDT theorem remains merged and frozen. The retained \(C,I\) route and
 the deferred \(F\) calculation use the fixed numerical input described above;
-the pending \(H\) source instead preserves the native error longer. These are
+the proved \(H\) route preserves the native error longer. These are
 only capped common-envelope comparisons. In particular, \(F\le I\) does not
 imply \(F\le H\): the exact families above prove both \(H<F\) and \(F<H\).
 No scalar ordering is asserted between any of \(F,H,I,C\) and the exact native
@@ -1400,11 +1489,11 @@ The status and role of the quantities are distinct.
 
 | Object | Mathematical role | Evidence and qualification |
 |---|---|---|
-| \(C\) and its canonical-100 and exact qubit forms | Historical degree-four #729 result | **IMPLEMENTED (retained historical result)** at the pinned QPBT proof source |
-| \(I\) and its exact qubit transport | Historical degree-two #729 correction | **IMPLEMENTED (historical; proved at the pinned source)**. Lean proves \(I\le C\); the accepted fixed-LDT calculation separately proves \(F\le I\) |
-| \(H\) | Pending #736 fractional common envelope | **CONDITIONAL IMPLEMENTATION TARGET**. Accepted algebra proves \(H\le I\le C\), but the soundness theorem, exact native precursor, review, merge, and ledger reconciliation are pending |
+| \(C\) and its canonical-100 and exact qubit forms | Historical degree-four #729 result | **IMPLEMENTED (retained compatibility result)** in the merged source; its degree-four loss is deferred #727 |
+| \(I\) and its exact qubit transport | Historical degree-two #729 correction | **IMPLEMENTED (retained compatibility result)**. Lean proves \(H\le I\le C\); the accepted fixed-LDT calculation separately proves \(F\le I\) |
+| \(H\) | Selected #736 fractional common envelope | **IMPLEMENTED (proved and merged)** in field and exact-qubit coordinates, with one common witness and full-domain cap |
 | \(F,F_4\), canonical \(\Delta_{100,1/1048576}\), and the exact qubit counterpart of each | Deferred #735 structural target | **MATHEMATICALLY CHECKED, NOT LEAN-IMPLEMENTED** with the same frozen LDT input; deferred by the two-improvement stopping rule |
-| Native mixed route through \(\Lambda_h\) and \(G\) | Historical #729 policy correction before common-envelope absorption | **IMPLEMENTED (historical; proved at the pinned source)**; the #736 repair must preserve its distinct state/operator orders, and no ordering with \(F\), \(H\), \(I\), or \(C\) is claimed |
+| Native mixed route through \(\Lambda_h\) and \(G\) | Exact construction before common-envelope absorption | **IMPLEMENTED (proved and merged)**; its distinct state/operator orders remain available, and no ordering with \(F\), \(H\), \(I\), or \(C\) is claimed |
 | \(f\) | Actual public named error | Defined and used by the pinned public theorem; source-inspected, not built here |
 | \(f_{\mathrm{raw}}\) | Conservative completed-to-raw scalar conversion | Unformalized common-encoding calculation; no cross-repository transport theorem |
 | \((a_V,1/2560000)\) | Public existential error-shape witness | Reconstructed witness arithmetic; not the actual composed function |
@@ -1545,14 +1634,13 @@ throughout the common domain. Inside the small-error regime this follows from
 \]
 
 This positive-error example concerns \(F\) and \(F_4\) only. No comparison with
-the pending \(H\) target is inferred from it.
+\(H\) is inferred from it.
 
 These examples are asymptotic certificates, not practical parameter
 recommendations. At every fixed finite \(n\), each displayed common envelope
 also retains a positive tail floor. No part of this comparison is a benchmark
 build, a cross-repository theorem, a proof of actual strategy-error ordering,
-or evidence that #735 or the pending #736 target has been implemented or
-merged.
+or evidence that #735 has been implemented or merged.
 
 ## Implementation evidence and remaining scope
 
@@ -1589,36 +1677,45 @@ and review receipts are dated September 28 in UTC, corresponding to September
 [merged implementation audit][ldt-implementation-audit] records the
 corresponding statement-integrity and construction details.
 
-### Historical pinned QPBT proof-source evidence
+### Merged QPBT evidence
 
-The immutable historical proof source is
-[`2ad0a5c12b28bbef8ba54b7bef22d786778a09e9`][qpbt-proof-source]. It contains
-the fixed field and qubit baselines, the historical degree-four results, the
-native direct-LDT and global-pair route, the mixed field and qubit component
-theorems, the degree-two field and qubit theorems, the canonical corollaries,
-and the baseline comparisons. The native LDT dependency remains frozen at tree
+The authoritative proof source is final #736 head
+[`6ea9f96bd86aaaad613130dea49eefdf6e80c5a9`][qpbt-final-head], merged as
+[`0b847308c30769be983bbd05c297e1014db76590`][qpbt-merge]. It contains the fixed
+field and qubit baselines, the native direct-LDT and exact global-pair route,
+the separated six-term and fractional scalar certificates, the mixed field and
+qubit component theorems, the fractional headline \(H\), the degree-two and
+degree-four compatibility results, the canonical corollaries, and the baseline
+comparisons. The native LDT dependency remains frozen at tree
 `ddd92480c55bbabba5a96af96064fc792a5eb68c`.
 
-The proof receipts record direct Lean checks and focused builds for the native
-combining route, the split quantitative scalar modules, both field-coordinate
-and qubit headline modules, and the axiom-audit target. The 31 QPBT audit
-entries checked for this integration report only `propext`,
-`Classical.choice`, and `Quot.sound`. The blueprint proof-closure audit checked
-2,148 `\leanok` declarations with zero failures, and `checkdecls` resolved all
-2,159 generated declarations. The 31-file generated challenge was current.
-The file-size, proof-integrity, source-public-header, frozen-LDT, line-length,
-owned-path, and whitespace checks passed.
+The final source includes the scalar-reuse modules
+[`Combining/QuantitativeScalarBase.lean`][qpbt-scalar-base],
+[`Combining/QuantitativeNativeScalars/Core.lean`][qpbt-native-core], and
+[`Combining/QuantitativeNativeFractionalScalars.lean`][qpbt-native-fractional].
+The previous public import modules remain available. The checked root
+certificate proves
+\(G\le277248K E_{2b}\) without a field-ratio assumption; the older
+\(10^7n^4E_{2b}\) comparison follows without the coefficient-30 `deltaLd`
+route. The separately derived coefficient 14596 remains an unimplemented
+coefficient-only refinement.
 
-[PR #736][pr-736] remains open at the old head
-[`2c9fb42fbaefe2190e580fcc6302f3a44a3dc170`][qpbt-pr-old-head]. At that head,
-all eight CI steps passed in 732 summed step-seconds, together with 31 QPBT
-axiom checks, 2,168 proof-closure checks, and 2,179 unique direct declaration
-checks. Those receipts apply only to that old head. Independent R2 review
-5368806524 requested the F1/F2 degree-loss repairs and the F3/F4 prose and
-dependency fixes. The adopted prose correction remains local, and a separate
-Sol author session 417435 is implementing the new six-term native scalar and
-fractional headline. Consequently, the displayed \(H\) is not yet supported by
-a final Lean proof, independent review, or merge.
+Exact-head CI passed all eight steps and all nine contexts in 567 summed
+step-seconds. It included the full build, blueprint render and synchronization,
+paper-gap, file-length, proof-debt, proof-evasion, and statement-origin checks.
+The canonical declaration check resolved 2,198 Lean references. The blueprint
+axiom closure checked 2,187 declarations across 407 modules with zero failures,
+including 403 statement-only and 1,784 proof-level placements. The committed
+QPBT axiom audit contains 53 commands; the quantitative declarations used here
+close only over `propext`, `Classical.choice`, and `Quot.sound`.
+
+Review [#5372229944][qpbt-mathematical-review] approved the final mathematics
+and identified three prose/dependency repairs. Review
+[#5372895844][qpbt-final-review] then approved only that final editorial patch,
+after independently checking that the Lean code and formulas were unchanged.
+It would be inaccurate to describe these as five full mathematical reviews.
+The normal merge completed all seven gates with no override and closed issue
+[#729][issue-729].
 
 The native and common-envelope conclusions have different purposes. The
 native theorem constructs at the exact \(G\) and defines
@@ -1627,9 +1724,9 @@ coarse consequence \(G\le10^7n^4E_{2b}\), which supports the degree-two common
 headline. That consequence does not replace the native construction interface.
 The source-argument candidate \(F\) fixes the numerical LDT input and changes
 later QPBT reasoning; it remains separate from both of these proved routes.
-The pending \(H\) target is likewise only a common-envelope scalar at present;
-it does not replace the native mixed construction until the repaired source is
-proved and reviewed.
+The proved \(H\) headline is a terminal common-bound corollary. It does not
+replace the native mixed construction or merge the squared-state and raw
+operator estimates at their construction interface.
 
 ### Remaining quantitative scope
 
@@ -1645,11 +1742,9 @@ deferred solely by the two-improvement stopping rule. Neither this report nor
 the static C8 `DELEGATED` ledger-shape result claims completion of the whole
 QPBT track.
 
-Final report publication and the QPBT stage-ledger reconciliation remain
-blocked on completion, independent review, and merge of [PR #736][pr-736]. The
-new six-term native scalar and \(H\) must be checked against the actual merged
-source before any declaration link, sharp ledger row, or publication token is
-finalized.
+This report and the reconciled ledger remain unpublished until their own normal
+CI, `review.sh`, and separate independent mathematical review complete. That
+future review concerns these documents, not the already merged #736 proof.
 
 [baseline-commit]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9
 [issue-728]: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/728
