@@ -185,3 +185,20 @@ one larger review; it carries every author cost and grants no inherited approval
 Parent work stays open until the integrated candidate lands through normal gates.
 The deferred #755 review-route findings and module packets remain separately
 gated. Decision and cost recorded in #27 comment5942473721.
+
+
+## 2026-10-02 — bounded continuation of required port and native review route
+
+The supported-toolchain port has cleared successive concrete API/elaboration
+failure sets, but has not passed a full build. MAIN preserves9900s author cost
+and admits a further3600s tranche (ceiling13500s) to repair the pending PointLine
+elaboration and finish the required validation. No statement/bound/pin change or
+gate waiver is authorized. #27comment5942526100 records this in-project cost.
+
+The final official native-preflight contract now permits preparing #745/PR755
+before756merges:1800s local editing/tests/commit, no fullbuild/publication, total
+author ceiling5698s. The two previous reviews and unresolved5384612101findings
+remain binding. MAIN explicitly permits one additional1800s independent canonical
+review of the changed native route after fresh exact-head CI; it does not reset
+history or carry approval. This replaces the obsolete legacy-launcher repair and
+preserves its provenance/instruction-root fixes. #27comment5942565919.
