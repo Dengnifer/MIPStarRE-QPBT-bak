@@ -484,20 +484,36 @@ pinned baseline commit, tracing the proof gives the following constants:
 \[
  \begin{aligned}
  c&=1024(172+\sqrt{344}),\\
- t&=2(2c+4886363136+4),\\
- Q&=10560(344+3t)+24t+11008,\\
- L&=115\bigl(1+(16Q+8320)^{1/8}\bigr)+1,\\
- H&=1+6(Q^{1/2}+L^{1/4}+Q^{1/4}+1),\\
- D&=4+3\sqrt{Q+H}.
+ t_0&=2(2c+4886363136+4),\\
+ Q_0&=10560(344+3t_0)+24t_0+11008,\\
+ L_0&=115\bigl(1+(16Q_0+8320)^{1/8}\bigr)+1,\\
+ H_0&=1+6(Q_0^{1/2}+L_0^{1/4}+Q_0^{1/4}+1),\\
+ D_0&=4+3\sqrt{Q_0+H_0}.
  \end{aligned}
 \]
 
-Set \(a=2500000000\), \(\beta=1/80000\), and
+Set \(a_L=2500000000\), \(\beta=1/80000\), and
 
 \[
- A=2\bigl[a4^a(D^\beta+2)+\sqrt Q+1\bigr]
-   +a+\frac{33\beta}{32}+3.
+ A=2\bigl[a_L4^{a_L}(D_0^\beta+2)+\sqrt{Q_0}+1\bigr]
+   +a_L+\frac{33\beta}{32}+3.
 \]
+
+The fixed coefficients must be distinguished from the error functions used by
+the native construction. Define
+
+\[
+ Q(e)=Q_0e^{1/8},\qquad
+ L(e,r)=L_0(e^{1/64}+r^{1/4}),\qquad
+ L_{\mathrm{ext}}(e,r)=mH_0(e^{1/256}+r^{1/16}).
+\]
+
+These are respectively `pauliBaselinePointError e`,
+`pauliBaselineLineError e r`, and the product of \(m\) with
+`pauliBaselineExtendedLineError e r`. Below, \(Q\), \(L\), and
+\(L_{\mathrm{ext}}\) abbreviate their values at the current \(e,r\). In
+particular, the \(64Q\) term in the native global-pair error vanishes with
+\(e\); it does not contain the fixed coefficient \(Q_0\) by itself.
 
 The later fixed-witness proof keeps the enormous projective-setting
 coefficient symbolic. Its exact constants are
@@ -584,17 +600,19 @@ original error when \(\varepsilon>1\).
 The merged source proves the structured field-coordinate theorem
 [`pauli_soundness_quantitative_degree_two`][qpbt-quantitative-proved], its exact
 qubit transport, the mixed component theorem and its exact qubit transport, and
-the comparisons with \(C\) and the historical baseline. On the enlarged
-nonsaturated branch it constructs the actual witness rather than tightening an
-arbitrary witness selected by the saturated historical theorem.
+the comparisons with \(C\) and the historical baseline. The fractional theorem
+constructs the actual witness on its nonsaturated branch; the retained
+degree-two theorem reuses that witness through the proved comparison \(H\le I\).
 
 #### The native low-degree route
 
-The merged QPBT headline uses the one-coordinate Lean theorem
-[`exists_direct_ld_soundness_of_k_eq_one`][direct-one-coordinate], not the
-general simultaneous theorem or the seed-indexed theorem
-`exists_ld_soundness`. It specializes the [source low-degree theorem
-`lem:ld-soundness`][qpbt-paper-ld] to the route used in the Pauli analysis. In
+The native rounded construction uses the arbitrary-strategy one-coordinate
+Lean theorem
+[`direct_ld_soundness_of_k_eq_one_any_strategy_at_native_error`][direct-one-coordinate],
+not the existential common-error theorem, the general simultaneous theorem, or
+the seed-indexed theorem `exists_ld_soundness`. It specializes the [source
+low-degree theorem `lem:ld-soundness`][qpbt-paper-ld] to the route used in the
+Pauli analysis and preserves the native error through Naimark compression. In
 this application, the direct-game simultaneity parameter equals one, while the
 inherited LDT sampling parameter is
 
@@ -728,7 +746,7 @@ subadditivity supports the mixed estimate
  \begin{aligned}
  L_{\mathrm{mix}}=30(hd)^{30}\bigl[&(10^8m)^\tau
    (e^u+r^{\tau/32})\\
-   &+q^{-\tau}+2^{-\tau Md}\bigr].
+   &+q^{-\tau}+2^{-\tau hd}\bigr].
  \end{aligned}
 \]
 
@@ -851,8 +869,18 @@ it proves
 \]
 
 The theorem
-[`pauli_soundness_quantitative_degree_two`][qpbt-quantitative-proved] uses the
-actual global-pair and component constructors. They give
+[`pauli_soundness_quantitative_degree_two`][qpbt-quantitative-proved] is now a
+weakening of `pauli_soundness_quantitative_fractional`. It obtains one witness
+at the fractional error \(H\), then composes the state estimate and both raw
+operator estimates with the proved scalar comparison \(H\le I\). Thus the
+auxiliary state, raw prescribed-answer effects, range projections, and exact
+field-coordinate metrics are inherited from the fractional theorem. The
+degree-two qubit sibling then transports those metrics exactly; neither theorem
+rebuilds a witness at \(I\).
+
+For provenance, an earlier direct degree-two derivation followed the actual
+global-pair and component constructors. This is a historical alternative
+calculation, not the proof of the current theorem. Its inputs give
 
 \[
  g\le10^7n^4E_{2b},\qquad
@@ -865,7 +893,7 @@ and therefore
  \sqrt{x}\le10^6n^2E_b.
 \]
 
-The new branch is the condition \(I_{\mathrm{raw}}<4\). If \(n=1\), then
+Its nonsaturated branch is the condition \(I_{\mathrm{raw}}<4\). If \(n=1\), then
 \(E_b\ge2^{-b}\ge1/2\), contradicting \(I_{\mathrm{raw}}<4\). Hence \(n\ge2\).
 It also gives
 
@@ -875,8 +903,8 @@ It also gives
  \qquad x<0.000016<1.
 \]
 
-Thus the actual global-pair constructor applies, and the component constructor
-returns one witness satisfying
+On that historical branch, the global-pair and component constructors return
+one witness satisfying
 
 \[
  \begin{aligned}
@@ -889,16 +917,11 @@ returns one witness satisfying
 
 while the state error satisfies
 \(s\le4\sqrt{x}\le4\cdot10^6n^2E_b<I_{\mathrm{raw}}\).
-When \(I_{\mathrm{raw}}\ge4\), an existing fixed-baseline witness and the
-universal state/operator caps \(2,4,4\) give the saturated conclusion. This
-preserves the full nonnegative-error domain, the same raw prescribed-answer
-effects and range projections, and the exact qubit conclusions. The witness
-qualification is essential: the small branch rebuilds the witness through the
-actual global-pair and component constructors; it does not select an arbitrary
-witness from the saturated branch of the degree-four theorem. At
-\(\varepsilon=0\), the positive ratio term supplies the required positive
-auxiliary low-degree parameter; for \(\varepsilon>1\), clipping gives \(e=1\)
-and the cap is four. No division by \(e\) is used.
+For \(I_{\mathrm{raw}}\ge4\), it used an existing fixed-baseline witness and the
+universal state/operator caps \(2,4,4\). That alternative also covered the full
+nonnegative-error domain without division by \(e\). The merged declaration no
+longer uses this branch construction: its full-domain and witness guarantees
+come from the sharper fractional theorem followed by \(H\le I\).
 
 For comparison, put
 
@@ -1094,26 +1117,27 @@ Thus \(m\ge1\) and \(n=md\ge1\); there is no additional assumption
 and write
 
 \[
- H_0=AME_b,\qquad F_0=Bn^pE_{64b},\qquad
- H=\min\{4,H_0\},\qquad F=\min\{4,F_0\}.
+ H_{\mathrm{raw}}=AME_b,\qquad F_{\mathrm{raw}}=Bn^pE_{64b},\qquad
+ H=\min\{4,H_{\mathrm{raw}}\},\qquad F=\min\{4,F_{\mathrm{raw}}\}.
 \]
 
 Since \(E_b>0\), the exact uncapped ratio is
 
 \[
- R=\frac{F_0}{H_0}
+ R=\frac{F_{\mathrm{raw}}}{H_{\mathrm{raw}}}
  =\frac BA\frac{n^p}{M}\frac{E_{64b}}{E_b}.
 \]
 
 The cap-sensitive strictness criteria are
 
 \[
- \boxed{F<H\iff F_0<4\ \text{and}\ R<1},\qquad
- \boxed{H<F\iff H_0<4\ \text{and}\ R>1}.
+ \boxed{F<H\iff F_{\mathrm{raw}}<4\ \text{and}\ R<1},\qquad
+ \boxed{H<F\iff H_{\mathrm{raw}}<4\ \text{and}\ R>1}.
 \]
 
-Equality holds exactly when \(F_0=H_0\), or when both raw bounds are at least
-four. If \(x=e^b\), \(y=q^{-b}\), and \(z=2^{-bn}\), then
+Equality holds exactly when \(F_{\mathrm{raw}}=H_{\mathrm{raw}}\), or when both
+raw bounds are at least four. If \(x=e^b\), \(y=q^{-b}\), and \(z=2^{-bn}\),
+then
 
 \[
  \frac{E_{64b}}{E_b}
@@ -1133,7 +1157,7 @@ The easy global comparison is different. Since \(m,d\ge1\),
 and hence
 
 \[
- 0<H_0<10^9n^2E_b<10^{14}n^4E_b.
+ 0<H_{\mathrm{raw}}<10^9n^2E_b<10^{14}n^4E_b.
 \]
 
 Taking caps gives
@@ -1142,7 +1166,7 @@ Taking caps gives
  \boxed{H\le I\le C.}
 \]
 
-Moreover, \(H<I\) exactly when \(H_0<4\), and \(I<C\) exactly when
+Moreover, \(H<I\) exactly when \(H_{\mathrm{raw}}<4\), and \(I<C\) exactly when
 \(10^9n^2E_b<4\). The separately accepted comparison \(F\le I\) therefore
 places both \(F\) and \(H\) below \(I\), but it does not imply \(F\le H\).
 Clipping omits no boundary case: if \(\varepsilon\ge1\), all four capped
@@ -1178,28 +1202,28 @@ Here \(M=2^{32k}\) and
 \(n^p=2^{(7680+5/128)k}\). Consequently,
 
 \[
- A2^{(32-L)k}<H_0<3A2^{(32-L)k},
+ A2^{(32-L)k}<H_{\mathrm{raw}}<3A2^{(32-L)k},
 \]
 
 and
 
 \[
  B2^{(7680+5/128-64L)k}
- <F_0<3B2^{(7680+5/128-64L)k}.
+ <F_{\mathrm{raw}}<3B2^{(7680+5/128-64L)k}.
 \]
 
 Both caps are inactive throughout both families. Indeed,
 \(3A<2^{25}\) and \(3B<2^{35}\) give the uniform certificates
 
 \[
- H_0<2^{25-89k}<4,
- \qquad F_0<2^{35-63k}<4.
+ H_{\mathrm{raw}}<2^{25-89k}<4,
+ \qquad F_{\mathrm{raw}}<2^{35-63k}<4.
 \]
 
 For \(L=121\),
 
 \[
- \frac{F_0}{H_0}
+ \frac{F_{\mathrm{raw}}}{H_{\mathrm{raw}}}
  >\frac{B}{3A}\,2^{(25+5/128)k}>1,
  \qquad\text{so}\qquad \boxed{H<F<4}.
 \]
@@ -1207,7 +1231,7 @@ For \(L=121\),
 For \(L=128\),
 
 \[
- \frac{F_0}{H_0}
+ \frac{F_{\mathrm{raw}}}{H_{\mathrm{raw}}}
  <\frac{3B}{A}\,2^{(-416+5/128)k}
  <2^{12-415k}<1,
  \qquad\text{so}\qquad \boxed{F<H<4}.
@@ -1268,7 +1292,7 @@ same estimate.
 | Linear consistency calculus in commutation, starting from [`consistencyDefect_trans_le`][consistency-calculus] and [`CommutingObs.lean`][point-commutation] | Squared twisted-commutator error \(O(\sqrt e)\to O(e)\); joint-point error \(O(e^{1/8})\to O(e^{1/4})\) | Twofold final exponent gain by itself | Medium/broad; completeness is load-bearing and every directed comparison must survive | **Deferred component of #735; mathematically checked, not Lean-implemented** |
 | Retain the Schmidt-mirror estimate in [`Pasting/Assembly.lean`][qpbt-pasting] | Pasting \(115(\eta^{1/4}+\delta^{1/8})\to12(\eta^{1/4}+\delta^{1/4})\) | Twofold headline exponent gain by itself | Medium; localized proof needs a sharper parameterization | **NOT IMPLEMENTED (comparison only)**. This is weaker than the deferred projective squared-failure estimate |
 | Projective pasting by squared failure amplitudes | Same sandwich bound improves to \(307\delta+16\eta\) when both codeword measurements are projective | Eightfold headline exponent gain by itself; improves field-error power as well | Medium/high; finite-sum identities, post-measurement collision weights, and heterogeneous placements are load-bearing | **Deferred central estimate of #735; mathematically checked, not Lean-implemented**. Both actual QPBT codeword families are projective; the general pasting theorem remains unchanged |
-| Linear complete-POVM triangle in direct-game passing, at [`EvaluatedLineComparison.lean`][passing-comparison] | \(O(\sqrt{Q+L}+r)\to O(Q+L+r)\) across both completed axis and diagonal readouts | Twofold final exponent gain by itself | Medium; both orientations, both line types, and all seven rejection branches must be propagated | **Deferred component of #735; mathematically checked, not Lean-implemented** |
+| Linear complete-POVM triangle in direct-game passing, at [`EvaluatedLineComparison.lean`][passing-comparison] | \(O(\sqrt{Q+L_{\mathrm{ext}}}+r)\to O(Q+L_{\mathrm{ext}}+r)\) across both completed axis and diagonal readouts | Twofold final exponent gain by itself | Medium; both orientations, both line types, and all seven rejection branches must be propagated | **Deferred component of #735; mathematically checked, not Lean-implemented** |
 | Linear rounding transport in [`RoundingTransport.lean`][rounding-transport] | Global-pair dependence \(\lambda^{1/8}\to\lambda^{1/4}\) before the unchanged final state root | Twofold final exponent gain at fixed \(\lambda\) | Medium; choose roundings before postprocessing maps and preserve quantifier order | **Deferred component of #735; mathematically checked, not Lean-implemented** |
 | Earlier combination of four local root-removal projections | Prospective sixteenfold exponent gain | Historical indication that a combined change could dominate any local tweak | High, multi-construction; complete constants were not then established | **SUPERSEDED as a projection** by the independently accepted 64-fold projective calculation; retained to preserve survey history |
 | Positive-failure state transfer | For a positive failure effect, improve the operator component from \(O(\sqrt x+r)\) to \(O(x+r)\) | Stronger operator conclusion, but no improvement to the common state-limited headline | Medium; positivity and range terms must remain explicit | **NOT IMPLEMENTED (deferred)**. It does not improve the state-limited common headline selected for #729 |
@@ -1537,7 +1561,7 @@ these parameters are admissible on both sides. Exact inequalities give
 The same zero-error benchmark therefore proves that \(H\) and the actual public
 function are not uniformly ordered. At \(n=2^{50}\), this follows immediately
 from \(H\le I\le C\). At \(n=2^{80}\), the coefficient and dimension factor in
-\(H_0\) are at least one and \(E_b\) retains the term \(2^{-bn}\), while the
+\(H_{\mathrm{raw}}\) are at least one and \(E_b\) retains the term \(2^{-bn}\), while the
 cap four is also larger than that term. Hence
 
 \[
@@ -1831,8 +1855,8 @@ future review concerns these documents, not the already merged #736 proof.
 [qpbt-paper-composition]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex#L1267-L1404
 [qpbt-paper-unitary]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex#L1666-L1876
 [delta-qld]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/SoundnessDefs.lean#L30-L38
-[pauli-soundness]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness.lean#L40-L64
-[direct-one-coordinate]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/DirectLowDegree/Soundness.lean#L411-L448
+[pauli-soundness]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness.lean#L110-L122
+[direct-one-coordinate]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/DirectLowDegree/AnyStrategySoundness.lean#L360-L400
 [state-extraction]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Extraction/StateExtraction.lean#L97-L130
 [raw-transfer]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness/RawOperatorTransferCore.lean#L568-L683
 [malformed-transfer]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness/RawOperatorTransferCore.lean#L93-L216
