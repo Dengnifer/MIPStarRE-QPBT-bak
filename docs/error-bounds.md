@@ -1,8 +1,6 @@
 # Error bounds in the low individual degree and Pauli basis tests
 
-> **UNFINISHED CHECKPOINT — October 1, 2026.** The final report writer stopped on a provider quota error after partially updating this report. Its formulas, inventory statuses and source links still need reconciliation and independent review. PR #731 and PR #736 are merged, but these documents have not passed their own final CI or independent review. This draft is published for inspection under the owner deadline fallback; it is not a completion claim.
-
-> **Final report status, September 30, 2026.** The bounded two-improvement scope
+> **Authored report status, October 1, 2026.** The bounded two-improvement scope
 > consists of the native LDT improvement from issue [#728][issue-728] and the
 > quantitative QPBT improvement from issue [#729][issue-729]. The LDT result was
 > proved and merged by [PR #731][pr-731] as
@@ -12,7 +10,10 @@
 > [`0b847308c30769be983bbd05c297e1014db76590`][qpbt-merge]. The stronger
 > source-argument candidate in issue [#735][issue-735] remains mathematically
 > accepted and unimplemented under the owner's stopping rule; this is a scope
-> decision, not a ranking against the implemented result.
+> decision, not a ranking against the implemented result. This report and its
+> separate ledger are authored and await their own normal CI, `review.sh`, and
+> independent mathematical review; this status does not claim those gates have
+> completed.
 
 > **QPBT publication evidence.** Exact-head CI passed all eight steps and all
 > nine contexts in 567 summed step-seconds. The canonical declaration check
@@ -52,7 +53,7 @@ corollaries, with the proved chain \(H\le I\le C\); they are not the strongest
 implemented common headline.
 
 Separately, the source-argument survey with the LDT input frozen found a
-stronger structural candidate
+higher-exponent structural candidate
 \(\min\{4,10^{10}(md)^{15/4+5/262144}E_{1/1048576}\}\). Its exponent is
 64 times larger than \(1/67108864\). That gain remains important, but issue
 #735 is deferred by scope rather than by mathematical ranking. The merged #736
@@ -568,6 +569,18 @@ degree. Relative to the exact fixed-witness baseline, the exponent gain is
  \frac{5242880000}{67108864}=78.125.
 \]
 
+For every \(\varepsilon\ge0\), Lean proves that \(I\) is strictly below the
+explicit baseline evaluated at the clipped error \(e=\min(\varepsilon,1)\):
+
+\[
+ I<\Delta_{a_0,b_0}(e,m,d,q).
+\]
+
+Since \(H\le I\), the same strict comparison holds for \(H\). This is a
+full-domain comparison of the capped new bounds with the clipped historical
+baseline; it is not an uncapped comparison with the baseline evaluated at the
+original error when \(\varepsilon>1\).
+
 The merged source proves the structured field-coordinate theorem
 [`pauli_soundness_quantitative_degree_two`][qpbt-quantitative-proved], its exact
 qubit transport, the mixed component theorem and its exact qubit transport, and
@@ -586,7 +599,7 @@ this application, the direct-game simultaneity parameter equals one, while the
 inherited LDT sampling parameter is
 
 \[
- N=2560000M^3d.
+ N=2560000h^3d.
 \]
 
 Applying the selected LDT estimate at \(\tau=1/8192\) gives a one-coordinate
@@ -915,18 +928,18 @@ argument gives \(F\le I\). For that calculation,
 Saturation completes the source-argument comparison, and \(F<I\) holds exactly
 when \(F_{\mathrm{raw}}<4\). These are capped comparisons; no uncapped uniform
 domination is asserted. The function \(I\) is the retained #729 compatibility
-bound proved in the merged source. It sharpens the earlier formalization envelope by retaining
-existing component information, rather than adding a new source-paper
-measurement argument. The comparison with \(F\) ranks those
+bound proved in the merged source. It sharpens the earlier formalization
+envelope by retaining existing component information, rather than adding a new
+source-paper measurement argument. The comparison with \(F\) ranks those
 fixed-numerical-LDT candidates; it does not compare \(F\) with the native mixed
 route, and it does not imply \(F\le H\) for the merged fractional headline below.
 
 ### Deferred structural fixed-LDT candidate
 
 The complete issue #733 [author report][survey-733-author] and independent
-[referee report][survey-733-referee] support a stronger QPBT-only candidate with
-LDT frozen. The candidate remains outside the present implementation run only
-because the owner reinstated the two-improvement stopping rule after #729. Put
+[referee report][survey-733-referee] support a higher-exponent QPBT-only
+candidate with LDT frozen. It remains unimplemented only because the owner
+reinstated the two-improvement stopping rule after #729. Put
 
 \[
  p=\frac{15}{4}+\frac{5}{262144}<4.
@@ -996,15 +1009,16 @@ post-LDT processing by a factor of two. The resulting 64-fold gain changes
 \(1/67108864\) to \(1/1048576\). The extraction gain selected for #729 appears
 on both sides and receives no additional credit.
 
-This complete projective calculation is the strongest accepted fixed-LDT
-candidate among the surveyed alternatives. Keeping only the existing
-Schmidt-mirror estimate gives a twofold gain. Using only one of the
-commutation, passing, or rounding improvements also gives at most a twofold
-gain. The projective squared-failure pasting estimate gives an eightfold gain
-by itself, and its coherent propagation through commutation, passing, and
-rounding gives the largest justified common-headline improvement. The smaller
-coefficient and the fractional dimension power are secondary. Its deferral is
-a scope decision, not a claim that the gain is less significant than #729.
+This complete projective calculation has the largest accepted exponent gain
+among the fixed-LDT source-argument alternatives in that survey. Keeping only
+the existing Schmidt-mirror estimate gives a twofold gain. Using only one of
+the commutation, passing, or rounding improvements also gives at most a
+twofold gain. The projective squared-failure pasting estimate gives an
+eightfold gain by itself, and its coherent propagation through commutation,
+passing, and rounding gives the largest justified exponent gain within that
+survey. The smaller coefficient and the fractional dimension power are
+secondary. Its deferral is a scope decision, not a claim that the gain is less
+significant than #729.
 
 ### Merged fractional headline and exact comparison with the deferred candidate
 
@@ -1023,8 +1037,9 @@ and its [exact qubit transport][qpbt-qubit-fractional-proved] prove this bound
 for the same common auxiliary state and isometries. They are derived from the
 six-term native scalar certificates and the mixed component theorem, while the
 separate squared-state and raw-operator estimates remain available. The
-incomparability calculation below is independent accepted mathematics; it is
-not needed by the Lean proof of \(H\).
+incomparability calculation below is independent accepted mathematics,
+recorded in the [fractional comparison report][fractional-comparison-report];
+it is not needed by the Lean proof of \(H\).
 
 For the terminal scalar conversion, put
 
@@ -1244,7 +1259,7 @@ same estimate.
 | Candidate and source | Baseline to calculated target | Headline effect | Cost and risk | Status and decision |
 |---|---|---|---|---|
 | Explicit fixed witnesses, from [`deltaQld`][delta-qld] and [`pauli_soundness`][pauli-soundness] | Existential \((a,b)\) to exact \((a_0,1/5242880000)\), with \(a_0=346\cdot21^3\operatorname{pauliBaselineProjectiveConstant}^4\); \(a_{\mathrm{base}}\) remains a padded scalar comparison | Establishes the numerical raw/qubit baseline, including the enormous polynomial degree | High formal plumbing through opaque existential interfaces | **IMPLEMENTED (proved and merged)** by [`pauli_soundness_explicit_baseline`][qpbt-baseline-proved] and its [exact qubit form][qpbt-qubit-baseline-proved] |
-| Historical degree-four #729 composition, using the improved one-coordinate LDT import and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransfer.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to C=\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\), but a common fourth-degree envelope discards the sharper extraction scaling; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **IMPLEMENTED (retained compatibility result)**. The degree-four declarations remain available beside the sharper siblings; their loss is recorded as deferred #727 |
+| Historical degree-four #729 composition, using the improved one-coordinate LDT import and separate state/operator estimates from [`StateExtraction.lean`][state-extraction] through [`RawOperatorTransferCore.lean`][raw-transfer] | \(\Delta_{a_0,1/5242880000}\to C=\min(4,10^{14}n^4E_{1/67108864})\), then canonical \(\Delta_{100,1/67108864}\) | Exponent multiplied by \(78.125\), but a common fourth-degree envelope discards the sharper extraction scaling; raw effects and qubit form retained | High interface work; same witnesses must survive every estimate | **IMPLEMENTED (retained compatibility result)**. The degree-four declarations remain available beside the sharper siblings; their loss is recorded as deferred #727 |
 | **Carry the native LDT error through QPBT** | Replace the early `deltaLd` absorption by \(\Lambda_h(t)\), then use \(g=G(\Lambda_{2m+2}(T_{\mathrm{pass}}),Q)\) | Retains the exact tail, dimension factor, and distinct error orders through direct transport, compression, rounding, and global-pair construction | High cross-stage interface work; every sibling must preserve the same measurements and quantifier order | **IMPLEMENTED (proved and merged)** through the native direct, rounding, separation, and global-witness declarations recorded in the [QPBT bound ledger](bound-ledger-qpbt.md) |
 | **Expose the mixed state/operator headline** | Replace the one common fourth-degree bound by \(s^2\le\min(4,16X_{\mathrm{native}})\) and raw errors \(\le\min(4,472X_{\mathrm{native}}+24r+192\sqrt{X_{\mathrm{native}}}+344e)\) | Keeps the squared state order separate from both raw summed-squared operator errors for one witness and transports all three exactly to qubits | Medium interface work; full-domain caps, range projections, and raw wrong-answer terms remain attached to the same witness | **IMPLEMENTED (proved and merged)** by the field and exact qubit mixed-component theorems; this remains separate from the common headline |
 | **Fractional common headline and retained degree-two/four comparisons** | \(C=\min(4,10^{14}n^4E_b)\) and \(I=\min(4,10^9n^2E_b)\) to \(H=\min(4,10769120m^{20481/262144}d^{1/64}E_b)\), with the same \(b=1/67108864\) | Replaces degree two by separate fractional powers of \(m\) and \(d\), while keeping the six-term native scalar and exact mixed bounds distinct | Bounded but load-bearing scalar and branch proof; preserve the witness, full domain, raw effects, range projections, and separate state/operator estimates | **IMPLEMENTED (selected; proved and merged in [PR #736][pr-736])**. Lean proves \(H\le I\le C\); independent accepted algebra shows \(H\) and deferred \(F\) are incomparable |
@@ -1268,7 +1283,7 @@ same estimate.
 | Off-route general simultaneous transport in [`Combining/Error.lean`][general-transport] | Retain \(1/40000\) instead of weakening to \(1/80000\) | Improves a general theorem, but not the live one-coordinate Pauli route | Medium | **NOT IMPLEMENTED (deferred, off route)** |
 | EPR normalization geometry in [`EPRState.lean`][epr-state] | Squared-state coefficient \(16\to8\) | Coefficient only | Low/medium; preserve the zero-projection branch | **NOT IMPLEMENTED (deferred)** |
 | Full Magic Square rigidity in [`MagicSquareTheorems.lean`][ms-rigidity] | \(2\cdot10^{12}\to1788904972224\), about a \(10.6\%\) reduction | No current Pauli headline effect: the live route uses [`msVarObs_anticommutator_le`][ms-anticommutator] with coefficient \(1183680\). A separate optimization could keep the operator conclusions quadratic in \(\sqrt\varepsilon+\sqrt\delta\) while the state conclusion remains linear | Low arithmetic, but agreement hypotheses remain load-bearing | **NOT IMPLEMENTED (deferred, off route)** |
-| Aggregate malformed-answer incidences in [`RawOperatorTransfer.lean`][raw-transfer] | \(86\varepsilon\to43\varepsilon\) before raw transfer | Coefficient only | Needs a new edge-sum proof | **NOT IMPLEMENTED (deferred)** |
+| Aggregate malformed-answer incidences in [`RawOperatorTransferCore.lean`][malformed-transfer] | \(86\varepsilon\to43\varepsilon\) before raw transfer | Coefficient only | Needs a new edge-sum proof | **NOT IMPLEMENTED (deferred)** |
 | Replace the field-valued combined-point construction by quantum linearity | No established quantitative gain for the current proof | None in the live construction | Would change the construction rather than sharpen its present bound | **NOT IMPLEMENTED (deferred, off route)** |
 | Condition a collision estimate on a good event in the [source Pauli composition][qpbt-paper-composition] | No valid target without the actual conditional law and restoration of the discarded probability mass | None from the proposed inference | The conditioning changes the distribution and cannot be omitted from the estimate | **REJECTED** |
 | Remove symmetrization attainment slack by scalar optimization | No valid target: symmetrization already preserves a supplied strategy's value exactly | None | Supremum attainment is not an arithmetic loss | **REJECTED** |
@@ -1742,8 +1757,8 @@ deferred solely by the two-improvement stopping rule. Neither this report nor
 the static C8 `DELEGATED` ledger-shape result claims completion of the whole
 QPBT track.
 
-This report and the reconciled ledger remain unpublished until their own normal
-CI, `review.sh`, and separate independent mathematical review complete. That
+This report and the reconciled ledger are authored and awaiting their own
+normal CI, `review.sh`, and separate independent mathematical review. That
 future review concerns these documents, not the already merged #736 proof.
 
 [baseline-commit]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9
@@ -1755,17 +1770,25 @@ future review concerns these documents, not the already merged #736 proof.
 [issue-734]: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/734
 [issue-735]: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/735
 [pr-736]: https://github.com/Dengnifer/MIPStarRE-QPBT/pull/736
-[qpbt-pr-old-head]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/2c9fb42fbaefe2190e580fcc6302f3a44a3dc170
-[qpbt-proof-source]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9
-[qpbt-baseline-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/Soundness.lean#L51-L108
-[qpbt-qubit-baseline-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/QubitForm.lean#L421-L459
-[qpbt-native-direct-scalars]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/QuantitativeDirectScalars.lean#L43-L614
-[qpbt-native-global]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/Quantitative.lean#L27-L123
-[qpbt-quantitative-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/QuantitativeSoundness.lean#L40-L440
-[qpbt-qubit-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/QuantitativeQubitForm.lean#L29-L125
+[qpbt-final-head]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9
+[qpbt-merge]: https://github.com/Dengnifer/MIPStarRE-QPBT/commit/0b847308c30769be983bbd05c297e1014db76590
+[qpbt-mathematical-review]: https://github.com/Dengnifer/MIPStarRE-QPBT/pull/736#pullrequestreview-5372229944
+[qpbt-final-review]: https://github.com/Dengnifer/MIPStarRE-QPBT/pull/736#pullrequestreview-5372895844
+[qpbt-baseline-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness.lean#L51-L108
+[qpbt-qubit-baseline-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/QubitForm.lean#L421-L459
+[qpbt-native-direct-scalars]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/QuantitativeDirectScalars.lean#L27-L598
+[qpbt-native-global]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/Quantitative.lean#L27-L144
+[qpbt-scalar-base]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/QuantitativeScalarBase.lean#L1-L85
+[qpbt-native-core]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/QuantitativeNativeScalars/Core.lean#L1-L549
+[qpbt-native-fractional]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/QuantitativeNativeFractionalScalars.lean#L1-L973
+[qpbt-quantitative-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/QuantitativeSoundness.lean#L40-L440
+[qpbt-qubit-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/QuantitativeQubitForm.lean#L29-L160
+[qpbt-fractional-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/QuantitativeSoundness.lean#L178-L360
+[qpbt-qubit-fractional-proved]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/QuantitativeQubitForm.lean#L63-L84
 [bound-audit]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/f39cd66b0c5ee49df0e7a723e72107ea5907ba91/results/telemetry/sessions/scout-730-20260930-01.last.md
 [bound-backlog]: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/727#issuecomment-5902387427
 [qpbt-quadratic-candidate]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/acfd20f07f30e71aedcc77846261c27ce4e1979a/results/telemetry/sessions/scout-730-20260929-02.last.md
+[fractional-comparison-report]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/cdc7a3c9b2f2a6bd1f284c0e2d3f0d2e199c9715/results/telemetry/sessions/scout-730-20261001-01.last.md
 [survey-733-author]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2814d000e9c6127bc4d5d30a2ee3f5fe4eb6edc9/results/telemetry/sessions/scout-733-20260929-01.last.md
 [survey-733-referee]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/ac0e8ed88fb5400acee65d0a1eaa8a73bf862a8b/results/telemetry/sessions/scout-733-20260929-02.last.md
 [benchmark-report]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2a3db5b923e240d1a54c50ae25ab54108ac2e2c4/results/telemetry/sessions/scout-730-20260929-01.last.md
@@ -1807,27 +1830,28 @@ future review concerns these documents, not the already merged #736 proof.
 [qpbt-paper-pauli-metric]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex#L1431-L1444
 [qpbt-paper-composition]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex#L1267-L1404
 [qpbt-paper-unitary]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/7bdfa416b7ff1f4a19de98b915efb3ca940f6fd9/references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex#L1666-L1876
-[delta-qld]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/SoundnessDefs.lean#L30-L38
-[pauli-soundness]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/Soundness.lean#L40-L64
-[direct-one-coordinate]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/DirectLowDegree/Soundness.lean#L411-L448
-[state-extraction]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Extraction/StateExtraction.lean#L97-L130
-[raw-transfer]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/Soundness/RawOperatorTransfer.lean#L391-L425
-[consistency-calculus]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Games/DistanceTheorems/Calculus.lean#L300-L345
-[point-commutation]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Observables/WinImplications/CommutingObs.lean#L450-L500
-[qpbt-pasting]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Games/Sandwich/Pasting/Assembly.lean#L714-L790
-[passing-comparison]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/ExtendedLineGame/EvaluatedLineComparison.lean#L245-L285
-[rounding-transport]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Games/DistanceTheorems/RoundingTransport.lean#L120-L175
-[combined-points]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/Points.lean#L55-L90
-[extended-lines]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/ExtendedLines/Estimates.lean#L235-L280
-[projective-rounding]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Games/DistanceTheorems/ProjectiveRounding.lean#L475-L525
-[actual-rounding]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/ActualErrorBounds.lean#L20-L63
-[direct-parameter]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/DirectLowDegree/Transport/Error.lean#L65-L95
-[seed-indexed]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean#L70-L115
-[general-transport]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/DirectLowDegree/Transport/Combining/Error.lean#L215-L255
-[epr-state]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Extraction/EPRState.lean#L135-L173
-[ms-rigidity]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Test/MagicSquareTheorems.lean#L640-L675
-[ms-anticommutator]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Observables/WinImplications/AnticommutingObs.lean#L131-L155
-[dimension-obstruction]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/2ad0a5c12b28bbef8ba54b7bef22d786778a09e9/MIPStarRE/QPBT/Combining/ErrorObstruction.lean#L24-L50
+[delta-qld]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/SoundnessDefs.lean#L30-L38
+[pauli-soundness]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness.lean#L40-L64
+[direct-one-coordinate]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/DirectLowDegree/Soundness.lean#L411-L448
+[state-extraction]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Extraction/StateExtraction.lean#L97-L130
+[raw-transfer]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness/RawOperatorTransferCore.lean#L568-L683
+[malformed-transfer]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/Soundness/RawOperatorTransferCore.lean#L93-L216
+[consistency-calculus]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Games/DistanceTheorems/Calculus.lean#L300-L345
+[point-commutation]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Observables/WinImplications/CommutingObs.lean#L450-L500
+[qpbt-pasting]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Games/Sandwich/Pasting/Assembly.lean#L714-L790
+[passing-comparison]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/ExtendedLineGame/EvaluatedLineComparison.lean#L245-L285
+[rounding-transport]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Games/DistanceTheorems/RoundingTransport.lean#L120-L175
+[combined-points]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/Points.lean#L55-L90
+[extended-lines]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/ExtendedLines/Estimates.lean#L235-L315
+[projective-rounding]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Games/DistanceTheorems/ProjectiveRounding.lean#L475-L525
+[actual-rounding]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/ActualErrorBounds.lean#L20-L63
+[direct-parameter]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/DirectLowDegree/Transport/Error.lean#L65-L95
+[seed-indexed]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean#L70-L115
+[general-transport]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/DirectLowDegree/Transport/Combining/Error.lean#L215-L255
+[epr-state]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Extraction/EPRState.lean#L135-L173
+[ms-rigidity]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Test/MagicSquareTheorems.lean#L640-L675
+[ms-anticommutator]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Observables/WinImplications/AnticommutingObs.lean#L131-L155
+[dimension-obstruction]: https://github.com/Dengnifer/MIPStarRE-QPBT/blob/6ea9f96bd86aaaad613130dea49eefdf6e80c5a9/MIPStarRE/QPBT/Combining/ErrorObstruction.lean#L24-L50
 [pasting-product-gap]: paper-gaps/qpbt_pasting-product-error.tex
 [public-commit]: https://github.com/vidick/MIPRE-formalization/tree/286b3ca44f811fa6e37517c04981bc2f164ee6b5
 [public-license]: https://github.com/vidick/MIPRE-formalization/blob/286b3ca44f811fa6e37517c04981bc2f164ee6b5/LICENSE
