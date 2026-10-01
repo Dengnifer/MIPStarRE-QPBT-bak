@@ -164,3 +164,24 @@ add the long reasoning to the pointed record.
 | 2026-10-02 | Prepare746 mechanically before756 merge while keeping all final gates | MAIN under owner section9 | Use freed754 slot for1200s of the original3600s reservation;142-path byte audit/local commit only, no full old-version build or publication.2400s reconciliation remains unadmitted | palomar-checker-finished-module-preparation-20261002.md; #27 comment5942140880 |
 
 | 2026-10-02 | Admit109-path preparation747 on immutable local P1 result | MAIN under owner section9 | P1 finishes142/142 byte audit in561s. Use1200s for P2 editing/audit/local commit only; preserve all full new-version and publication gates | palomar-draft-compiles-p2-preparation-20261002.md; #27 comment5942298074 |
+
+
+## 2026-10-02 — Palomar hosted preflight and compact-stack integration
+
+MAIN chooses explicit `execution_profile: palomar-standard-v1` for the pinned
+PalomarSubmission reusable full preflight at
+`65f0154ed776cd26c224254aa57b379137f28b0d`. The upstream resolver explicitly
+accepts this built-in GitHub-hosted profile even though the catalogue default
+uses Namespace. Local pure resolution yielded profile digest
+`eb97b7b548c5d016967434818f0ed48a215e7fdc15528f564ab21ff2927cfd69`.
+No workflow dispatch, registry operation or new account/resource occurred.
+
+After #756, PR #775 will be reconciled and reviewed as the complete compact
+statement/extractor integration against main, including the work published in
+#761/#764/#765/#768/#771/#772/#773. Its whole diff must pass canonical CI and
+independent exact-head review, and the actual Challenge must pass the required
+Astra faithfulness audit. This replaces seven serial refresh/build cycles with
+one larger review; it carries every author cost and grants no inherited approval.
+Parent work stays open until the integrated candidate lands through normal gates.
+The deferred #755 review-route findings and module packets remain separately
+gated. Decision and cost recorded in #27 comment5942473721.
