@@ -1,12 +1,16 @@
-import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
-import Mathlib.LinearAlgebra.Matrix.BilinearForm
-import MIPStarRE.QPBT.Algebra.Subspaces
+module
+
+public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
+public import Mathlib.LinearAlgebra.Matrix.BilinearForm
+public import MIPStarRE.QPBT.Algebra.Subspaces
 
 /-! # Orthogonal-complement algebra
 
 Blueprint `lem:perp_perp`, `def:Lperp`, and `lem:L_perp_perp`; paper
 `references/qpbt-paper/04_preliminaries.tex:263-281,386-415`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

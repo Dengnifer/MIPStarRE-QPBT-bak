@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Algebra.Coefficients
-import MIPStarRE.QPBT.Algebra.FieldBasis
-import MIPStarRE.QPBT.Algebra.Lines
-import MIPStarRE.QPBT.Games.CondLinear
-import MIPStarRE.QPBT.Games.Defs
+module
+
+public import MIPStarRE.QPBT.Algebra.Coefficients
+public import MIPStarRE.QPBT.Algebra.FieldBasis
+public import MIPStarRE.QPBT.Algebra.Lines
+public import MIPStarRE.QPBT.Games.CondLinear
+public import MIPStarRE.QPBT.Games.Defs
 
 /-!
 # The low-degree game
@@ -21,6 +23,8 @@ The exact decomposition of a scalar seed into its coordinate index and its
 residue records the balance assertion for the map `chi` in the same source
 definition.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

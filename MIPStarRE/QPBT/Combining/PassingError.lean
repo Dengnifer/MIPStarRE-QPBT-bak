@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.ErrorFunctions
+module
+
+public import MIPStarRE.QPBT.Games.ErrorFunctions
 
 /-! # Capped scalar envelope for direct-game error bounds
 
@@ -17,6 +19,8 @@ and at infinity.
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1279-1288`
 - Parent issue #119 and arithmetic issue #326
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

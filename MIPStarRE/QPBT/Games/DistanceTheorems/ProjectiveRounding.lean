@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
-import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization
-import MIPStarRE.LDT.Preliminaries.Completion
-import MIPStarRE.LDT.Preliminaries.Triangles.Core
-import MIPStarRE.LDT.Test.StrategyRole.Algebra
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization
+public import MIPStarRE.LDT.Preliminaries.Completion
+public import MIPStarRE.LDT.Preliminaries.Triangles.Core
+public import MIPStarRE.LDT.Test.StrategyRole.Algebra
 
 /-!
 # Projective rounding for consistent POVMs
@@ -30,6 +32,8 @@ mass has been shown to be small.
 - Blueprint `lem:ortho-explicit-constant`, the statement proved in this module
 - `references/ldt-paper/orthonormalization.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

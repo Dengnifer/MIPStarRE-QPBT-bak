@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Games.CondLinear
-import MIPStarRE.QPBT.Games.CondLinearTheorems.DirectSumSupport
-import MIPStarRE.QPBT.Games.CondLinearTheorems.Reindex
+module
+
+public import MIPStarRE.QPBT.Games.CondLinear
+public import MIPStarRE.QPBT.Games.CondLinearTheorems.DirectSumSupport
+public import MIPStarRE.QPBT.Games.CondLinearTheorems.Reindex
 
 /-! # Structure and direct sums of conditionally linear functions
 
@@ -15,6 +17,8 @@ The source results are blueprint `lem:cl-kth`, `lem:cl-func-prod`, and
 `lem:cl-dist-prod`, with paper origin
 `references/qpbt-paper/05_conditionally_linear_functions.tex:150-379`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

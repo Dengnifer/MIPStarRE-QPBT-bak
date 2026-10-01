@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # Polynomial combination and restricted line distributions
@@ -19,6 +21,8 @@ The combining map is blueprint
 The restricted laws are blueprint `def:ith-restricted-line`,
 with paper origin in the same source at lines 1038--1048.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

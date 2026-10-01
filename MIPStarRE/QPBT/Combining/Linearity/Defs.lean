@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.FieldBasis
-import MIPStarRE.QPBT.Games.Defs
+module
+
+public import MIPStarRE.QPBT.Algebra.FieldBasis
+public import MIPStarRE.QPBT.Games.Defs
 
 /-!
 # Binary observables and the state-dependent distance
@@ -32,6 +34,8 @@ from Theorem 10 of Natarajan--Vidick, arXiv:1610.03574,
 `references/nv-paper/fullpaper.tex:1074-1088`; the state-dependent distance is
 defined there at lines 866--875.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

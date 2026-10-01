@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Algebra.Subspaces
+module
+
+public import MIPStarRE.QPBT.Algebra.Subspaces
 
 /-!
 # Reduced row echelon form and the canonical complement
@@ -26,6 +28,8 @@ provide an executable elimination algorithm or a complexity theorem for finding 
   Definition `def:canonical-complement` and Lemma `lem:canonical-complement`.
 * `audits/2026-09-21_issue-676-canonical-complement-alignment.md`, issue #676.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

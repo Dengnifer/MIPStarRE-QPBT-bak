@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
 
 /-! # Consistency under independent additive convolution
 
@@ -18,6 +20,8 @@ before applying it to the expanded point construction.
 - Blueprint `def:expanded-state` and `def:expanded-point-measurement`.
 - Issue #266; the ideal-point specialization is the separate issue #267.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

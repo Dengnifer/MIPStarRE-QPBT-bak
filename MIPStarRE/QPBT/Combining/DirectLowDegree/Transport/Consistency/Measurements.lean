@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
 
 /-!
 # Low-degree consistency transport
@@ -14,6 +16,8 @@ without changing either coordinate order or consistency error.
 - `references/ldt-paper/test_definition.tex:180-202`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

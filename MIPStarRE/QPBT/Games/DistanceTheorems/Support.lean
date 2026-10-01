@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Games.Consistency
-import MIPStarRE.LDT.Basic.DistributionAvg
-import MIPStarRE.LDT.MakingMeasurementsProjective.Defs
-import MIPStarRE.LDT.Preliminaries.CauchySchwarz
-import MIPStarRE.Quantum.FiniteHilbert
+module
+
+public import MIPStarRE.QPBT.Games.Consistency
+public import MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Defs
+public import MIPStarRE.LDT.Preliminaries.CauchySchwarz
+public import MIPStarRE.Quantum.FiniteHilbert
 
 /-!
 # Finite-dimensional operator estimates for state-dependent distance
@@ -16,6 +18,8 @@ assumptions or source-facing statements.
 - `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:295-395`
 - `references/ldt-paper/preliminaries.tex:649-666`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

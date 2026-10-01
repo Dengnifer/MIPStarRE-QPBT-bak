@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Correspondence
-import MIPStarRE.QPBT.State
-import MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Correspondence
+public import MIPStarRE.QPBT.State
+public import MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal
 
 /-!
 # Seed-fiber dilation for the directly indexed low-degree game
@@ -14,6 +16,8 @@ arbitrary dependence on the seed within each `chiIndex` fiber.
 - `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-458`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

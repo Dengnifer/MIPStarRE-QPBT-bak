@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Defs
+module
+
+public import MIPStarRE.QPBT.Combining.Defs
 
 /-!
 # Uniform coordinate-index mixtures of the line-point laws
@@ -17,6 +19,8 @@ The mixture assertion is the opening sentence of blueprint
 The restricted laws are blueprint `def:ith-restricted-line`, paper lines
 1038--1048.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

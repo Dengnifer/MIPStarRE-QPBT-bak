@@ -1,6 +1,8 @@
-import MIPStarRE.LDT.Test.StrategyRole.Algebra
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Measurements
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+module
+
+public import MIPStarRE.LDT.Test.StrategyRole.Algebra
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Measurements
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
 
 /-!
 # State conversion and direct point readout
@@ -14,6 +16,8 @@ portion of the low-degree consistency transport.
 - `references/ldt-paper/test_definition.tex:180-202`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

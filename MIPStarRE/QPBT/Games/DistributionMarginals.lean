@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.PMFAverages
-import MIPStarRE.QPBT.Games.DistributionAux
+module
+
+public import MIPStarRE.LDT.Basic.PMFAverages
+public import MIPStarRE.QPBT.Games.DistributionAux
 
 /-!
 # Products, marginals, and restrictions of finite distributions
@@ -17,6 +19,8 @@ conditioning on an event of one factor preserves the independence of the other.
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1063-1116`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

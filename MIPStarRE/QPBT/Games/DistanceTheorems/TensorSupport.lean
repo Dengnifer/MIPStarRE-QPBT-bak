@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.Support
-import MIPStarRE.LDT.Basic.TensorPlacement
-import MIPStarRE.LDT.MakingMeasurementsProjective.Defs
-import MIPStarRE.LDT.Preliminaries.ComparisonCore
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Support
+public import MIPStarRE.LDT.Basic.TensorPlacement
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Defs
+public import MIPStarRE.LDT.Preliminaries.ComparisonCore
 
 /-!
 # Tensor-placement and marginal identities
@@ -15,6 +17,8 @@ used in data processing and the commutator estimate.
 - Blueprint `fact:triangle-for-simeq`, `fact:data-processing`, and
   `lem:commutation-analysis`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

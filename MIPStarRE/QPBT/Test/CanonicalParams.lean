@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.RpowBounds
-import MIPStarRE.QPBT.Test.SoundnessDefs
+module
+
+public import MIPStarRE.LDT.Basic.RpowBounds
+public import MIPStarRE.QPBT.Test.SoundnessDefs
 
 /-!
 # Canonical Pauli basis test parameters
@@ -13,6 +15,8 @@ The definitions and estimate correspond to blueprint `def:introparams` and
 `lem:delta-bound`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1503-1562`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

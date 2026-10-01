@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.StrategyClasses
+module
+
+public import MIPStarRE.QPBT.Games.StrategyClasses
 
 /-!
 # Ground-slice compression of measurements
@@ -13,6 +15,8 @@ The construction supports the pullback after the first paragraph of the proof
 of paper `lem:qld-4-7`,
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1279-1289`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

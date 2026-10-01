@@ -1,6 +1,8 @@
-import MIPStarRE.Quantum.Measurement
-import MIPStarRE.LDT.Basic.DistributionAvg
-import MIPStarRE.LDT.Basic.Distribution
+module
+
+public import MIPStarRE.Quantum.Measurement
+public import MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPStarRE.LDT.Basic.Distribution
 
 /-!
 # Games, tensor-product strategies, and value
@@ -15,6 +17,8 @@ The source-facing nodes are blueprint `def:game`, `def:povm-conventions`,
 `def:tensor-product-strategy`, and `def:tensor-product-value`.
 The paper origin is `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:10-57`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

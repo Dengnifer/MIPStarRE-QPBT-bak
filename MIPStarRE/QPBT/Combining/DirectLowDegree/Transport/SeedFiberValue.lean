@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
-import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
 
 /-!
 # Value of the seed-fiber dilation
@@ -26,6 +28,8 @@ convention.
   `lem:ld-dline-level`, `lem:ld-question-typed-cl`, `lem:alnf`, and `lem:dlnf`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

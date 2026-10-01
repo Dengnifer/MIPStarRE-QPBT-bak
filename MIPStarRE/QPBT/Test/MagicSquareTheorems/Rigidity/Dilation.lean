@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkFull
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Relations
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkFull
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Relations
 
 /-!
 # A simultaneous projective dilation of a Magic Square strategy
@@ -41,6 +43,8 @@ one-measurement Naimark lemma of
 `references/ldt-paper/orthonormalization.tex:121-159`, formalized as
 `MIPStarRE.LDT.MakingMeasurementsProjective.oneMeasNaimark`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Compression
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Defect
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Compression
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Defect
 
 /-!
 # Low-degree consistency transport

@@ -1,5 +1,7 @@
-import Mathlib
-import MIPStarRE.LDT.Preliminaries.Polynomials
+module
+
+public import Mathlib
+public import MIPStarRE.LDT.Preliminaries.Polynomials
 
 /-!
 # The low-degree encoding
@@ -20,6 +22,8 @@ of the QPBT headline theorems, which must elaborate in the same environment as
 the Mathlib-only `ChallengeQPBT.lean`.  Keep the full `import Mathlib`; do not
 narrow it.  See `docs/comparator.md`, "Environment alignment".
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 open MvPolynomial

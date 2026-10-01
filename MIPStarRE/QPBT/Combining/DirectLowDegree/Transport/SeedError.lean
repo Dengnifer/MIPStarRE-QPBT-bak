@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
 
 /-!
 # Error absorption for seed compression
@@ -11,6 +13,8 @@ error function of blueprint `lem:ld-soundness`.
 
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

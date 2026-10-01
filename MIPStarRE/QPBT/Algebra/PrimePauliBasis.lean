@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.PauliTheorems
-import MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+module
+
+public import MIPStarRE.QPBT.Algebra.PauliTheorems
+public import MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
 
 /-!
 # Prime-characteristic Pauli eigenbases
@@ -13,6 +15,8 @@ projective-measurement properties, and Fourier expansions are established here.
 * Blueprint `def:generalized-pauli` and `lem:pauli-observable-expansion`.
 * `references/qpbt-paper/04_preliminaries.tex:1096-1161`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

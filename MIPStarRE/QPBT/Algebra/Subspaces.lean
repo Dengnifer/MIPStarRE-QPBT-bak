@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Subspaces for the Pauli basis test
@@ -21,6 +23,8 @@ of the QPBT headline theorems, which must elaborate in the same environment as
 the Mathlib-only `ChallengeQPBT.lean`.  Keep the full `import Mathlib`; do not
 narrow it.  See `docs/comparator.md`, "Environment alignment".
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

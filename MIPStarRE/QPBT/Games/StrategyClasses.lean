@@ -1,9 +1,11 @@
-import MIPStarRE.QPBT.Games.Defs
-import MIPStarRE.QPBT.Games.Consistency
-import MIPStarRE.QPBT.State
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkFull
-import MIPStarRE.LDT.Preliminaries.Completion
-import MIPStarRE.LDT.Test.StrategyBiProj.DirectSum
+module
+
+public import MIPStarRE.QPBT.Games.Defs
+public import MIPStarRE.QPBT.Games.Consistency
+public import MIPStarRE.QPBT.State
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkFull
+public import MIPStarRE.LDT.Preliminaries.Completion
+public import MIPStarRE.LDT.Test.StrategyBiProj.DirectSum
 
 /-! # Strategy classes and symmetric games
 
@@ -13,6 +15,8 @@ predicates from blueprint `def:projective-strategy-general`,
 `def:consistent-strategy`, and `def:spcc`, with source definitions in
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:68-180`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 
