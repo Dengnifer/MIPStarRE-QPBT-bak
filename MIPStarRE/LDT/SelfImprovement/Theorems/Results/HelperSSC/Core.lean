@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer
+module
+
+public import MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer
 
 /-!
 # Helper strong self-consistency bounds: core reductions
@@ -11,6 +13,8 @@ variance-swap identities used in the helper strong self-consistency chain.
 - `references/ldt-paper/self_improvement.tex`
 - `blueprint/src/chapter/ch07_self_improvement.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.SelfImprovement
 

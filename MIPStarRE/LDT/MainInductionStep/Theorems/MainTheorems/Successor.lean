@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Base
+module
+
+public import MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Base
 
 /-!
 # Section 6 — Main Induction Theorems: Successor and Public Interfaces
@@ -6,6 +8,8 @@ import MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Base
 This module contains the answer-valued induction theorem, successor reductions,
 and the public corrected large-`k` main-induction interface.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

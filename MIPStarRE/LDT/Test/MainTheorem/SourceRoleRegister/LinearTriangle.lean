@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Preliminaries.Triangles.CompleteMeasurements
-import MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final
+module
+
+public import MIPStarRE.LDT.Preliminaries.Triangles.CompleteMeasurements
+public import MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final
 
 /-!
 # Linear-triangle role-register construction
@@ -16,6 +18,8 @@ measurements as the existing source route.
 * `references/ldt-paper/preliminaries.tex`,
   `prop:simeq-triangle-inequality` at lines 649-684.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

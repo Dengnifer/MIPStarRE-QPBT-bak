@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.EndpointEquivs
-import MIPStarRE.LDT.Pasting.Core.LdGbcon
+module
+
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.EndpointEquivs
+public import MIPStarRE.LDT.Pasting.Core.LdGbcon
 
 /-!
 # Section 12 pasting: line one-point transport — endpoint lemmas
@@ -11,6 +13,8 @@ Internal helper module; part of the file-split for `#1127`.
 - `references/ldt-paper/ld-pasting.tex`
 - `blueprint/src/chapter/ch09_pasting.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

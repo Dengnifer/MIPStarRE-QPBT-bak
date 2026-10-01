@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition
+module
+
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition
 
 /-!
 # Section 12 pasting: over all outcomes — Schwartz–Zippel bounds and final assembly
@@ -11,6 +13,8 @@ assembly of `lem:over-all-outcomes`.
 - `references/ldt-paper/ld-pasting.tex`
 - `blueprint/src/chapter/ch09_pasting.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

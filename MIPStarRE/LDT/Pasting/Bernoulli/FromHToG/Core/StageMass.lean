@@ -1,8 +1,10 @@
-import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.BernoulliTail
-import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps
-import MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Split
-import MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Move
-import MIPStarRE.LDT.Preliminaries.CauchySchwarz
+module
+
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.BernoulliTail
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Split
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Move
+public import MIPStarRE.LDT.Preliminaries.CauchySchwarz
 
 /-!
 # Section 12 pasting: from-H-to-G stage-mass bookkeeping
@@ -10,6 +12,8 @@ import MIPStarRE.LDT.Preliminaries.CauchySchwarz
 Stage-`0` identification, terminal identification, adjacent-stage split, and
 telescoping lemmas that connect the Lean recurrence stages to the paper scalars.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

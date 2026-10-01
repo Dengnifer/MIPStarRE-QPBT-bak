@@ -1,9 +1,11 @@
-import MIPStarRE.LDT.Basic.LinePolynomialEmbedding
-import MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
-import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
-import MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Successor
-import MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
-import MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+module
+
+public import MIPStarRE.LDT.Basic.LinePolynomialEmbedding
+public import MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
+public import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+public import MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Successor
+public import MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
+public import MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
 
 /-!
 # Section 6 — Main Induction Theorems: Base and Large-Error Branches
@@ -11,6 +13,8 @@ import MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
 This module contains the base cases and the trivial large-error branches for the
 ordinary and answer-valued main induction statements.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 
