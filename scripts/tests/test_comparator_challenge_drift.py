@@ -37,7 +37,7 @@ _spec.loader.exec_module(check_challenge_drift)
 
 
 class ComparatorChallengeDriftTests(unittest.TestCase):
-    def test_clean_closure_rows_keeps_only_four_column_tsv_rows(self) -> None:
+    def test_clean_closure_rows_keeps_supported_tsv_rows(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             raw = root / "closure.tsv"
@@ -48,6 +48,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
                         "noise from an unexpected diagnostic",
                         "Decl\tMIPStarRE/Foo.lean\t1\t2",
                         "too\tmany\tcolumns\tfor\tthis\trow",
+                        "Hole\tMIPStarRE/Hole.lean\t3\t4\tDEF_SAFE",
                         "Generated\tMIPStarRE/Bar.lean\tNORANGE\tNORANGE",
                     ]
                 )
@@ -60,6 +61,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
             self.assertEqual(
                 clean.read_text(encoding="utf-8"),
                 "Decl\tMIPStarRE/Foo.lean\t1\t2\n"
+                "Hole\tMIPStarRE/Hole.lean\t3\t4\tDEF_SAFE\n"
                 "Generated\tMIPStarRE/Bar.lean\tNORANGE\tNORANGE\n",
             )
 
@@ -74,7 +76,10 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
 
     def test_readme_documents_update_command_and_footer_source(self) -> None:
         readme = README.read_text(encoding="utf-8")
-        self.assertIn("python3 scripts/comparator/check_challenge_drift.py --root . --update", readme)
+        self.assertIn(
+            "python3 scripts/comparator/check_challenge_drift.py --root . --update",
+            readme,
+        )
         self.assertIn("challenge_footer.lean", readme)
         self.assertIn("MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean", readme)
         self.assertIn("--challenge", readme)
@@ -88,6 +93,10 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         self.assertIn("MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean", readme)
         self.assertIn("MIPStarRE/QPBT/Test/Soundness.lean", readme)
         self.assertIn("MIPStarRE/QPBT/Test/QubitForm.lean", readme)
+        self.assertIn("definition_names", readme)
+        self.assertIn("Solution axiom audit", readme)
+        self.assertIn("3,509 physical lines and 161,038 bytes", readme)
+        self.assertIn("module-conversion packet #753", readme)
         self.assertIn(LDT_BASELINE_SHA256, readme)
 
     def test_ldt_expected_matches_baseline(self) -> None:

@@ -35,6 +35,64 @@ elaboration-context tables (`extras`, `module_preludes`).  The schema, with the
 meaning of every key, is documented at the top of `challenge_config.py`; unknown
 keys are rejected, so a typo fails loudly rather than silently dropping context.
 
+### Registered definition frontiers
+
+The optional `definition_names` list implements the official comparator's
+named-definition frontier.  Each registered name must resolve to a
+repository-local definition.  Its full type and every dependency of that type
+remain in the extracted closure, but its value is not traversed.  Every
+unregistered definition value and theorem proof reached by the ordinary closure
+is still traversed.
+
+The assembler copies the registered declaration's source header, preserving its
+name, universe parameters, binders, return type, and safety modifier, and
+replaces only its generated Challenge value with `by sorry`.  Missing names and
+names that are not definitions fail extraction.  The fifth closure-TSV column
+records the definition safety checked from Lean metadata.
+
+This Challenge hole is not a permission for an unchecked Solution axiom.  The
+official comparator compares the registered definition's name, universes, type,
+and safety while deliberately ignoring its Challenge value.  It separately
+traverses the actual Solution definition value during the Solution axiom audit.
+Thus the generated Challenge may contain `sorryAx` at the registered value, but
+the checked Solution must still supply an implementation using only the
+permitted axioms.  Registering one definition does not erase unrelated helper
+proofs or values.
+
+Neither checked-in challenge currently sets `definition_names`; omitting it or
+setting it to `[]` preserves the historical extraction and both golden fixtures
+byte-for-byte.
+
+### Fixed-field prototype measurement
+
+Issue #769 measured a temporary copy of the four-target QPBT configuration at
+library base `9643b5ad12422babd3c7245bb0743e54395c30b5`.  The copy registered
+only `MIPStarRE.QPBT.fixedFieldModel` and removed the two `FieldBasis` prelude
+scopes that became correctly unmatched when the construction disappeared.  It
+did not modify `challenges/qpbt.json` or either expected fixture.
+
+The compiled-metadata extraction produced the same 31-file split layout.  The
+checked-in tree has 3,956 physical lines and 181,818 bytes; the prototype has
+3,509 physical lines and 161,038 bytes, a reduction of 447 lines and 20,780
+bytes.  Its unique dependency inventory fell from 275 to 252: 19 ranged field-
+construction declarations and four generated helpers disappeared, with no
+prototype-only dependency.  The `FieldBasis` mirror fell from 551 lines and
+25,746 bytes to 108 lines and 5,396 bytes.  No construction-only dependency
+remained in the measured closure.
+
+The prototype still retains `FieldModel`, `IsAdmissibleSize`, the complete
+`FixedFieldModel` contract (cardinality, algebra, natural binary encoding,
+self-duality, and normality), its instances and accessors, and the exact
+`fixedFieldModel` type.  Only the generated Challenge value is unspecified.  In
+the unchanged library Solution, the selector remains
+`Classical.choice (exists_fixed_field_model q hq)`, so its construction is still
+subject to the Solution axiom audit.
+
+This old four-statement tree still exceeds Palomar's 1,000-line and 100-KiB hard
+limits.  It is evidence for the definition frontier, not the final single-file
+Challenge or a readiness claim; the compact statement/bridge work remains
+separate.
+
 `require_expected` distinguishes a challenge that must stay regenerated (`true`,
 a missing expected copy is an error) from one still being developed (`false`,
 a missing expected copy is reported and skipped).
@@ -130,7 +188,7 @@ PY
 #    variable unset it closes the LDT main theorem:
 MIPSTARRE_COMPARATOR_TARGETS="MIPStarRE.QPBT.pauli_soundness,MIPStarRE.QPBT.pauli_soundness_qubit,MIPStarRE.QPBT.exists_spcc_value_one,MIPStarRE.QPBT.exists_ld_soundness" \
   lake env lean extract_closure_qpbt.lean > closure.tsv
-awk -F'\t' 'NF==4' closure.tsv > closure.clean.tsv
+awk -F'\t' 'NF==4 || NF==5' closure.tsv > closure.clean.tsv
 
 # 3. assemble the challenge body (topological order, namespace handling)
 # `qpbt` is split, so the assembler writes a directory:
@@ -180,6 +238,10 @@ generation and deliberately does not duplicate mutable acceptance status.
 - Declarations without a source range (compiler-generated congruence lemmas
   and `autoParam` helpers) are emitted as explanatory comments; they
   regenerate identically during elaboration of the challenge file.
+- `extract_closure.lean` is an executable tracked Lean source.  The final
+  dynamic source inventory in module-conversion packet #753 must include it and
+  give it the module header required by that packet; it is not exempt merely
+  because it is a generator rather than a library module.
 - A configured header or footer file that is not in the tree is reported and
   omitted, so a challenge under development can be generated before its footer
   exists.  That omission is confined to `--write`: `--update` refuses such a
