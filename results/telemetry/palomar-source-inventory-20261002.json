@@ -1,0 +1,57 @@
+{
+  "commit": "14c43b47f4eb2bb005666c000f5880b60b400c8a",
+  "scope": "tracked regular Lean sources, excluding .git/.lake; first-token scan ignores leading nested comments, not compiler verification",
+  "files": 742,
+  "physical_lines": 251114,
+  "missing_module": 742,
+  "over_10000": [],
+  "symlinks": [],
+  "largest": [
+    {
+      "path": "MIPStarRE/QPBT/Combining/ExtendedLineGame/LinePointRejection.lean",
+      "lines": 1000,
+      "bytes": 49805,
+      "module_first_token": false,
+      "header_exempt": false
+    },
+    {
+      "path": "MIPStarRE/QPBT/Games/StrategyClasses.lean",
+      "lines": 990,
+      "bytes": 43316,
+      "module_first_token": false,
+      "header_exempt": false
+    },
+    {
+      "path": "MIPStarRE/QPBT/Games/CondLinearTheorems.lean",
+      "lines": 986,
+      "bytes": 44916,
+      "module_first_token": false,
+      "header_exempt": false
+    },
+    {
+      "path": "MIPStarRE/QPBT/Test/MagicSquareTheorems/Rigidity/Transfer.lean",
+      "lines": 979,
+      "bytes": 59151,
+      "module_first_token": false,
+      "header_exempt": false
+    },
+    {
+      "path": "MIPStarRE/QPBT/Combining/QuantitativeNativeFractionalScalars.lean",
+      "lines": 973,
+      "bytes": 44962,
+      "module_first_token": false,
+      "header_exempt": false
+    }
+  ],
+  "scan_note": "Git export-ignore excludes two tracked Lean files from git archive; both were restored to the inventory by reading their exact HEAD blobs. All 742 tracked Lean files are included.",
+  "policy": {
+    "commit": "96b034cc31a72a63d4f4041911dce337a85c9a04",
+    "source": "https://github.com/PalomarRegistry/PalomarPolicy/blob/96b034cc31a72a63d4f4041911dce337a85c9a04/CONTRIBUTING.md#lean-source-requirements",
+    "passage_lines": [
+      164,
+      188
+    ],
+    "observed_date": "2026-10-02",
+    "conclusion": "The header and file-length requirements explicitly extend to separately declared substantive source repositories for thin wrappers."
+  }
+}
