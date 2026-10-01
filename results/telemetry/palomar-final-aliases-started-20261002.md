@@ -42,3 +42,11 @@ Progress Log27 comment: 5940813135
 The newly generated human-readable766 receipt was normalized for trailing
 Markdown whitespace before its first commit. The raw JSONL and private original
 remain unchanged. The three770 theorem names were registered with dup_check.
+
+Correction to the preceding claim-registration sentence: the claim command
+returned exit3 and did not register the names. Its short-name heuristic matched
+each new Palomar-qualified alias against the intended original QPBT theorem.
+These are the explicitly authorized compact transport aliases, with distinct
+fully qualified names and reused original proofs, not duplicate proof work.
+No force/override was used. Dispatch's advisory warning remains; issue770 and
+its precise ownership contract are authoritative for this assignment.
