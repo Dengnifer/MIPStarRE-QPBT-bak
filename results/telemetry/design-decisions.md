@@ -152,3 +152,5 @@ add the long reasoning to the pointed record.
 | 2026-10-02 | Align module packets with recorded upgrade756 and prepare142-path packet746 | MAIN under owner section9 | Remove stale4.32 plan; retain exact statements and normal gates. First3600s Sol budget reserved but not admitted before756 merges | palomar-conversion-briefs-aligned-20261002.md; #27 comment5940485566 |
 
 | 2026-10-02 | Admit one1500s extraction769 continuation | MAIN under owner section9 | Initial1800s ended during dependency build; preserve41-test checkpoint and six-file patch, complete prototype/publication under3300s cumulative author ceiling | palomar-frontier-continuation-20261002.md; #27 comment5940572876 |
+
+| 2026-10-02 | Admit2700s continuation of upgrade756 | MAIN under owner section9 | Initial3600s preserves authenticated setup, checked pilot and small port patch; resolve remaining instance/API failures under6300s cumulative author ceiling without statement/bound changes | palomar-toolchain-continuation-20261002.md; #27 comment5940915438 |
