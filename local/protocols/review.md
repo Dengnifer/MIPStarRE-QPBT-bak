@@ -28,14 +28,26 @@ Locally the normal chain is: `ci.sh` publishes the `local-ci/*` statuses on the
 head SHA; `review.sh` refuses to do anything until the `local-ci/summary`
 roll-up is `success` for the **current** head.  The explicit
 `--source-repo PATH` route is restricted to `Dengnifer/QPBT-comparator`: it
-instead requires a successful GitHub Actions `comparator` check on that exact
-SHA whose actual run uses `.github/workflows/comparator.yml` and whose job is
-bound to the run's current attempt. The workflow and `verify.sh` bytes must
-match the reviewed pins from comparator main commit
-`360402fdf4a39399f94331452d6e5d0a35c144be`, and `comparator.json` must enable
-NanoDa. A launcher change therefore fails closed until this library receives
-an explicit reviewed pin update. There is no event bus, so either chain is an
-ordering discipline rather than a trigger, enforced by the gate below.
+instead requires a successful GitHub Actions `comparator / verify` check on
+that exact SHA. Its run must use `.github/workflows/comparator.yml`, be a push
+of the reviewed branch, and bind the check URL and job to the run's current
+attempt. The caller bytes must match
+`scripts/tests/fixtures/companion-review/comparator.yml`: a reusable full job at
+PalomarSubmission commit `65f0154ed776cd26c224254aa57b379137f28b0d`, with
+`pipeline_commit` equal to that pin and explicit execution profile
+`palomar-standard-v1`. At that revision the profile resolves to GitHub-hosted
+`ubuntu-24.04`, not the catalogue's Namespace default, and has digest
+`eb97b7b548c5d016967434818f0ed48a215e7fdc15528f564ab21ff2927cfd69`.
+
+The exact-head `comparator.json` must contain only `Challenge`, `Solution`, the
+four registered QPBT theorem names in fixed order, the single
+`MIPStarRE.QPBT.fixedFieldModel` definition, the three standard axioms and the
+compatibility field `enable_nanoda: true`. The route runs no companion
+`verify.sh`, comparator binary or branch-defined checker. The expected check
+name follows GitHub's reusable-workflow job presentation and remains an
+integration assumption to confirm on the first real companion push; a different
+name fails closed. There is no event bus, so either chain is an ordering
+discipline rather than a trigger, enforced by the gate below.
 
 Marking a draft ready is not a trigger there and is not one here.  A review
 follows a CI run, and only a CI run.
@@ -79,12 +91,14 @@ nothing, so a subset cannot green-light review.  On the companion route, rung
 5 reads check runs through `gh_common.py`, follows each candidate's exact
 Actions run and job, skips same-named checks from other workflows, and accepts
 only the newest official workflow evidence whose exact-head run, current
-attempt, job id, check-run URL, status and conclusion all agree. The pinned
-workflow and verification launcher replace source-text greps: comments,
-unreachable shell text and decoy jobs cannot satisfy the gate. The gate is read
-again immediately before publication, followed by a final clean checkout,
-branch, base and head check. Missing, failed, pending, stale, cross-repository
-or unbound evidence publishes nothing.
+attempt, push branch, job id, check-run URL, status and conclusion all agree.
+The pinned caller delegates to Palomar's unmodified full verifier, whose
+successful `verify` job includes its final report gate. The complete local
+configuration check prevents target or axiom weakening, while branch launchers
+and executables are never invoked. The gate is read again immediately before
+publication, followed by a final clean checkout, branch, base and head check.
+Missing, failed, pending, stale, cross-repository or unbound evidence publishes
+nothing.
 
 ## 3. Trusted prompts
 

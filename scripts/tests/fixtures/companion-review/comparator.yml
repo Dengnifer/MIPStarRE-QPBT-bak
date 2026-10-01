@@ -1,98 +1,21 @@
-name: Comparator verification
-
-# Runs the official leanprover/comparator: the MIPStarRE-A library (pinned in
-# lakefile.toml and lake-manifest.json) proves exactly the statements in
-# Challenge.lean using only propext, Quot.sound, Classical.choice, replayed
-# through the Lean kernel and the independent nanoda kernel.  The challenge
-# is Challenge.lean together with the modules under Challenge/.  See the
-# Validating Proofs chapter of the Lean reference manual for the trust model.
-#
-# The systemd-run guard from the comparator README is omitted: it hardens
-# against landrun escapes by untrusted solutions, and both modules here come
-# from this trusted checkout.
-#
-# This is the authoritative run.  On the development host the sandbox and the
-# external kernel are unavailable (no Go, no modern Rust), so local runs use
-# ./verify.sh --fake-landrun and are functional checks only.
+name: Comparator
 
 on:
   push:
-    branches: [main, master, issue-662-closure-20260921-diagnostic]
-  pull_request:
-  workflow_dispatch:
-  schedule:
-    - cron: '41 5 * * 1'  # weekly: catch upstream tool or cache drift
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+permissions:
+  contents: read
 
 jobs:
   comparator:
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Check the challenge imports only Mathlib and its own modules
-        run: |
-          # The challenge is one Mathlib-only module per contributing library
-          # module (see the README): every module may import Mathlib and other
-          # Challenge modules, and nothing else -- in particular never the
-          # library it is meant to be an independent statement of.
-          files="Challenge.lean $(find Challenge -name '*.lean' | sort)"
-          bad=$(grep -hE '^import ' $files \
-                | grep -vE '^import Mathlib$|^import Challenge(\.[A-Za-z0-9_.]+)?$' \
-                || true)
-          if [ -n "$bad" ]; then
-            echo "::error::challenge modules may import only Mathlib and other"
-            echo "::error::challenge modules, found: $bad"
-            exit 1
-          fi
-          echo "checked $(printf '%s\n' $files | wc -l) challenge modules"
-
-      - name: Check the library pin is a full commit hash
-        run: |
-          rev=$(grep -E '^rev = ' lakefile.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
-          if ! printf '%s' "$rev" | grep -qE '^[0-9a-f]{40}$'; then
-            echo "::error::lakefile.toml must pin MIPStarRE to a full 40-character commit hash, found: $rev"
-            exit 1
-          fi
-          man=$(grep -A6 '"name": "MIPStarRE"' lake-manifest.json | grep '"rev"' | head -1 | sed 's/.*"rev": "\(.*\)".*/\1/')
-          if [ -n "$man" ] && [ "$man" != "$rev" ]; then
-            echo "::error::lakefile.toml pins $rev but lake-manifest.json pins $man"
-            exit 1
-          fi
-          echo "library pin: $rev"
-
-      - name: Free disk space before Lean setup
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
-          if [ -n "${AGENT_TOOLSDIRECTORY:-}" ]; then
-            sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          fi
-          df -h
-
-      - name: Build Challenge and Solution (with leanchecker re-check)
-        uses: leanprover/lean-action@v1
-        with:
-          leanchecker: true
-
-      - name: Set up Go for landrun
-        uses: actions/setup-go@v6
-        with:
-          go-version: stable
-          cache: false
-
-      - name: Cache verification tools
-        uses: actions/cache@v4
-        with:
-          path: |
-            landrun/landrun
-            comparator/.lake
-            nanoda_lib/target/release/nanoda_bin
-          key: comparator-tools-${{ hashFiles('lean-toolchain', 'verify.sh') }}
-
-      - name: Run comparator
-        run: ./verify.sh
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@65f0154ed776cd26c224254aa57b379137f28b0d
+    with:
+      repository: ${{ github.repository }}
+      commit: ${{ github.sha }}
+      pipeline_commit: 65f0154ed776cd26c224254aa57b379137f28b0d
+      request_id: qpbtpreflight
+      mode: full
+      execution_profile: palomar-standard-v1
+      options: >-
+        {"comparator_config_path":"comparator.json",
+        "authorization_relationship":"I am a responsible author or maintainer"}

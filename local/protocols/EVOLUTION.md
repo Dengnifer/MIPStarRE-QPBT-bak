@@ -1899,3 +1899,35 @@ actual PR head without mutating its checkout or confusing it with a library PR
 having the same number. Missing or mismatched local or GitHub evidence fails
 closed; the default library review and existing reviewer/account gates are
 unchanged.
+
+## 2026-10-02 - Pin the official native Palomar preflight (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "PR755
+native-preflight rescope", and independent review 5384612101. Its F1 showed
+that the previously pinned `verify.sh` trusted a tracked branch comparator; F2
+showed that `enable_nanoda` alone did not bind modules, declarations,
+definitions or permitted axioms. The earlier review and its cost remain part of
+the episode.
+
+**Change:** the companion route now pins the complete caller fixture for the
+official reusable PalomarSubmission full workflow at
+`65f0154ed776cd26c224254aa57b379137f28b0d`. The caller selects explicit
+GitHub-hosted profile `palomar-standard-v1` (digest
+`eb97b7b548c5d016967434818f0ed48a215e7fdc15528f564ab21ff2927cfd69`).
+`review.sh` accepts only the exact `comparator / verify` check from a push run,
+retains exact-head/current-attempt/job binding, and exactly validates the
+Challenge/Solution modules, four theorem targets, one definition, three axioms
+and compatibility field. It executes no candidate launcher or comparator.
+Focused regressions mutate caller and every configuration surface, inject a
+tracked fake comparator, and retain decoy workflow/job, stale-attempt,
+wrong-head, repository-independence and trusted-primary-root coverage.
+
+**Expected effect:** branch-provided verification tools and weakened target
+configurations cannot manufacture review admission. A first real companion run
+must confirm GitHub's `comparator / verify` naming; until then the route fails
+closed and no review is dispatched.
+
+**Outcome:** the companion-routing class passes 13 tests, the complete GitHub
+workflow module passes 73, and the related review/native modules pass 16.
+Shell/Python syntax, hook installation and whitespace checks pass. No full build
+or live companion run was performed, so the check-name assumption remains open.

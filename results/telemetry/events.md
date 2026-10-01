@@ -10147,3 +10147,17 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
 - Palomar pilot full build passed in865s. Its subsequent real-build CI fixtures contend with the separately queued #759 full build for the same machine lock; fixture wait is300s. MAIN will let current checks report and rerun canonical CI uncontended if necessary, preserving serialization and all checks. New additive proof packet760 implements the accepted compact generic strategy/game foundation with exact equivalences, one bounded3600s Sol assignment. Two Sol workers live; third slot reserved for independent review after green CI. Decisions/costs and exact heads recorded on #27 and palomar-pilot-ci-20261002.md.
 - Before first publication, normalized trailing Markdown whitespace in newly captured rendered last-message files: results/telemetry/sessions/orc-745-20261002-01.last.md, results/telemetry/sessions/orc-754-20261002-01.last.md, results/telemetry/sessions/prover-757-20261002-01.last.md, results/telemetry/sessions/reviewer-pr755-20261002-01.last.md, results/telemetry/sessions/scout-palomar-faithfulness-route-20261002-02.last.md, results/telemetry/sessions/simplifier-744-20261002-01.last.md. Raw JSONL and private runtime last messages retain original bytes; no mathematical wording changed.
 - Pilot PR758 first complete CI failed only test_cold_project_build_catches_axiom_audit_failure: the real-build fixture returned lock-timeout outcome error while the concurrent PR759 build owned the global lock, instead of reaching its deliberately failing axiom example. All other steps passed. Preserved first-run logs/manifest with -first-run suffix and started complete unmodified-head CI again after PR759's build released the lock (handle7303; /tmp/qpbt-palomar-pattern-ci-retry.log). PR759 full build/both axiom audits and all other CI steps passed; only QPBT generated provenance/import-order drift failed. Fresh linked simplifier-757-20261002-01 gets900s to regenerate that fixture with862s predecessor proof cost retained (handle22910; /tmp/qpbt-palomar-line-provenance-repair.log). No source or gate relaxation. Three primary space-3 Sol workers now live:745 repair,757 fixture repair,760 exact strategy bridges.
+- PR755 native-preflight rescope: independent review 5384612101 showed that the
+  pinned legacy `verify.sh` could accept a tracked branch comparator and that
+  checking only `enable_nanoda` left targets, definitions and axioms mutable.
+  MAIN selected the official reusable PalomarSubmission workflow at
+  `65f0154ed776cd26c224254aa57b379137f28b0d`. The repair pins the complete
+  caller, validates the entire four-target configuration, and never executes a
+  companion checker or bundled executable. This continuation retains the prior
+  3898-second author charge, both full review rounds and unresolved F1/F2; no
+  finding is marked resolved before fresh CI and independent adjudication.
+- PR755 native-preflight local validation: 13 companion-route tests, all 73
+  GitHub-workflow tests and all 16 related review/native tests pass. Shell and
+  Python syntax, `git diff --check`, and the installed-hook check pass. No full
+  build, live companion run, push, publication or companion mutation occurred;
+  `comparator / verify` remains a first-live-run integration assumption.

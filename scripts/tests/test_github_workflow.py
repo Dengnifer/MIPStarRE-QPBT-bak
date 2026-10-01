@@ -627,6 +627,7 @@ class CompanionReviewRoutingTests(LayerTestCase):
     """The primary reviewer can inspect one exact companion-repository checkout."""
 
     COMPANION = "Dengnifer/QPBT-comparator"
+    CHECK_NAME = "comparator / verify"
     LIBRARY_BRANCH = "issue-0745-library-route"
     COMPANION_BRANCH = "issue-0745-palomar-route"
 
@@ -682,10 +683,9 @@ class CompanionReviewRoutingTests(LayerTestCase):
         workflow = self.source / ".github" / "workflows" / "comparator.yml"
         workflow.parent.mkdir(parents=True)
         shutil.copy2(fixture / "comparator.yml", workflow)
-        (self.source / "comparator.json").write_text(
-            json.dumps({"enable_nanoda": True}) + "\n", encoding="utf-8")
-        verify = self.source / "verify.sh"
-        shutil.copy2(fixture / "verify.sh", verify)
+        shutil.copy2(fixture / "comparator.json", self.source / "comparator.json")
+        self.expected_config = json.loads(
+            (fixture / "comparator.json").read_text(encoding="utf-8"))
         (self.source / "Challenge.lean").write_text(
             "theorem companionBase : True := by trivial\n", encoding="utf-8")
         (self.source / "README.md").write_text("companion base\n", encoding="utf-8")
@@ -742,7 +742,7 @@ class CompanionReviewRoutingTests(LayerTestCase):
         job_id = check_id if job_id is None else job_id
         return {
             "id": check_id,
-            "name": "comparator",
+            "name": self.CHECK_NAME,
             "head_sha": self.companion_head,
             "status": "completed",
             "conclusion": conclusion,
@@ -754,7 +754,8 @@ class CompanionReviewRoutingTests(LayerTestCase):
 
     def arm_companion(self, checks: list[dict], *, payload: dict | None = None,
                       run_paths: dict[int, str] | None = None,
-                      jobs_by_run: dict[int, list[dict]] | None = None) -> None:
+                      jobs_by_run: dict[int, list[dict]] | None = None,
+                      run_overrides: dict[int, dict] | None = None) -> None:
         self.gh.reset()
         self.gh.route(r"^pulls/7$", payload or self.pr_payload())
         self.gh.route(r"^commits/[0-9a-f]+/check-runs\?filter=all", {
@@ -762,25 +763,31 @@ class CompanionReviewRoutingTests(LayerTestCase):
         })
         run_paths = run_paths or {}
         jobs_by_run = jobs_by_run or {}
+        run_overrides = run_overrides or {}
         for check in checks:
             match = re.search(r"/actions/runs/([0-9]+)/job/([0-9]+)$",
                               check["details_url"])
             if match is None:
                 continue
             run_id, job_id = map(int, match.groups())
-            self.gh.route(rf"^actions/runs/{run_id}$", {
+            run = {
                 "id": run_id,
                 "path": run_paths.get(run_id, ".github/workflows/comparator.yml"),
+                "event": "push",
+                "head_branch": self.COMPANION_BRANCH,
                 "head_sha": self.companion_head,
                 "run_attempt": 1,
                 "status": "completed",
                 "conclusion": check["conclusion"],
-            })
+            }
+            run.update(run_overrides.get(run_id, {}))
+            self.gh.route(rf"^actions/runs/{run_id}$", run)
+            attempt = run["run_attempt"]
             jobs = jobs_by_run.get(run_id, [{
                 "id": job_id,
                 "run_id": run_id,
-                "run_attempt": 1,
-                "name": "comparator",
+                "run_attempt": attempt,
+                "name": check["name"],
                 "head_sha": self.companion_head,
                 "status": "completed",
                 "conclusion": check["conclusion"],
@@ -788,7 +795,7 @@ class CompanionReviewRoutingTests(LayerTestCase):
                     f"https://api.github.com/repos/{self.COMPANION}/check-runs/"
                     f"{check['id']}"),
             }])
-            self.gh.route(rf"^actions/runs/{run_id}/attempts/1/jobs\?", {
+            self.gh.route(rf"^actions/runs/{run_id}/attempts/{attempt}/jobs\?", {
                 "total_count": len(jobs), "jobs": jobs,
             })
         self.gh.route(r"^pulls/7/reviews", [])
@@ -895,7 +902,7 @@ print(f"last_message: {last}")
         self.assertIn("PRIMARY TRUSTED REVIEW TASK", task)
         self.assertNotIn("UNTRUSTED COMPANION TASK", task)
         self.assertIn(f"Repository       {self.COMPANION}", task)
-        self.assertIn("official comparator workflow run 31 attempt 1", task)
+        self.assertIn("official Palomar workflow run 31 attempt 1", task)
         self.assertTrue(sentinel.exists(), "companion runtime state must not reuse reviews/pr7")
         self.assertEqual(_git(self.source, "status", "--porcelain"), "")
         self.assertNotIn("core.sparseCheckout", _git(self.source, "config", "--list"))
@@ -911,7 +918,7 @@ print(f"last_message: {last}")
         self.assertEqual(result.returncode, 0, result.stderr)
         task = (cache / "reviews" / "dengnifer-qpbt-comparator" / "pr7" /
                 self.companion_head / "code-task.md").read_text(encoding="utf-8")
-        self.assertIn("official comparator workflow run 31 attempt 1", task)
+        self.assertIn("official Palomar workflow run 31 attempt 1", task)
         self.assertNotIn("workflow run 99 attempt", task)
 
     def test_companion_route_rejects_decoy_job_not_bound_to_check(self) -> None:
@@ -920,7 +927,7 @@ print(f"last_message: {last}")
             "id": 42,
             "run_id": 31,
             "run_attempt": 1,
-            "name": "comparator",
+            "name": self.CHECK_NAME,
             "head_sha": self.companion_head,
             "status": "completed",
             "conclusion": "success",
@@ -931,6 +938,34 @@ print(f"last_message: {last}")
         result, _ = self.run_companion("decoy-job")
         self.assertEqual(result.returncode, 3, result.stderr)
         self.assertIn("not a job in current run attempt", result.stderr)
+
+    def test_companion_route_rejects_stale_attempt_and_wrong_run_head(self) -> None:
+        check = self.successful_check()
+        stale_job = [{
+            "id": 41,
+            "run_id": 31,
+            "run_attempt": 1,
+            "name": self.CHECK_NAME,
+            "head_sha": self.companion_head,
+            "status": "completed",
+            "conclusion": "success",
+            "check_run_url": (
+                f"https://api.github.com/repos/{self.COMPANION}/check-runs/41"),
+        }]
+        self.arm_companion(
+            [check],
+            jobs_by_run={31: stale_job},
+            run_overrides={31: {"run_attempt": 2}},
+        )
+        result, _ = self.run_companion("stale-attempt")
+        self.assertEqual(result.returncode, 3, result.stderr)
+        self.assertIn("job run attempt", result.stderr)
+
+        self.arm_companion(
+            [check], run_overrides={31: {"head_sha": "e" * 40}})
+        result, _ = self.run_companion("wrong-run-head")
+        self.assertEqual(result.returncode, 3, result.stderr)
+        self.assertIn("malformed exact-head metadata", result.stderr)
 
     def test_companion_route_rejects_repository_and_head_mismatches(self) -> None:
         self.arm_companion([self.successful_check()])
@@ -963,10 +998,10 @@ print(f"last_message: {last}")
             check_id=41, run_id=31, conclusion="failure",
             completed_at="2026-10-02T00:00:00Z")
         for label, checks, expected in (
-            ("missing", [], "no GitHub Actions comparator check"),
-            ("failed", [newer_failure], "official comparator evidence failed"),
+            ("missing", [], "no GitHub Actions 'comparator / verify' check"),
+            ("failed", [newer_failure], "official Palomar evidence failed"),
             ("stale", [older_success, newer_failure],
-             "official comparator evidence failed"),
+             "official Palomar evidence failed"),
         ):
             with self.subTest(label=label):
                 self.arm_companion(checks)
@@ -974,32 +1009,79 @@ print(f"last_message: {last}")
                 self.assertEqual(result.returncode, 3, result.stderr)
                 self.assertIn(expected, result.stderr)
 
-    def test_companion_route_requires_nanoda_on_the_exact_head(self) -> None:
-        (self.source / "comparator.json").write_text(
-            json.dumps({"enable_nanoda": False}) + "\n", encoding="utf-8")
-        _git(self.source, "commit", "-q", "--no-verify", "-am", "disable nanoda")
-        self.companion_head = _git(self.source, "rev-parse", "HEAD")
-        self.arm_companion([self.successful_check()])
-        result, _ = self.run_companion("nanoda-off")
+    def test_companion_route_rejects_legacy_plain_comparator_check(self) -> None:
+        legacy = self.successful_check()
+        legacy["name"] = "comparator"
+        self.arm_companion([legacy])
+        result, _ = self.run_companion("legacy-check-name")
         self.assertEqual(result.returncode, 3, result.stderr)
-        self.assertIn("enable_nanoda", result.stderr)
+        self.assertIn("'comparator / verify'", result.stderr)
+        self.assertFalse(any("actions/runs/" in call["rel"] for call in self.gh.calls()))
 
-    def test_companion_route_rejects_comment_only_dead_launcher_contract(self) -> None:
-        (self.source / "verify.sh").write_text(
-            "#!/bin/bash\nexit 0\n"
-            "# CONFIG=comparator.json\n"
-            "# if [ \"${1:-}\" = \"--fake-landrun\" ]; then\n"
-            "# CONFIG=comparator.local.json\n"
-            "# lake env comparator \"$CONFIG\"\n",
+    def test_companion_route_rejects_every_config_contract_mutation(self) -> None:
+        mutations = {
+            "challenge": lambda row: row.__setitem__("challenge_module", "OtherChallenge"),
+            "solution": lambda row: row.__setitem__("solution_module", "OtherSolution"),
+            "target": lambda row: row["theorem_names"].pop(),
+            "target-order": lambda row: row["theorem_names"].reverse(),
+            "definition": lambda row: row.__setitem__("definition_names", []),
+            "axioms": lambda row: row["permitted_axioms"].append("sorryAx"),
+            "nanoda": lambda row: row.__setitem__("enable_nanoda", False),
+            "nanoda-number": lambda row: row.__setitem__("enable_nanoda", 1),
+            "extra": lambda row: row.__setitem__("external_kernels", {}),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label):
+                config = json.loads(json.dumps(self.expected_config))
+                mutate(config)
+                (self.source / "comparator.json").write_text(
+                    json.dumps(config, indent=2) + "\n", encoding="utf-8")
+                _git(self.source, "add", "comparator.json")
+                _git(self.source, "commit", "-q", "--no-verify", "-m",
+                     f"mutate comparator config {label}")
+                self.companion_head = _git(self.source, "rev-parse", "HEAD")
+                self.arm_companion([self.successful_check()])
+                result, _ = self.run_companion(f"config-{label}")
+                self.assertEqual(result.returncode, 3, result.stderr)
+                self.assertIn("exactly match the reviewed four-target", result.stderr)
+                self.assertFalse(any(
+                    "actions/runs/" in call["rel"] for call in self.gh.calls()))
+
+    def test_companion_route_rejects_caller_mutation_before_ci_lookup(self) -> None:
+        workflow = self.source / ".github" / "workflows" / "comparator.yml"
+        workflow.write_text(
+            workflow.read_text(encoding="utf-8").replace(
+                "palomar-standard-v1", "palomar-namespace-16x32-v1"),
             encoding="utf-8",
         )
-        _git(self.source, "commit", "-q", "--no-verify", "-am", "replace launcher")
+        _git(self.source, "commit", "-q", "--no-verify", "-am", "mutate caller")
         self.companion_head = _git(self.source, "rev-parse", "HEAD")
         self.arm_companion([self.successful_check()])
-        result, _ = self.run_companion("dead-launcher")
+        result, _ = self.run_companion("caller-mutation")
         self.assertEqual(result.returncode, 3, result.stderr)
-        self.assertIn("differs from its reviewed comparator-main pin", result.stderr)
-        self.assertFalse(any("actions/runs/" in call["rel"] for call in self.gh.calls()))
+        self.assertIn("differs from the pinned official native-preflight", result.stderr)
+        self.assertFalse(any("check-runs" in call["rel"] for call in self.gh.calls()))
+
+    def test_companion_route_never_executes_branch_verifier_or_comparator(self) -> None:
+        sentinel = self.tmp / "branch-comparator-ran"
+        fake = self.source / "comparator" / ".lake" / "build" / "bin" / "comparator"
+        fake.parent.mkdir(parents=True)
+        fake.write_text(
+            f"#!/bin/sh\nprintf ran > {sentinel}\nexit 0\n", encoding="utf-8")
+        fake.chmod(0o755)
+        verify = self.source / "verify.sh"
+        verify.write_text(
+            "#!/bin/sh\nexec comparator/.lake/build/bin/comparator\n", encoding="utf-8")
+        verify.chmod(0o755)
+        _git(self.source, "add", "-f", "comparator/.lake/build/bin/comparator")
+        _git(self.source, "add", "verify.sh")
+        _git(self.source, "commit", "-q", "--no-verify", "-m", "add fake verifier")
+        self.companion_head = _git(self.source, "rev-parse", "HEAD")
+        self.arm_companion([])
+        result, _ = self.run_companion("fake-verifier")
+        self.assertEqual(result.returncode, 3, result.stderr)
+        self.assertIn("no GitHub Actions", result.stderr)
+        self.assertFalse(sentinel.exists())
 
     def test_companion_dispatch_uses_primary_instruction_root(self) -> None:
         self.arm_companion([self.successful_check()])

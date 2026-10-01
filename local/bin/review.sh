@@ -18,14 +18,14 @@
 #                    landed, and stop before dispatching an agent.
 #   --source-repo    Review Dengnifer/QPBT-comparator from this clean checkout.
 #                    The checkout, PR repository, branch, base and exact head
-#                    must agree; official comparator CI replaces local CI.
+#                    must agree; pinned Palomar preflight replaces local CI.
 #
 # Local replacement for .github/workflows/pr-review.yml (gate + code-review +
 # prose-review jobs).  Protocol: local/protocols/review.md.
 #
 # GitHub is the record (gh_common.py:4-8).  The gate reads exact-head CI:
-# local-ci/summary for the library, or the official NanoDa-enabled comparator
-# check for the explicit companion route.  The verdict is published as ONE
+# local-ci/summary for the library, or the pinned Palomar full-preflight check
+# for the explicit companion route.  The verdict is published as ONE
 # COMMENT review bound to that SHA plus a local-review/summary status.
 # Single-account repos cannot self-APPROVE, so adverseness travels in the
 # status, never in a review state.  There is no local PR record: a GitHub
@@ -116,10 +116,13 @@ BOT_PREFIX_RE='^\[(claude|codex)-(auto|review)-fix\]'
 BLUEPRINT_CITATION_PATH="scripts/blueprint_citations.py"
 COMPANION_REPO="Dengnifer/QPBT-comparator"
 COMPANION_WORKFLOW_PATH=".github/workflows/comparator.yml"
-# Reviewed from QPBT-comparator main at 360402fdf4a39399f94331452d6e5d0a35c144be.
-# Any launcher change requires an explicit reviewed pin update in this library.
-COMPANION_WORKFLOW_SHA256="6e7a3e0452e7474a7991a72c3c847cc7e6d22405888c9729dacf141880d5f0fc"
-COMPANION_VERIFY_SHA256="de3959724718b719da979b467f364219c6ce6f47a98c98167eddedfb0bf7f9ec"
+COMPANION_CHECK_NAME="comparator / verify"
+# Reviewed fixture: scripts/tests/fixtures/companion-review/comparator.yml.
+# It calls PalomarSubmission 65f0154ed776cd26c224254aa57b379137f28b0d in
+# full mode with explicit palomar-standard-v1. Profile digest:
+# eb97b7b548c5d016967434818f0ed48a215e7fdc15528f564ab21ff2927cfd69.
+# Any caller change requires an explicit reviewed pin update in this library.
+COMPANION_WORKFLOW_SHA256="7ec4603377f006aa963d6b1fb508c43cb50169abefb44ccdf6a4be09cd56e298"
 
 LOCK_HELD=""
 
@@ -612,11 +615,24 @@ gate_block() {
 }
 
 validate_companion_ci_contract() {
-  python3 - "$REVIEW_ROOT" "$HEAD_SHA" "$COMPANION_WORKFLOW_SHA256" \
-    "$COMPANION_VERIFY_SHA256" <<'PY'
+  python3 - "$REVIEW_ROOT" "$HEAD_SHA" "$COMPANION_WORKFLOW_SHA256" <<'PY'
 import hashlib, json, subprocess, sys
 
-root, head, workflow_pin, verify_pin = sys.argv[1:5]
+root, head, workflow_pin = sys.argv[1:4]
+
+expected_config = {
+    "challenge_module": "Challenge",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+        "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+        "MIPStarRE.QPBT.Palomar.pauli_soundness",
+        "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit",
+    ],
+    "definition_names": ["MIPStarRE.QPBT.fixedFieldModel"],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+    "enable_nanoda": True,
+}
 
 def blob(path):
     try:
@@ -631,8 +647,8 @@ def require_pin(path, expected, mode):
     raw = blob(path)
     actual = hashlib.sha256(raw).hexdigest()
     if actual != expected:
-        print(f"{path} differs from its reviewed comparator-main pin; "
-              "update the primary pin only after reviewing the launcher change")
+        print(f"{path} differs from the pinned official native-preflight caller; "
+              "update the primary pin only after reviewing the caller change")
         raise SystemExit(1)
     tree = subprocess.check_output(
         ["git", "-C", root, "ls-tree", head, "--", path], text=True).strip()
@@ -640,18 +656,39 @@ def require_pin(path, expected, mode):
         print(f"{path} must retain reviewed mode {mode}")
         raise SystemExit(1)
 
+def require_mode(path, mode):
+    tree = subprocess.check_output(
+        ["git", "-C", root, "ls-tree", head, "--", path], text=True).strip()
+    if not tree.startswith(f"{mode} blob "):
+        print(f"{path} must be a regular file with mode {mode}")
+        raise SystemExit(1)
+
+def reject_duplicate_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate key {key!r}")
+        result[key] = value
+    return result
+
 require_pin(".github/workflows/comparator.yml", workflow_pin, "100644")
-require_pin("verify.sh", verify_pin, "100755")
+require_mode("comparator.json", "100644")
 
 try:
-    config = json.loads(blob("comparator.json").decode("utf-8"))
-except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+    config = json.loads(
+        blob("comparator.json").decode("utf-8"),
+        object_pairs_hook=reject_duplicate_keys,
+    )
+except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
     print(f"comparator.json is invalid JSON: {exc}")
     raise SystemExit(1)
-if config.get("enable_nanoda") is not True:
-    print("comparator.json must set enable_nanoda to the JSON boolean true")
+def canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+if canonical(config) != canonical(expected_config):
+    print("comparator.json must exactly match the reviewed four-target Palomar contract")
     raise SystemExit(1)
-print("reviewed workflow and verification-launcher pins present; NanoDa enabled")
+print("pinned Palomar caller and complete four-target comparator contract present")
 PY
 }
 
@@ -662,23 +699,24 @@ require_companion_ci() {
     gate_block "$contract_result"
   fi
   if ! ghc check-runs "$HEAD_SHA" >"$RUN_ROOT/check-runs.json"; then
-    gate_block "official comparator check runs are unreadable for $HEAD_SHA"
+    gate_block "official Palomar check runs are unreadable for $HEAD_SHA"
   fi
-  if ! candidates="$(python3 - "$RUN_ROOT/check-runs.json" "$HEAD_SHA" "$TARGET_REPO" <<'PY'
+  if ! candidates="$(python3 - "$RUN_ROOT/check-runs.json" "$HEAD_SHA" \
+    "$TARGET_REPO" "$COMPANION_CHECK_NAME" <<'PY'
 import json, sys
 import re
 from urllib.parse import urlparse
 
-path, head, repo = sys.argv[1:4]
+path, head, repo, check_name = sys.argv[1:5]
 try:
     rows = json.load(open(path, encoding="utf-8"))
 except (OSError, json.JSONDecodeError) as exc:
-    print(f"official comparator check evidence is unreadable: {exc}")
+    print(f"official Palomar check evidence is unreadable: {exc}")
     raise SystemExit(1)
 
 matches = []
 for row in rows:
-    if (row.get("name") != "comparator"
+    if (row.get("name") != check_name
             or (row.get("app") or {}).get("slug") != "github-actions"
             or row.get("head_sha") != head):
         continue
@@ -694,7 +732,7 @@ for row in rows:
     matches.append((check_id, int(match.group(1)), int(match.group(2)),
                     row.get("status") or "", row.get("conclusion") or ""))
 if not matches:
-    print(f"no GitHub Actions comparator check is bound to exact head {head}")
+    print(f"no GitHub Actions {check_name!r} check is bound to exact head {head}")
     raise SystemExit(1)
 for match in sorted(matches, reverse=True):
     print("\t".join(str(value) for value in match))
@@ -708,15 +746,17 @@ PY
     ghc actions-run "$run_id" >"$RUN_ROOT/actions-run-$run_id.json" ||
       gate_block "GitHub Actions run $run_id is unreadable"
     run_meta="$(python3 - "$RUN_ROOT/actions-run-$run_id.json" "$run_id" \
-      "$HEAD_SHA" "$COMPANION_WORKFLOW_PATH" <<'PY'
+      "$HEAD_SHA" "$COMPANION_WORKFLOW_PATH" "$BRANCH" <<'PY'
 import json, sys
-path, run_id, head, workflow = sys.argv[1:5]
+path, run_id, head, workflow, branch = sys.argv[1:6]
 row = json.load(open(path, encoding="utf-8"))
 if str(row.get("id")) != run_id or row.get("head_sha") != head:
     raise SystemExit(1)
 if row.get("path") != workflow:
     print("skip")
     raise SystemExit(0)
+if row.get("event") != "push" or row.get("head_branch") != branch:
+    raise SystemExit(1)
 attempt = row.get("run_attempt")
 if not isinstance(attempt, int) or attempt < 1:
     raise SystemExit(1)
@@ -733,10 +773,10 @@ PY
       "$RUN_ROOT/actions-run-$run_id.json" \
       "$RUN_ROOT/actions-run-$run_id-attempt-$attempt-jobs.json" \
       "$TARGET_REPO" "$HEAD_SHA" "$run_id" "$attempt" "$job_id" "$check_id" \
-      "$check_status" "$check_conclusion" <<'PY'
+      "$check_status" "$check_conclusion" "$COMPANION_CHECK_NAME" <<'PY'
 import json, sys
 (run_path, jobs_path, repo, head, run_id, attempt, job_id, check_id,
- check_status, check_conclusion) = sys.argv[1:11]
+ check_status, check_conclusion, check_name) = sys.argv[1:12]
 run = json.load(open(run_path, encoding="utf-8"))
 jobs = json.load(open(jobs_path, encoding="utf-8"))
 job = next((row for row in jobs if str(row.get("id")) == job_id), None)
@@ -746,7 +786,7 @@ if job is None:
 expected_check_url = f"https://api.github.com/repos/{repo}/check-runs/{check_id}"
 checks = (
     (str(job.get("run_id")) == run_id, "job run id"),
-    (job.get("name") == "comparator", "job name"),
+    (job.get("name") == check_name, "job name"),
     (job.get("head_sha") == head, "job head SHA"),
     (str(job.get("run_attempt")) == attempt, "job run attempt"),
     (job.get("check_run_url") == expected_check_url, "job check-run binding"),
@@ -759,9 +799,9 @@ checks = (
 )
 failed = [label for ok, label in checks if not ok]
 if failed:
-    print("official comparator evidence failed: " + ", ".join(failed))
+    print("official Palomar evidence failed: " + ", ".join(failed))
     raise SystemExit(1)
-print(f"official comparator workflow run {run_id} attempt {attempt} job {job_id} "
+print(f"official Palomar workflow run {run_id} attempt {attempt} job {job_id} "
       f"check {check_id} succeeded at {head}")
 PY
 )"; then
@@ -774,9 +814,12 @@ PY
 import json, sys
 before = json.load(open(sys.argv[1], encoding="utf-8"))
 after = json.load(open(sys.argv[2], encoding="utf-8"))
-keys = ("id", "path", "head_sha", "run_attempt", "status", "conclusion")
+keys = (
+    "id", "path", "event", "head_branch", "head_sha", "run_attempt",
+    "status", "conclusion",
+)
 if any(before.get(key) != after.get(key) for key in keys):
-    print("workflow run attempt changed while comparator evidence was checked")
+    print("workflow run identity changed while Palomar evidence was checked")
     raise SystemExit(1)
 print("stable")
 PY
@@ -787,8 +830,8 @@ PY
     return
   done <<<"$candidates"
   [ "$official_seen" -eq 1 ] ||
-    gate_block "no comparator check belongs to $COMPANION_WORKFLOW_PATH"
-  gate_block "no current official comparator workflow job passed exact binding"
+    gate_block "no Palomar check belongs to $COMPANION_WORKFLOW_PATH"
+  gate_block "no current official Palomar workflow job passed exact binding"
 }
 
 require_ci_gate() {
