@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterEvaluatedLineBound
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineCoefficientBound
-import MIPStarRE.QPBT.Observables.WinImplications.Averages
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterEvaluatedLineBound
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineCoefficientBound
+public import MIPStarRE.QPBT.Observables.WinImplications.Averages
 
 /-!
 # Transport of the diagonal parameter-evaluation defect
@@ -25,6 +27,8 @@ line marginal, including zero directions, and introduces no new hypotheses.
 - Blueprint `lem:qld-4-7`.
 - Issue #353.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

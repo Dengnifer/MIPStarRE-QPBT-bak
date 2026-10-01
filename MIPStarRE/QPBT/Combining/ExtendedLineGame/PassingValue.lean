@@ -1,11 +1,13 @@
-import MIPStarRE.QPBT.Combining.PassingError
-import MIPStarRE.QPBT.Combining.DirectLowDegree.ExtendedCoefficientLoss
-import MIPStarRE.QPBT.Combining.DirectLowDegree.RejectionBounds
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.AxisParameterDefectTransport
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.DiagonalParameterDefectTransport
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterEvaluatedLineBound
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineCoefficientBound
-import MIPStarRE.QPBT.Combining.WitnessErrorNonneg
+module
+
+public import MIPStarRE.QPBT.Combining.PassingError
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.ExtendedCoefficientLoss
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.RejectionBounds
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.AxisParameterDefectTransport
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.DiagonalParameterDefectTransport
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterEvaluatedLineBound
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineCoefficientBound
+public import MIPStarRE.QPBT.Combining.WitnessErrorNonneg
 
 /-!
 # Passing value of the supplied extended-line strategy
@@ -23,6 +25,8 @@ not construct the witness or establish source theorem `lem:qld-4-7`.
 - Blueprint `lem:qld-4-7`
 - Issue #348
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
-import MIPStarRE.QPBT.Combining.Lines.ZeroDirectionMass
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
+public import MIPStarRE.QPBT.Combining.Lines.ZeroDirectionMass
 
 /-!
 # Retained mass for nondegenerate-line pasting
@@ -13,6 +15,8 @@ upper bounds for that mass.
 The restriction is the proof-only conditioning used in `lem:qld-xz-lines`,
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-963`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

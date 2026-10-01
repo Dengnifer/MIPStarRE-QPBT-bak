@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.QuantitativeNativeGlobalPairScalars
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Bounds
+module
+
+public import MIPStarRE.QPBT.Combining.QuantitativeNativeGlobalPairScalars
+public import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Bounds
 
 /-!
 # Separated native extraction bounds for Pauli soundness
@@ -16,6 +18,8 @@ field ratio as distinct summands.
 * Blueprint `def:pauli-final-fractional-error`
 * Blueprint `thm:pauli-final-fractional-scalar-support`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

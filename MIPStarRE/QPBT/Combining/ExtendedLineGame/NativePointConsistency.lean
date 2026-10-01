@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame
 
 /-!
 # Native supplied-point interface for direct soundness
@@ -17,6 +19,8 @@ source lemma.
 - Blueprint `lem:qld-supplied-scalar-point-measurement` and `lem:qld-4-7`
 - Issue #362
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

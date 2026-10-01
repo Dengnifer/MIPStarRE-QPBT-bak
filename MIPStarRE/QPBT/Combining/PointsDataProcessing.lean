@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Witnesses
+module
+
+public import MIPStarRE.QPBT.Combining.Witnesses
 
 /-!
 # Averaged affine coarse-graining of complete operator families
@@ -15,6 +17,8 @@ This is the finite-dimensional calculation used for the coarse-graining in
 `lem:qld-4-12`, `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:993-1018`.
 The operator-family contraction is a formalization-only auxiliary lemma.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

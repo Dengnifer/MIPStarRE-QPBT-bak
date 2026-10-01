@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Witnesses
-import MIPStarRE.QPBT.Games.Sandwich
+module
+
+public import MIPStarRE.QPBT.Combining.Witnesses
+public import MIPStarRE.QPBT.Games.Sandwich
 
 /-!
 # Combined X/Z line measurement
@@ -17,6 +19,8 @@ Its separate blueprint entries are `def:concrete-paired-line-measurement` and
 `lem:concrete-paired-line-degree-support`; consistency remains the distinct
 obligation `lem:combined-line-measurement-consistency`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

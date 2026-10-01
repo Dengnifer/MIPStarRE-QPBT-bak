@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
 
 /-!
 # Removing the unused EPR registers from the expanded state
@@ -21,6 +23,8 @@ construction, not consistency estimates.
 - Blueprint `def:expanded-state` and `def:symmetric-equivalents`.
 - Issue #273.
 -/
+
+@[expose] public section
 
 -- The six-register products require the same instance-search size as ExpandedPlacement.
 set_option synthInstance.maxSize 400

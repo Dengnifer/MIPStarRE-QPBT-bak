@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.PointPointRejection
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.PointPointRejection
 
 /-!
 # Completed same-line evaluation comparison
@@ -19,6 +21,8 @@ no coefficient-collision conclusion is asserted here.
 - Blueprint `lem:qld-4-7`.
 - Issue #321.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

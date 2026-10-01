@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.SwappedConsistency
-import MIPStarRE.QPBT.Extraction.EvaluatedPauliConsistency
-import MIPStarRE.QPBT.Extraction.PauliComparison
+module
+
+public import MIPStarRE.QPBT.Extraction.SwappedConsistency
+public import MIPStarRE.QPBT.Extraction.EvaluatedPauliConsistency
+public import MIPStarRE.QPBT.Extraction.PauliComparison
 
 /-!
 # Total Pauli measurements under the extraction swaps
@@ -15,6 +17,8 @@ Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1785-1858`,
 especially `eq:qld-unitary-6` and `eq:qld-unitary-9`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder Classical
 

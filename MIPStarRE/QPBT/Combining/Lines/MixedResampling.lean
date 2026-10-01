@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.AxisLineResampling
-import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.AxisLineResampling
+public import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
 
 /-!
 # Mixed line-point parameter resampling
@@ -14,6 +16,8 @@ The resampling supports the Schwartz-Zippel step in `lem:qld-xz-lines`,
 mixed line-point law is `def:line-point-dist` in
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:274-287`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

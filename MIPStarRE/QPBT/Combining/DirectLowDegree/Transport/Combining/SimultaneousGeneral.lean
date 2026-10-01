@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryTransport
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Simultaneous
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryTransport
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Simultaneous
 
 /-!
 # Simultaneous polynomial measurements for a general simultaneity parameter
@@ -38,6 +40,8 @@ conclusion is `exists_direct_ld_soundness`.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:682-715`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.MixedLinePointRejection
-import MIPStarRE.QPBT.Combining.Points.Placement
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.MixedLinePointRejection
+public import MIPStarRE.QPBT.Combining.Points.Placement
 
 /-!
 # Point/point rejection for the extended direct game
@@ -21,6 +23,8 @@ the complete passing-value estimate.
 - `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:295-311`
 - Issue #313.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

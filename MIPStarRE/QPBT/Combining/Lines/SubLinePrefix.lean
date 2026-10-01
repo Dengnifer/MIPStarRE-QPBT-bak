@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
 
 /-!
 # Coordinate blocks of a truncated extended direction
@@ -23,6 +25,8 @@ The truncation is the prefix restriction of paper `eq:cl-dlnf`,
 and blueprint `def:ld-question-distribution`; the coordinate blocks are those of
 blueprint `def:combine-map`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

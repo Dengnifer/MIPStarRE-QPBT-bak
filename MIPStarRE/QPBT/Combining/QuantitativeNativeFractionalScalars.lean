@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars.Core
+module
+
+public import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars.Core
 
 /-!
 # Fractional native scalar bounds for QPBT
@@ -14,6 +16,8 @@ global-pair and extraction estimates.
 * Blueprint `thm:qld-native-small-regime-global-pair`
 * Blueprint `thm:pauli-final-fractional-scalar-support`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

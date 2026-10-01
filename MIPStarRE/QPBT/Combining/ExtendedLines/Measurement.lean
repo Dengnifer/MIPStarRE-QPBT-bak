@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines
+module
+
+public import MIPStarRE.QPBT.Combining.Lines
 
 /-!
 # Conditional extended-line measurements
@@ -15,6 +17,8 @@ See `docs/paper-gaps/qpbt_combined-lines-error-term.tex` and
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` for the remaining
 comparison with the printed source theorem.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame
 
 /-!
 # Parameter evaluation versus completed line evaluation
@@ -18,6 +20,8 @@ strategy POVMs.  It uses neither projectivity nor a collision estimate.
 - `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:230-390`
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1402`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

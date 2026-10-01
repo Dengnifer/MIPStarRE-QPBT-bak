@@ -1,34 +1,36 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
-import MIPStarRE.QPBT.Combining.DirectLowDegree.AnyStrategySoundness
-import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientCollision
-import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientConsistency
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.LineResampling
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
-import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
-import MIPStarRE.QPBT.Combining.DirectLowDegree.RejectionBounds
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PassConversion
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedFiberValue
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Simultaneous
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Linearity
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Strategy
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.QuestionLaw
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.GameValue
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.WinPredicate
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Value
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Restriction
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Coefficients
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.ExactLinearity
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Recovery
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryDefect
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryTransport
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.SimultaneousGeneral
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Error
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PointAgreement
-import MIPStarRE.QPBT.Combining.DirectLowDegree.SeedIndexedSoundness
-import MIPStarRE.QPBT.Combining.DirectLowDegree.ResampledCoefficientConsistency
-import MIPStarRE.QPBT.Combining.DirectLowDegree.ExtendedCoefficientLoss
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.AnyStrategySoundness
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientCollision
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientConsistency
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.LineResampling
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.RejectionBounds
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PassConversion
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedFiberValue
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Simultaneous
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Linearity
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Strategy
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.QuestionLaw
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.GameValue
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.WinPredicate
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Value
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Restriction
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Coefficients
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.ExactLinearity
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Recovery
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryDefect
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryTransport
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.SimultaneousGeneral
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Error
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PointAgreement
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.SeedIndexedSoundness
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.ResampledCoefficientConsistency
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.ExtendedCoefficientLoss
 
 /-!
 # The directly indexed low-degree game

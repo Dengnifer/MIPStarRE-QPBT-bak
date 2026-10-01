@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
 
 /-!
 # Line/point rejection for the extended direct game
@@ -16,6 +18,8 @@ bound or construct the supplied witness.
 - Blueprint `lem:qld-4-7`.
 - Issues #302, #305, #307, and #309.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

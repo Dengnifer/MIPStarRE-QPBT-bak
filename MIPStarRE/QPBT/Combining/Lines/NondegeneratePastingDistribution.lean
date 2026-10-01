@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingMass
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingMass
 
 /-!
 # Nondegenerate-line pasting distribution
@@ -13,6 +15,8 @@ The conditioning supports the pasting argument in `lem:qld-xz-lines`,
 the normalized question laws from
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:504-525`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

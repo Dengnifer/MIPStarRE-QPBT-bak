@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
-import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
+public import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
 
 /-!
 # Axis line-point parameter resampling
@@ -15,6 +17,8 @@ The resampling is used at
 axis line-point law is `def:line-point-dist` at
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:274-287`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
 
 /-!
 # The branch data of the sub-line sampling procedure
@@ -26,6 +28,8 @@ The coordinate blocks are those of `def:combine-map`, blueprint lines
 445--480, paper lines 970--989; the prefix truncation is that of
 blueprint `def:ld-question-distribution`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

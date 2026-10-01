@@ -1,32 +1,34 @@
-import MIPStarRE.QPBT.Combining.Lines.Construction
-import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
-import MIPStarRE.QPBT.Combining.Lines.ConditionalConsistency
-import MIPStarRE.QPBT.Combining.Lines.Marginal
-import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
-import MIPStarRE.QPBT.Combining.Lines.ConditionalCollision
-import MIPStarRE.QPBT.Combining.Lines.AxisLineResampling
-import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
-import MIPStarRE.QPBT.Combining.Lines.MixedResampling
-import MIPStarRE.QPBT.Combining.Lines.ProductWeightedCollision
-import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingDistribution
-import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingMass
-import MIPStarRE.QPBT.Combining.Lines.PairStateConsistencyTransport
-import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
-import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingResampling
-import MIPStarRE.QPBT.Combining.Lines.SubLineMixture
-import MIPStarRE.QPBT.Combining.Lines.UniformAffineCollision
-import MIPStarRE.QPBT.Combining.Lines.WeightedCollision
-import MIPStarRE.QPBT.Combining.Lines.PointwiseDefect
-import MIPStarRE.QPBT.Combining.Lines.PointSelfConsistencyCompleted
-import MIPStarRE.QPBT.Combining.Points
-import MIPStarRE.QPBT.Combining.Witnesses
-import MIPStarRE.QPBT.Combining.Lines.AffineEvaluation
-import MIPStarRE.QPBT.Combining.Lines.FiberCollision
-import MIPStarRE.QPBT.Combining.Lines.NondegenerateFiberCollision
-import MIPStarRE.QPBT.Combining.Lines.ZeroDirectionMass
-import MIPStarRE.QPBT.Combining.Lines.RestrictedConsistency
-import MIPStarRE.QPBT.Combining.Lines.PastingRestoration
-import MIPStarRE.QPBT.Games.RestrictedAverage
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.Construction
+public import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
+public import MIPStarRE.QPBT.Combining.Lines.ConditionalConsistency
+public import MIPStarRE.QPBT.Combining.Lines.Marginal
+public import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
+public import MIPStarRE.QPBT.Combining.Lines.ConditionalCollision
+public import MIPStarRE.QPBT.Combining.Lines.AxisLineResampling
+public import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
+public import MIPStarRE.QPBT.Combining.Lines.MixedResampling
+public import MIPStarRE.QPBT.Combining.Lines.ProductWeightedCollision
+public import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingDistribution
+public import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingMass
+public import MIPStarRE.QPBT.Combining.Lines.PairStateConsistencyTransport
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
+public import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingResampling
+public import MIPStarRE.QPBT.Combining.Lines.SubLineMixture
+public import MIPStarRE.QPBT.Combining.Lines.UniformAffineCollision
+public import MIPStarRE.QPBT.Combining.Lines.WeightedCollision
+public import MIPStarRE.QPBT.Combining.Lines.PointwiseDefect
+public import MIPStarRE.QPBT.Combining.Lines.PointSelfConsistencyCompleted
+public import MIPStarRE.QPBT.Combining.Points
+public import MIPStarRE.QPBT.Combining.Witnesses
+public import MIPStarRE.QPBT.Combining.Lines.AffineEvaluation
+public import MIPStarRE.QPBT.Combining.Lines.FiberCollision
+public import MIPStarRE.QPBT.Combining.Lines.NondegenerateFiberCollision
+public import MIPStarRE.QPBT.Combining.Lines.ZeroDirectionMass
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedConsistency
+public import MIPStarRE.QPBT.Combining.Lines.PastingRestoration
+public import MIPStarRE.QPBT.Games.RestrictedAverage
 
 /-!
 # Combined lines and restricted line distributions
@@ -48,6 +50,8 @@ carrier and probability law.  Their paper sources
 are `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:882-894`
 and `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1038-1069`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 
