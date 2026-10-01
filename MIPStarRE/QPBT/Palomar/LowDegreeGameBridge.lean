@@ -95,8 +95,8 @@ def lowDegreeQuestionPairEquiv (P : MIPStarRE.QPBT.LdParams) :
   rfl
 
 /-- The compact least nonzero coordinate is the one used by the published formula. -/
-theorem lowDegreePivot_eq_linePivotIndex {K : Type} [Field K] [Fintype K]
-    [DecidableEq K] {m : ℕ} (v : Fin m → K) (hv : v ≠ 0) :
+theorem lowDegreePivot_eq_linePivotIndex {K : Type} [Field K] [DecidableEq K]
+    {m : ℕ} (v : Fin m → K) (hv : v ≠ 0) :
     lowDegreePivot v hv = MIPStarRE.QPBT.linePivotIndex v hv := by
   have hpivot_ne : v (lowDegreePivot v hv) ≠ 0 := by
     unfold lowDegreePivot
@@ -114,8 +114,8 @@ theorem lowDegreePivot_eq_linePivotIndex {K : Type} [Field K] [Fintype K]
     exact hpivot_ne (MIPStarRE.QPBT.linePivotIndex_zero_before v hv _ hlt)
 
 /-- The compact elementary representative is exactly the canonical representative. -/
-theorem lowDegreeLineRep_eq_lineRepMap {K : Type} [Field K] [Fintype K]
-    [DecidableEq K] {m : ℕ} (u v : Fin m → K) :
+theorem lowDegreeLineRep_eq_lineRepMap {K : Type} [Field K] [DecidableEq K]
+    {m : ℕ} (u v : Fin m → K) :
     lowDegreeLineRep u v = MIPStarRE.QPBT.lineRepMap v u := by
   rw [MIPStarRE.QPBT.lineRepMap_apply_eq_explicitLineRep]
   simp only [lowDegreeLineRep, MIPStarRE.QPBT.explicitLineRep]
