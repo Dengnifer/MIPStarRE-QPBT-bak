@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-01T04:46:40.742919+00:00",
+  "bounded_goal_only": true,
+  "ldt_731": {
+    "merge": "fac99fdf22bbdbb83a2376ca48cd679dc7d13750",
+    "evidence": "/tmp/qpbt-final-audit-ldt-verified-1001.json",
+    "issue728": "closed"
+  },
+  "qpbt_736": {
+    "merge": "0b847308c30769be983bbd05c297e1014db76590",
+    "evidence": "/tmp/qpbt-pr736-merged-evidence-1001.json",
+    "issue729": "closed"
+  },
+  "frozen_ldt_tree": "ddd92480c55bbabba5a96af96064fc792a5eb68c",
+  "report_742": {
+    "head": "4cacce612622bd2a287073ef569f4a2542c02360",
+    "merge": "1b32dfe5883ee078e44bcc4d8e1bc38509c51d3a",
+    "parents": [
+      "2a99998c0d01de03150c33f6eadee72d182f7c88",
+      "4cacce612622bd2a287073ef569f4a2542c02360"
+    ],
+    "merged": true,
+    "issue730": "closed",
+    "normal_review": 5375046975,
+    "independent_math_review": 5924825278,
+    "all_ci_green": true,
+    "normal_merge_gate": "all7passed; nooverride",
+    "current_files_equal_reviewed_blobs": true,
+    "c8": {
+      "ident": "C8",
+      "title": "bound ledger",
+      "status": "DELEGATED",
+      "summary": "all 152 stage row(s) have the required nonempty cells and a valid disposition; the bounds' honesty comes from independent review",
+      "evidence": [],
+      "notes": [
+        "the gate checks the ledger's shape only; independent review judges whether each stated and proved bound is honest and each disposition is justified"
+      ]
+    }
+  },
+  "owner_findings734_pinned": true,
+  "deferred735": "open; notimplemented",
+  "kit741": "open; separatefuturegoal",
+  "source_invariants": "existingstatements/zero-proof-hole/headlineaxiomaudits bound to736 exacthead receipts; reportdiff changes only2markdownfiles",
+  "report_coverage": "16LDT+31QPBTcandidates;152stage rows,57PR736rows. R1 independently confirmed full coverage and comparison certificates; R2 independently approved all corrected formulas, names, proof descriptions and preserved coverage.",
+  "source_trees_unchanged": [
+    "MIPStarRE",
+    "references",
+    "blueprint"
+  ],
+  "remaining_actions": [
+    "requestedgoalpause"
+  ],
+  "closing_27_comment": 5924930962,
+  "closing_27_url": "https://github.com/Dengnifer/MIPStarRE-QPBT/issues/27#issuecomment-5924930962",
+  "keeper_stop_file": "/home/drx/.cache/mipstarre-dev/watchdog/goal-keeper.stop",
+  "keeper_stop_set": true,
+  "assigned_workers": "all terminal",
+  "cache_snapshot": "snap-20261001T044228Z-1b32dfe5883e complete8s"
+}
