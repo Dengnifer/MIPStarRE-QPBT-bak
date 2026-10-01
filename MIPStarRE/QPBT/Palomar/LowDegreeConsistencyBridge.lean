@@ -24,6 +24,11 @@ open MIPStarRE.LDT MIPStarRE.Quantum
 
 noncomputable section
 
+/-- A compact parameter record carries the registered admissible-size predicate. -/
+theorem LowDegreeParams.is_admissible_size (P : LowDegreeParams) :
+    MIPStarRE.QPBT.IsAdmissibleSize P.q :=
+  P.hq
+
 /-- Copy compact numerical parameters into the registered low-degree domain. -/
 def LowDegreeParams.toLdParams (P : LowDegreeParams) : MIPStarRE.QPBT.LdParams where
   q := P.q
@@ -33,7 +38,7 @@ def LowDegreeParams.toLdParams (P : LowDegreeParams) : MIPStarRE.QPBT.LdParams w
   hm := P.hm
   hd := P.hd
   hk := P.hk
-  hq := P.hq
+  hq := P.is_admissible_size
   hdvd := P.hdvd
 
 /-- Compact parameters are recovered exactly after conversion to the library record. -/
