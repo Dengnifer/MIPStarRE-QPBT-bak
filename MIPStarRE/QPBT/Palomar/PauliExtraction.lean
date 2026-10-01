@@ -157,7 +157,7 @@ def binaryRegisterLabel {P : PauliParams} {K : Type} {r : ℕ}
   fun p => coordinates (u p.1) p.2
 
 /-- Alice's raw prescribed-answer qudit operator error. -/
-noncomputable def pauliAliceOperatorError {K : Type} [Field K] [Fintype K]
+noncomputable def rawPauliAliceError {K : Type} [Field K] [Fintype K]
     [DecidableEq K] (P : PauliParams) (S : PauliStrategy P K)
     (w : ExtractionWitness (R := PauliRegister P K) S)
     (trace : K → ZMod 2) (W : PauliKind) : ℝ :=
@@ -167,7 +167,7 @@ noncomputable def pauliAliceOperatorError {K : Type} [Field K] [Fintype K]
     (fun u => idealProjectorAlice (J' := w.ιB') (pauliProj trace W u))
 
 /-- Bob's raw prescribed-answer qudit operator error. -/
-noncomputable def pauliBobOperatorError {K : Type} [Field K] [Fintype K]
+noncomputable def rawPauliBobError {K : Type} [Field K] [Fintype K]
     [DecidableEq K] (P : PauliParams) (S : PauliStrategy P K)
     (w : ExtractionWitness (R := PauliRegister P K) S)
     (trace : K → ZMod 2) (W : PauliKind) : ℝ :=
@@ -178,7 +178,7 @@ noncomputable def pauliBobOperatorError {K : Type} [Field K] [Fintype K]
 
 /-- Alice's raw prescribed-answer qubit operator error, summed over the
 original field-valued outcomes. -/
-noncomputable def qubitAliceOperatorError {K : Type} [Field K] [Fintype K]
+noncomputable def rawQubitAliceError {K : Type} [Field K] [Fintype K]
     [DecidableEq K] {r : ℕ} (P : PauliParams) (S : PauliStrategy P K)
     (w : ExtractionWitness (R := QubitRegister P r) S)
     (coordinates : K → Fin r → ZMod 2) (W : PauliKind) : ℝ :=
@@ -190,7 +190,7 @@ noncomputable def qubitAliceOperatorError {K : Type} [Field K] [Fintype K]
 
 /-- Bob's raw prescribed-answer qubit operator error, summed over the
 original field-valued outcomes. -/
-noncomputable def qubitBobOperatorError {K : Type} [Field K] [Fintype K]
+noncomputable def rawQubitBobError {K : Type} [Field K] [Fintype K]
     [DecidableEq K] {r : ℕ} (P : PauliParams) (S : PauliStrategy P K)
     (w : ExtractionWitness (R := QubitRegister P r) S)
     (coordinates : K → Fin r → ZMod 2) (W : PauliKind) : ℝ :=
