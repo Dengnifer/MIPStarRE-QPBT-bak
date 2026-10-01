@@ -10111,3 +10111,21 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
 
 - Palomar preparation: live how-to-submit and PalomarPolicy CONTRIBUTING.md section 2.1 explicitly require module headers and the 10000-line cap for separately declared substantive repositories. This invalidates the briefing assumption that the Solution-only library might be exempt. Following owner briefing section 5.4: measure migration scope, write docs/palomar-submission.md, post one owner-inbox blocker, then pause without converting library sources. Initial scout admission refused an inherited Astra model for the routine job; explicitly selecting the owner-required Sol model passed preflight, with no shim or credential changes.
 - Owner decision B12:A received directly in MAIN on 2026-10-02; briefing section8 authorizes all742 Lean files to adopt modules in tested packets, keeping v4.32.0, every statement and normal gates unchanged. The same #500 blocker is resolved in place. The uncommitted blocking-era submission-note draft was preserved at ~/.cache/mipstarre-dev/palomar/palomar-submission-blocked-draft-20261002.md to keep primary clean for merges; final docs/palomar-submission.md will be committed through its normal packet. Keeper stop flag removed for the authorized resumed work.
+- Companion-review routing gap: setting `MIPSTARRE_GITHUB_REPO` to
+  `Dengnifer/QPBT-comparator` redirected GitHub reads while `review.sh` still
+  resolved the base, head, diff and worktree in the unrelated primary-library
+  history. The route therefore could not produce an exact-head independent
+  comparator review, and equal PR numbers shared runtime paths and locks. Issue
+  #745 adds one explicit clean-source route, exact official comparator/NanoDa
+  evidence, primary-main prompt isolation and repository-qualified runtime
+  identities. Lesson: a repository override for remote records must be paired
+  with an explicit, validated local source identity; changing only the API
+  target is unsafe.
+- Issue #745 publication blocker: the implementation and local fixture checks
+  passed, but the managed session denied creation of the shared worktree
+  `index.lock` because the Git administrative directory is read-only. An
+  earlier issue read through `gh_common.py` also failed because outbound GitHub
+  TCP was unavailable. No commit, push, PR, CI status or review was
+  synthesized; the working-tree patch remains intact for a publication session.
+  Lesson: a session assigned branch publication needs writable shared Git
+  metadata and GitHub network access, not only a writable worktree checkout.

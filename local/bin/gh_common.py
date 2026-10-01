@@ -2,7 +2,7 @@
 """The one GitHub layer for ``local/bin`` — a thin, fail-closed wrapper over ``gh``.
 
 GitHub is the single source of truth for issues and their prerequisite edges,
-PRs, CI evidence (commit statuses on the exact head SHA), review verdicts
+PRs, CI evidence (commit statuses or check runs on the exact head SHA), review verdicts
 (COMMENT reviews bound to a commit id), and merges (REST merge guarded by an
 exact-SHA match).  This module is the only place workflow scripts talk to
 GitHub, as a Python import or via its CLI
@@ -183,6 +183,23 @@ def latest_statuses(sha: str) -> dict[str, dict]:
                                "description": row.get("description") or "",
                                "created_at": row.get("created_at") or ""}
     return latest
+
+
+def check_runs(sha: str) -> list[dict]:
+    """All GitHub check-run attempts on *sha*, preserving exact-head metadata."""
+    rows: list[dict] = []
+    page = 1
+    while True:
+        payload = api(
+            f"commits/{sha}/check-runs?filter=all&per_page={PAGE}&page={page}")
+        if not isinstance(payload, dict) or not isinstance(payload.get("check_runs"), list):
+            raise LayerError(f"malformed check-runs payload for {sha}")
+        batch = payload["check_runs"]
+        rows.extend(batch)
+        total = payload.get("total_count")
+        if len(batch) < PAGE or (isinstance(total, int) and len(rows) >= total):
+            return rows
+        page += 1
 
 
 # ---------------------------------------------------------------------------
@@ -480,6 +497,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("sha"); p.add_argument("context"); p.add_argument("state")
     p.add_argument("--desc", default=""); p.add_argument("--target-url")
     p = sub.add_parser("latest-statuses"); p.add_argument("sha")
+    p = sub.add_parser("check-runs"); p.add_argument("sha")
     p = sub.add_parser("ensure-pr-comment")
     p.add_argument("number", type=int); p.add_argument("marker")
     p.add_argument("--body-file", required=True)
@@ -519,6 +537,8 @@ def main(argv: list[str] | None = None) -> int:
                         description=args.desc, target_url=args.target_url)
         elif args.cmd == "latest-statuses":
             _emit(latest_statuses(args.sha))
+        elif args.cmd == "check-runs":
+            _emit(check_runs(args.sha))
         elif args.cmd == "ensure-pr-comment":
             _emit(ensure_pr_comment(args.number, args.marker,
                                     Path(args.body_file).read_text(encoding="utf-8")))

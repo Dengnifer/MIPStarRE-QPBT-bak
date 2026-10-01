@@ -199,6 +199,16 @@ class GitHubLayerTests(LayerTestCase):
         self.assertEqual(latest["local-review/summary"]["state"], "failure")
         self.assertIn(f"commits/{HEAD}/statuses", self.gh.calls()[0]["rel"])
 
+    def test_check_runs_reads_all_exact_head_attempts(self) -> None:
+        rows = [{"id": 17, "name": "comparator", "head_sha": HEAD,
+                 "status": "completed", "conclusion": "success"}]
+        self.gh.route(r"^commits/[0-9a-f]+/check-runs\?filter=all", {
+            "total_count": 1, "check_runs": rows,
+        })
+        self.assertEqual(gh_common.check_runs(HEAD), rows)
+        self.assertIn(f"commits/{HEAD}/check-runs?filter=all",
+                      self.gh.calls()[0]["rel"])
+
     def test_post_status_validates_state_and_binds_to_the_exact_sha(self) -> None:
         with self.assertRaises(LayerError):
             gh_common.post_status(HEAD, "local-ci/build", "green")
@@ -599,6 +609,266 @@ exit 9
         self.assertEqual(self.tool_log.read_text(encoding="utf-8").splitlines(),
                          [self.latexmk_call()])
         self.assertEqual(self.pdf.read_bytes(), b"fresh partial pdf")
+
+
+class CompanionReviewRoutingTests(LayerTestCase):
+    """The primary reviewer can inspect one exact companion-repository checkout."""
+
+    COMPANION = "Dengnifer/QPBT-comparator"
+    LIBRARY_BRANCH = "issue-0745-library-route"
+    COMPANION_BRANCH = "issue-0745-palomar-route"
+
+    @staticmethod
+    def init_repo(path: Path, templates: Path) -> None:
+        path.mkdir()
+        _git(path, "init", "-q", f"--template={templates}")
+        _git(path, "symbolic-ref", "HEAD", "refs/heads/main")
+        _git(path, "config", "user.email", "tests@example.invalid")
+        _git(path, "config", "user.name", "MIPStarRE tests")
+        _git(path, "config", "commit.gpgsign", "false")
+
+    def setUp(self) -> None:
+        super().setUp()
+        templates = self.tmp / "review-routing-no-templates"
+        templates.mkdir()
+
+        self.repo = self.tmp / "primary"
+        self.init_repo(self.repo, templates)
+        local_bin = self.repo / "local" / "bin"
+        local_bin.mkdir(parents=True)
+        for name in ("review.sh", "gh_common.py", "wf_util.py", "model_policy.py"):
+            shutil.copy2(LOCAL_BIN / name, local_bin / name)
+        scripts = self.repo / "scripts"
+        scripts.mkdir()
+        for name in ("blueprint_citations.py", "tex_utils.py"):
+            shutil.copy2(REPO_ROOT / "scripts" / name, scripts / name)
+        (self.repo / "blueprint" / "src" / "chapter").mkdir(parents=True)
+        persona = self.repo / "local" / "personas" / "orchestrator.md"
+        persona.parent.mkdir(parents=True)
+        persona.write_text("PRIMARY TRUSTED REVIEW PERSONA\n", encoding="utf-8")
+        prompts = self.repo / ".github" / "prompts"
+        prompts.mkdir(parents=True)
+        (prompts / "claude-code-review-system-prompt.md").write_text(
+            "PRIMARY TRUSTED REVIEW SYSTEM\n", encoding="utf-8")
+        (prompts / "claude-code-review-prompt.md").write_text(
+            "PRIMARY TRUSTED REVIEW TASK\n", encoding="utf-8")
+        for name in ("blueprint-prose-review-system-prompt.md",
+                     "blueprint-prose-review-prompt.md"):
+            (prompts / name).write_text("PRIMARY PROSE REVIEW\n", encoding="utf-8")
+        (self.repo / "README.md").write_text("library base\n", encoding="utf-8")
+        _git(self.repo, "add", "-A")
+        _git(self.repo, "commit", "-q", "--no-verify", "-m", "primary base")
+        self.library_base = _git(self.repo, "rev-parse", "HEAD")
+        _git(self.repo, "checkout", "-q", "-b", self.LIBRARY_BRANCH)
+        (self.repo / "README.md").write_text("library branch\n", encoding="utf-8")
+        _git(self.repo, "commit", "-q", "--no-verify", "-am", "library change")
+        self.library_head = _git(self.repo, "rev-parse", "HEAD")
+
+        self.source = self.tmp / "companion"
+        self.init_repo(self.source, templates)
+        workflow = self.source / ".github" / "workflows" / "comparator.yml"
+        workflow.parent.mkdir(parents=True)
+        workflow.write_text(
+            "name: Comparator verification\n"
+            "jobs:\n"
+            "  comparator:\n"
+            "    steps:\n"
+            "      - name: Run comparator\n"
+            "        run: ./verify.sh\n",
+            encoding="utf-8",
+        )
+        (self.source / "comparator.json").write_text(
+            json.dumps({"enable_nanoda": True}) + "\n", encoding="utf-8")
+        verify = self.source / "verify.sh"
+        verify.write_text(
+            "#!/bin/bash\n"
+            "CONFIG=comparator.json\n"
+            "if [ \"${1:-}\" = \"--fake-landrun\" ]; then\n"
+            "  CONFIG=comparator.local.json\n"
+            "fi\n"
+            "lake env comparator \"$CONFIG\"\n",
+            encoding="utf-8",
+        )
+        verify.chmod(0o755)
+        (self.source / "Challenge.lean").write_text(
+            "theorem companionBase : True := by trivial\n", encoding="utf-8")
+        (self.source / "README.md").write_text("companion base\n", encoding="utf-8")
+        _git(self.source, "add", "-A")
+        _git(self.source, "commit", "-q", "--no-verify", "-m", "companion base")
+        self.companion_base = _git(self.source, "rev-parse", "HEAD")
+        _git(self.source, "remote", "add", "origin",
+             "https://github.com/Dengnifer/QPBT-comparator.git")
+        _git(self.source, "checkout", "-q", "-b", self.COMPANION_BRANCH)
+        (self.source / "Challenge.lean").write_text(
+            "theorem companionHead : True := by trivial\n", encoding="utf-8")
+        (self.source / "README.md").write_text("companion branch\n", encoding="utf-8")
+        source_persona = self.source / "local" / "personas" / "orchestrator.md"
+        source_persona.parent.mkdir(parents=True)
+        source_persona.write_text("UNTRUSTED COMPANION PERSONA\n", encoding="utf-8")
+        source_prompt = self.source / ".github" / "prompts" / "claude-code-review-prompt.md"
+        source_prompt.parent.mkdir(parents=True, exist_ok=True)
+        source_prompt.write_text("UNTRUSTED COMPANION TASK\n", encoding="utf-8")
+        (source_prompt.parent / "claude-code-review-system-prompt.md").write_text(
+            "UNTRUSTED COMPANION SYSTEM\n", encoding="utf-8")
+        _git(self.source, "add", "-A")
+        _git(self.source, "commit", "-q", "--no-verify", "-m", "companion change")
+        self.companion_head = _git(self.source, "rev-parse", "HEAD")
+
+    def pr_payload(self, *, head: str | None = None,
+                   head_repo: str | None = None) -> dict:
+        return {
+            "number": 7,
+            "state": "open",
+            "head": {
+                "sha": head or self.companion_head,
+                "ref": self.COMPANION_BRANCH,
+                "repo": {"full_name": head_repo or self.COMPANION},
+            },
+            "base": {
+                "sha": self.companion_base,
+                "ref": "main",
+                "repo": {"full_name": self.COMPANION},
+            },
+        }
+
+    def successful_check(self, *, check_id: int = 41,
+                         conclusion: str = "success",
+                         completed_at: str = "2026-10-02T00:00:00Z") -> dict:
+        return {
+            "id": check_id,
+            "name": "comparator",
+            "head_sha": self.companion_head,
+            "status": "completed",
+            "conclusion": conclusion,
+            "completed_at": completed_at,
+            "details_url": (
+                f"https://github.com/{self.COMPANION}/actions/runs/{check_id}/job/1"),
+            "app": {"slug": "github-actions"},
+        }
+
+    def arm_companion(self, checks: list[dict], *, payload: dict | None = None) -> None:
+        self.gh.reset()
+        self.gh.route(r"^pulls/7$", payload or self.pr_payload())
+        self.gh.route(r"^commits/[0-9a-f]+/check-runs\?filter=all", {
+            "total_count": len(checks), "check_runs": checks,
+        })
+        self.gh.route(r"^pulls/7/reviews", [])
+
+    def run_companion(self, label: str, *, source: Path | None = None
+                      ) -> tuple[subprocess.CompletedProcess, Path]:
+        cache = self.tmp / f"cache-{label}"
+        environment = dict(os.environ, **self.gh.env())
+        environment.update({
+            "MIPSTARRE_GITHUB_REPO": self.COMPANION,
+            "MIPSTARRE_CACHE_ROOT": str(cache),
+            "LOCAL_REVIEW_ENABLED": "true",
+            "MIPSTARRE_REVIEW_EFFORT": "ultra",
+            "PYTHONDONTWRITEBYTECODE": "1",
+        })
+        result = subprocess.run(
+            ["bash", str(self.repo / "local" / "bin" / "review.sh"), "7",
+             "--source-repo", str(source or self.source),
+             "--force-review", "--dry-run"],
+            cwd=self.repo, capture_output=True, text=True, env=environment,
+        )
+        return result, cache
+
+    def test_default_library_route_still_requires_local_ci(self) -> None:
+        self.gh.reset()
+        self.gh.route(r"^pulls/7$", {
+            "number": 7, "state": "open",
+            "head": {"sha": self.library_head, "ref": self.LIBRARY_BRANCH},
+            "base": {"sha": self.library_base, "ref": "main"},
+        })
+        self.gh.route(r"^commits/[0-9a-f]+/statuses", [
+            {"context": "local-ci/summary", "state": "success"},
+        ])
+        self.gh.route(r"^pulls/7/reviews", [])
+        cache = self.tmp / "cache-library"
+        environment = dict(os.environ, **self.gh.env(),
+                           MIPSTARRE_CACHE_ROOT=str(cache),
+                           LOCAL_REVIEW_ENABLED="true",
+                           MIPSTARRE_REVIEW_EFFORT="ultra",
+                           PYTHONDONTWRITEBYTECODE="1")
+        result = subprocess.run(
+            ["bash", str(self.repo / "local/bin/review.sh"), "7",
+             "--force-review", "--dry-run"],
+            cwd=self.repo, capture_output=True, text=True, env=environment,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((cache / "reviews" / "pr7" / self.library_head / "code-task.md").exists())
+        self.assertFalse(any("check-runs" in call["rel"] for call in self.gh.calls()))
+
+    def test_valid_companion_route_is_exact_clean_and_prompt_isolated(self) -> None:
+        self.arm_companion([self.successful_check()])
+        sentinel = self.tmp / "cache-valid" / "reviews" / "pr7" / "sentinel"
+        sentinel.parent.mkdir(parents=True)
+        sentinel.write_text("library identity\n", encoding="utf-8")
+        result, cache = self.run_companion("valid")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        run_dir = (cache / "reviews" / "dengnifer-qpbt-comparator" / "pr7" /
+                   self.companion_head)
+        persona = (run_dir / "code-persona.md").read_text(encoding="utf-8")
+        task = (run_dir / "code-task.md").read_text(encoding="utf-8")
+        self.assertIn("PRIMARY TRUSTED REVIEW SYSTEM", persona)
+        self.assertNotIn("UNTRUSTED COMPANION SYSTEM", persona)
+        self.assertIn("PRIMARY TRUSTED REVIEW TASK", task)
+        self.assertNotIn("UNTRUSTED COMPANION TASK", task)
+        self.assertIn(f"Repository       {self.COMPANION}", task)
+        self.assertIn("GitHub Actions comparator check 41 succeeded", task)
+        self.assertTrue(sentinel.exists(), "companion runtime state must not reuse reviews/pr7")
+        self.assertEqual(_git(self.source, "status", "--porcelain"), "")
+        self.assertNotIn("core.sparseCheckout", _git(self.source, "config", "--list"))
+
+    def test_companion_route_rejects_repository_and_head_mismatches(self) -> None:
+        self.arm_companion([self.successful_check()])
+        _git(self.source, "remote", "set-url", "origin",
+             "https://github.com/Dengnifer/not-the-comparator.git")
+        result, _ = self.run_companion("wrong-repo")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("source checkout origin", result.stderr)
+
+        _git(self.source, "remote", "set-url", "origin",
+             "https://github.com/Dengnifer/QPBT-comparator.git")
+        self.arm_companion([self.successful_check()],
+                           payload=self.pr_payload(head="f" * 40))
+        result, _ = self.run_companion("wrong-head")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("source checkout HEAD", result.stderr)
+
+    def test_companion_route_rejects_dirty_checkout_before_ci(self) -> None:
+        (self.source / "untracked.txt").write_text("dirty\n", encoding="utf-8")
+        self.arm_companion([self.successful_check()])
+        result, _ = self.run_companion("dirty")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("companion reviews require a clean exact-head tree", result.stderr)
+        self.assertFalse(any("check-runs" in call["rel"] for call in self.gh.calls()))
+
+    def test_companion_route_blocks_missing_failed_and_stale_ci(self) -> None:
+        older_success = self.successful_check(
+            check_id=40, completed_at="2026-10-01T23:00:00Z")
+        newer_failure = self.successful_check(
+            check_id=41, conclusion="failure", completed_at="2026-10-02T00:00:00Z")
+        for label, checks, expected in (
+            ("missing", [], "no GitHub Actions comparator check"),
+            ("failed", [newer_failure], "conclusion='failure'"),
+            ("stale", [older_success, newer_failure], "conclusion='failure'"),
+        ):
+            with self.subTest(label=label):
+                self.arm_companion(checks)
+                result, _ = self.run_companion(label)
+                self.assertEqual(result.returncode, 3, result.stderr)
+                self.assertIn(expected, result.stderr)
+
+    def test_companion_route_requires_nanoda_on_the_exact_head(self) -> None:
+        (self.source / "comparator.json").write_text(
+            json.dumps({"enable_nanoda": False}) + "\n", encoding="utf-8")
+        _git(self.source, "commit", "-q", "--no-verify", "-am", "disable nanoda")
+        self.companion_head = _git(self.source, "rev-parse", "HEAD")
+        self.arm_companion([self.successful_check()])
+        result, _ = self.run_companion("nanoda-off")
+        self.assertEqual(result.returncode, 3, result.stderr)
+        self.assertIn("enable_nanoda", result.stderr)
 
 
 class ReviewRoundCounterTests(LayerTestCase):

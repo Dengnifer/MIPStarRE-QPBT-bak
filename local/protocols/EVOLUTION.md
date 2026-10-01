@@ -1870,3 +1870,29 @@ override is still never self-granted.
 **Expected effect:** the guard still stops runaway scaffolding, at five times the old ceiling. The per-episode
 discipline in `local/personas/main.md` (stop at the limit, commit what stands, record, rescope) is unchanged, and
 review still checks the PR's cumulative workflow diff.
+
+## 2026-10-02 - Bind companion reviews to their source checkout (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Companion-review
+routing gap". `MIPSTARRE_GITHUB_REPO` changed GitHub API reads but left every
+reviewed Git object in the primary library, so the separate comparator had no
+supported exact-head review route.
+
+**Change:** `local/bin/review.sh` accepts one explicit `--source-repo PATH`
+route, restricted to `Dengnifer/QPBT-comparator`. It requires a clean checkout
+whose origin, PR repositories, branch, base and head all agree; replaces the
+library's `local-ci/summary` gate with the latest successful exact-head GitHub
+Actions `comparator` check; verifies the committed NanoDa-enabled official
+workflow contract; and repeats CI plus checkout freshness before publication.
+Prompts and helpers still come only from primary committed `main`, dispatch and
+account admission remain primary, and companion cache, lock and session scopes
+include the repository identity. `gh_common.py` gains the read-only check-runs
+query. Offline fixture tests cover the unchanged library route, valid companion
+input, repository/head/dirt mismatches, missing/failed/stale CI, NanoDa and
+trusted-prompt isolation.
+
+**Expected effect:** MAIN can request an independent review of the comparator's
+actual PR head without mutating its checkout or confusing it with a library PR
+having the same number. Missing or mismatched local or GitHub evidence fails
+closed; the default library review and existing reviewer/account gates are
+unchanged.

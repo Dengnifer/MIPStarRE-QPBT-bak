@@ -10,7 +10,8 @@ substantive review criteria are unchanged: `docs/CONTRIBUTING.md` §5 and the
 prompt pair under `.github/prompts/` are the same texts the GitHub jobs used.
 What changed is only who runs them and where the verdict lands.
 
-    local/bin/review.sh <pr-id> [--force-review] [--dry-run]
+    local/bin/review.sh <pr-id> [--source-repo PATH]
+                        [--force-review] [--dry-run]
 
 ---
 
@@ -23,11 +24,15 @@ drew two full reviews per push — and the auto-fix loop then rewrote the very
 code under review.  Chaining the review to CI completion spends review effort
 only on code that at least compiles.
 
-Locally the chain is: `ci.sh` publishes the `local-ci/*` statuses on the head
-SHA; `review.sh` refuses to do anything until the `local-ci/summary` roll-up is
-`success` for the **current** head.  There is no event bus, so the chain is an
-ordering discipline rather than a trigger, and the discipline is enforced by the
-gate below rather than by trust.
+Locally the normal chain is: `ci.sh` publishes the `local-ci/*` statuses on the
+head SHA; `review.sh` refuses to do anything until the `local-ci/summary`
+roll-up is `success` for the **current** head.  The explicit
+`--source-repo PATH` route is restricted to `Dengnifer/QPBT-comparator`: it
+instead requires the latest successful GitHub Actions `comparator` check on
+that exact SHA and verifies from the exact commit that `comparator.json`
+enables NanoDa and the official workflow invokes `./verify.sh` without the
+development-only fake-landrun flag.  There is no event bus, so either chain is
+an ordering discipline rather than a trigger, enforced by the gate below.
 
 Marking a draft ready is not a trigger there and is not one here.  A review
 follows a CI run, and only a CI run.
@@ -48,8 +53,8 @@ as a green one.
 | 2 | no open GitHub PR for the number, or no head SHA | error, exit 1 |
 | 3 | branch name contains `] ~ ^ : ? *`, space or backslash | error, exit 1 |
 | 4 | branch under review equals `MIPSTARRE_TRUSTED_REF` | error, exit 1 |
-| 5 | `local-ci/summary` is missing on the head SHA, or is not `success` | **block**, exit 3 |
-| 6 | the local branch tip ≠ the remote PR head | error, exit 1 |
+| 5 | required exact-head CI is missing or unsuccessful | **block**, exit 3 |
+| 6 | repository, clean checkout, branch/base, or head mismatch | error, exit 1 |
 | 7 | head commit subject matches `^\[(claude\|codex)-(auto\|review)-fix\]` | skip, exit 0, unless `--force-review` |
 | 8 | a fix lock is held for this branch | skip, exit 0 |
 | 9 | the head moved while this run queued for the review lock | skip, exit 0 |
@@ -63,19 +68,26 @@ reviewing and reports nothing.
 
 Rung 7 is the ping-pong guard, and §5 explains it.
 
-Rung 5 reads exactly one status, the `local-ci/summary` roll-up `ci.sh` posts
-last; it never iterates the per-step contexts.  Per-step completeness is the
-merge gate's job (`pr_merge.py` gate 3 blocks on any missing `local-ci/<step>`),
-and it costs this gate nothing: a partial `--only` / `--skip-build` run posts
-nothing to GitHub at all, so a subset can never green-light a review either.
+On the default route, rung 5 reads exactly one status, the `local-ci/summary`
+roll-up `ci.sh` posts last; it never iterates the per-step contexts.  Per-step
+completeness is the merge gate's job (`pr_merge.py` gate 3 blocks on any
+missing `local-ci/<step>`), and a partial `--only` / `--skip-build` run posts
+nothing, so a subset cannot green-light review.  On the companion route, rung
+5 reads check runs through `gh_common.py`, accepts only the latest exact-head
+`comparator` job from the `github-actions` app with conclusion `success`, and
+requires its details URL to belong to the target repository.  The gate is read
+again immediately before publication, followed by a final clean checkout,
+branch, base and head check.  Missing, failed, pending, stale or cross-repository
+evidence publishes nothing.
 
 ## 3. Trusted prompts
 
-The reviewer persona and task prompt are read with
+The reviewer persona and task prompt are read from the primary library with
 
     git show "$MIPSTARRE_TRUSTED_REF:.github/prompts/<file>"
 
-never from the checkout under review.  On GitHub this was a second
+never from the checkout under review, including when `--source-repo` points at
+the companion repository.  On GitHub this was a second
 `actions/checkout` of the default branch into `.trusted-actions/`
 (`pr-review.yml:140-146`), with every prompt path prefixed by that directory
 (`pr-review.yml:173-182`, `:248-252`).  The property being preserved is that a
@@ -235,7 +247,7 @@ no review at all simply has no such status, which the merge gate reads as
 
 | Lock | Key | Cancellation |
 |---|---|---|
-| review | PR id | none — a queued run waits, then re-checks the head |
+| review | repo + PR for companion; PR for default | wait, then re-check head |
 | fix (`autofix.md`) | branch | supersession sentinel |
 
 The split of keys is inherited (`pr-review.yml:18-20` groups by PR number with
@@ -361,8 +373,10 @@ branch and owns the branch-name lint (`local/protocols/issues-prs.md`).
 
 ## 11. Operating it
 
-    local/bin/review.sh 7                # review PR 0007 at its current head
+    local/bin/review.sh 7                # review library PR 0007 at its current head
     local/bin/review.sh 7 --dry-run      # build diff and prompts, dispatch nothing
+    MIPSTARRE_GITHUB_REPO=Dengnifer/QPBT-comparator \
+      local/bin/review.sh 7 --source-repo /clean/QPBT-comparator
     LOCAL_REVIEW_ENABLED=false local/bin/review.sh 7    # confirm the kill switch
 
 Issue #505 retired lease-backed native review. Before running a current review,
@@ -386,15 +400,19 @@ Artefacts:
 |---|---|---|
 | the exact-head `COMMENT` review on the PR | on GitHub | combined verdict, ledger, prose |
 | `local-review/summary` on the head SHA | on GitHub | the gate-readable verdict |
-| `~/.cache/mipstarre-dev/reviews/pr<N>/<sha>/` | no | diff, prompts, raw agent output |
+| `~/.cache/mipstarre-dev/reviews/pr<N>/<sha>/` | no | default review artifacts |
+| `~/.cache/mipstarre-dev/reviews/<repo-key>/pr<N>/<sha>/` | no | companion artifacts |
 | `~/.cache/mipstarre-dev/reviews/pr<N>/<sha>/blueprint-citations.md` | no | bounded, sanitized label-derived blueprint spans |
 | `~/.cache/mipstarre-dev/reviews/pr<N>/<sha>/blueprint-citations.raw.md` | no | complete resolver output retained locally |
-| `~/.cache/mipstarre-dev/locks/review-<pr>.lock` | no | the review lock |
+| `~/.cache/mipstarre-dev/locks/review-<pr>.lock` | no | the default-route review lock |
+| `~/.cache/mipstarre-dev/locks/review-<repo-key>-pr<pr>.lock` | no | companion review lock |
 
 Every codex invocation made by `review.sh` goes through `local/bin/dispatch.sh`, so
 the session is named, captured to `results/telemetry/sessions/<name>.jsonl` and
-summarised into `results/telemetry/sessions.jsonl`
-(`local/protocols/sessions.md`). A missing dispatcher fails closed. `dispatch.sh` enforces
+summarised into `results/telemetry/sessions.jsonl`. Companion scopes include
+`dengnifer-qpbt-comparator-pr<N>`, so equal PR numbers in the two repositories
+cannot reuse a runtime identity (`local/protocols/sessions.md`). A missing
+dispatcher fails closed. `dispatch.sh` enforces
 `LOCAL_REVIEW_ENABLED` for reviewer-role sessions independently; the two checks
 agreeing is intentional redundancy.
 
