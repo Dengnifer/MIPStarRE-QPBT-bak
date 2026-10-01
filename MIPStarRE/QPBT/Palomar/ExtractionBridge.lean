@@ -88,7 +88,7 @@ namespace Palomar
 /-- Alice's compact qudit error specialized to raw prescribed-answer effects. -/
 def pauliAliceOperatorError (P : AdmissibleParams)
     (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : PauliSoundnessWitness P S) (W : PauliKind) : ℝ :=
+    (w : PauliSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) : ℝ :=
   aliceOperatorError w.toPalomar
     (fun u => liftedAEffect S w.φA
       ((S.A (pauliQuestion P W)).effect (.pauliOutcome u)))
@@ -97,7 +97,7 @@ def pauliAliceOperatorError (P : AdmissibleParams)
 /-- Bob's compact qudit error specialized to raw prescribed-answer effects. -/
 def pauliBobOperatorError (P : AdmissibleParams)
     (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : PauliSoundnessWitness P S) (W : PauliKind) : ℝ :=
+    (w : PauliSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) : ℝ :=
   bobOperatorError w.toPalomar
     (fun u => liftedBEffect S w.φB
       ((S.B (pauliQuestion P W)).effect (.pauliOutcome u)))
@@ -106,7 +106,7 @@ def pauliBobOperatorError (P : AdmissibleParams)
 /-- Alice's compact qubit error, still summed over the original field outcomes. -/
 def qubitAliceOperatorError (P : AdmissibleParams)
     (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : QubitSoundnessWitness P S) (W : PauliKind) : ℝ :=
+    (w : QubitSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) : ℝ :=
   aliceOperatorError w.toPalomar
     (fun u => liftedQubitAEffect S w.φA
       ((S.A (pauliQuestion P W)).effect (.pauliOutcome u)))
@@ -115,7 +115,7 @@ def qubitAliceOperatorError (P : AdmissibleParams)
 /-- Bob's compact qubit error, still summed over the original field outcomes. -/
 def qubitBobOperatorError (P : AdmissibleParams)
     (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : QubitSoundnessWitness P S) (W : PauliKind) : ℝ :=
+    (w : QubitSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) : ℝ :=
   bobOperatorError w.toPalomar
     (fun u => liftedQubitBEffect S w.φB
       ((S.B (pauliQuestion P W)).effect (.pauliOutcome u)))
@@ -124,25 +124,25 @@ def qubitBobOperatorError (P : AdmissibleParams)
 /-- The compact Alice qudit sum equals the source-facing raw Pauli distance. -/
 @[simp] theorem pauliAliceOperatorError_eq
     (P : AdmissibleParams) (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : PauliSoundnessWitness P S) (W : PauliKind) :
+    (w : PauliSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) :
     pauliAliceOperatorError P S w W = rawPauliOperatorDistanceA P S w W := rfl
 
 /-- The compact Bob qudit sum equals the source-facing raw Pauli distance. -/
 @[simp] theorem pauliBobOperatorError_eq
     (P : AdmissibleParams) (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : PauliSoundnessWitness P S) (W : PauliKind) :
+    (w : PauliSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) :
     pauliBobOperatorError P S w W = rawPauliOperatorDistanceB P S w W := rfl
 
 /-- The compact Alice qubit sum equals the established qubit distance. -/
 @[simp] theorem qubitAliceOperatorError_eq
     (P : AdmissibleParams) (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : QubitSoundnessWitness P S) (W : PauliKind) :
+    (w : QubitSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) :
     qubitAliceOperatorError P S w W = qubitOperatorDistanceA P S w W := rfl
 
 /-- The compact Bob qubit sum equals the established qubit distance. -/
 @[simp] theorem qubitBobOperatorError_eq
     (P : AdmissibleParams) (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : QubitSoundnessWitness P S) (W : PauliKind) :
+    (w : QubitSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) :
     qubitBobOperatorError P S w W = qubitOperatorDistanceB P S w W := rfl
 
 /-- Fixed-basis qudit-to-qubit transport preserves the compact state error exactly. -/
@@ -155,14 +155,14 @@ theorem stateError_toQubit (P : AdmissibleParams)
 /-- Fixed-basis transport preserves Alice's compact squared operator sum exactly. -/
 theorem pauliAliceOperatorError_toQubit (P : AdmissibleParams)
     (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : PauliSoundnessWitness P S) (W : PauliKind) :
+    (w : PauliSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) :
     qubitAliceOperatorError P S w.toQubit W = pauliAliceOperatorError P S w W := by
   simpa using qubit_operator_distance_a_to_qubit P S w W
 
 /-- Fixed-basis transport preserves Bob's compact squared operator sum exactly. -/
 theorem pauliBobOperatorError_toQubit (P : AdmissibleParams)
     (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
-    (w : PauliSoundnessWitness P S) (W : PauliKind) :
+    (w : PauliSoundnessWitness P S) (W : MIPStarRE.QPBT.PauliKind) :
     qubitBobOperatorError P S w.toQubit W = pauliBobOperatorError P S w W := by
   simpa using qubit_operator_distance_b_to_qubit P S w W
 

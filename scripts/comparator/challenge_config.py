@@ -25,6 +25,7 @@ Schema (unknown top-level keys are rejected so typos fail loudly):
   "expected": "scripts/…/Challenge.lean.expected",   // required
   "require_expected": true,            // optional, default true
   "split": false,                      // optional, default false
+  "provenance_comments": true,         // optional, default true
   "common_opens": ["open scoped …"],  // optional, split-module context
   "extras": {"Decl.Name": ["line"]},   // optional
   "module_preludes": {                 // optional
@@ -82,6 +83,7 @@ _KEYS = {
     "expected",
     "require_expected",
     "split",
+    "provenance_comments",
     "common_opens",
     "extras",
     "module_preludes",
@@ -132,6 +134,7 @@ class ChallengeConfig:
     expected: str
     require_expected: bool
     split: bool
+    provenance_comments: bool
     common_opens: tuple[str, ...]
     extras: dict[str, list[str]]
     module_preludes: dict[str, tuple[Prelude, ...]]
@@ -299,6 +302,12 @@ def load_challenge(path: Path) -> ChallengeConfig:
     if not isinstance(split, bool):
         raise ChallengeConfigError(f"{path}: key 'split' must be a boolean")
 
+    provenance_comments = data.get("provenance_comments", True)
+    if not isinstance(provenance_comments, bool):
+        raise ChallengeConfigError(
+            f"{path}: key 'provenance_comments' must be a boolean"
+        )
+
     common_opens = data.get("common_opens", [])
     if not isinstance(common_opens, list) or not all(
         isinstance(line, str) for line in common_opens
@@ -319,6 +328,7 @@ def load_challenge(path: Path) -> ChallengeConfig:
         expected=_typed(data, "expected", str, path),
         require_expected=require_expected,
         split=split,
+        provenance_comments=provenance_comments,
         common_opens=tuple(common_opens),
         extras=_extras(data, path),
         module_preludes=_module_preludes(data, path),

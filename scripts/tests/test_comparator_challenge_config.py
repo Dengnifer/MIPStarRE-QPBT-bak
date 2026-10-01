@@ -51,6 +51,7 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
         by_name = {challenge.name: challenge for challenge in challenges}
 
         self.assertIn("ldt", by_name)
+        self.assertIn("palomar", by_name)
         self.assertIn("qpbt", by_name)
         self.assertEqual(
             by_name["ldt"].targets, ("MIPStarRE.LDT.Test.mainFormal",)
@@ -64,6 +65,15 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
                 "MIPStarRE.QPBT.exists_ld_soundness",
             ),
         )
+        self.assertEqual(
+            by_name["palomar"].targets,
+            (
+                "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+                "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+                "MIPStarRE.QPBT.Palomar.pauli_soundness",
+                "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit",
+            ),
+        )
         # the context tables are per challenge: neither challenge's keys may
         # constrain the other's closure
         self.assertTrue(by_name["ldt"].extras)
@@ -73,12 +83,21 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
             & set(by_name["qpbt"].module_preludes),
             {"MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean"},
         )
-        # both challenges have a checked-in expected copy
+        # every configured challenge has a checked-in expected copy
         self.assertTrue(by_name["ldt"].require_expected)
+        self.assertTrue(by_name["palomar"].require_expected)
         self.assertTrue(by_name["qpbt"].require_expected)
         self.assertEqual(by_name["ldt"].definition_names, ())
+        self.assertEqual(
+            by_name["palomar"].definition_names,
+            ("MIPStarRE.QPBT.fixedFieldModel",),
+        )
         self.assertEqual(by_name["qpbt"].definition_names, ())
+        self.assertTrue(by_name["ldt"].provenance_comments)
+        self.assertFalse(by_name["palomar"].provenance_comments)
+        self.assertTrue(by_name["qpbt"].provenance_comments)
         self.assertTrue((REPO_ROOT / by_name["ldt"].expected).exists())
+        self.assertTrue((REPO_ROOT / by_name["palomar"].expected).exists())
         self.assertTrue((REPO_ROOT / by_name["qpbt"].expected).exists())
 
     def test_ldt_expected_path_and_tables_are_unchanged(self) -> None:
@@ -198,6 +217,15 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
 
             with self.assertRaises(challenge_config.ChallengeConfigError):
                 challenge_config.load_challenge(path)
+
+    def test_provenance_comments_must_be_boolean(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            path = write_config(Path(td), "sample", provenance_comments="no")
+
+            with self.assertRaises(challenge_config.ChallengeConfigError) as ctx:
+                challenge_config.load_challenge(path)
+
+            self.assertIn("provenance_comments", str(ctx.exception))
 
     def test_unknown_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as td:
@@ -374,6 +402,23 @@ class MultiTargetAssemblyTests(unittest.TestCase):
             second = assemble_challenge.assemble(challenge, root, tsv)
 
         self.assertEqual(first, second)
+
+    def test_provenance_comments_can_be_disabled(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            self._tree(root)
+            tsv = self._tsv(root)
+            challenge = challenge_config.load_challenge(
+                write_config(root, "sample", provenance_comments=False)
+            )
+
+            body = assemble_challenge.assemble(challenge, root, tsv)
+
+        self.assertNotIn("-- source:", body)
+        self.assertLess(body.index("def base"), body.index("def later"))
+        self.assertLess(body.index("def later"), body.index("def mid"))
+        self.assertLess(body.index("def mid"), body.index("def top"))
+        self.assertIn("--   MIPStarRE.generated  (from MIPStarRE/Top.lean)", body)
 
     def test_stale_context_table_names_the_offending_challenge(self) -> None:
         with tempfile.TemporaryDirectory() as td:

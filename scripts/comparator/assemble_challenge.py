@@ -7,7 +7,8 @@ metadata).  For each declaration this script re-reads its source lines and
 records the namespace stack active at that point (tracking
 ``namespace``/``section``/``end`` lines), orders declarations topologically
 (module import rank, then line number), and emits the snippets grouped under
-merged namespace blocks with provenance comments.
+merged namespace blocks.  Per-declaration provenance comments are configurable;
+they are enabled by default.
 
 The elaboration context that the kernel closure cannot see (attribute commands,
 ``CoeFun`` instances, ``variable``/``open`` blocks) lives in the ``extras`` and
@@ -71,11 +72,13 @@ class Assembler:
         extras: dict[str, list[str]] | None = None,
         module_preludes: dict[str, tuple[Prelude, ...]] | None = None,
         definition_names: tuple[str, ...] = (),
+        provenance_comments: bool = True,
     ) -> None:
         self.repo_root = repo_root
         self.extras = extras or {}
         self.module_preludes = module_preludes or {}
         self.definition_names = set(definition_names)
+        self.provenance_comments = provenance_comments
         self._file_cache: dict[str, list[str]] = {}
         self.out: list[str] = []
         self.cur_ns: list[str] = []
@@ -105,8 +108,8 @@ class Assembler:
             if m:
                 stack.append(("ns", m.group(1)))
                 continue
-            m = re.match(r"section\s*([\w.À-￿']*)", s)
-            if m and s.startswith("section"):
+            m = re.match(r"(?:noncomputable\s+)?section\s*([\w.À-￿']*)", s)
+            if m:
                 stack.append(("sec", m.group(1) or None))
                 continue
             m = re.match(r"end\s*([\w.À-￿']*)\s*(?:--.*)?$", s)
@@ -199,6 +202,8 @@ class Assembler:
         self.used_preludes.add((path, prelude.first))
 
     def emit(self, entries: list[Entry], generated: list[tuple[str, str]]) -> str:
+        if not self.provenance_comments and (entries or generated):
+            self.out.append("")
         # compiler-generated declarations (no source range) regenerate
         # identically during elaboration; record them up front as comments so
         # they never interact with namespace or prelude state
@@ -241,8 +246,9 @@ class Assembler:
             if prelude is not None and self.open_prelude is None:
                 self.open_prelude_for(path, prelude)
             self.switch_ns(self.ns_stack_at(path, a))
-            self.out.append("")
-            self.out.append(f"-- source: {path}:{a}-{b}  ({name})")
+            if self.provenance_comments:
+                self.out.append("")
+                self.out.append(f"-- source: {path}:{a}-{b}  ({name})")
             if hole is None:
                 self.out.extend(src)
             else:
@@ -315,6 +321,7 @@ def assemble_split(
         challenge.extras,
         challenge.module_preludes,
         challenge.definition_names,
+        challenge.provenance_comments,
     )
     entries, generated = read_entries(asm, tsv)
 
@@ -540,6 +547,7 @@ def assemble(challenge: ChallengeConfig, root: Path, tsv: Path) -> str:
         challenge.extras,
         challenge.module_preludes,
         challenge.definition_names,
+        challenge.provenance_comments,
     )
     entries, generated = read_entries(asm, tsv)
 
