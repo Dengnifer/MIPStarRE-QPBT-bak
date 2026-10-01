@@ -146,3 +146,5 @@ add the long reasoning to the pointed record.
 | 2026-10-02 | Register exactly fixedFieldModel and prove compact generic strategy equivalences | MAIN adopting bounded Astra source judgement | Retain complete field/basis/encoding contract and existing checked construction; textual saving375lines/16672bytes. Two Astra reports1141s total; additive Sol proof packet760 gets3600s. No proof-helper erasure or mathematical weakening | Progress Log27 comment5937200054; issue760; palomar-pilot-ci-20261002.md |
 
 | 2026-10-02 | Admit bounded continuation766 after proved game checkpoint | MAIN under owner section9 | First3600s reached budget; exact PMF/verifier checked, strategy/value/SPCC still required. Allocate2700s once, cumulative6300s; preserve normal gates | palomar-pauli-continuation-20261002.md; #27 comment5940259520 |
+
+| 2026-10-02 | Prepare exact compact completeness/qudit/qubit aliases770 | MAIN under the Palomar goal | Registered statements are still required after game/error bridges. First3600s Sol tranche reserved, not yet admitted; dependencies766/763 and all normal gates retained | palomar-final-aliases-prepared-20261002.md; issue770 |
