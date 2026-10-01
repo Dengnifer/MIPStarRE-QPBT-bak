@@ -63,3 +63,23 @@ PR's independent review. No native agent, merge daemon or outside repository is
 used. Real-build fixtures in the pilot CI compete with #759 for the shared
 build lock; fixed timeout failures require an uncontended rerun, not a lock or
 check bypass. No project completion or Palomar readiness is claimed.
+
+## Follow-up at 03:42 JST
+
+The first #758 run is terminal failure from one cold-fixture lock timeout;
+other steps passed. Its logs/manifest are preserved under the original runtime
+paths plus `-first-run`. The unmodified-head complete rerun is handle7303,
+`/tmp/qpbt-palomar-pattern-ci-retry.log`; its repeated build passed in33seconds.
+
+The first #759 run is terminal failure solely from generated QPBT provenance and
+import ordering; full build, both axiom audits and remaining CI steps passed.
+Fresh linked simplifier-757-20261002-01, at most900seconds, preserves its proof
+predecessor's862seconds cost and owns only regeneration/normal publication.
+Handle22910; contract `/tmp/palomar-line-provenance-repair.md`; log
+`/tmp/qpbt-palomar-line-provenance-repair.log`. No concurrent writer or CI is
+running in that source worktree. The author must return for new exact-head CI.
+
+Upgrade756's full dispatch brief is prepared at
+`/tmp/palomar-upgrade-756-brief.md`. Supply the actual merged-pilot base and a
+fresh helper-prepared worktree only after744 closes. Budget3600seconds for the
+first Sol/Ultra author segment; preserve cost across any justified continuation.
