@@ -202,3 +202,32 @@ remain binding. MAIN explicitly permits one additional1800s independent canonica
 review of the changed native route after fresh exact-head CI; it does not reset
 history or carry approval. This replaces the obsolete legacy-launcher repair and
 preserves its provenance/instruction-root fixes. #27comment5942565919.
+
+
+## 2026-10-02 — integrate module packets before their full gate
+
+Under owner section9, MAIN retains the disjoint Sol author packets and all
+normalized path audits/commits, then reconciles them in final #753 on the
+normally merged #756 toolchain and #774 compact surface. The entire integrated
+diff must pass full canonical CI, both axiom audits, comparator drift, a complete
+normalized comparison to that current base, and independent exact-head review
+before normal pr_merge.py. No prepared packet is approved/complete before this
+lands, and all costs/findings remain recorded. The tradeoff is one larger
+mechanical review with its complete diff available, avoiding eight serial
+dependent full-library rebuild cycles. No gate or mathematical invariant is
+waived. Pilot744 already passed its normal gate. #27comment5942728582.
+
+
+## 2026-10-02 — preserve telemetry losslessly within substantive source cap
+
+Official validate_preservable_remote_source also imposes500MiB on the separately
+declared substantive library. At36805f1d, tracked blobs total2079423932bytes,
+2056375693of them under results; the mathematical source is not the size problem.
+MAIN assigns #777 a bounded1800s Sol preparation to losslessly compress historical
+per-session raw JSONL archives, with full original-blob/SHA256/size/archive manifests
+and byte-for-byte recovery checks. Keep public history, project runtime raw copies,
+registry append semantics, summaries/reviews and mathematical source unchanged.
+Narrow archive-reader compatibility and protocol clarification require normal CI
+and independent review. No LFS/external service/history rewrite or proof hiding.
+Final #776 local checks must measure the substantive pin as well as the wrapper.
+Decision/cost: #27comment5942781550.
