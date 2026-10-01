@@ -5,10 +5,10 @@ import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
 import Challenge.MIPStarRE.QPBT.Algebra.Subspaces
 import Challenge.MIPStarRE.Quantum.FiniteMatrix.Basic
 import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
-import Challenge.MIPStarRE.QPBT.Algebra.Lines
 import Challenge.MIPStarRE.QPBT.Algebra.LowDegreeCode
 import Challenge.MIPStarRE.QPBT.State
 import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+import Challenge.MIPStarRE.QPBT.Algebra.Lines
 import Challenge.MIPStarRE.QPBT.Algebra.Pauli
 import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasis
 import Challenge.MIPStarRE.Quantum.Measurement
