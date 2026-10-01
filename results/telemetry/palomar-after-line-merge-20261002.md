@@ -67,3 +67,19 @@ heavy CI/real-build fixtures to avoid the observed300-second fixture lock timeou
 Prepared upgrade756 brief remains /tmp/palomar-upgrade-756-brief.md and waits
 for744 to close; bulk746 also waits for756. No final Challenge, comparator CI,
 full mechanical report or owner submission note is complete. Goal stays active.
+
+## Cache handoff completed
+
+The warmer published complete snapshot
+snap-20261001T191811Z-52484f7cffc3 after739seconds. The primary warm-worktree
+helper force-cloned that immutable snapshot into755 successfully; log
+/tmp/qpbt-palomar-review-route-warm-after759.log. Fresh canonical CI755 is
+running atb265ccb1, exec76928, /tmp/qpbt-palomar-review-route-ci-b265.log; its
+build passed in51seconds. No other full CI should start before its real-build
+fixtures finish. After green, dispatch the second independent Sol review using
+all explicit Sol model overrides, then normal merge if approved and fresh.
+Serial gate order and new proof packet763 are recorded on27 comment5938849511.
+
+Two proof workers762/763 remain active. Do not replace an observational timeout
+with a restart. Main is at the line merge plus passive telemetry. Final Palomar
+completion remains unproven and materially incomplete.
