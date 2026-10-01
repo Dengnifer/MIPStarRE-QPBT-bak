@@ -94,3 +94,9 @@ once started, /tmp/qpbt-palomar-pattern-second-review.log. Do not launch a
 duplicate review while this tail is live. Reserve its third worker slot.
 After independent approval, publish fresh telemetry and merge normally, then
 start756 using the actual merged-pilot base.
+
+The9040c6fa CI run subsequently completed successfully. The one-shot handoff
+entered the normal review gate and started reviewer-pr758-20261002-02,
+Sol/Ultra, through primary review.sh. No duplicate reviewer is needed.
+Use exec80635 and /tmp/qpbt-palomar-pattern-second-review.log to observe the
+second review. The active slots are766,767 and this reviewer.
