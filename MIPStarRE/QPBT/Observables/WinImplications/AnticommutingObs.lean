@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Observables.WinImplications.CommutingObs
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.CommutingObs
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
 
 /-!
 # Approximate anticommutation of the point observables on anticommuting tuples
@@ -17,6 +19,8 @@ The declarations support `lem:qld-win-implications-obs` in
 `blueprint/src/chapter/ch14_qpbt_observables.tex:761-794`, whose paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:342-362`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientConsistency
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.LineResampling
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientConsistency
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.LineResampling
 
 /-!
 # Resampled consistency of direct coefficient measurements
@@ -14,6 +16,8 @@ parameter, so the joint integrand retains the full uniform parameter average.
 - `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:243-344`
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1020-1116`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

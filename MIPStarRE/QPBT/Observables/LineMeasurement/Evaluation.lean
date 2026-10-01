@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
 
 /-!
 # Evaluation of line polynomials at a sampled point
@@ -21,6 +23,8 @@ The evaluation classes `[eval_u(·) = a]` are `def:ideg-deg-polynomials`, paper
 manipulated in `eq:qld-comm-line-pt-cons` and `eq:qld-comm-line-pt-cons2`,
 paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:534-545`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

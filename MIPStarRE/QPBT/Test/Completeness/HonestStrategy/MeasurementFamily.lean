@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Completeness.HonestStrategy
+module
+
+public import MIPStarRE.QPBT.Test.Completeness.HonestStrategy
 
 /-!
 # The honest Pauli measurement family
@@ -18,6 +20,8 @@ The measurement family described here is the one displayed in the proof of
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1237-1360`;
 blueprint `lem:pauli-completeness`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

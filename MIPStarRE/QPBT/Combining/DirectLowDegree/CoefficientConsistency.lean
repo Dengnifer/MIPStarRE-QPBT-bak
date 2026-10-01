@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientCollision
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientCollision
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # Consistency of direct coefficient measurements
@@ -14,6 +16,8 @@ univariate collision bound `degree / q`.
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1595-1603`
 - Blueprint `lem:sandwich-codeword-defect`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

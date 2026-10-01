@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.ResampledCoefficientConsistency
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.ResampledCoefficientConsistency
 
 /-!
 # Extended direct coefficient-collision loss
@@ -12,6 +14,8 @@ ratio.
 - `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:331-344`
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1595-1603`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.ErrorFunctions
-import MIPStarRE.QPBT.Observables.ExpandedCommutation
+module
+
+public import MIPStarRE.QPBT.Games.ErrorFunctions
+public import MIPStarRE.QPBT.Observables.ExpandedCommutation
 
 /-!
 # Expanded point consistency and commutation
@@ -14,6 +16,8 @@ The declarations formalize blueprint
 `lem:qld-comm-cons`, whose paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:452-505`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

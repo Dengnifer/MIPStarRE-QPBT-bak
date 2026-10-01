@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems
-import MIPStarRE.QPBT.Games.Sandwich.Defs
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems
+public import MIPStarRE.QPBT.Games.Sandwich.Defs
 
 /-! # Quantitative support for sandwiched measurements
 
@@ -11,6 +13,8 @@ in the quantitative sandwich argument.
 Blueprint `lem:ld-sandwich` and `lem:ld-sandwich-measurement`; paper
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:465-501`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

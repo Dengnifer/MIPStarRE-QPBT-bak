@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitIntertwine
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Constants
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.SecondPair
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitSwap
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitIntertwine
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Constants
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.SecondPair
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitSwap
 
 /-!
 # Assembling the small-error regime of Magic Square rigidity
@@ -25,6 +27,8 @@ corresponding reflections; each of them is available at a scale bounded by
 blueprint `thm:ms-rigidity`,
 paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-652`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

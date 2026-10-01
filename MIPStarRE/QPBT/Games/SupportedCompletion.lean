@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # Completion on a prescribed set of outcomes
@@ -21,6 +23,8 @@ No result here asserts the global polynomial-pair theorem or derives that estima
   the completion step after `eq:qld-sgg-mhat-sandwich` in `lem:qld-4-7`.
 * Blueprint `lem:qld-4-7`, whose source theorem remains separate from this auxiliary.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

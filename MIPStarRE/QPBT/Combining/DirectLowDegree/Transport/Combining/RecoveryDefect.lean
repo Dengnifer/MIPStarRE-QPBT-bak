@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Recovery
-import MIPStarRE.QPBT.Games.Sandwich
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Recovery
+public import MIPStarRE.QPBT.Games.Sandwich
 
 /-!
 # Transporting a consistency relation along the recovery step
@@ -41,6 +43,8 @@ insensitive to the placement.
 * `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:219-288`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:617-680`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

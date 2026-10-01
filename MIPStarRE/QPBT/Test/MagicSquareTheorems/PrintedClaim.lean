@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems
 
 /-! # The unasserted printed Magic Square rigidity claim
 
@@ -14,6 +16,8 @@ additional variable-agreement hypotheses and a different error bound.
 * `docs/paper-gaps/qpbt_ms-rigidity-symmetric-strategies.tex`.
 * Issue #688, continuing the statement comparison of issues #105 and #172.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

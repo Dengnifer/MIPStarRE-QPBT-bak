@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
 
 /-!
 # Evaluation on a nondegenerate affine line
@@ -11,6 +13,8 @@ the unique affine parameter of a point on a line with nonzero direction.
 The result is the geometric step in the collision argument at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-955`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

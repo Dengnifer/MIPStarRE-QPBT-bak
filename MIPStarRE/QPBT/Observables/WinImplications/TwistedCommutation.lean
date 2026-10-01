@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.AnticommutingObs
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.AnticommutingObs
 
 /-!
 # The phase-signed commutation relation of the point observables
@@ -15,6 +17,8 @@ The declarations formalize the first assertion of
 `blueprint/src/chapter/ch14_qpbt_observables.tex:761-794`, whose paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:309-362`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

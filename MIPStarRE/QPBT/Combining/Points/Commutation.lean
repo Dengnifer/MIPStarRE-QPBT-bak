@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.Points.Placement
-import MIPStarRE.QPBT.ExplicitConstants
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Consistency
+module
+
+public import MIPStarRE.QPBT.Combining.Points.Placement
+public import MIPStarRE.QPBT.ExplicitConstants
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Consistency
 
 /-!
 # Approximate commutation of the field-valued expanded point measurements
@@ -37,6 +39,8 @@ Fourier form of the point effects is `def:expanded-point-measurement`, paper
 lines 384--418.  The role of the transfer in the proof of `lem:qld-4-10` is
 explained in `docs/paper-gaps/qpbt_combined-points-field-valued.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

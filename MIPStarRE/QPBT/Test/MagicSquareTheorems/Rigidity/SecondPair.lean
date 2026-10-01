@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Consistency
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Consistency
 
 /-!
 # The second logical Pauli pair of the Magic Square
@@ -55,6 +57,8 @@ Theorem 6.9, `references/cs-paper/self-testing.tex:660-730`.  The correction to
 the strategy class is `docs/paper-gaps/qpbt_ms-rigidity-symmetric-strategies.tex`.
 The variable and constraint indices are zero-based.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

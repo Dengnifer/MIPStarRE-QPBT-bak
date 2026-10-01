@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.IdealTarget
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.IdealTarget
 
 /-!
 # Coarse estimates and the large-error regime of Magic Square rigidity
@@ -25,6 +27,8 @@ paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-6
 The distance conventions are blueprint
 `def:povm-distance`, paper `06_nonlocal_games_and_mipstar.tex:258-285`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

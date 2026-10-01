@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Extraction.EPRProjection
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.JointState
+module
+
+public import MIPStarRE.QPBT.Extraction.EPRProjection
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.JointState
 
 /-!
 # The auxiliary vector from the EPR projection
@@ -13,6 +15,8 @@ orthogonal projection of the original vector onto the EPR subspace.
 Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1769-1783`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

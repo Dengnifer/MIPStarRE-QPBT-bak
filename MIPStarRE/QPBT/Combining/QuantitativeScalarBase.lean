@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.ActualErrorBounds
-import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
-import MIPStarRE.QPBT.Combining.QuantitativeDirectScalars
+module
+
+public import MIPStarRE.QPBT.Combining.ActualErrorBounds
+public import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
+public import MIPStarRE.QPBT.Combining.QuantitativeDirectScalars
 
 /-!
 # Baseline quantitative scalar certificates for QPBT
@@ -13,6 +15,8 @@ the three fixed coefficient estimates used in the global-pair scalar bounds.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1404`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.InterchangedCommutation
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.InterchangedCommutation
 
 /-!
 # Winning implications for strategy observables
@@ -17,6 +19,8 @@ The declarations formalize blueprint `lem:qld-win-implications` and
 `lem:qld-win-implications-obs`. Their paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:192-354`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

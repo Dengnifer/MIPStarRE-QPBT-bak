@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
 
 /-!
 # Transfer of Bob's anticommutator estimate along the projective dilation
@@ -14,6 +16,8 @@ dilated state through Alice's partner observable.
 blueprint `thm:ms-rigidity`,
 paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-652`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

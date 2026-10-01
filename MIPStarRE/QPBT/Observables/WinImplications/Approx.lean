@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.ApproxLines
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.ApproxLines
 
 /-!
 # Approximate winning implications for the tuple subtests
@@ -14,6 +16,8 @@ The declarations support the trailing clause of `lem:qld-win-implications` in
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:192-267`,
 whose closing sentences at lines 227 and 263-264 state both companions.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

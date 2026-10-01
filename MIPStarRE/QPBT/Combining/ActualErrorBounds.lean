@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectPassingErrorBounds
-import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
-import MIPStarRE.QPBT.Combining.RootErrorBounds
+module
+
+public import MIPStarRE.QPBT.Combining.DirectPassingErrorBounds
+public import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
+public import MIPStarRE.QPBT.Combining.RootErrorBounds
 
 /-! # Absorption of the actual rounded polynomial-pair error
 
@@ -15,6 +17,8 @@ Paper `lem:qld-4-7`,
 This module composes the direct passing estimate with square-root closure for
 the global error function.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

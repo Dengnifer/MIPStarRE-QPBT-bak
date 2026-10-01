@@ -1,6 +1,8 @@
-import MIPStarRE.LDT.Preliminaries.Polynomials
-import MIPStarRE.QPBT.Games.Sandwich
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
+module
+
+public import MIPStarRE.LDT.Preliminaries.Polynomials
+public import MIPStarRE.QPBT.Games.Sandwich
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
 
 /-!
 # Indicator-weighted ordered products
@@ -25,6 +27,8 @@ lemmas remain private.
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1289-1326`,
   especially `eq:qld-g-42`, `eq:qld-g-43`, and `eq:qld-g-prime`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

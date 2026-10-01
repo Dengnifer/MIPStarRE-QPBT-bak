@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.ExpandedPlacement
+module
+
+public import MIPStarRE.QPBT.Observables.ExpandedPlacement
 
 /-!
 # Square-root error bounds for placed measurement families
@@ -16,6 +18,8 @@ exceeds `4`, and a quantity bounded by both `a * ε` and `4` is bounded by
 `lem:qld-comm-line-cons`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:527-545`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

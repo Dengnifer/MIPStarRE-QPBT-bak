@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Observables.PointConsistency
-import MIPStarRE.QPBT.Observables.LineMeasurement.Expanded
-import MIPStarRE.QPBT.Observables.LineMeasurement.SquareRootError
+module
+
+public import MIPStarRE.QPBT.Observables.PointConsistency
+public import MIPStarRE.QPBT.Observables.LineMeasurement.Expanded
+public import MIPStarRE.QPBT.Observables.LineMeasurement.SquareRootError
 
 /-!
 # Self-consistency of the expanded line measurements
@@ -24,6 +26,8 @@ The declarations formalize `enu:qld-comm-line-self-cons`, item 1 of
 `lem:qld-comm-line-cons`, whose paper source is
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:527-532`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

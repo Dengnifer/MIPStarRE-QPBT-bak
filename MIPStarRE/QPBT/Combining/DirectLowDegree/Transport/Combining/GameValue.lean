@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.BranchComparison
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.QuestionLaw
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.BranchComparison
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.QuestionLaw
 
 /-!
 # Index-conditioned rejection probabilities of the directly indexed game
@@ -27,6 +29,8 @@ value; none is a paper-labelled result.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:517-568`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
