@@ -150,3 +150,5 @@ add the long reasoning to the pointed record.
 | 2026-10-02 | Prepare exact compact completeness/qudit/qubit aliases770 | MAIN under the Palomar goal | Registered statements are still required after game/error bridges. First3600s Sol tranche reserved, not yet admitted; dependencies766/763 and all normal gates retained | palomar-final-aliases-prepared-20261002.md; issue770 |
 
 | 2026-10-02 | Align module packets with recorded upgrade756 and prepare142-path packet746 | MAIN under owner section9 | Remove stale4.32 plan; retain exact statements and normal gates. First3600s Sol budget reserved but not admitted before756 merges | palomar-conversion-briefs-aligned-20261002.md; #27 comment5940485566 |
+
+| 2026-10-02 | Admit one1500s extraction769 continuation | MAIN under owner section9 | Initial1800s ended during dependency build; preserve41-test checkpoint and six-file patch, complete prototype/publication under3300s cumulative author ceiling | palomar-frontier-continuation-20261002.md; #27 comment5940572876 |
