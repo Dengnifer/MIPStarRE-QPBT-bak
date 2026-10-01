@@ -154,3 +154,5 @@ add the long reasoning to the pointed record.
 | 2026-10-02 | Admit one1500s extraction769 continuation | MAIN under owner section9 | Initial1800s ended during dependency build; preserve41-test checkpoint and six-file patch, complete prototype/publication under3300s cumulative author ceiling | palomar-frontier-continuation-20261002.md; #27 comment5940572876 |
 
 | 2026-10-02 | Admit2700s continuation of upgrade756 | MAIN under owner section9 | Initial3600s preserves authenticated setup, checked pilot and small port patch; resolve remaining instance/API failures under6300s cumulative author ceiling without statement/bound changes | palomar-toolchain-continuation-20261002.md; #27 comment5940915438 |
+
+| 2026-10-02 | Audit frozen754 checker evidence contract while756/770 run | MAIN under required mechanical-check deliverable | New compact aliases/registered definition require profile validation; settle real official report semantics and self-binding before final use.900s Sol read-only scout, prior1547s retained | palomar-frontier-published-mechanical-audit-20261002.md; #27 comment5941133801 |
