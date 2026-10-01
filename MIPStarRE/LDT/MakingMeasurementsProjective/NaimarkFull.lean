@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkOneMeas
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkOneMeas
 
 /-!
 # Section 5 — Naimark tensor-product assembly
@@ -7,6 +9,8 @@ Questionwise one-measurement Naimark data, the two-sided trace identity, and
 the source-facing tensor-product Naimark theorem in the projective-submeasurement
 form supplied by the paper's helper lemma.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -1,6 +1,8 @@
-import MIPStarRE.Quantum.FiniteMatrix
-import MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
-import MIPStarRE.LDT.SelfImprovement.Defs
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
+public import MIPStarRE.LDT.SelfImprovement.Defs
 
 /-!
 # Section 9 — Matrix realization
@@ -11,6 +13,8 @@ Concrete finite-dimensional matrix realizations of the self-improvement SDP data
 
 - `references/ldt-paper/self_improvement.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.SelfImprovement
 

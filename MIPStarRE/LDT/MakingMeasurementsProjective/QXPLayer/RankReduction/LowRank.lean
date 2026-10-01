@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma
 
 /-!
 # Section 5 — Q/X/XHat/P low-rank truncation
@@ -6,6 +8,8 @@ import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma
 Rank-reduction auxiliary-space constructions and the low-rank truncation branch for
 the paper's `Q/X/XHat/P` intermediate layer.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

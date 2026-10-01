@@ -1,6 +1,8 @@
-import MIPStarRE.LDT.GlobalVariance.Defs.Families
-import MIPStarRE.LDT.MainInductionStep.Defs
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPStarRE.LDT.MainInductionStep.Defs
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
 
 /-!
 # Section 9 — Definitions
@@ -13,6 +15,8 @@ constructions and error terms.
 
 - `references/ldt-paper/self_improvement.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.SelfImprovement
 
