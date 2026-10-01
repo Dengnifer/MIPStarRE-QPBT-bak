@@ -1,0 +1,6 @@
+{"type":"thread.started","thread_id":"01a0f523-a6fe-7701-968d-5490aef8f8ce"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Codex is ignoring 2 unrecognized configuration settings. Check for typos or deprecated settings.\n  user (/home/drx/.cache/mipstarre-dev/codex-home-qpbt-space3/config.toml): `disable_response_storage` is ignored.\n  user (/home/drx/.cache/mipstarre-dev/codex-home-qpbt-space3/config.toml): `network_access` is ignored."}}
+{"type":"item.completed","item":{"id":"item_1","type":"error","message":"Codex is ignoring 2 unrecognized configuration settings. Check for typos or deprecated settings.\n  user (/home/drx/.cache/mipstarre-dev/codex-home-qpbt-space3/config.toml): `disable_response_storage` is ignored.\n  user (/home/drx/.cache/mipstarre-dev/codex-home-qpbt-space3/config.toml): `network_access` is ignored."}}
+{"type":"turn.started"}
+{"type":"error","message":"Quota exceeded. Check your plan and billing details."}
+{"type":"turn.failed","error":{"message":"Quota exceeded. Check your plan and billing details."}}

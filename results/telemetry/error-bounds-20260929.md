@@ -1136,3 +1136,15 @@ Normal pr_merge.py736 passed all7gates (all9CIcontexts, exactheadapproval5372895
 ## 2026-09-30T23:02:56.723670+00:00 — Admit final report and ledger reconciliation730
 
 Sole Sol Ultra/general writer at refreshedreportd83af17c417c090a843d8ddb5f464519332de159, preserving0ef and actual736merge0b847308. Scopeonlydocs/error-bounds.md anddocs/bound-ledger-qpbt.md;47candidateinventory,57mergedPRboundrows, native/separated/fractionalmathematics,H/Fandpublicbenchmarkcomparisons,actualgate/mergeevidence,truthfulbacklog. Work1800s/hard2400s,priorreport8660sretained;source12831s/review6252s/scouts15836s. NoLean/blueprint/tooling/kit/runtimechanges,publication,commitsorchildren. NormalCI/reviewplusindependentAstramathematicalauditfollowthefinishedreport. Kit741separategoal,F735deferred.
+
+## 2026-10-01T01:46:43.573522+00:00 — Quota interruption and owner deadline fallback
+
+736mergednormally0b847308;731previouslymerged. Finalreportwriter730-01failed558squota,reportauthorcumulative9218s. Partialreportupdatepreservedhashd0147580f068486e30ce3bc2b2126f7adbf2feb380cc39feeabf44a77012d3fa;ledgerstillhistorical114rows,152plannednotdelivered. Ownerresumeauthorizesspaced2and00:40ZdraftPRfallback;clockalready01:45Z. Requiredsmallprobe730-02wasroutedtospace3bydispatchunset/shim,failedquota0s;spaced2notverified. Noretry/runtimechange. Publishtruthfullylabelleddraftwithsavedreportandledger,noCI/review/mergeclaim,oneclosing27comment,keeperstop+goalpause. Kit741/F735deferred.
+
+## 2026-10-01T01:47:19.323814+00:00 — Owner voids deadline; finish730normally
+
+Latestownersteeringvoids00:40Zbecausekeymigrationwas01:44Z. Continue730throughnormalgates;checkpoint71edac3dpreserved,nodraftPRpublishedyet,noauthoritytopauseonelapsedtime. Correcttask-localworkertransportafterthefailedoldrouting: /tmp/qpbt-spaced2-1001-bin/codex explicitlysetsownerauthorizedspaced2homeandexecutesinstalledCLI;dispatch.shstillownsmodelpolicy,sandbox,caps,fanoutoffandtelemetry. No persistentkeyrotation/shim/credentials/caps/configchanges. One actualspaced2smallprobe next; ifitfailsone27line+pauseasownerinstructed.
+
+## 2026-10-01T01:48:25.790322+00:00 — Space-d2 verified; resume final report author
+
+Actualspace-d2probe scout730-03 returnedexit0in28s,thread01a0f525-07ac-7002-a9a7-ac67654125d7;cleancheckpoint71edac3dandbothunfinishedbannersverified. NewsoleSolUltrageneralwriterat71edac3d74d1cea3ead07ddffbe48ba43fdbcf00,1800swork/2400shard,priorreport9218sretained. Finishbothdocs,47candidates,all57PRrows/expected152ledgerrows,normalCI+independentreviewthenmerge. Ownerdeadlinevoid,noPRpublishedyet. TransportispertaskPATHwrapper,notpersistentmachineroutingchange.
