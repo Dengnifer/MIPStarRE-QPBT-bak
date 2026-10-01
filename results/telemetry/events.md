@@ -10129,3 +10129,12 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
   synthesized; the working-tree patch remains intact for a publication session.
   Lesson: a session assigned branch publication needs writable shared Git
   metadata and GitHub network access, not only a writable worktree checkout.
+- Companion-review trust-boundary findings: independent review 5383425988 found
+  that the first #745 gate trusted a same-named GitHub Actions check without
+  binding it to `.github/workflows/comparator.yml`, and dispatched from the
+  companion checkout whose `AGENTS.md` and protocols were branch-controlled.
+  The repair binds check, run, current attempt and job; pins the reviewed
+  workflow and launcher bytes from comparator main `360402fd`; and uses the
+  primary checkout as the reviewer instruction root while framing the companion
+  tree as untrusted data. Lesson: trusted prompts alone do not close an
+  instruction channel when the agent cwd supplies additional policy files.

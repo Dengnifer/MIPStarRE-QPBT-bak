@@ -1874,22 +1874,25 @@ review still checks the PR's cumulative workflow diff.
 ## 2026-10-02 - Bind companion reviews to their source checkout (#745)
 
 **Trigger:** `results/telemetry/events.md`, 2026-10-02, "Companion-review
-routing gap". `MIPSTARRE_GITHUB_REPO` changed GitHub API reads but left every
-reviewed Git object in the primary library, so the separate comparator had no
-supported exact-head review route.
+routing gap" and "Companion-review trust-boundary findings". The first
+implementation supplied a source route, but independent review 5383425988
+showed that a same-named check was not bound to its workflow run and that the
+companion checkout still supplied dispatch-time instructions.
 
 **Change:** `local/bin/review.sh` accepts one explicit `--source-repo PATH`
 route, restricted to `Dengnifer/QPBT-comparator`. It requires a clean checkout
 whose origin, PR repositories, branch, base and head all agree; replaces the
-library's `local-ci/summary` gate with the latest successful exact-head GitHub
-Actions `comparator` check; verifies the committed NanoDa-enabled official
-workflow contract; and repeats CI plus checkout freshness before publication.
-Prompts and helpers still come only from primary committed `main`, dispatch and
-account admission remain primary, and companion cache, lock and session scopes
-include the repository identity. `gh_common.py` gains the read-only check-runs
-query. Offline fixture tests cover the unchanged library route, valid companion
-input, repository/head/dirt mismatches, missing/failed/stale CI, NanoDa and
-trusted-prompt isolation.
+library's `local-ci/summary` gate with exact-head GitHub Actions evidence. The
+selected check is bound to the actual `.github/workflows/comparator.yml` run,
+its current attempt and exact job; the workflow and `verify.sh` bytes are pinned
+to reviewed comparator main commit `360402fdf4a39399f94331452d6e5d0a35c144be`.
+The reviewer runs from the primary instruction root, while the companion tree
+is explicitly framed as untrusted data. Prompts, protocols, dispatch and account
+admission remain primary, and companion cache, lock and session scopes include
+the repository identity. `gh_common.py` gains read-only check-run, Actions-run
+and exact-attempt job queries. Offline fixtures cover decoy workflows/jobs,
+dead/comment-only launchers and malicious companion instructions in addition to
+the original exact-head cases.
 
 **Expected effect:** MAIN can request an independent review of the comparator's
 actual PR head without mutating its checkout or confusing it with a library PR

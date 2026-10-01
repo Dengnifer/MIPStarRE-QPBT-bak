@@ -28,11 +28,14 @@ Locally the normal chain is: `ci.sh` publishes the `local-ci/*` statuses on the
 head SHA; `review.sh` refuses to do anything until the `local-ci/summary`
 roll-up is `success` for the **current** head.  The explicit
 `--source-repo PATH` route is restricted to `Dengnifer/QPBT-comparator`: it
-instead requires the latest successful GitHub Actions `comparator` check on
-that exact SHA and verifies from the exact commit that `comparator.json`
-enables NanoDa and the official workflow invokes `./verify.sh` without the
-development-only fake-landrun flag.  There is no event bus, so either chain is
-an ordering discipline rather than a trigger, enforced by the gate below.
+instead requires a successful GitHub Actions `comparator` check on that exact
+SHA whose actual run uses `.github/workflows/comparator.yml` and whose job is
+bound to the run's current attempt. The workflow and `verify.sh` bytes must
+match the reviewed pins from comparator main commit
+`360402fdf4a39399f94331452d6e5d0a35c144be`, and `comparator.json` must enable
+NanoDa. A launcher change therefore fails closed until this library receives
+an explicit reviewed pin update. There is no event bus, so either chain is an
+ordering discipline rather than a trigger, enforced by the gate below.
 
 Marking a draft ready is not a trigger there and is not one here.  A review
 follows a CI run, and only a CI run.
@@ -73,12 +76,15 @@ roll-up `ci.sh` posts last; it never iterates the per-step contexts.  Per-step
 completeness is the merge gate's job (`pr_merge.py` gate 3 blocks on any
 missing `local-ci/<step>`), and a partial `--only` / `--skip-build` run posts
 nothing, so a subset cannot green-light review.  On the companion route, rung
-5 reads check runs through `gh_common.py`, accepts only the latest exact-head
-`comparator` job from the `github-actions` app with conclusion `success`, and
-requires its details URL to belong to the target repository.  The gate is read
+5 reads check runs through `gh_common.py`, follows each candidate's exact
+Actions run and job, skips same-named checks from other workflows, and accepts
+only the newest official workflow evidence whose exact-head run, current
+attempt, job id, check-run URL, status and conclusion all agree. The pinned
+workflow and verification launcher replace source-text greps: comments,
+unreachable shell text and decoy jobs cannot satisfy the gate. The gate is read
 again immediately before publication, followed by a final clean checkout,
-branch, base and head check.  Missing, failed, pending, stale or cross-repository
-evidence publishes nothing.
+branch, base and head check. Missing, failed, pending, stale, cross-repository
+or unbound evidence publishes nothing.
 
 ## 3. Trusted prompts
 
@@ -94,6 +100,13 @@ the companion repository.  On GitHub this was a second
 pull request cannot edit the instructions given to its own reviewer.  A branch
 that *is* the trusted ref is refused outright (rung 4), because for such a
 branch the property is unsatisfiable.
+
+For companion review, `dispatch.sh` also receives the primary checkout as its
+working and instruction root. Its session frame therefore reads primary
+`AGENTS.md` and `local/protocols/`; the companion path is named only in the
+trusted task as **untrusted review data**. A companion `AGENTS.md`, protocol,
+prompt or comment is candidate content to inspect, never reviewer authority.
+Default library review keeps its existing branch-worktree behavior.
 
 `MIPSTARRE_TRUSTED_REF` defaults to `main`.  Repointing it at anything a
 contributor can push to defeats the guard; if you must, record why in

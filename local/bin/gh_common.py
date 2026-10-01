@@ -202,6 +202,32 @@ def check_runs(sha: str) -> list[dict]:
         page += 1
 
 
+def actions_run(run_id: int) -> dict:
+    """The current metadata for one GitHub Actions workflow run."""
+    payload = api(f"actions/runs/{run_id}")
+    if not isinstance(payload, dict):
+        raise LayerError(f"malformed Actions run payload for {run_id}")
+    return payload
+
+
+def actions_run_jobs(run_id: int, attempt: int) -> list[dict]:
+    """All jobs belonging to one exact GitHub Actions run attempt."""
+    rows: list[dict] = []
+    page = 1
+    while True:
+        payload = api(
+            f"actions/runs/{run_id}/attempts/{attempt}/jobs?per_page={PAGE}&page={page}")
+        if not isinstance(payload, dict) or not isinstance(payload.get("jobs"), list):
+            raise LayerError(
+                f"malformed Actions jobs payload for run {run_id} attempt {attempt}")
+        batch = payload["jobs"]
+        rows.extend(batch)
+        total = payload.get("total_count")
+        if len(batch) < PAGE or (isinstance(total, int) and len(rows) >= total):
+            return rows
+        page += 1
+
+
 # ---------------------------------------------------------------------------
 # Pull requests
 # ---------------------------------------------------------------------------
@@ -498,6 +524,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--desc", default=""); p.add_argument("--target-url")
     p = sub.add_parser("latest-statuses"); p.add_argument("sha")
     p = sub.add_parser("check-runs"); p.add_argument("sha")
+    p = sub.add_parser("actions-run"); p.add_argument("run_id", type=int)
+    p = sub.add_parser("actions-run-jobs")
+    p.add_argument("run_id", type=int); p.add_argument("attempt", type=int)
     p = sub.add_parser("ensure-pr-comment")
     p.add_argument("number", type=int); p.add_argument("marker")
     p.add_argument("--body-file", required=True)
@@ -539,6 +568,10 @@ def main(argv: list[str] | None = None) -> int:
             _emit(latest_statuses(args.sha))
         elif args.cmd == "check-runs":
             _emit(check_runs(args.sha))
+        elif args.cmd == "actions-run":
+            _emit(actions_run(args.run_id))
+        elif args.cmd == "actions-run-jobs":
+            _emit(actions_run_jobs(args.run_id, args.attempt))
         elif args.cmd == "ensure-pr-comment":
             _emit(ensure_pr_comment(args.number, args.marker,
                                     Path(args.body_file).read_text(encoding="utf-8")))
