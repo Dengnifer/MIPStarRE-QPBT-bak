@@ -1,8 +1,10 @@
-import Mathlib.Data.Nat.Choose.Sum
-import MIPStarRE.LDT.Pasting.Statements
-import MIPStarRE.LDT.Pasting.Bernoulli.Weights
-import MIPStarRE.LDT.Pasting.Bernoulli.Scalar
-import MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+module
+
+public import Mathlib.Data.Nat.Choose.Sum
+public import MIPStarRE.LDT.Pasting.Statements
+public import MIPStarRE.LDT.Pasting.Bernoulli.Weights
+public import MIPStarRE.LDT.Pasting.Bernoulli.Scalar
+public import MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
 
 /-!
 # Section 12 pasting: Bernoulli tail polynomial combinatorics
@@ -10,6 +12,8 @@ import MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
 Finset re-indexing and cardinality-grouping lemmas for the Bernoulli-tail
 operator endpoint of the `fromHToG` recurrence.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

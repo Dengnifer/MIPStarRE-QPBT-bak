@@ -1,5 +1,7 @@
-import Mathlib
-import MIPStarRE.LDT.Basic.LinePolynomials
+module
+
+public import Mathlib
+public import MIPStarRE.LDT.Basic.LinePolynomials
 
 /-!
 # Low-individual-degree polynomials for the low individual degree test
@@ -11,6 +13,8 @@ of `mainFormal`, which must elaborate in the same environment as the
 Mathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow
 it.  See `docs/comparator.md`, "Environment alignment".
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT
 

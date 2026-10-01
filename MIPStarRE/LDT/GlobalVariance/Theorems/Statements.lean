@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Defs.Families
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Defs.Families
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -10,6 +12,8 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-! ## Statement structures -/
+
+@[expose] public section
 
 /-- Paper origin: `references/ldt-paper/expansion.tex:273-291`
 (`\label{lem:generalize-b}`).

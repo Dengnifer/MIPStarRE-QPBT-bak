@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Test.StrategyCore
+module
+
+public import MIPStarRE.LDT.Test.StrategyCore
 
 /-!
 # Section 6 — Definitions
@@ -10,6 +12,8 @@ averaging operators, and tensor-placement bookkeeping for the induction step.
 
 - `references/ldt-paper/inductive_step.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

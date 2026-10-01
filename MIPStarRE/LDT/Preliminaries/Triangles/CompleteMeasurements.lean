@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Preliminaries.DistanceBounds
-import MIPStarRE.LDT.Preliminaries.Triangles.Core
+module
+
+public import MIPStarRE.LDT.Preliminaries.DistanceBounds
+public import MIPStarRE.LDT.Preliminaries.Triangles.Core
 
 /-!
 # Linear consistency triangles for complete measurements
@@ -18,6 +20,8 @@ false for arbitrary submeasurements.
   `prop:simeq-triangle-inequality` at lines 649-684.
 * `references/ldt-paper/inductive_step.tex`, lines 111-185.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

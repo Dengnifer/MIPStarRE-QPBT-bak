@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.DistributionUniform
-import MIPStarRE.LDT.Pasting.Statements
+module
+
+public import MIPStarRE.LDT.Basic.DistributionUniform
+public import MIPStarRE.LDT.Pasting.Statements
 
 /-!
 # Section 12 pasting: distinct tuple distribution bound
@@ -7,6 +9,8 @@ import MIPStarRE.LDT.Pasting.Statements
 The total variation distance between the uniform distribution on all point tuples
 and the distribution restricted to distinct tuples.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

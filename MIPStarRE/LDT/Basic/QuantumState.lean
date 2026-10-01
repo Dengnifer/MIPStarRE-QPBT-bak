@@ -1,11 +1,15 @@
-import MIPStarRE.LDT.Basic.ParametersBase
-import MIPStarRE.Quantum.FiniteMatrix
+module
+
+public import MIPStarRE.LDT.Basic.ParametersBase
+public import MIPStarRE.Quantum.FiniteMatrix
 
 /-!
 # Quantum states and tensor placement for the low individual degree test
 
 Core quantum-state definitions together with tensor-placement operators.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

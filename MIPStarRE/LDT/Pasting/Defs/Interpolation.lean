@@ -1,11 +1,15 @@
-import MIPStarRE.LDT.Basic.LinePolynomialEmbedding
-import MIPStarRE.LDT.Pasting.Defs.Tuples
+module
+
+public import MIPStarRE.LDT.Basic.LinePolynomialEmbedding
+public import MIPStarRE.LDT.Pasting.Defs.Tuples
 
 /-!
 # Section 12 — Definitions: interpolation
 
 Interpolation helpers extracted from `Pasting.Defs`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

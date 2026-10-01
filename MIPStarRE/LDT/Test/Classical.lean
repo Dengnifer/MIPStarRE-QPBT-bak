@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Test.StrategyCore
+module
+
+public import MIPStarRE.LDT.Test.StrategyCore
 
 /-!
 # Section 3 — Classical two-prover strategies
@@ -10,6 +12,8 @@ paper's two-prover classical low individual degree test from
 The role-average lemmas below make explicit the same branch decomposition used
 by the paper-faithful two-space projective strategy container `ProjStrat`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
