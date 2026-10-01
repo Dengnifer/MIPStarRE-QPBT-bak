@@ -78,3 +78,19 @@ including new legacy proof bridges. Upgrade756 brief is prepared at
 New rendered receipt trailing whitespace is normalized before first publication;
 raw JSONL/private runtime receipts preserve original bytes. No historical
 telemetry is rewritten.
+
+## Pilot handoff queued
+
+The full pilot build and both axiom audits passed at9040c6fa (build809s).
+Remaining canonical checks are still running. A one-shot operator tail
+/tmp/qpbt-palomar-pilot-final-review-tail.sh waits only for the already-live
+CI process1739445 (1800s observation bound,10s sleeps), checks the unchanged
+exact head, then calls primary review.sh758 with explicit Sol/Ultra and the
+normal green-CI gate. This is not a merge daemon and invokes no merge or bypass.
+If CI fails, review.sh refuses; an observation deadline is not CI termination.
+
+Tail exec80635; log /tmp/qpbt-palomar-pilot-final-review-tail.log. Review log,
+once started, /tmp/qpbt-palomar-pattern-second-review.log. Do not launch a
+duplicate review while this tail is live. Reserve its third worker slot.
+After independent approval, publish fresh telemetry and merge normally, then
+start756 using the actual merged-pilot base.
