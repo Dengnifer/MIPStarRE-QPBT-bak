@@ -80,6 +80,34 @@ class AssembleChallengeTests(unittest.TestCase):
         self.assertEqual(start, 2)
         self.assertEqual(source, lines[1:3])
 
+    def test_imports_of_accepts_module_header_modifiers(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "MIPStarRE" / "Example.lean"
+            source.parent.mkdir(parents=True)
+            source.write_text(
+                "module\n\n"
+                "public import MIPStarRE.Public\n"
+                "public meta import MIPStarRE.PublicMeta\n"
+                "meta import MIPStarRE.Meta\n"
+                "import all MIPStarRE.All\n",
+                encoding="utf-8",
+            )
+
+            imports = assemble_challenge.Assembler(root).imports_of(
+                "MIPStarRE/Example.lean"
+            )
+
+        self.assertEqual(
+            imports,
+            [
+                "MIPStarRE/Public.lean",
+                "MIPStarRE/PublicMeta.lean",
+                "MIPStarRE/Meta.lean",
+                "MIPStarRE/All.lean",
+            ],
+        )
+
     def test_split_assembly_omits_unconfigured_parts(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             files = self.assemble_split_fixture(
