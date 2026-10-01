@@ -19,6 +19,7 @@ Schema (unknown top-level keys are rejected so typos fail loudly):
   "description": "…",                  // optional, free text
   "imports": ["MIPStarRE.…"],          // required, non-empty
   "targets": ["MIPStarRE.…"],          // required, non-empty; closure roots
+  "definition_names": ["MIPStarRE.…"], // optional; values become Challenge holes
   "header": "scripts/…/header.lean",   // optional, null to omit
   "footer": "scripts/…/footer.lean",   // optional, null to omit
   "expected": "scripts/…/Challenge.lean.expected",   // required
@@ -63,6 +64,7 @@ DEFAULT_CHALLENGE = "ldt"
 
 # Read by `extract_closure.lean`; comma-separated fully qualified names.
 TARGETS_ENV = "MIPSTARRE_COMPARATOR_TARGETS"
+DEFINITIONS_ENV = "MIPSTARRE_COMPARATOR_DEFINITIONS"
 
 # `last` of a scope that runs to the end of its module
 LAST_LINE = 10**9
@@ -74,6 +76,7 @@ _KEYS = {
     "description",
     "imports",
     "targets",
+    "definition_names",
     "header",
     "footer",
     "expected",
@@ -123,6 +126,7 @@ class ChallengeConfig:
     description: str
     imports: tuple[str, ...]
     targets: tuple[str, ...]
+    definition_names: tuple[str, ...]
     header: str | None
     footer: str | None
     expected: str
@@ -137,8 +141,11 @@ class ChallengeConfig:
         return "".join(f"import {module}\n" for module in self.imports)
 
     def extractor_env(self) -> dict[str, str]:
-        """Environment overrides telling the extractor which targets to close."""
-        return {TARGETS_ENV: ",".join(self.targets)}
+        """Environment overrides telling the extractor which frontiers to close."""
+        env = {TARGETS_ENV: ",".join(self.targets)}
+        if self.definition_names:
+            env[DEFINITIONS_ENV] = ",".join(self.definition_names)
+        return env
 
 
 def _typed(data: dict[str, Any], key: str, kind: type, where: Path) -> Any:
@@ -158,6 +165,17 @@ def _string_list(data: dict[str, Any], key: str, where: Path, *, nonempty: bool)
         raise ChallengeConfigError(f"{where}: key {key!r} must be a list of strings")
     if nonempty and not value:
         raise ChallengeConfigError(f"{where}: key {key!r} must not be empty")
+    return tuple(value)
+
+
+def _optional_string_list(data: dict[str, Any], key: str, where: Path) -> tuple[str, ...]:
+    value = data.get(key, [])
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        raise ChallengeConfigError(f"{where}: key {key!r} must be a list of strings")
+    if any(not item.strip() for item in value):
+        raise ChallengeConfigError(f"{where}: key {key!r} must not contain empty names")
+    if len(value) != len(set(value)):
+        raise ChallengeConfigError(f"{where}: key {key!r} must not contain duplicates")
     return tuple(value)
 
 
@@ -295,6 +313,7 @@ def load_challenge(path: Path) -> ChallengeConfig:
         description=str(data.get("description", "")),
         imports=_string_list(data, "imports", path, nonempty=True),
         targets=_string_list(data, "targets", path, nonempty=True),
+        definition_names=_optional_string_list(data, "definition_names", path),
         header=_optional_path(data, "header", path),
         footer=_optional_path(data, "footer", path),
         expected=_typed(data, "expected", str, path),

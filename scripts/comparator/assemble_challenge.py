@@ -2,11 +2,12 @@
 """Assemble the body of a comparator `Challenge.lean` from the extractor's TSV.
 
 Input: the TSV produced by ``extract_closure.lean`` (one declaration per row:
-name, module path, start line, end line).  For each declaration this script
-re-reads its source lines and records the namespace stack active at that
-point (tracking ``namespace``/``section``/``end`` lines), orders declarations
-topologically (module import rank, then line number), and emits the snippets
-grouped under merged namespace blocks with provenance comments.
+name, module path, start line, end line, plus optional registered-definition
+metadata).  For each declaration this script re-reads its source lines and
+records the namespace stack active at that point (tracking
+``namespace``/``section``/``end`` lines), orders declarations topologically
+(module import rank, then line number), and emits the snippets grouped under
+merged namespace blocks with provenance comments.
 
 The elaboration context that the kernel closure cannot see (attribute commands,
 ``CoeFun`` instances, ``variable``/``open`` blocks) lives in the ``extras`` and
@@ -22,6 +23,7 @@ import argparse
 import re
 import sys
 from pathlib import Path
+from typing import NamedTuple
 
 from challenge_config import (
     DEFAULT_CHALLENGE,
@@ -31,11 +33,22 @@ from challenge_config import (
     load_challenges,
 )
 
-Entry = tuple[str, str, int, int, list[str]]
+
+class DefinitionHole(NamedTuple):
+    """Exact declaration data for a registered definition value frontier."""
+
+    safety: str
+
+
+Entry = tuple[str, str, int, int, list[str], DefinitionHole | None]
 
 
 class StaleContextTables(ValueError):
     """A challenge's ``extras``/``module_preludes`` key matches no declaration."""
+
+
+class DefinitionFrontierError(ValueError):
+    """Definition-hole metadata does not match the selected challenge."""
 
 
 def source_range_with_context(
@@ -57,16 +70,25 @@ class Assembler:
         repo_root: Path,
         extras: dict[str, list[str]] | None = None,
         module_preludes: dict[str, tuple[Prelude, ...]] | None = None,
+        definition_names: tuple[str, ...] = (),
     ) -> None:
         self.repo_root = repo_root
         self.extras = extras or {}
         self.module_preludes = module_preludes or {}
+        self.definition_names = set(definition_names)
         self._file_cache: dict[str, list[str]] = {}
         self.out: list[str] = []
         self.cur_ns: list[str] = []
         self.open_prelude: tuple[str, Prelude] | None = None
         self.used_preludes: set[tuple[str, int]] = set()
         self._closure_cache: dict[str, set[str]] = {}
+        self.emitted_definition_names: set[str] = set()
+
+    @staticmethod
+    def definition_hole_source(
+        name: str, source: list[str], hole: DefinitionHole
+    ) -> list[str]:
+        return replace_definition_value(name, source, hole).splitlines()
 
     def get_lines(self, path: str) -> list[str]:
         if path not in self._file_cache:
@@ -190,16 +212,27 @@ class Assembler:
         # widest range emitted so far per module, to swallow the pieces of a
         # declaration that the closure reports separately
         enclosing: dict[str, tuple[int, int]] = {}
-        for name, path, a, b, src in entries:
-            if (path, a) in emitted_ranges:  # deriving twins share the range
+        for name, path, a, b, src, hole in entries:
+            if (path, a) in emitted_ranges and hole is None:
+                # deriving twins share the range
                 continue
+            if (path, a) in emitted_ranges:
+                raise DefinitionFrontierError(
+                    f"registered definition {name!r} shares an already emitted "
+                    f"source range {path}:{a}-{b}"
+                )
             # a constructor's `.elim`/`.noConfusion`/`.injEq` companion and a
             # `deriving` clause report a range *inside* their inductive's
             # range; emitting those lines on their own is a syntax error, and
             # the inductive command regenerates them anyway
             outer = enclosing.get(path)
-            if outer is not None and outer[0] <= a and b <= outer[1]:
+            if outer is not None and outer[0] <= a and b <= outer[1] and hole is None:
                 continue
+            if outer is not None and outer[0] <= a and b <= outer[1]:
+                raise DefinitionFrontierError(
+                    f"registered definition {name!r} is nested in source range "
+                    f"{path}:{outer[0]}-{outer[1]}"
+                )
             emitted_ranges.add((path, a))
             enclosing[path] = (a, b)
             prelude = self.prelude_for(path, a)
@@ -210,7 +243,11 @@ class Assembler:
             self.switch_ns(self.ns_stack_at(path, a))
             self.out.append("")
             self.out.append(f"-- source: {path}:{a}-{b}  ({name})")
-            self.out.extend(src)
+            if hole is None:
+                self.out.extend(src)
+            else:
+                self.out.extend(self.definition_hole_source(name, src, hole))
+                self.emitted_definition_names.add(name)
             self.out.extend(self.extras.get(name, []))
         self.close_prelude()
         self.switch_ns([])
@@ -273,7 +310,12 @@ def assemble_split(
     challenge: ChallengeConfig, root: Path, tsv: Path
 ) -> dict[str, str]:
     """Return {path relative to the challenge repository: file contents}."""
-    asm = SplitAssembler(root, challenge.extras, challenge.module_preludes)
+    asm = SplitAssembler(
+        root,
+        challenge.extras,
+        challenge.module_preludes,
+        challenge.definition_names,
+    )
     entries, generated = read_entries(asm, tsv)
 
     rank = asm.module_ranks({e[1] for e in entries})
@@ -335,14 +377,138 @@ def read_entries(
     for row in tsv.read_text(encoding="utf-8").splitlines():
         if not row or "\t" not in row:
             continue
-        name, path, a, b = row.split("\t")
+        columns = row.split("\t", 4)
+        if len(columns) not in (4, 5):
+            raise DefinitionFrontierError(f"malformed closure row: {row!r}")
+        name, path, a, b = columns[:4]
+        hole = parse_definition_hole(name, columns[4] if len(columns) == 5 else None)
+        if hole is not None and name not in asm.definition_names:
+            raise DefinitionFrontierError(
+                f"closure marks unregistered definition {name!r} as a value hole"
+            )
         if a == "NORANGE":
+            if hole is not None:
+                raise DefinitionFrontierError(
+                    f"registered definition {name!r} has no source range"
+                )
             generated.append((name, path))
             continue
         start, end = int(a), int(b)
         start, source = source_range_with_context(asm.get_lines(path), start, end)
-        entries.append((name, path, start, end, source))
+        entries.append((name, path, start, end, source, hole))
     return entries, generated
+
+
+def parse_definition_hole(name: str, raw: str | None) -> DefinitionHole | None:
+    if raw is None:
+        return None
+    markers = {
+        "DEF_SAFE": "safe",
+        "DEF_UNSAFE": "unsafe",
+        "DEF_PARTIAL": "partial",
+    }
+    safety = markers.get(raw)
+    if safety is None:
+        raise DefinitionFrontierError(
+            f"invalid definition-hole marker for {name!r}: {raw!r}"
+        )
+    return DefinitionHole(safety=safety)
+
+
+def replace_definition_value(
+    name: str, source: list[str], hole: DefinitionHole
+) -> str:
+    """Keep a definition command's header and replace its top-level value."""
+    text = "\n".join(source)
+    declaration_seen = False
+    paren_depth = 0
+    bracket_depth = 0
+    brace_depth = 0
+    block_comment_depth = 0
+    in_string = False
+    escaped = False
+    in_line_comment = False
+    index = 0
+
+    def at_top_level() -> bool:
+        return paren_depth == bracket_depth == brace_depth == 0
+
+    def token_at(token: str) -> bool:
+        if not text.startswith(token, index):
+            return False
+        before = text[index - 1] if index else " "
+        after_index = index + len(token)
+        after = text[after_index] if after_index < len(text) else " "
+        identifier = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'"
+        return before not in identifier and after not in identifier
+
+    while index < len(text):
+        char = text[index]
+        next_char = text[index + 1] if index + 1 < len(text) else ""
+
+        if in_line_comment:
+            if char == "\n":
+                in_line_comment = False
+            index += 1
+            continue
+        if block_comment_depth:
+            if char == "/" and next_char == "-":
+                block_comment_depth += 1
+                index += 2
+            elif char == "-" and next_char == "/":
+                block_comment_depth -= 1
+                index += 2
+            else:
+                index += 1
+            continue
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            index += 1
+            continue
+        if char == "-" and next_char == "-":
+            in_line_comment = True
+            index += 2
+            continue
+        if char == "/" and next_char == "-":
+            block_comment_depth = 1
+            index += 2
+            continue
+        if char == '"':
+            in_string = True
+            index += 1
+            continue
+
+        if char == "(":
+            paren_depth += 1
+        elif char == ")":
+            paren_depth -= 1
+        elif char == "[":
+            bracket_depth += 1
+        elif char == "]":
+            bracket_depth -= 1
+        elif char == "{":
+            brace_depth += 1
+        elif char == "}":
+            brace_depth -= 1
+        elif at_top_level() and not declaration_seen:
+            if token_at("def") or token_at("abbrev") or token_at("instance"):
+                declaration_seen = True
+        elif at_top_level() and declaration_seen:
+            if char == ":" and next_char == "=":
+                return text[:index].rstrip() + " := by\n  sorry"
+            if token_at("where") or char == "|":
+                return text[:index].rstrip() + " := by\n  sorry"
+        index += 1
+
+    raise DefinitionFrontierError(
+        f"could not locate the value of registered definition {name!r} "
+        f"(validated safety: {hole.safety})"
+    )
 
 
 def check_stale_tables(
@@ -355,17 +521,26 @@ def check_stale_tables(
         for scope in scopes
         if (path, scope.first) not in asm.used_preludes
     }
-    if unused_extras or unused_preludes:
+    missing_definitions = set(challenge.definition_names) - asm.emitted_definition_names
+    unexpected_definitions = asm.emitted_definition_names - set(challenge.definition_names)
+    if unused_extras or unused_preludes or missing_definitions or unexpected_definitions:
         raise StaleContextTables(
             f"stale context tables in {challenge.path} — "
             f"unmatched extras keys: {sorted(unused_extras)}; "
-            f"unmatched module_preludes scopes: {sorted(unused_preludes)}"
+            f"unmatched module_preludes scopes: {sorted(unused_preludes)}; "
+            f"missing definition holes: {sorted(missing_definitions)}; "
+            f"unexpected definition holes: {sorted(unexpected_definitions)}"
         )
 
 
 def assemble(challenge: ChallengeConfig, root: Path, tsv: Path) -> str:
     """Assembled body text; raises ``StaleContextTables`` on an unmatched key."""
-    asm = Assembler(root, challenge.extras, challenge.module_preludes)
+    asm = Assembler(
+        root,
+        challenge.extras,
+        challenge.module_preludes,
+        challenge.definition_names,
+    )
     entries, generated = read_entries(asm, tsv)
 
     rank = asm.module_ranks({e[1] for e in entries})
@@ -412,7 +587,7 @@ def main() -> int:
             print(f"wrote {len(files)} challenge files to {args.split_dir}")
             return 0
         print(assemble(challenge, args.root, args.tsv))
-    except (ChallengeConfigError, StaleContextTables) as exc:
+    except (ChallengeConfigError, StaleContextTables, DefinitionFrontierError) as exc:
         print(exc, file=sys.stderr)
         return 1
     return 0

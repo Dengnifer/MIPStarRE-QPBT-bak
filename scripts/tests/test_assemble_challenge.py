@@ -46,6 +46,7 @@ class AssembleChallengeTests(unittest.TestCase):
             description="split fixture",
             imports=("MIPStarRE.Example",),
             targets=("Example.value",),
+            definition_names=(),
             header=header,
             footer=footer,
             expected="expected/test",
