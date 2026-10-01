@@ -65,6 +65,54 @@ theorem pauli_soundness :
     exact (rawPauliBobError_ofPauliSoundnessWitness w W).trans_le
       (hBob (pauliKindEquiv W))
 
+/-- `cor:pauli-binary`: compact Pauli-basis soundness in the qubit
+coordinates of the original fixed self-dual normal basis. -/
+theorem pauli_soundness_qubit :
+    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b < 1 ∧
+      ∀ (P : PauliParams) (epsilon : ℝ), 0 ≤ epsilon →
+        ∀ S : PauliStrategy P
+            (MIPStarRE.QPBT.fixedFieldModel P.q P.is_admissible_size).K,
+          1 - epsilon ≤ S.value
+            (pauliGame P
+              (MIPStarRE.QPBT.binaryRepresentation
+                (MIPStarRE.QPBT.fixedFieldModel P.q P.is_admissible_size))
+              (MIPStarRE.QPBT.fixedBinTrace
+                (MIPStarRE.QPBT.fixedFieldModel P.q P.is_admissible_size))) →
+          ∃ w : ExtractionWitness
+              (R := QubitRegister P
+                (MIPStarRE.QPBT.fixedFieldModel P.q
+                  P.is_admissible_size).basisDim) S,
+            stateError w ≤ deltaQld a b epsilon P.m P.d P.q ∧
+            (∀ W : PauliKind,
+              rawQubitAliceError P S w
+                  (MIPStarRE.QPBT.fixedFieldModel P.q
+                    P.is_admissible_size).binaryCoordinates W ≤
+                deltaQld a b epsilon P.m P.d P.q) ∧
+            ∀ W : PauliKind,
+              rawQubitBobError P S w
+                  (MIPStarRE.QPBT.fixedFieldModel P.q
+                    P.is_admissible_size).binaryCoordinates W ≤
+                deltaQld a b epsilon P.m P.d P.q := by
+  obtain ⟨a, b, ha, hb, hb_one, hsound⟩ :=
+    MIPStarRE.QPBT.pauli_soundness_qubit
+  refine ⟨a, b, ha, hb, hb_one, ?_⟩
+  intro P epsilon hepsilon S hvalue
+  let Q := P.toAdmissibleParams
+  have hvalue' : 1 - epsilon ≤
+      (pauliStrategyToLibrary Q S).value := by
+    rw [pauliStrategyToLibrary_value]
+    exact hvalue
+  obtain ⟨w, hstate, hAlice, hBob⟩ :=
+    hsound Q epsilon hepsilon (pauliStrategyToLibrary Q S) hvalue'
+  refine ⟨ExtractionWitness.ofQubitSoundnessWitness w, ?_, ?_, ?_⟩
+  · exact (stateError_ofQubitSoundnessWitness w).trans_le hstate
+  · intro W
+    exact (rawQubitAliceError_ofQubitSoundnessWitness w W).trans_le
+      (hAlice (pauliKindEquiv W))
+  · intro W
+    exact (rawQubitBobError_ofQubitSoundnessWitness w W).trans_le
+      (hBob (pauliKindEquiv W))
+
 end
 
 end MIPStarRE.QPBT.Palomar
