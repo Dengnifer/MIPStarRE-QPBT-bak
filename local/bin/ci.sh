@@ -874,16 +874,25 @@ step_build() {
     run_outside_git_env lake build MIPStarRE.LDT.Test.AxiomAudit MIPStarRE.QPBT.Test.AxiomAudit
   fi
 
-  # pr-ci.yml:158-159
+  # pr-ci.yml:158-175
   echo "+ scripts/comparator/check_challenge_drift.py"
   run_outside_git_env python3 scripts/comparator/check_challenge_drift.py --root .
+
+  # Regeneration drift and standalone elaboration are distinct checks: matching
+  # bytes do not establish that the generated Palomar file still compiles.
+  local palomar_challenge="$RUN_TMP/palomar/Challenge.lean"
+  echo "+ regenerate standalone Palomar challenge at $palomar_challenge"
+  run_outside_git_env python3 scripts/comparator/check_challenge_drift.py \
+    --root . --challenge palomar --write "$palomar_challenge"
+  echo "+ lake env lean $palomar_challenge"
+  run_outside_git_env lake env lean "$palomar_challenge"
 }
 
 step_blueprint_render() {
   cd "$WORKTREE"
   require_tool leanblueprint "pipx install leanblueprint && pipx inject --include-apps --force leanblueprint plastex"
 
-  # pr-ci.yml:210-218.  The PDF pass is what catches undefined macros; it needs
+  # pr-ci.yml:226-234.  The PDF pass is what catches undefined macros; it needs
   # a TeX installation the CI runner apt-installs and a laptop may not have.
   if command -v latexmk >/dev/null 2>&1 || command -v xelatex >/dev/null 2>&1; then
     _pdf="blueprint/print/print.pdf"
@@ -915,7 +924,7 @@ step_blueprint_render() {
 undefined-macro check did not run"
   fi
 
-  # pr-ci.yml:222-223: web.bbl is not committed and is regenerated from the
+  # pr-ci.yml:236-239: web.bbl is not committed and is regenerated from the
   # \cite keys in the blueprint sources.
   if command -v texra-blueprint >/dev/null 2>&1; then
     echo "+ texra-blueprint bbl"
@@ -924,7 +933,7 @@ undefined-macro check did not run"
     note_warning "texra-blueprint not installed; skipped 'texra-blueprint bbl' (paper-gap cite keys may render unresolved)"
   fi
 
-  # pr-ci.yml:225-243.  ^ERROR: is a hard failure; 'WARNING: File not found:'
+  # pr-ci.yml:241-259.  ^ERROR: is a hard failure; 'WARNING: File not found:'
   # is advisory.  Keep exit-code semantics, not annotation semantics.
   _web_log="$RUN_TMP/blueprint-web.txt"
   if command -v texra-blueprint >/dev/null 2>&1; then
@@ -947,14 +956,14 @@ undefined-macro check did not run"
 step_paper_gaps() {
   cd "$WORKTREE"
   require_tool texra-blueprint "pipx install 'git+https://github.com/LionSR/texra-blueprint@v0.3.8'"
-  # pr-ci.yml:270-271
+  # pr-ci.yml:286-287
   echo "+ texra-blueprint --root . paper-gaps check"
   run_outside_git_env texra-blueprint --root . paper-gaps check
 }
 
 step_blueprint_sync() {
   cd "$WORKTREE"
-  # pr-ci.yml:294-301
+  # pr-ci.yml:310-317
   echo "+ python3 -m unittest discover -s scripts/tests -p 'test_*.py'"
   run_outside_git_env python3 -m unittest discover -s scripts/tests -p 'test_*.py'
 
@@ -964,7 +973,7 @@ step_blueprint_sync() {
   echo "+ scripts/blueprint_lean_sync.py --ci"
   run_outside_git_env python3 scripts/blueprint_lean_sync.py --root . --ci
 
-  # pr-ci.yml:303-317.  This job deliberately has NO Lean setup: on GitHub it
+  # pr-ci.yml:319-333.  This job deliberately has NO Lean setup: on GitHub it
   # exhausted the runner disk repeatedly.  Locally the reason is the machine's
   # single full-build budget (invariant 7) — the axiom audit is reported, not
   # run, and a human runs it inside the build lock.
@@ -979,14 +988,14 @@ step_blueprint_sync() {
 
 step_file_length() {
   cd "$WORKTREE"
-  # pr-ci.yml:339-340
+  # pr-ci.yml:354-356
   echo "+ scripts/check_oversized_lean_files.py"
   run_outside_git_env python3 scripts/check_oversized_lean_files.py --root .
 }
 
 step_proof_debt() {
   cd "$WORKTREE"
-  # pr-ci.yml:362-371
+  # pr-ci.yml:378-387
   echo "+ python3 -m unittest scripts/tests/test_audit_paper_facing_proof_debt.py"
   run_outside_git_env python3 -m unittest scripts/tests/test_audit_paper_facing_proof_debt.py
 
@@ -996,14 +1005,14 @@ step_proof_debt() {
 
 step_proof_evasion() {
   cd "$WORKTREE"
-  # pr-ci.yml:407-412
+  # pr-ci.yml:423-428
   echo "+ proof-evasion regression tests"
   run_outside_git_env python3 -m unittest scripts/tests/test_check_duplicate_private_helpers.py
   run_outside_git_env python3 -m unittest scripts/tests/test_audit_conclusion_shaped_hypotheses.py
   run_outside_git_env python3 -m unittest scripts/tests/test_audit_lean_axiom_declarations.py
   run_outside_git_env python3 -m unittest scripts/tests/test_audit_unfaithful_markers.py
 
-  # pr-ci.yml:414-430
+  # pr-ci.yml:430-446
   echo "+ scripts/audit_lean_axiom_declarations.py --ci"
   run_outside_git_env python3 scripts/audit_lean_axiom_declarations.py --root . --ci
   echo "+ scripts/audit_conclusion_shaped_hypotheses.py --ci"
@@ -1011,7 +1020,7 @@ step_proof_evasion() {
   echo "+ scripts/audit_unfaithful_markers.py --ci"
   run_outside_git_env python3 scripts/audit_unfaithful_markers.py --root . --ci
 
-  # pr-ci.yml:432-445: exit 1 from this one audit is advisory, anything else
+  # pr-ci.yml:448-461: exit 1 from this one audit is advisory, anything else
   # is a real failure.  --github-annotations is dropped: ::warning lines are
   # inert outside Actions.
   echo "+ scripts/check_duplicate_private_helpers.py --ci (advisory)"
@@ -1030,7 +1039,7 @@ step_proof_evasion() {
 
 step_statement_origin() {
   cd "$WORKTREE"
-  # pr-ci.yml:466-471
+  # pr-ci.yml:482-487
   echo "+ scripts/check_statement_paper_origin.py"
   run_outside_git_env python3 scripts/check_statement_paper_origin.py --root .
 }

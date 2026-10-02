@@ -91,7 +91,17 @@ class TrainTests(unittest.TestCase):
                      "check_duplicate_private_helpers", "check_statement_paper_origin"):
             self.write(f"scripts/{name}.py", "")
         self.write("scripts/blueprint_axiom_audit_needed.py", "print('false')\n")
-        self.write("scripts/comparator/check_challenge_drift.py", "")
+        self.write(
+            "scripts/comparator/check_challenge_drift.py",
+            "from pathlib import Path\n"
+            "import sys\n\n"
+            "if '--write' in sys.argv:\n"
+            "    target = Path(sys.argv[sys.argv.index('--write') + 1])\n"
+            "    target.parent.mkdir(parents=True, exist_ok=True)\n"
+            "    target.write_text(\n"
+            "        'def challengeFixture : Nat := 1\\n', encoding='utf-8'\n"
+            "    )\n",
+        )
         for name in ("audit_paper_facing_proof_debt", "check_duplicate_private_helpers",
                      "audit_conclusion_shaped_hypotheses", "audit_lean_axiom_declarations",
                      "audit_unfaithful_markers"):
@@ -195,8 +205,17 @@ class TrainTests(unittest.TestCase):
         self.assertEqual((developer / "uncommitted").read_text(), "preserve\n")
         self.assertEqual((self.repo / "shared").read_text(), "accepted\n")
         self.assertEqual((self.repo / "third").read_text(), "third\n")
-        self.assertEqual((self.tmp / "build.log").read_text().splitlines(),
-                         ["build MIPStarRE MIPStarRE.LDT.Test.AxiomAudit MIPStarRE.QPBT.Test.AxiomAudit"])
+        build_calls = (self.tmp / "build.log").read_text().splitlines()
+        self.assertEqual(len(build_calls), 2)
+        self.assertEqual(
+            build_calls[0],
+            "build MIPStarRE MIPStarRE.LDT.Test.AxiomAudit "
+            "MIPStarRE.QPBT.Test.AxiomAudit",
+        )
+        self.assertTrue(build_calls[1].startswith("env lean "), build_calls)
+        self.assertTrue(
+            build_calls[1].endswith("/palomar/Challenge.lean"), build_calls
+        )
         self.assertEqual(_git(self.repo, "branch", "--list", "train-*"), "")
         posts = [row for row in self.gh.calls() if row["method"] != "GET"]
         self.assertEqual([row["rel"] for row in posts], ["issues/1/comments", "issues/3/comments"])
@@ -590,6 +609,14 @@ class TrainTests(unittest.TestCase):
         calls = (self.tmp / "build.log").read_text().splitlines()
         self.assertEqual(calls.count("build MIPStarRE MIPStarRE.LDT.Test.AxiomAudit MIPStarRE.QPBT.Test.AxiomAudit"),
                          1)
+        self.assertEqual(
+            sum(
+                call.startswith("env lean ")
+                and call.endswith("/palomar/Challenge.lean")
+                for call in calls
+            ),
+            1,
+        )
         self.assertIn("exe checkdecls blueprint/lean_decls", calls)
         self.assertNotEqual(self.remote_main(), self.base)
 

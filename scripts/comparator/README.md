@@ -66,7 +66,9 @@ traverses the actual Solution definition value during the Solution axiom audit.
 Thus the generated Challenge may contain `sorryAx` at the registered value, but
 the checked Solution must still supply an implementation using only the
 permitted axioms.  Registering one definition does not erase unrelated helper
-proofs or values.
+proofs or values.  `MIPStarRE/QPBT/Test/AxiomAudit.lean` checks the actual
+`fixedFieldModel` value transitively and currently requires exactly the same
+three standard Lean axioms as the four theorem aliases.
 
 The historical LDT and QPBT challenges do not set `definition_names`; omitting
 it or setting it to `[]` preserves their extraction and golden fixtures
@@ -80,6 +82,12 @@ It contains exactly four theorem holes and the sole registered
 `fixedFieldModel` value hole.  Its other reachable definitions and proofs are
 present in full, and the standalone file compiles with only a public Mathlib
 import.
+
+The normal local build gate and its frozen GitHub-workflow mirror first build
+the three configured compact modules through the QPBT axiom-audit target, then
+regenerate and byte-compare the Palomar artifact.  A separate regeneration to a
+temporary path is compiled with the repository's pinned Lean and Mathlib, so a
+byte-current but ill-typed standalone file still fails the gate.
 
 This is a coherent local Lean 4.32 prototype, not final Palomar/native
 verification.  The mandatory Lean 4.35 native replay, exact-environment

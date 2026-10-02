@@ -17,12 +17,16 @@ COMPARATOR = REPO_ROOT / "scripts" / "comparator"
 SCRIPT = COMPARATOR / "check_challenge_drift.py"
 PR_CI = REPO_ROOT / ".github" / "workflows" / "pr-ci.yml"
 CI_SH = REPO_ROOT / "local" / "bin" / "ci.sh"
+QPBT_AXIOM_AUDIT = REPO_ROOT / "MIPStarRE" / "QPBT" / "Test" / "AxiomAudit.lean"
 README = COMPARATOR / "README.md"
 EXTRACTOR = COMPARATOR / "extract_closure.lean"
 LDT_EXPECTED = COMPARATOR / "expected" / "Challenge.lean.expected"
 PALOMAR_EXPECTED = COMPARATOR / "expected" / "palomar" / "Challenge.lean.expected"
 LDT_BASELINE_SHA256 = (
     "e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b"
+)
+PALOMAR_BASELINE_SHA256 = (
+    "4600b1c3e2409edf2a68df53a2055516c99646e42750f966cf02e60437700de3"
 )
 
 # the drift checker imports its sibling `challenge_config`, which a script run
@@ -73,8 +77,15 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         self.assertIn("- 'scripts/comparator/**'", workflow)
         self.assertIn("needs.changes.outputs.comparator == 'true'", workflow)
         build = workflow.index("lake build MIPStarRE.LDT.Test.AxiomAudit")
-        guard = workflow.index("python3 scripts/comparator/check_challenge_drift.py --root .")
-        self.assertLess(build, guard)
+        palomar_guard = workflow.index(
+            "python3 scripts/comparator/check_challenge_drift.py "
+            "--root . --challenge palomar"
+        )
+        palomar_write = workflow.index("--challenge palomar --write")
+        palomar_compile = workflow.index('lake env lean "$PALOMAR_CHALLENGE"')
+        self.assertLess(build, palomar_guard)
+        self.assertLess(palomar_guard, palomar_write)
+        self.assertLess(palomar_write, palomar_compile)
 
     def test_readme_documents_update_command_and_footer_source(self) -> None:
         readme = README.read_text(encoding="utf-8")
@@ -129,17 +140,35 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
             "python3 scripts/comparator/check_challenge_drift.py --root .\n",
             CI_SH.read_text(encoding="utf-8"),
         )
+        local_ci = CI_SH.read_text(encoding="utf-8")
+        self.assertIn("--root . --challenge palomar --write", local_ci)
+        self.assertIn('lake env lean "$palomar_challenge"', local_ci)
 
     def test_pr_ci_names_published_challenges(self) -> None:
-        # Palomar remains a local prototype until the 4.35/native reconciliation;
-        # canonical workflow integration belongs to that publication step.
         workflow = PR_CI.read_text(encoding="utf-8")
-        for name in ("ldt", "qpbt"):
+        for name in ("ldt", "qpbt", "palomar"):
             self.assertIn(
                 "python3 scripts/comparator/check_challenge_drift.py "
                 f"--root . --challenge {name}",
                 workflow,
             )
+
+    def test_palomar_solution_axiom_roots_are_explicit(self) -> None:
+        audit = QPBT_AXIOM_AUDIT.read_text(encoding="utf-8")
+        for module in (
+            "MIPStarRE.QPBT.Palomar.PauliCompleteness",
+            "MIPStarRE.QPBT.Palomar.LowDegreeSoundness",
+            "MIPStarRE.QPBT.Palomar.PauliSoundness",
+        ):
+            self.assertIn(f"import {module}", audit)
+        for declaration in (
+            "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+            "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+            "MIPStarRE.QPBT.Palomar.pauli_soundness",
+            "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit",
+            "MIPStarRE.QPBT.fixedFieldModel",
+        ):
+            self.assertIn(f"audit_standard_axioms {declaration}", audit)
 
     def test_every_challenge_is_configured_completely(self) -> None:
         challenges = {
@@ -230,6 +259,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
             ("MIPStarRE.QPBT.fixedFieldModel",),
         )
         data = PALOMAR_EXPECTED.read_bytes()
+        self.assertEqual(hashlib.sha256(data).hexdigest(), PALOMAR_BASELINE_SHA256)
         text = data.decode("utf-8")
         self.assertLessEqual(len(text.splitlines()), 1000)
         self.assertLessEqual(len(data), 102400)

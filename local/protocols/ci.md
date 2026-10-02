@@ -60,19 +60,19 @@ blueprint-fix, everything else → never auto-fixed) ports without translation.
 
 | Step | Parent job | What it runs (in the worktree) | Gate |
 |---|---|---|---|
-| `build` | `build` (`pr-ci.yml:115-168`) | warm `.lake/build`, `lake exe cache get`, `lake build`, `lake build MIPStarRE.LDT.Test.AxiomAudit MIPStarRE.QPBT.Test.AxiomAudit` (`:155-156`), `scripts/comparator/check_challenge_drift.py` (`:158-159`) | `lean ∨ comparator ∨ workflow` |
-| `blueprint-render` | `blueprint-render` (`:173-243`) | remove the prior PDF, run the project `latexmk` configuration noninteractively, require its exit zero and a fresh non-empty `blueprint/print/print.pdf` (`:210-218`), `texra-blueprint bbl` (`:222-223`), `texra-blueprint web` with `grep '^ERROR:'` (`:225-243`) | `blueprint_src ∨ workflow` |
-| `paper-gaps` | `paper-gaps` (`:248-271`) | `texra-blueprint --root . paper-gaps check` | `paper_gaps ∨ workflow` |
-| `blueprint-sync` | `blueprint-sync` (`:273-317`) | `python3 -m unittest discover -s scripts/tests`, `blueprint_lean_sync.py --update-lean-decls`, `blueprint_lean_sync.py --ci`, `blueprint_axiom_audit_needed.py --base-ref` | `lean ∨ blueprint ∨ scripts ∨ workflow` |
-| `file-length` | `file-length` (`:319-340`) | `check_oversized_lean_files.py --root .` (>1000 lines) | `mip_lean ∨ scripts ∨ workflow` |
-| `proof-debt` | `proof-debt` (`:342-386`) | `unittest test_audit_paper_facing_proof_debt.py`, `audit_paper_facing_proof_debt.py --ci` | `mip_lean ∨ tex_chapter ∨ scripts ∨ workflow` |
-| `proof-evasion` | `proof-evasion` (`:388-445`) | four regression tests, then `audit_lean_axiom_declarations.py --ci`, `audit_conclusion_shaped_hypotheses.py --ci`, `audit_unfaithful_markers.py --ci`, and `check_duplicate_private_helpers.py --ci` (advisory) | `mip_lean ∨ scripts ∨ workflow` |
-| `statement-origin` | `statement-origin` (`:447-487`) | `check_statement_paper_origin.py --root .` | `ldt_lean ∨ scripts ∨ workflow` |
+| `build` | `build` (`pr-ci.yml:115-185`) | warm `.lake/build`, `lake exe cache get`, `lake build`, both axiom-audit targets, all comparator drift checks, and standalone compilation of a freshly regenerated Palomar `Challenge.lean` | `lean ∨ comparator ∨ workflow` |
+| `blueprint-render` | `blueprint-render` (`:189-260`) | remove the prior PDF, run the project `latexmk` configuration noninteractively, require its exit zero and a fresh non-empty `blueprint/print/print.pdf` (`:226-234`), `texra-blueprint bbl` (`:236-239`), `texra-blueprint web` with `grep '^ERROR:'` (`:241-259`) | `blueprint_src ∨ workflow` |
+| `paper-gaps` | `paper-gaps` (`:264-288`) | `texra-blueprint --root . paper-gaps check` | `paper_gaps ∨ workflow` |
+| `blueprint-sync` | `blueprint-sync` (`:289-334`) | `python3 -m unittest discover -s scripts/tests`, `blueprint_lean_sync.py --update-lean-decls`, `blueprint_lean_sync.py --ci`, `blueprint_axiom_audit_needed.py --base-ref` | `lean ∨ blueprint ∨ scripts ∨ workflow` |
+| `file-length` | `file-length` (`:335-357`) | `check_oversized_lean_files.py --root .` (>1000 lines) | `mip_lean ∨ scripts ∨ workflow` |
+| `proof-debt` | `proof-debt` (`:358-403`) | `unittest test_audit_paper_facing_proof_debt.py`, `audit_paper_facing_proof_debt.py --ci` | `mip_lean ∨ tex_chapter ∨ scripts ∨ workflow` |
+| `proof-evasion` | `proof-evasion` (`:404-462`) | four regression tests, then `audit_lean_axiom_declarations.py --ci`, `audit_conclusion_shaped_hypotheses.py --ci`, `audit_unfaithful_markers.py --ci`, and `check_duplicate_private_helpers.py --ci` (advisory) | `mip_lean ∨ scripts ∨ workflow` |
+| `statement-origin` | `statement-origin` (`:463-503`) | `check_statement_paper_origin.py --root .` | `ldt_lean ∨ scripts ∨ workflow` |
 
 Every step is blocking. The single advisory sub-check is
 `check_duplicate_private_helpers.py`: exit 1 means "candidates reported" and is
 downgraded to a warning, any other nonzero status is a real failure — the same
-`set +e` dance as `pr-ci.yml:432-445`.
+`set +e` dance as `pr-ci.yml:448-461`.
 
 The PDF subpass invokes `latexmk` from `blueprint/src`, so the checked status is
 the compiler driver's status rather than a wrapper's. It uses the checked-in
@@ -277,15 +277,19 @@ worktree writes into the shared snapshot, so it does not.
    prune workaround lives, and a package-free tree is exactly the state that
    triggers it. `MIPSTARRE_CI_ALLOW_COLD_FETCH=1` overrides for a tree you know
    is clean.
-4. `lake build`, then `lake build MIPStarRE.LDT.Test.AxiomAudit MIPStarRE.QPBT.Test.AxiomAudit`,
-   then the comparator drift check.  Both audit modules are compile-time
-   checks, not reports: each `audit_standard_axioms` /
-   `assert_standard_axioms` command calls `Lean.collectAxioms` and throws
-   unless the declaration's axioms are exactly `propext`,
-   `Classical.choice` and `Quot.sound`, so a `sorryAx` reaching a headline
-   theorem fails the build step.  They are built as explicit targets
-   rather than imported from the umbrella libraries, so they stay out of
-   normal downstream imports.
+4. `lake build`, then `lake build MIPStarRE.LDT.Test.AxiomAudit
+   MIPStarRE.QPBT.Test.AxiomAudit`, then the comparator drift check.  Both audit
+   modules are compile-time checks, not reports: each `audit_standard_axioms` /
+   `assert_standard_axioms` command calls `Lean.collectAxioms` and throws unless
+   the declaration's axioms are exactly `propext`, `Classical.choice` and
+   `Quot.sound`, so a `sorryAx` reaching a headline theorem fails the build
+   step.  The QPBT audit imports the three compact Palomar modules and applies
+   that exact check to all four aliases and the actual `fixedFieldModel` value.
+   The audit targets stay out of normal downstream imports.
+5. Regenerate the Palomar challenge to a temporary path and compile it with
+   `lake env lean` after the byte-drift check.  This is deliberately separate:
+   byte equality alone cannot establish that the standalone artifact elaborates
+   under the pinned Lean and Mathlib environment.
 
 For reviewed trains, `--integration-head SHA --worktree PATH --base SHA` runs
 every step without publishing PR evidence. Its single locked Lake invocation is
@@ -311,7 +315,7 @@ the check to `warm-worktree.sh` and simply builds whatever it is handed.
 
 `blueprint-sync` deliberately has no Lean setup. On GitHub that was forced by
 repeated runner disk exhaustion, and the job degraded to a `::notice` telling a
-human to run the audit locally (`pr-ci.yml:303-317`). Locally the constraint is
+human to run the audit locally (`pr-ci.yml:319-333`). Locally the constraint is
 different but the conclusion is the same: the machine has a single full-build
 budget, already spent by `build`. So `blueprint_axiom_audit_needed.py` runs, and
 when it answers `true` the run records a warning:
