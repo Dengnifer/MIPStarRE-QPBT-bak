@@ -10111,6 +10111,33 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
 
 - Palomar preparation: live how-to-submit and PalomarPolicy CONTRIBUTING.md section 2.1 explicitly require module headers and the 10000-line cap for separately declared substantive repositories. This invalidates the briefing assumption that the Solution-only library might be exempt. Following owner briefing section 5.4: measure migration scope, write docs/palomar-submission.md, post one owner-inbox blocker, then pause without converting library sources. Initial scout admission refused an inherited Astra model for the routine job; explicitly selecting the owner-required Sol model passed preflight, with no shim or credential changes.
 - Owner decision B12:A received directly in MAIN on 2026-10-02; briefing section8 authorizes all742 Lean files to adopt modules in tested packets, keeping v4.32.0, every statement and normal gates unchanged. The same #500 blocker is resolved in place. The uncommitted blocking-era submission-note draft was preserved at ~/.cache/mipstarre-dev/palomar/palomar-submission-blocked-draft-20261002.md to keep primary clean for merges; final docs/palomar-submission.md will be committed through its normal packet. Keeper stop flag removed for the authorized resumed work.
+- Companion-review routing gap: setting `MIPSTARRE_GITHUB_REPO` to
+  `Dengnifer/QPBT-comparator` redirected GitHub reads while `review.sh` still
+  resolved the base, head, diff and worktree in the unrelated primary-library
+  history. The route therefore could not produce an exact-head independent
+  comparator review, and equal PR numbers shared runtime paths and locks. Issue
+  #745 adds one explicit clean-source route, exact official comparator/NanoDa
+  evidence, primary-main prompt isolation and repository-qualified runtime
+  identities. Lesson: a repository override for remote records must be paired
+  with an explicit, validated local source identity; changing only the API
+  target is unsafe.
+- Issue #745 publication blocker: the implementation and local fixture checks
+  passed, but the managed session denied creation of the shared worktree
+  `index.lock` because the Git administrative directory is read-only. An
+  earlier issue read through `gh_common.py` also failed because outbound GitHub
+  TCP was unavailable. No commit, push, PR, CI status or review was
+  synthesized; the working-tree patch remains intact for a publication session.
+  Lesson: a session assigned branch publication needs writable shared Git
+  metadata and GitHub network access, not only a writable worktree checkout.
+- Companion-review trust-boundary findings: independent review 5383425988 found
+  that the first #745 gate trusted a same-named GitHub Actions check without
+  binding it to `.github/workflows/comparator.yml`, and dispatched from the
+  companion checkout whose `AGENTS.md` and protocols were branch-controlled.
+  The repair binds check, run, current attempt and job; pins the reviewed
+  workflow and launcher bytes from comparator main `360402fd`; and uses the
+  primary checkout as the reviewer instruction root while framing the companion
+  tree as untrusted data. Lesson: trusted prompts alone do not close an
+  instruction channel when the agent cwd supplies additional policy files.
 - Owner briefing section9 withdraws rule5.4 entirely and delegates all in-project scope, conversion, restructuring, route and version decisions to MAIN. Only beyond-project risks need #500; independent work continues meanwhile. MAIN keeps v4.32.0 for the current packet because its required module syntax is already present; no dependency rebuild cost is justified by an identified need. Recorded on #27. Previous goal turn was progress: B12 resolved, #743/#744 opened, three bounded Sol sessions dispatched, prepared primary/cache worktree and fresh comparator clone, and publication passed normal hooks.
 - Palomar companion review route: review.sh accepts a GitHub repository override but computes branch/base objects and worktrees in its own primary library history. The independent comparator history therefore has no supported exact-head review route. MAIN authorizes one minimal internal routing packet under owner section9, with a two-hour/5000-line ceiling, primary trusted prompts/account routing retained, distinct repository runtime identities, successful actual official comparator CI on the exact SHA, fixture tests and normal library CI/independent review before use. No gate override or synthesized approval. Decision and cost recorded on #27; conversion remains the next substantive implementation assignment after this tooling merges.
 - The module-pattern worker completed source validation but workspace-write cannot create the linked worktree index lock in the primary .git administration directory. No new permission is needed: owner briefing section4 records standing full access from2026-09-19. Future writing sessions use explicit danger-full-access with their authorized repository scope; existing workers return their preserved changes for normal commit/CI/review. The metadata-only companion assignment754 uses the fresh own-repository clone, which has no .githooks to install; its dispatch skips only the library-specific hook installation check, with no companion publication or merge allowed until official CI and exact-head independent review. It performs no Lean build and therefore needs no library hot-cache bootstrap.
@@ -10120,6 +10147,56 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
 - Palomar pilot full build passed in865s. Its subsequent real-build CI fixtures contend with the separately queued #759 full build for the same machine lock; fixture wait is300s. MAIN will let current checks report and rerun canonical CI uncontended if necessary, preserving serialization and all checks. New additive proof packet760 implements the accepted compact generic strategy/game foundation with exact equivalences, one bounded3600s Sol assignment. Two Sol workers live; third slot reserved for independent review after green CI. Decisions/costs and exact heads recorded on #27 and palomar-pilot-ci-20261002.md.
 - Before first publication, normalized trailing Markdown whitespace in newly captured rendered last-message files: results/telemetry/sessions/orc-745-20261002-01.last.md, results/telemetry/sessions/orc-754-20261002-01.last.md, results/telemetry/sessions/prover-757-20261002-01.last.md, results/telemetry/sessions/reviewer-pr755-20261002-01.last.md, results/telemetry/sessions/scout-palomar-faithfulness-route-20261002-02.last.md, results/telemetry/sessions/simplifier-744-20261002-01.last.md. Raw JSONL and private runtime last messages retain original bytes; no mathematical wording changed.
 - Pilot PR758 first complete CI failed only test_cold_project_build_catches_axiom_audit_failure: the real-build fixture returned lock-timeout outcome error while the concurrent PR759 build owned the global lock, instead of reaching its deliberately failing axiom example. All other steps passed. Preserved first-run logs/manifest with -first-run suffix and started complete unmodified-head CI again after PR759's build released the lock (handle7303; /tmp/qpbt-palomar-pattern-ci-retry.log). PR759 full build/both axiom audits and all other CI steps passed; only QPBT generated provenance/import-order drift failed. Fresh linked simplifier-757-20261002-01 gets900s to regenerate that fixture with862s predecessor proof cost retained (handle22910; /tmp/qpbt-palomar-line-provenance-repair.log). No source or gate relaxation. Three primary space-3 Sol workers now live:745 repair,757 fixture repair,760 exact strategy bridges.
+- PR755 native-preflight rescope: independent review 5384612101 showed that the
+  pinned legacy `verify.sh` could accept a tracked branch comparator and that
+  checking only `enable_nanoda` left targets, definitions and axioms mutable.
+  MAIN selected the official reusable PalomarSubmission workflow at
+  `65f0154ed776cd26c224254aa57b379137f28b0d`. The repair pins the complete
+  caller, validates the entire four-target configuration, and never executes a
+  companion checker or bundled executable. This continuation retains the prior
+  3898-second author charge, both full review rounds and unresolved F1/F2; no
+  finding is marked resolved before fresh CI and independent adjudication.
+- PR755 native-preflight local validation: 13 companion-route tests, all 73
+  GitHub-workflow tests and all 16 related review/native tests pass. Shell and
+  Python syntax, `git diff --check`, and the installed-hook check pass. No full
+  build, live companion run, push, publication or companion mutation occurred;
+  `comparator / verify` remains a first-live-run integration assumption.
+- PR755 repository-routing finding: independent review 5388322891 confirmed
+  that `MIPSTARRE_GITHUB_REPO` still selected foreign PR records on the default
+  route while refs, diff and worktree bytes came from the trusted primary
+  checkout. The accepted repair derives the primary repository independently
+  from its `github` remote and rejects mismatched default routing before any PR
+  read, runtime record or worktree resolution. Explicit companion routing keeps
+  its one allowed target and now validates checkout root, origin and cleanliness
+  before the PR read, then repeats the exact PR/head checks. The finding remains
+  adverse historical review evidence; this repair is not an approval, and fresh
+  exact-head CI plus the admitted fourth independent review remain required.
+- PR755 repository-routing repair validation: the first focused run failed
+  because the new trusted-remote fixture was placed in the neighboring CI test
+  class rather than the companion-review class. No production path or remote
+  record was touched; the fixture placement was corrected. The 14 focused
+  routing tests, all 74 GitHub-workflow tests and all 16 related review/native
+  tests then passed, together with shell/Python syntax, `git diff --check`, the
+  changed-line length check and installed-hook check. No full build, canonical
+  CI, live companion review, independent review or merge was performed.
+- PR755 ref-qualified workflow-path finding: independent review 5388498920
+  found that the companion gate accepted only the bare canonical Actions path,
+  while GitHub's REST documentation also represents a workflow-run path as
+  `.github/workflows/<file>@<ref>`. Read-only inspection of the repository's
+  existing companion runs found bare paths, so the finding did not establish
+  that every live run failed; the API compatibility gap was nevertheless real.
+  The repair accepts only the existing bare comparator path or that same path
+  qualified by the already-validated push branch. A different path or ref is
+  still rejected, and every prior repository, source, event, branch, head,
+  attempt, job, check URL, status and conclusion check remains in force. Review
+  5388498920 remains adverse historical evidence pending fresh exact-head CI
+  and the separately admitted final independent recheck.
+- PR755 ref-qualified workflow-path repair validation: all 16 focused companion
+  routing tests, all 76 GitHub-workflow tests and all 16 related review/native
+  tests pass. Shell and Python syntax, `git diff --check`, changed-added-line
+  length and installed-hook checks also pass. No full build, live companion
+  review, canonical CI, independent review, companion mutation or merge ran in
+  the author phase.
 
 ### 2026-10-02 — Reuse the recorded companion metadata dispatch setup
 
