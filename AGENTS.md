@@ -776,9 +776,12 @@ agent must know:
   `local/bin/autofix.sh` → `local/bin/pr_merge.py`. Primary-library reviews
   require complete green exact-head `local-ci/*` evidence. The sole companion
   route, for `Dengnifer/QPBT-comparator`, instead requires its pinned official
-  Palomar full-CI evidence on the exact head; reviewer instructions still come
-  from primary main. Both routes publish `local-review/summary`; merges use an
-  exact-SHA guard. Details: `local/README.md`, `local/protocols/review.md`, and
+  Palomar full-CI evidence on the exact head. Its model receives two private,
+  mode-read-only Git snapshots: instructions pinned to primary main and review
+  data pinned to the companion head. Live checkouts remain only identity,
+  movement and CI-revalidation inputs. Both routes publish
+  `local-review/summary`; merges use an exact-SHA guard. Details:
+  `local/README.md`, `local/protocols/review.md`, and
   `local/protocols/issues-prs.md`.
 - **Sessions.** Worker Codex sessions use `local/bin/dispatch.sh` (roles: orc,
   prover, reviewer, simplifier, blueprint, splitter, scout; `mathfix` is

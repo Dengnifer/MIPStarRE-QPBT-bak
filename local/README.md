@@ -30,11 +30,12 @@ issue  →  branch + worktree  →  agent session(s)  →  local CI  →  review
 5. **Review**: `local/bin/review.sh PPPP` — primary-library PRs require complete
    green exact-head local CI. Its sole companion route, for
    `Dengnifer/QPBT-comparator`, requires that repository's pinned official
-   Palomar full-CI evidence on the exact head while keeping reviewer
-   instructions on validated committed primary main. Companion heads always
-   receive a fresh model review; only the primary route can carry identical
-   patch evidence forward. Both routes publish one exact-head COMMENT review
-   plus `local-review/summary`; see
+   Palomar full-CI evidence on the exact head. The companion model receives a
+   private, mode-read-only instruction snapshot pinned to committed primary
+   main and a separate source snapshot pinned to the reviewed head. Companion
+   heads always receive a fresh model review; only the primary route can carry
+   identical patch evidence forward. Both routes publish one exact-head COMMENT
+   review plus `local-review/summary`; see
    [`protocols/review.md`](protocols/review.md).
 6. **Auto-fix** (optional, the repository's auto-fix label on the PR):
    `local/bin/autofix.sh PPPP --mode auto`, capped, serialized.
