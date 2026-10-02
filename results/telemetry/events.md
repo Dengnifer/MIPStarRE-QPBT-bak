@@ -10134,3 +10134,4 @@ assignment cannot push, change Lean files, run CI or merge. No library hook,
 merge gate, account, sandbox privilege or provider setting is being waived or
 changed. The failed preflight used no model allocation; the1800s repair budget
 and all prior754 costs remain unchanged.
+- Issue #777 Palomar source-cap preparation found 2,101 committed raw per-session JSONL captures totaling 2,024,852,261 bytes, while the official verifier caps the full checked-out substantive source at 524,288,000 bytes. MAIN authorized deterministic lossless gzip representation with immutable Git-blob and SHA-256 bindings. Preserve live raw writers, top-level registries, last-message prose, reviews, and runtime copies; verify every decoded archive byte against its source blob and reject damaged compressed input.

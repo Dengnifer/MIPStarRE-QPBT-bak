@@ -392,12 +392,27 @@ git worktree remove .worktrees/issue-0042-pauli-basis
 python3 local/bin/telemetry.py event --text "…symptom → diagnosis → fix → lesson"
 ```
 
-**The JSONL capture is the archive.** `results/telemetry/sessions/<name>.jsonl`
-and `<name>.last.md` are committed and never rewritten; the worktree is
-disposable and the codex rollout under `~/.codex/sessions/YYYY/MM/DD/` is
-outside the repository and outside our control. The registry line records the
-resolved rollout path when one is found, because the store is date-sharded and
-a bare thread id is not enough to locate it later.
+**The event stream is permanent archival evidence.** A live dispatch writes
+`results/telemetry/sessions/<name>.jsonl`; `dispatch.sh` does not compress or
+rename it. Historical raw captures may later be represented as deterministic
+`<name>.jsonl.gz` files in the committed substantive checkout only when
+`results/telemetry/session-capture-archive-manifest.jsonl` binds every original
+path to its immutable source commit, Git blob, mode, SHA-256 and byte count,
+and binds the archive's SHA-256, byte count and fixed gzip parameters. Run
+`python3 local/bin/archive_session_captures.py verify` to check complete
+coverage, canonical encoding and byte-for-byte decompression against every
+original Git blob. A missing, malformed or truncated archive is a failure, not
+an empty session. The private runtime raw copy is never modified by this
+packaging step.
+
+The `<name>.last.md` files and top-level `sessions.jsonl` registry remain
+readable, committed and uncompressed. Existing registry rows may retain their
+original `.jsonl` capture path; telemetry readers resolve the corresponding
+`.jsonl.gz` file only when the raw path is absent. The worktree is disposable
+and the codex rollout under `~/.codex/sessions/YYYY/MM/DD/` is outside the
+repository and outside our control. The registry line records the resolved
+rollout path when one is found, because the store is date-sharded and a bare
+thread id is not enough to locate it later.
 
 The registry is append-only (`meta.md`, "Two memory disciplines"): archival
 appends a new line for the same `name` rather than editing the old one, and
@@ -516,7 +531,7 @@ fix sessions; no role name identifies one, so `dispatch.sh` cannot.
 
 | Artifact | Path | Lifetime |
 |---|---|---|
-| event stream | `results/telemetry/sessions/<name>.jsonl` | permanent, committed — this is the archive |
+| event stream | `results/telemetry/sessions/<name>.jsonl[.gz]` | permanent lossless archive |
 | final message | `results/telemetry/sessions/<name>.last.md` | permanent, committed |
 | registry line | `results/telemetry/sessions.jsonl` | permanent, append-only |
 | codex rollout | `~/.codex/sessions/YYYY/MM/DD/rollout-*-<thread-id>.jsonl` | outside the repo; path recorded, contents not relied on |

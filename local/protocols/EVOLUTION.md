@@ -1870,3 +1870,28 @@ override is still never self-granted.
 **Expected effect:** the guard still stops runaway scaffolding, at five times the old ceiling. The per-episode
 discipline in `local/personas/main.md` (stop at the limit, commit what stands, record, rescope) is unchanged, and
 review still checks the PR's cumulative workflow diff.
+
+## 2026-10-02 - Store historical session captures as lossless gzip archives (#777)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Issue #777 Palomar
+source-cap preparation". The official Palomar verifier applies a 500 MiB cap
+(524,288,000 bytes) to the regular files in the clean substantive checkout;
+2,101 raw per-session JSONL captures alone occupy 2,024,852,261 bytes. MAIN's
+issue #777 authorization permits a lossless deterministic representation but
+forbids deletion, filtering or summarization of the recorded evidence.
+
+**Change:** `local/protocols/sessions.md` permits historical per-session raw
+captures to be committed as fixed-parameter `.jsonl.gz` files while live
+writers continue to produce raw `.jsonl`. A committed JSONL manifest binds each
+original path, source commit, Git blob, mode, SHA-256 and byte count to the
+archive's path, SHA-256, byte count and gzip parameters. The standard-library
+archive utility verifies complete coverage, canonical encoding and exact
+recovery against every original Git blob. `telemetry.py` reads either form,
+uses a compressed fallback for legacy registry paths, and rejects damaged gzip
+instead of treating it as an empty record. Top-level append-only registries,
+last-message prose, reviews and runtime raw copies remain unchanged.
+
+**Expected effect:** the clean substantive checkout remains below Palomar's
+source cap without losing one byte of session evidence or changing live
+accounting. Historical records remain reproducibly recoverable and corrupt or
+partial archives fail closed.

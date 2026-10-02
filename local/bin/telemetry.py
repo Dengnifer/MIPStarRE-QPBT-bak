@@ -34,12 +34,14 @@ from __future__ import annotations
 
 import argparse
 import fcntl
+import gzip
 import json
 import os
 import re
 import shlex
 import sys
 import tempfile
+import zlib
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
@@ -197,25 +199,52 @@ def _ensure_trailing_newline(handle: Any) -> None:
     handle.seek(0, os.SEEK_END)
 
 
+def resolve_jsonl_path(path: Path) -> Path:
+    """Resolve a raw JSONL path to its lossless historical archive when needed."""
+    if path.exists():
+        return path
+    if path.name.endswith(".jsonl"):
+        archived = path.with_name(path.name + ".gz")
+        if archived.exists():
+            return archived
+    return path
+
+
+def jsonl_stem(path: Path) -> str:
+    """Return the logical stem of either ``name.jsonl`` or ``name.jsonl.gz``."""
+    for suffix in (".jsonl.gz", ".jsonl"):
+        if path.name.endswith(suffix):
+            return path.name[: -len(suffix)]
+    return path.stem
+
+
 def read_jsonl(path: Path) -> tuple[list[dict[str, Any]], int]:
-    """Read a JSONL file, returning (objects, malformed line count)."""
+    """Read raw or gzipped JSONL, returning objects and malformed line count."""
+    path = resolve_jsonl_path(path)
     if not path.exists():
         return [], 0
     objects: list[dict[str, Any]] = []
     errors = 0
-    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        raw = raw.strip()
-        if not raw:
-            continue
-        try:
-            obj = json.loads(raw)
-        except json.JSONDecodeError:
-            errors += 1
-            continue
-        if isinstance(obj, dict):
-            objects.append(obj)
-        else:
-            errors += 1
+    opener = gzip.open if path.name.endswith(".jsonl.gz") else open
+    try:
+        with opener(path, "rt", encoding="utf-8", errors="replace") as handle:
+            for raw in handle:
+                raw = raw.strip()
+                if not raw:
+                    continue
+                try:
+                    obj = json.loads(raw)
+                except json.JSONDecodeError:
+                    errors += 1
+                    continue
+                if isinstance(obj, dict):
+                    objects.append(obj)
+                else:
+                    errors += 1
+    except (EOFError, gzip.BadGzipFile, OSError, zlib.error) as error:
+        if path.name.endswith(".jsonl.gz"):
+            raise ValueError(f"damaged compressed JSONL {path}: {error}") from error
+        raise
     return objects, errors
 
 
@@ -646,7 +675,7 @@ def record_native(args: argparse.Namespace) -> int:
 
 
 def cmd_session_summarize(args: argparse.Namespace) -> int:
-    capture = args.capture.resolve()
+    capture = resolve_jsonl_path(args.capture.resolve())
     if not capture.exists():
         fail(
             f"capture file not found: {capture}\n"
@@ -655,7 +684,10 @@ def cmd_session_summarize(args: argparse.Namespace) -> int:
             "cannot be reconstructed."
         )
 
-    events, parse_errors = read_jsonl(capture)
+    try:
+        events, parse_errors = read_jsonl(capture)
+    except ValueError as error:
+        fail(str(error))
     if parse_errors:
         warn(f"{parse_errors} malformed line(s) in {capture} were skipped")
     if not events:
@@ -672,7 +704,7 @@ def cmd_session_summarize(args: argparse.Namespace) -> int:
         )
     usage, turns = summarize_usage(events, mode=args.usage_mode)
 
-    name = args.name or capture.stem
+    name = args.name or jsonl_stem(capture)
     role = args.role
     if role is None:
         head = name.split("-", 1)[0]
@@ -887,9 +919,9 @@ def _build_parser() -> argparse.ArgumentParser:
 
     summarize = subparsers.add_parser(
         "session-summarize",
-        help="turn a captured `codex exec --json` stream into a sessions.jsonl line",
+        help="turn a raw or gzipped `codex exec --json` stream into a sessions.jsonl line",
     )
-    summarize.add_argument("capture", type=Path, help="captured JSONL event stream")
+    summarize.add_argument("capture", type=Path, help="captured .jsonl or .jsonl.gz event stream")
     summarize.add_argument("--name", help="session name (default: capture file stem)")
     summarize.add_argument("--role", choices=ROLES, help="agent role")
     summarize.add_argument("--model", help="explicitly selected Codex model")
