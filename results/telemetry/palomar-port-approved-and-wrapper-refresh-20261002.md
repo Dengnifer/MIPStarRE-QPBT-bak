@@ -152,3 +152,12 @@ bytes of remaining margin. All prior 2,163 manifest/payload objects are
 reported unchanged. Its final receipt is still running and will be adopted
 from the dispatch registry; no final publication or independent approval is
 claimed yet.
+
+The refreshed-head review completed APPROVED with no findings, published as
+review `5390987805` on `283d4fa2`. Actual reviewer time is 602s; cumulative
+PR778 review cost is now 3,199s. Normal merge is ready for retry after adopting
+the receipt. The review prose calls the API-doc evidence partial; the actual
+full 20,151-job success at `68b5c46a` remains recorded in the earlier checkpoint
+and PR body. It was not rerun at the telemetry-only refreshed head, and no
+new-head full API-doc execution is claimed. The four theorem statements and
+all source blobs are unchanged from the previously approved source.
