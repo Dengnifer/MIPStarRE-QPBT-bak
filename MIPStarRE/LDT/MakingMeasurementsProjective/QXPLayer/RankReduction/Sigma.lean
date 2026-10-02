@@ -134,7 +134,7 @@ private noncomputable def sigmaFinCarrierEquiv {Outcome : Type*} [Fintype Outcom
 
 /-- The canonical block projective measurement on the lifted sigma carrier
 indexed by `Fin n`. -/
-private noncomputable def finSigmaProjMeas (n : ℕ) (m : Fin n → ℕ) :
+noncomputable def finSigmaProjMeas (n : ℕ) (m : Fin n → ℕ) :
     ProjMeas (Fin n) (ULift.{uι} (Σ i : Fin n, Fin (m i))) where
   outcome := fun i =>
     Matrix.diagonal fun x : ULift.{uι} (Σ i : Fin n, Fin (m i)) => if x.down.1 = i then 1 else 0

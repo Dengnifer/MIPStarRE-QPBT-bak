@@ -207,7 +207,7 @@ noncomputable def addInURightOperatorAtPoint {Outcome : Type*} [Fintype Outcome]
     let Au := pointConditionedOutcomeOperatorAtPolynomial params strategy ah.2 u
     opTensor (Au * (M u).outcome ah.1 * Au) (T.outcome ah.2)
 
-private noncomputable def addInUPointAverage (params : Parameters)
+noncomputable def addInUPointAverage (params : Parameters)
     [FieldModel params.q]
     (strategy : SymStrat params ι)
     (f : Point params → MIPStarRE.Quantum.Op (ι × ι)) : Error :=

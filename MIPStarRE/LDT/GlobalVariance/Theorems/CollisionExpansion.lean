@@ -548,4 +548,6 @@ lemma generalizeBFromSchwartzZippel
   intro g
   exact generalizeBPointwiseSchwartzZippel params strategy G g
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

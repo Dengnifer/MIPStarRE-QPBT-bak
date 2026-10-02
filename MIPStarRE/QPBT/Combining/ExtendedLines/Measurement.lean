@@ -146,7 +146,13 @@ private theorem SubLineWitness.exists_affineData {params : AdmissibleParams}
 def SubLineWitness.affineData {params : AdmissibleParams}
     (sublines : SubLineWitness params) (sample : SubLineTriple params)
     (hsample : sample ∈ sublines.D.support) : Fin 8 → PauliScalar params :=
-  Classical.choose (sublines.exists_affineData sample hsample)
+  Classical.choose (show
+    ∃ data : Fin 8 → PauliScalar params,
+      IsCombineLineCompatible (directPointToPauli params sample.1.base)
+        (directPointToPauli params sample.1.direction)
+        sample.2.1.base sample.2.1.direction sample.2.2.base sample.2.2.direction
+        (data 0) (data 1) (data 2) (data 3) (data 4) (data 5) (data 6) (data 7) from by
+    exact sublines.exists_affineData sample hsample)
 
 /-- The selected coordinates satisfy the source's affine line identities. -/
 theorem SubLineWitness.affineData_compatible {params : AdmissibleParams}

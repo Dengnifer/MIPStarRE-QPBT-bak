@@ -218,4 +218,6 @@ lemma leftTensor_opBounded01
   · exact sub_nonneg.mpr
       (leftTensor_le_one (ι₂ := ι₂) (sub_nonneg.mp hB.boundedByIdentity))
 
+end
+
 end MIPStarRE.LDT.Preliminaries

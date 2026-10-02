@@ -19,7 +19,7 @@ namespace MIPStarRE.QPBT
 section
 open MIPStarRE.LDT
 
--- source: MIPStarRE/QPBT/Algebra/SelfDualBasisTheorems.lean:144-149  (MIPStarRE.QPBT.kappaVec)
+-- source: MIPStarRE/QPBT/Algebra/SelfDualBasisTheorems.lean:148-153  (MIPStarRE.QPBT.kappaVec)
 /-- Fixed-model coordinate vector for item 3 of
 blueprint `lem:downsize_field`, paper
 `04_preliminaries.tex:509-550`. -/

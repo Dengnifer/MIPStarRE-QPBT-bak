@@ -364,7 +364,7 @@ theorem msRejection_eq_source {P : AdmissibleParams} {ε : ℝ}
       by_cases hab : msWinPredicate x y a b = false <;> simp [hab]
 
 /-- Lift a supported Magic Square incidence to the corresponding Pauli verifier edge. -/
-private def msImplicationEdge (xy : MsType × MsType)
+def msImplicationEdge (xy : MsType × MsType)
     (hxy : xy ∈ (graphDistribution msEdges msEdges_nonempty).support) : PauliEdge :=
   ⟨((.ms xy.1), (.ms xy.2)), by
     have hedge : Sym2.mk xy.1 xy.2 ∈ msEdges :=
@@ -444,7 +444,7 @@ theorem msRejection_le_pauliRejection {P : AdmissibleParams} {ε : ℝ}
   exact msRejection_implies_pauliRejection P z xy hxy hanti A B hreject
 
 /-- Rejection mass of the induced Magic Square strategy at one tuple and question pair. -/
-private noncomputable def inducedMsRejection {P : AdmissibleParams} {ε : ℝ}
+noncomputable def inducedMsRejection {P : AdmissibleParams} {ε : ℝ}
     (S : ProjectiveSetting P ε) (ω : PauliTuple P) (xy : MsType × MsType) : ℝ :=
   outcomeEventWeight (S.msStrategyAt ω) xy.1 xy.2
     (fun a b => msWinPredicate xy.1 xy.2 a b = false)

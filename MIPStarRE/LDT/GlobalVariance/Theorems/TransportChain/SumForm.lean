@@ -454,4 +454,6 @@ lemma localVarianceDeviation_sum_le_localVarianceOfPointsError
   exact le_trans hlocal_sum
     (localVarianceTransportChainError_le_localVarianceOfPointsError params strategy hgood)
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

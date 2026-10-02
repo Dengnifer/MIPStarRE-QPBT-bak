@@ -14,7 +14,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 namespace MIPStarRE.QPBT
 
--- source: MIPStarRE/QPBT/Algebra/Coefficients.lean:26-33  (MIPStarRE.QPBT.evalCoefficient)
+-- source: MIPStarRE/QPBT/Algebra/Coefficients.lean:30-37  (MIPStarRE.QPBT.evalCoefficient)
 /-- Evaluation of a coefficient tuple at a field element. This is the
 representative convention used by the line answers in blueprint
 `def:ld-win-predicate`, paper origin

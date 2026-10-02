@@ -10,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -23,7 +24,7 @@ EXTRACTOR = COMPARATOR / "extract_closure.lean"
 LDT_EXPECTED = COMPARATOR / "expected" / "Challenge.lean.expected"
 PALOMAR_EXPECTED = COMPARATOR / "expected" / "palomar" / "Challenge.lean.expected"
 LDT_BASELINE_SHA256 = (
-    "d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2"
+    "3430abaf0e82e3527a8f64719f5da2740f3a84d4169a3391be8af6650179c434"
 )
 PALOMAR_BASELINE_SHA256 = (
     "acb66991fbdbc80a9c5d0a7e522f572ba604e6c88b2907f9c43a477438ebe6f8"
@@ -116,6 +117,29 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
                 "Decl\tMIPStarRE/Foo.lean\t1\t2\n"
                 "Hole\tMIPStarRE/Hole.lean\t3\t4\tDEF_SAFE\n"
                 "Generated\tMIPStarRE/Bar.lean\tNORANGE\tNORANGE\n",
+            )
+
+    def test_closure_extraction_loads_transitive_server_metadata(self) -> None:
+        challenge = challenge_config.load_challenges(["ldt"])[0]
+        with tempfile.TemporaryDirectory() as td:
+            workdir = Path(td)
+
+            def fake_run(cmd, *, cwd, stdout=None, env=None):
+                self.assertEqual(cwd, REPO_ROOT)
+                self.assertIsNotNone(stdout)
+                assert stdout is not None
+                stdout.write_text(
+                    "Decl\tMIPStarRE/Foo.lean\t1\t2\n", encoding="utf-8"
+                )
+                return ""
+
+            with patch.object(check_challenge_drift, "run", side_effect=fake_run) as run:
+                check_challenge_drift.closure_tsv(REPO_ROOT, workdir, challenge)
+
+            command = run.call_args.args[0]
+            self.assertEqual(
+                command[:4],
+                ["lake", "env", "lean", "-DElab.inServer=true"],
             )
 
     def test_pr_ci_runs_drift_guard_after_lean_build_for_comparator_changes(self) -> None:

@@ -14,10 +14,10 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 namespace MIPStarRE.LDT
 
--- source: MIPStarRE/LDT/Basic/ParametersBase.lean:18-18  (MIPStarRE.LDT.Error)
+-- source: MIPStarRE/LDT/Basic/ParametersBase.lean:22-22  (MIPStarRE.LDT.Error)
 abbrev Error := ℝ
 
--- source: MIPStarRE/LDT/Basic/ParametersBase.lean:210-217  (MIPStarRE.LDT.FieldModel)
+-- source: MIPStarRE/LDT/Basic/ParametersBase.lean:214-221  (MIPStarRE.LDT.FieldModel)
 /-- A bundled field model for the paper's `F_q`, together with a coding equivalence
 to the repository's finite carrier `Fin q`. -/
 class FieldModel (q : ℕ) where

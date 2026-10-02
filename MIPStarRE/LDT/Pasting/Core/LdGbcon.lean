@@ -32,7 +32,7 @@ private noncomputable def ldGbconAxisLineMeasurement
   { toSubMeas := postprocess ((strategy.axisParallelMeasurement ℓ).toSubMeas) (· zeroCoord)
     total_eq_one := (strategy.axisParallelMeasurement ℓ).total_eq_one }
 
-private noncomputable def ldGbconVerticalLineMeasurement
+noncomputable def ldGbconVerticalLineMeasurement
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) :
     IdxMeas (Point params.next) (Fq params) ι := fun u =>

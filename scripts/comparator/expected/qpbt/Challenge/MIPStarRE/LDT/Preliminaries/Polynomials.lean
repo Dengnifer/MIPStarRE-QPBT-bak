@@ -14,7 +14,7 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 namespace MIPStarRE.LDT.Preliminaries
 
--- source: MIPStarRE/LDT/Preliminaries/Polynomials.lean:25-29  (MIPStarRE.LDT.Preliminaries.polyFunc)
+-- source: MIPStarRE/LDT/Preliminaries/Polynomials.lean:29-33  (MIPStarRE.LDT.Preliminaries.polyFunc)
 /-- `\polyfunc{m}{q}{d}` from the paper's definition of low-individual-degree
 polynomials. This is Mathlib's `MvPolynomial.restrictDegree` submodule. -/
 noncomputable abbrev polyFunc (m : ℕ) (K : Type*) [CommSemiring K] (d : ℕ) :

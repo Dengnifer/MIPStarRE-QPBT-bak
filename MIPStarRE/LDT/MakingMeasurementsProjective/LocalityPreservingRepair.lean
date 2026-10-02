@@ -56,7 +56,7 @@ open MIPStarRE.LDT
 noncomputable section
 
 /-- The diagonal block of a bipartite operator at a fixed right index. -/
-private def diagBlock {ιA ιB : Type*}
+def diagBlock {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (M : MIPStarRE.Quantum.Op (ιA × ιB)) (b : ιB) :
     MIPStarRE.Quantum.Op ιA :=
@@ -64,7 +64,7 @@ private def diagBlock {ιA ιB : Type*}
 
 /-- The normalized left marginal of a bipartite density, obtained by
 averaging its diagonal right blocks. -/
-private def leftMarginalDensity {ιA ιB : Type*}
+def leftMarginalDensity {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ρ : MIPStarRE.Quantum.Op (ιA × ιB)) : MIPStarRE.Quantum.Op ιA :=
   ((((Fintype.card ιB : Error) : Error)⁻¹ : Error) : ℂ) •
@@ -92,7 +92,8 @@ def leftMarginalState {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ψ : QuantumState (ιA × ιB)) : QuantumState ιA where
   density := leftMarginalDensity ψ.density
-  density_psd := leftMarginalDensity_nonneg ψ.density_psd
+  density_psd := by
+    exact leftMarginalDensity_nonneg ψ.density_psd
 
 /-- Left tensor placement is block diagonal with the same block at every
 right index. -/

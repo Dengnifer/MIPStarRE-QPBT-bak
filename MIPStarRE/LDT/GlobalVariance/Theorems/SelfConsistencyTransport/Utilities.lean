@@ -330,4 +330,6 @@ lemma cabApproxDelta_sum_from_sdd
                     rw [hleft s g, hright s g]
     _ ≤ η := hcab
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

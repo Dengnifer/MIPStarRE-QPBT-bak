@@ -284,4 +284,6 @@ lemma globalVarianceOfPoints
   intro g
   exact localVarianceTransportChainBound params strategy eps delta gamma hgood G g
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

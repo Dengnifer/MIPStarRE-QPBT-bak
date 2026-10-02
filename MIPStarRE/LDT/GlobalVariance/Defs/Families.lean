@@ -279,11 +279,14 @@ noncomputable def localVarianceLeftFamily (params : Parameters) [FieldModel para
       fun g => weightedPointConditionedOperatorAtPolynomial params strategy G g uv.1
     SubMeas.singleOutcome
       (averageOperatorOverDistribution (uniformDistribution (Polynomial params)) F)
-      (averageOperatorOverDistribution_nonneg
-        (uniformDistribution (Polynomial params)) F
-        (fun g => weightedPointConditionedOperatorAtPolynomial_pos params strategy G g uv.1))
-      (averageOperatorOverDistribution_uniform_le_one F
-        (fun g => weightedPointConditionedOperatorAtPolynomial_le_one params strategy G g uv.1))
+      (by
+        exact averageOperatorOverDistribution_nonneg
+          (uniformDistribution (Polynomial params)) F
+          (fun g => weightedPointConditionedOperatorAtPolynomial_pos params strategy G g uv.1))
+      (by
+        exact averageOperatorOverDistribution_uniform_le_one F
+          (fun g =>
+            weightedPointConditionedOperatorAtPolynomial_le_one params strategy G g uv.1))
 
 /-- Aggregated family for `A^v_[g(v)] ⊗ (G_g)^{1/2}`
 on the bipartite space `d * d`. -/
@@ -296,11 +299,14 @@ noncomputable def localVarianceRightFamily (params : Parameters) [FieldModel par
       fun g => weightedPointConditionedOperatorAtPolynomial params strategy G g uv.2
     SubMeas.singleOutcome
       (averageOperatorOverDistribution (uniformDistribution (Polynomial params)) F)
-      (averageOperatorOverDistribution_nonneg
-        (uniformDistribution (Polynomial params)) F
-        (fun g => weightedPointConditionedOperatorAtPolynomial_pos params strategy G g uv.2))
-      (averageOperatorOverDistribution_uniform_le_one F
-        (fun g => weightedPointConditionedOperatorAtPolynomial_le_one params strategy G g uv.2))
+      (by
+        exact averageOperatorOverDistribution_nonneg
+          (uniformDistribution (Polynomial params)) F
+          (fun g => weightedPointConditionedOperatorAtPolynomial_pos params strategy G g uv.2))
+      (by
+        exact averageOperatorOverDistribution_uniform_le_one F
+          (fun g =>
+            weightedPointConditionedOperatorAtPolynomial_le_one params strategy G g uv.2))
 
 /-- The same weighted operator on the first independently sampled point.
 On the bipartite space `d * d`. -/

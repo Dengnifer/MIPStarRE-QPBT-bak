@@ -493,7 +493,7 @@ theorem dlineMismatch_le_rejection {P : AdmissibleParams} {ε : ℝ}
   exact hne (dlineLabels_eq_of_win P W z A B htrue)
 
 /-- Source-answer mismatch mass for the completed line and point readouts. -/
-private noncomputable def lowDegreeMismatchMass {P : AdmissibleParams} {ε : ℝ}
+noncomputable def lowDegreeMismatchMass {P : AdmissibleParams} {ε : ℝ}
     (S : ProjectiveSetting P ε) (W : PauliKind)
     (sample : LineDesc P.toLdParams × (Fin P.m → PauliScalar P)) : ℝ :=
   outcomeEventWeight S.toStrategy

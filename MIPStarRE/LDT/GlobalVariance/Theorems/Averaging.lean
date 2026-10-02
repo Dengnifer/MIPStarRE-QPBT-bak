@@ -257,4 +257,6 @@ lemma avgOver_polynomialDistribution_le_of_pointwise
     _ = δ := by
       simp [polynomialDistribution, avgOver, uniformDistribution]
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

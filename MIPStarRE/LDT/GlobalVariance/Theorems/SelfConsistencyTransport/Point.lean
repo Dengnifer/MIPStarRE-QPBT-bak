@@ -374,4 +374,6 @@ lemma pointConditionedEventSelfConsistency_weighted_rightEdge_sum
           params strategy eps delta gamma hgood G
 
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

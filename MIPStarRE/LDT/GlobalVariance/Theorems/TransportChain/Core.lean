@@ -504,4 +504,6 @@ lemma localVarianceTransportChainError_le_localVarianceOfPointsError
   dsimp [localVarianceTransportChainError, localVarianceOfPointsError]
   linarith
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

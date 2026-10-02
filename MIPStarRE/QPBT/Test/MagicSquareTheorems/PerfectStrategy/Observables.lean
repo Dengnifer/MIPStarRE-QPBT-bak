@@ -206,7 +206,8 @@ noncomputable def reflectionMeasurement
     (O : Op V) (hO : Oᴴ = O) (hO_sq : O * O = 1) :
     Measurement (ZMod 2) V :=
   Measurement.ofSumEqOne (reflectionEffect O)
-    (fun b => (reflectionEffect_isProj O hO hO_sq b).nonneg)
+    (fun b => by
+      exact (reflectionEffect_isProj O hO hO_sq b).nonneg)
     (by
       rw [sum_zmod_two]
       simp [reflectionEffect]

@@ -21,7 +21,7 @@ namespace MIPStarRE.QPBT
 section
 open MIPStarRE.LDT MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/Games/Consistency.lean:19-30  (MIPStarRE.QPBT.consistencyDefect)
+-- source: MIPStarRE/QPBT/Games/Consistency.lean:23-34  (MIPStarRE.QPBT.consistencyDefect)
 /-- The off-diagonal defect in blueprint
 `def:consistency`, paper `06_nonlocal_games_and_mipstar.tex:232-248`. -/
 noncomputable def consistencyDefect {X α ι : Type*}

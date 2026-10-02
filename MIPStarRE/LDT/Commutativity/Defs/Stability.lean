@@ -31,7 +31,7 @@ variable (params : Parameters) [FieldModel params.q]
 The outcome type `β` must retain every coordinate that still appears in
 `weight`; otherwise any later postprocessing would sum over an irrelevant fiber
 and change the operator by a multiplicity factor. -/
-private noncomputable def weightedReindexOpFamily
+noncomputable def weightedReindexOpFamily
     {α β : Type*} [Fintype α] [Fintype β]
     {κ : Type*} [Fintype κ] [DecidableEq κ]
     (base : OpFamily α κ)

@@ -61,16 +61,18 @@ noncomputable def directPolyEquivPolynomial (D : DirectLdParams) :
   refine
     { toFun := fun g =>
         { poly := MvPolynomial.rename Fin.rev g.1
-          lowIndividualDegree := directPolynomialRename_degreeOf_le D g.1
-            (degreeOf_le_of_mem_polyFunc g.2) }
+          lowIndividualDegree := by
+            exact directPolynomialRename_degreeOf_le D g.1
+              (degreeOf_le_of_mem_polyFunc g.2) }
       invFun := fun g =>
-        ⟨MvPolynomial.rename Fin.rev g.poly, ?_⟩
+        ⟨MvPolynomial.rename Fin.rev g.poly, by
+          rw [MvPolynomial.mem_restrictDegree]
+          intro s hs i
+          exact (MvPolynomial.degreeOf_le_iff.mp (by
+            exact directPolynomialRename_degreeOf_le D g.poly
+              g.lowIndividualDegree i)) s hs⟩
       left_inv := ?_
       right_inv := ?_ }
-  · rw [MvPolynomial.mem_restrictDegree]
-    intro s hs i
-    exact (MvPolynomial.degreeOf_le_iff.mp
-      (directPolynomialRename_degreeOf_le D g.poly g.lowIndividualDegree i)) s hs
   · intro g
     apply Subtype.ext
     change MvPolynomial.rename Fin.rev
@@ -86,8 +88,8 @@ noncomputable def directPolyEquivPolynomial (D : DirectLdParams) :
           rw [MvPolynomial.rename_rename]
           rw [show Fin.rev ∘ Fin.rev = id by funext i; simp]
           exact MvPolynomial.rename_id_apply p
-        apply ldtPolynomial_ext
-        exact hpoly
+        exact (by
+          exact ldtPolynomial_ext hpoly)
 
 @[simp] theorem directPolyEquivPolynomial_poly
     (D : DirectLdParams) (g : PolyIndex D.m (DirectScalarQ D) D.d) :

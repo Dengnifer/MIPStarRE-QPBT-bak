@@ -64,7 +64,7 @@ noncomputable instance pauliQuestionPairDecidableEq (P : AdmissibleParams) :
 base, seed, and direction of a diagonal line. It is finite and indexes the
 line-point average in blueprint
 `lem:qld-win-implications`. -/
-private abbrev LineDescCode (P : AdmissibleParams) :=
+abbrev LineDescCode (P : AdmissibleParams) :=
   ((Fin P.m → PauliScalar P) × PauliScalar P) ⊕
     ((Fin P.m → PauliScalar P) × PauliScalar P ×
       (Fin P.m → PauliScalar P))
@@ -72,7 +72,7 @@ private abbrev LineDescCode (P : AdmissibleParams) :=
 /-- Map a canonical line to its kind and coordinate data: base and seed for an
 axis line, and base, seed, and direction for a diagonal line. Blueprint
 `lem:qld-win-implications`. -/
-private def lineDescCode (P : AdmissibleParams) :
+def lineDescCode (P : AdmissibleParams) :
     LineDesc P.toLdParams → LineDescCode P
   | .axis base seed _ => .inl (base, seed)
   | .diagonal base seed direction _ _ => .inr (base, seed, direction)
@@ -105,7 +105,8 @@ used in the line-point average from item 2 of blueprint
 `lem:qld-win-implications`. -/
 noncomputable instance lineDescFintype (P : AdmissibleParams) :
     Fintype (LineDesc P.toLdParams) :=
-  Fintype.ofInjective (lineDescCode P) (lineDescCode_injective P)
+  Fintype.ofInjective (lineDescCode P) (by
+    exact lineDescCode_injective P)
 
 /-- The set of pairs consisting of a canonical line and a point is finite.
 These pairs index the line-point distribution in the low-degree winning

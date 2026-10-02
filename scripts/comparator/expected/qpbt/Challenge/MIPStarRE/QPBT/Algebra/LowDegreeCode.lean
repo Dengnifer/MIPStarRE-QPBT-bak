@@ -19,7 +19,7 @@ namespace MIPStarRE.QPBT
 section
 open MvPolynomial
 
--- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:30-35  (MIPStarRE.QPBT.Cube)
+-- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:34-39  (MIPStarRE.QPBT.Cube)
 /-- The Boolean cube indexing the `2^m` qudits of the test.  This is the index
 type in blueprint
 `def:low-degree-encoding`, paper origin
@@ -27,7 +27,7 @@ type in blueprint
 -/
 abbrev Cube (m : ℕ) := Fin m → Bool
 
--- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:37-45  (MIPStarRE.QPBT.indicatorPoly)
+-- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:41-49  (MIPStarRE.QPBT.indicatorPoly)
 /--
 The representative polynomial which is `1` at `y` on the Boolean cube and
 zero at the other cube points.  This is the indicator polynomial in blueprint
@@ -38,7 +38,7 @@ noncomputable def indicatorPoly {K : Type*} [CommRing K] {m : ℕ} (y : Cube m) 
     MvPolynomial (Fin m) K :=
   ∏ i : Fin m, if y i then X i else (1 - X i)
 
--- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:47-55  (MIPStarRE.QPBT.lowDegreeEncoding)
+-- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:51-59  (MIPStarRE.QPBT.lowDegreeEncoding)
 /--
 The multilinear low-degree encoding of a coefficient string.  Polynomial
 representatives are used, as fixed by issue #0004, rather than quotienting by
@@ -49,7 +49,7 @@ noncomputable def lowDegreeEncoding {K : Type*} [CommRing K] {m : ℕ}
     (a : Cube m → K) : MvPolynomial (Fin m) K :=
   ∑ y : Cube m, a y • indicatorPoly y
 
--- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:59-65  (MIPStarRE.QPBT.lowDegreeEnc)
+-- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:63-69  (MIPStarRE.QPBT.lowDegreeEnc)
 /-- Evaluation shorthand for the low-degree encoding.  Blueprint
 `def:low-degree-encoding`, paper origin
 `references/qpbt-paper/04_preliminaries.tex:832-897`.
@@ -58,7 +58,7 @@ noncomputable def lowDegreeEnc {K : Type*} [CommRing K] {m : ℕ}
     (a : Cube m → K) (x : Fin m → K) : K :=
   eval x (lowDegreeEncoding a)
 
--- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:67-74  (MIPStarRE.QPBT.indicatorVec)
+-- source: MIPStarRE/QPBT/Algebra/LowDegreeCode.lean:71-78  (MIPStarRE.QPBT.indicatorVec)
 /--
 The indicator vector `ind_m(x)` of `def:indicator-vector`.
 Blueprint: `def:indicator-vector`; paper origin:

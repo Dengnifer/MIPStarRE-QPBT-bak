@@ -245,7 +245,8 @@ noncomputable def canonicalGlobalVarianceDecomposition (params : Parameters)
   orthogonalComponent := fun u =>
     A u - ((hypercubeVertexCount params : ℂ)⁻¹) • ∑ v, A v
   averageComponent_eq := rfl
-  orthogonal_sum_zero := centered_sum_eq_zero params A
+  orthogonal_sum_zero := by
+    exact centered_sum_eq_zero params A
   decomposition := fun _ => eq_add_of_sub_eq' rfl
 
 /-- Paper origin: `references/ldt-paper/expansion.tex:179-190`

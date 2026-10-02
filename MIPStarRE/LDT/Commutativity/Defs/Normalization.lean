@@ -71,7 +71,8 @@ noncomputable def normalizationConditionSandwichedFamily {OutcomeA OutcomeB : Ty
             (P.outcome_pos a)
             (Q.outcome_hermitian b)
       sum_eq_total := rfl
-      total_le_one := normalizationConditionSandwichedOperator_sum_le_one P Q a }
+      total_le_one := by
+        exact normalizationConditionSandwichedOperator_sum_le_one P Q a }
 
 /-- The total family `a ↦ ∑_b C_{a,b}` from `lem:normalization-condition`. -/
 noncomputable def normalizationConditionSandwichedTotalFamily {OutcomeA OutcomeB : Type*}
@@ -171,9 +172,10 @@ noncomputable def normalizationConditionSquareFamily {OutcomeA OutcomeB : Type*}
     (Matrix.posSemidef_self_mul_conjTranspose
       (normalizationConditionSandwichedTotalOperator P Q a)).nonneg
   sum_eq_total := rfl
-  total_le_one := normalizationConditionSandwichedTotalSum_le_one P Q fun a => by
-    simpa [normalizationConditionSandwichedTotalOperator_hermitian P Q a] using
-      normCondSandwichedTotal_sq_le P Q a
+  total_le_one := by
+    exact normalizationConditionSandwichedTotalSum_le_one P Q fun a => by
+      simpa [normalizationConditionSandwichedTotalOperator_hermitian P Q a] using
+        normCondSandwichedTotal_sq_le P Q a
 
 /-- The family `a ↦ (∑_b C_{a,b})^†(∑_b C_{a,b})`. -/
 noncomputable def normalizationConditionAdjointSquareFamily {OutcomeA OutcomeB : Type*}
@@ -191,9 +193,10 @@ noncomputable def normalizationConditionAdjointSquareFamily {OutcomeA OutcomeB :
     (Matrix.posSemidef_conjTranspose_mul_self
       (normalizationConditionSandwichedTotalOperator P Q a)).nonneg
   sum_eq_total := rfl
-  total_le_one := normalizationConditionSandwichedTotalSum_le_one P Q fun a => by
-    simpa [normalizationConditionSandwichedTotalOperator_hermitian P Q a] using
-      normCondSandwichedTotal_sq_le P Q a
+  total_le_one := by
+    exact normalizationConditionSandwichedTotalSum_le_one P Q fun a => by
+      simpa [normalizationConditionSandwichedTotalOperator_hermitian P Q a] using
+        normCondSandwichedTotal_sq_le P Q a
 
 /-- The operator `∑_a (∑_b C_{a,b})(∑_b C_{a,b})^†`. -/
 noncomputable def normalizationConditionSquareOperator {OutcomeA OutcomeB : Type*}

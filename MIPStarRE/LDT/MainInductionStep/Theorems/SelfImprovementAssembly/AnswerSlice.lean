@@ -160,8 +160,8 @@ noncomputable def xRestrictedAnswerSymStratOfAnswer
       (answerSelfImprovementCarrier params.next strategy) x).axisParallelMeasurement
   diagonalMeasurement :=
     { toIdxProjMeas := restrictAnswerDiagonalAnswerMeasurement params strategy x
-      transportInvariant :=
-        restrictAnswerDiagonalAnswerMeasurement_transportInvariant params strategy x }
+      transportInvariant := by
+        exact restrictAnswerDiagonalAnswerMeasurement_transportInvariant params strategy x }
 
 /-- Answer-valued slice restriction does not change the bipartite state. -/
 @[simp] theorem xRestrictedAnswerSymStratOfAnswer_state

@@ -454,7 +454,7 @@ noncomputable def averageIdxSubMeas {Question Outcome : Type*} [Fintype Outcome]
 
 /-! ### Tensor-placement constructors -/
 
-private def mkLeftPlacedSubMeas {α : Type*}
+def mkLeftPlacedSubMeas {α : Type*}
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype α] (A : SubMeas α ιA) :
     SubMeas α (ιA × ιB) where
@@ -465,7 +465,7 @@ private def mkLeftPlacedSubMeas {α : Type*}
     (congrArg (leftTensor (ι₂ := ιB)) A.sum_eq_total)
   total_le_one := leftTensor_le_one (ι₂ := ιB) A.total_le_one
 
-private def mkRightPlacedSubMeas {α : Type*}
+def mkRightPlacedSubMeas {α : Type*}
     {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     [Fintype α] (A : SubMeas α ιB) :
     SubMeas α (ιA × ιB) where

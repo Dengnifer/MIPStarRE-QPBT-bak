@@ -34,7 +34,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 After expanding the first evaluated family in paper `eq:gcom4-diff`, the remaining
 error is this nonnegative sum over pairs of distinct polynomial outcomes whose
 values collide at the sampled point `u`. -/
-private noncomputable def fullSliceBABAxCollisionFactored
+noncomputable def fullSliceBABAxCollisionFactored
     (params : Parameters) [FieldModel params.q]
     (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)
     (xy : FullSliceQuestion params) : Error :=

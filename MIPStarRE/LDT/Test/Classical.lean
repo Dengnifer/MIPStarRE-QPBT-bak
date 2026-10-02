@@ -68,14 +68,14 @@ def restrictedDiagonalAccepts {params : Parameters} [FieldModel params.q]
   | .B => strategy.pointAnswerA u = strategy.diagonalAnswerB ℓ zeroCoord
 
 /-- Average the indicator of a decidable predicate over a uniform sample space. -/
-private noncomputable def indicatorAcceptanceProbability {β : Type*}
+noncomputable def indicatorAcceptanceProbability {β : Type*}
     [Fintype β] [DecidableEq β] [Nonempty β]
     (p : β → Prop) : Error := by
   classical
   exact avgOver (uniformDistribution β) fun s => if p s then (1 : Error) else 0
 
 /-- Average the paper's role-tagged acceptance predicate over `Role × β`. -/
-private noncomputable def roleTaggedAcceptanceProbability {β : Type*}
+noncomputable def roleTaggedAcceptanceProbability {β : Type*}
     [Fintype β] [DecidableEq β] [Nonempty β]
     (pA pB : β → Prop) : Error := by
   classical

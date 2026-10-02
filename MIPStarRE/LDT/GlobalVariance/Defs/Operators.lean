@@ -3,6 +3,8 @@ module
 public import MIPStarRE.LDT.GlobalVariance.Defs.Core
 public import MIPStarRE.LDT.Test.StrategyCore
 
+@[expose] public section
+
 namespace MIPStarRE.LDT.GlobalVariance
 
 open MIPStarRE.LDT
@@ -14,8 +16,6 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable (params : Parameters) [FieldModel params.q]
 
 /-! ## Weighted operators and variance families -/
-
-@[expose] public section
 
 /-- The operator `(G_g)^{1/2}` used throughout `expansion.tex`.
 Uses `CFC.sqrt` (continuous functional calculus) to compute the matrix

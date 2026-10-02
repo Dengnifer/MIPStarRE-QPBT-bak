@@ -439,8 +439,9 @@ blueprint `def:ancillary-point-measurement`. -/
 noncomputable def tauPointMeas (W : PauliKind)
     (u : Fin P.m → PauliScalar P) :
     Measurement (PauliScalar P) (PauliRegister P) :=
-  Measurement.ofSumEqOne (tauPointProj W u) (tauPointProj_nonneg W u)
-    (sum_tauPointProj_eq_one W u)
+  Measurement.ofSumEqOne (tauPointProj W u) (by
+    exact tauPointProj_nonneg W u) (by
+    exact sum_tauPointProj_eq_one W u)
 
 /-- The effects of the Pauli point measurement are the point projectors. -/
 @[simp] theorem tauPointMeas_effect (W : PauliKind)

@@ -103,4 +103,6 @@ structure GlobalVarianceOfPointsStatement (params : Parameters) [FieldModel para
     pointConditionedGlobalVariance params strategy G ≤
       globalVarianceOfPointsError params eps delta
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

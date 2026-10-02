@@ -606,7 +606,7 @@ theorem localDirectSumBlock_finset_sum {α ιA ιB : Type*} (s : Finset α)
       rw [Finset.sum_insert ha, Finset.sum_insert ha, Finset.sum_insert ha, ih]
       rw [localDirectSumBlock_add]
 
-private def roleBlockFamily {ιA ιB : Type*}
+def roleBlockFamily {ιA ιB : Type*}
     (A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)) :
     Role → MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)
   | Role.A => A

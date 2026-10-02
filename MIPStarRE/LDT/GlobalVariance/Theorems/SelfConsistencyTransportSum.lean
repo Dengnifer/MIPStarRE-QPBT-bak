@@ -329,4 +329,6 @@ lemma axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum
         axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum
           params strategy eps delta gamma hgood G
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

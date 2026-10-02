@@ -22,13 +22,13 @@ namespace MIPStarRE.QPBT
 noncomputable section
 open MIPStarRE.LDT MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:37-40  (MIPStarRE.QPBT.QubitRegister)
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:41-44  (MIPStarRE.QPBT.QubitRegister)
 /-- The bit register obtained by expanding every Pauli-register field element
 in the basis stored by `P.model`. -/
 abbrev QubitRegister (P : AdmissibleParams) :=
   Cube P.m × Fin P.model.basisDim → ZMod 2
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:42-55  (MIPStarRE.QPBT.idealQubitState)
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:46-59  (MIPStarRE.QPBT.idealQubitState)
 /-- The ideal auxiliary state tensored with the qubit EPR register, in the
 local-player ordering used by `cor:pauli-binary`. -/
 noncomputable def idealQubitState (P : AdmissibleParams)
@@ -44,7 +44,7 @@ noncomputable def idealQubitState (P : AdmissibleParams)
         (EuclideanSpace.equiv (QubitRegister P × QubitRegister P) ℂ
           (eprState (QubitRegister P)) (p.1.2, p.2.2)))
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:57-73  (MIPStarRE.QPBT.QubitSoundnessWitness)
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:61-77  (MIPStarRE.QPBT.QubitSoundnessWitness)
 /-- The local isometries, auxiliary spaces, and unit auxiliary state in
 `cor:pauli-binary`; this structure introduces no hypothesis beyond the paper
 theorem. -/
@@ -68,7 +68,7 @@ attribute [instance] QubitSoundnessWitness.ιAFintype
   QubitSoundnessWitness.ιBFintype QubitSoundnessWitness.ιADecidableEq
   QubitSoundnessWitness.ιBDecidableEq
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:79-88  (MIPStarRE.QPBT.qubitProjOnA'')
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:83-92  (MIPStarRE.QPBT.qubitProjOnA'')
 /-- Alice's ideal qubit projector placed on the joint target space. -/
 noncomputable def qubitProjOnA'' (P : AdmissibleParams)
     {ιA' ιB' : Type*} [Fintype ιA'] [DecidableEq ιA']
@@ -80,7 +80,7 @@ noncomputable def qubitProjOnA'' (P : AdmissibleParams)
       qubitPauliProj W (kappaVec P.model u) p.1.2 q.1.2
     else 0
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:90-99  (MIPStarRE.QPBT.qubitProjOnB'')
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:94-103  (MIPStarRE.QPBT.qubitProjOnB'')
 /-- Bob's ideal qubit projector placed on the joint target space. -/
 noncomputable def qubitProjOnB'' (P : AdmissibleParams)
     {ιA' ιB' : Type*} [Fintype ιA'] [DecidableEq ιA']
@@ -92,7 +92,7 @@ noncomputable def qubitProjOnB'' (P : AdmissibleParams)
       qubitPauliProj W (kappaVec P.model u) p.2.2 q.2.2
     else 0
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:101-109  (MIPStarRE.QPBT.liftedQubitAEffect)
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:105-113  (MIPStarRE.QPBT.liftedQubitAEffect)
 /-- Lift a conjugated Alice effect to the full qubit target space. -/
 noncomputable def liftedQubitAEffect {P : AdmissibleParams} {G : Game}
     (S : Strategy G) {ιA' ιB' : Type*} [Fintype ιA'] [DecidableEq ιA']
@@ -103,7 +103,7 @@ noncomputable def liftedQubitAEffect {P : AdmissibleParams} {G : Game}
     Op ((ιA' × QubitRegister P) × (ιB' × QubitRegister P)) :=
   heteroKron (conjIsometry φA M) 1
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:111-119  (MIPStarRE.QPBT.liftedQubitBEffect)
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:115-123  (MIPStarRE.QPBT.liftedQubitBEffect)
 /-- Lift a conjugated Bob effect to the full qubit target space. -/
 noncomputable def liftedQubitBEffect {P : AdmissibleParams} {G : Game}
     (S : Strategy G) {ιA' ιB' : Type*} [Fintype ιA'] [DecidableEq ιA']
@@ -114,7 +114,7 @@ noncomputable def liftedQubitBEffect {P : AdmissibleParams} {G : Game}
     Op ((ιA' × QubitRegister P) × (ιB' × QubitRegister P)) :=
   heteroKron 1 (conjIsometry φB M)
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:121-130  (MIPStarRE.QPBT.qubitOperatorDistanceA)
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:125-134  (MIPStarRE.QPBT.qubitOperatorDistanceA)
 /-- Alice's qubit-projector family distance in `cor:pauli-binary`. -/
 noncomputable def qubitOperatorDistanceA
     (P : AdmissibleParams) (S : Strategy (pauliBasisTest P))
@@ -126,7 +126,7 @@ noncomputable def qubitOperatorDistanceA
         qubitProjOnA'' P W u)
       (idealQubitState P w.aux)‖ ^ 2
 
--- source: MIPStarRE/QPBT/Test/QubitForm.lean:132-141  (MIPStarRE.QPBT.qubitOperatorDistanceB)
+-- source: MIPStarRE/QPBT/Test/QubitForm.lean:136-145  (MIPStarRE.QPBT.qubitOperatorDistanceB)
 /-- Bob's qubit-projector family distance in `cor:pauli-binary`. -/
 noncomputable def qubitOperatorDistanceB
     (P : AdmissibleParams) (S : Strategy (pauliBasisTest P))

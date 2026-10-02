@@ -194,7 +194,8 @@ noncomputable def strategyPureState {G : Game} (S : Strategy G)
 /-- The density-matrix state represented by a game's unit strategy vector. -/
 noncomputable def strategyQuantumState {G : Game} (S : Strategy G) :
     QuantumState (S.ιA × S.ιB) := by
-  letI : Nonempty (S.ιA × S.ιB) := strategy_carrier_nonempty S
+  letI : Nonempty (S.ιA × S.ιB) := by
+    exact strategy_carrier_nonempty S
   exact PureState.toQuantumState (strategyPureState S)
 
 /-- The density-matrix state associated with a game strategy is normalized. -/

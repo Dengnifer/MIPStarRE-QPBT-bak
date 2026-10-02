@@ -46,7 +46,8 @@ noncomputable def questionwiseOneMeasNaimarkData
   Classical.choose <| oneMeasNaimark ({
     effect := (A x).outcome
     pos := (A x).outcome_pos
-    sum_le_one := idxSubMeas_outcome_sum_le_one A x
+    sum_le_one := by
+      exact idxSubMeas_outcome_sum_le_one A x
   } : MIPStarRE.Quantum.Submeasurement Outcome ι)
 
 /-- The questionwise Naimark data is attached to the intended source

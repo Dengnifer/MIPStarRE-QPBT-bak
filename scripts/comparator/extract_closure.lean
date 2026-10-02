@@ -59,6 +59,9 @@ def generatedTails : List String :=
    "mk.inj", "mk.injEq", "mk.noConfusion", "mk.sizeOf_spec"]
 
 def canon (env : Environment) (closure : NameSet) (n : Name) : Name :=
+  let n := match privateToUserName? n with
+    | some userName => if closure.contains userName then userName else n
+    | none => n
   let s := n.toString
   let s := (s.splitOn "._proof_").head!
   let s := (s.splitOn ".match_").head!

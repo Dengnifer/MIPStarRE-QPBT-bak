@@ -305,4 +305,6 @@ lemma generalizeBDeviationAtPolynomial_polysum_le_error
     _ ≤ generalizeBError params :=
         generalizeBCollisionResidual_polysum_le_error params strategy G
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

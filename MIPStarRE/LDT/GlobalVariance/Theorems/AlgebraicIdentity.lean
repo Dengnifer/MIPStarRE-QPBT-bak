@@ -411,4 +411,6 @@ lemma globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomia
           localVarianceDeviationAtPolynomial params strategy strategy.state G g := by
         rw [hlocal]
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

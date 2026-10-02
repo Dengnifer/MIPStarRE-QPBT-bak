@@ -225,7 +225,7 @@ noncomputable def interpolateCompletedSlicesFromSupport (params : Parameters)
       Li.eval₂ MvPolynomial.C
         (MvPolynomial.X (lastCoord params))
     LiMv * slicePoly
-  lowIndividualDegree :=
-    interpolateCompletedSlicesFromSupport_degree params xs gs σ hσsupport hσcard
+  lowIndividualDegree := by
+    exact interpolateCompletedSlicesFromSupport_degree params xs gs σ hσsupport hσcard
 
 end MIPStarRE.LDT.Pasting

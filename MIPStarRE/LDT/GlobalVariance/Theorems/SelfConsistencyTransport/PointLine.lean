@@ -415,4 +415,6 @@ lemma axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion
     _ ≤ 2 * eps := axisParallelPointLineConsistency_weighted_leftToRightLineQuestion
       params strategy eps delta gamma hgood G g
 
+end
+
 end MIPStarRE.LDT.GlobalVariance

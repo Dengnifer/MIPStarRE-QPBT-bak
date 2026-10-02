@@ -61,9 +61,11 @@ noncomputable def matrixSdpStrictPrimalSubmeasurement (params : Parameters)
     (model : MatrixSdpRealization params) :
     MatrixSubmeasurement (DegreeBoundedPolynomialAnswer params) model.space where
   effect := fun _ => sdpStrictPrimalWeight params • (1 : MatrixOperator model.space)
-  pos := fun _ => sdpStrictPrimalEffect_nonneg params model.space
-  sum_le_one := (le_of_eq (matrixSdpStrictPrimalConstantSum params model)).trans
-    (errorHalf_smul_one_le_one model.space)
+  pos := fun _ => by
+    exact sdpStrictPrimalEffect_nonneg params model.space
+  sum_le_one := by
+    exact (le_of_eq (matrixSdpStrictPrimalConstantSum params model)).trans
+      (errorHalf_smul_one_le_one model.space)
 
 /-- The matrix-level strict-feasible primal witness has total mass `(1/2) I`. -/
 theorem matrixSdpStrictPrimalSubmeasurement_sum_effect (params : Parameters)

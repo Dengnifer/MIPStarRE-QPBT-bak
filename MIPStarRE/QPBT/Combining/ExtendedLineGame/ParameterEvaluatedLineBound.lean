@@ -42,7 +42,7 @@ variable {setting : ProjectiveSetting P epsilon}
 variable {points : CombinedPointsWitness setting deltaQ}
 
 /-- The unique coordinate in the extended direct game. -/
-private def lineCoordinate : Fin P.extendedDirectLd.k :=
+def lineCoordinate : Fin P.extendedDirectLd.k :=
   ⟨0, by change 0 < 1; decide⟩
 
 private theorem coordinate_eq_lineCoordinate (i : Fin P.extendedDirectLd.k) :
@@ -55,7 +55,7 @@ private theorem coordinate_eq_lineCoordinate (i : Fin P.extendedDirectLd.k) :
 
 /-- Read the axis coefficient vector from a direct-game answer. Wrong answer
 formats receive an arbitrary zero value; their Born weight is zero. -/
-private def axisCoefficients
+def axisCoefficients
     (answer : DirectLdAnswer P.extendedDirectLd) :
     DirectDegPoly P.extendedDirectLd P.d :=
   match answer with
@@ -64,7 +64,7 @@ private def axisCoefficients
 
 /-- Read the diagonal coefficient vector from a direct-game answer. Wrong
 answer formats receive an arbitrary zero value; their Born weight is zero. -/
-private def diagonalCoefficients
+def diagonalCoefficients
     (answer : DirectLdAnswer P.extendedDirectLd) :
     DirectDegPoly P.extendedDirectLd
       (P.extendedDirectLd.m * P.extendedDirectLd.d) :=
@@ -73,12 +73,12 @@ private def diagonalCoefficients
   | _ => 0
 
 /-- The canonical direct-game axis question represented by an axis line. -/
-private def axisQuestion (line : DirectLineDesc P.extendedDirectLd) :
+def axisQuestion (line : DirectLineDesc P.extendedDirectLd) :
     DirectLdQuestion P.extendedDirectLd :=
   (.aline, ⟨line.base, line.index, 0⟩)
 
 /-- The canonical direct-game diagonal question represented by a diagonal line. -/
-private def diagonalQuestion (line : DirectLineDesc P.extendedDirectLd) :
+def diagonalQuestion (line : DirectLineDesc P.extendedDirectLd) :
     DirectLdQuestion P.extendedDirectLd :=
   (.dline, ⟨line.base, line.index, line.direction⟩)
 

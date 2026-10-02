@@ -19,7 +19,7 @@ namespace MIPStarRE.QPBT
 section
 open MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/State.lean:17-27  (MIPStarRE.QPBT.conjIsometry)
+-- source: MIPStarRE/QPBT/State.lean:21-31  (MIPStarRE.QPBT.conjIsometry)
 /-- Conjugation by the local isometries in `thm:ms-rigidity` and
 `lem:pauli-binary`; blueprint `thm:ms-rigidity` and
 `lem:pauli-binary`, paper
@@ -32,7 +32,7 @@ noncomputable def conjIsometry {ι ι' : Type*}
   let U : Matrix ι' ι ℂ := Matrix.toEuclideanLin.symm φ.toLinearMap
   U * M * Uᴴ
 
--- source: MIPStarRE/QPBT/State.lean:29-35  (MIPStarRE.QPBT.reindexState)
+-- source: MIPStarRE/QPBT/State.lean:33-39  (MIPStarRE.QPBT.reindexState)
 /-- Coordinate transport used by blueprint
 `def:strategy-distance`, paper `06_nonlocal_games_and_mipstar.tex:273-285`. -/
 noncomputable def reindexState {ι ι' : Type*} [Fintype ι] [DecidableEq ι]
@@ -41,7 +41,7 @@ noncomputable def reindexState {ι ι' : Type*} [Fintype ι] [DecidableEq ι]
   (EuclideanSpace.equiv ι' ℂ).symm
     (fun j => (EuclideanSpace.equiv ι ℂ ψ) (e.symm j))
 
--- source: MIPStarRE/QPBT/State.lean:37-55  (MIPStarRE.QPBT.isometryTensor)
+-- source: MIPStarRE/QPBT/State.lean:41-59  (MIPStarRE.QPBT.isometryTensor)
 /-- Apply the two independent local isometries of blueprint
 `thm:ms-rigidity`, paper
 `08_classical_and_quantum_low_degree_tests.tex:620-652`. -/

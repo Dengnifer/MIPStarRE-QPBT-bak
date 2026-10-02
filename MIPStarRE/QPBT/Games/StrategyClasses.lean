@@ -1,5 +1,4 @@
 module
-
 public import MIPStarRE.QPBT.Games.Defs
 public import MIPStarRE.QPBT.Games.Consistency
 public import MIPStarRE.QPBT.State
@@ -15,9 +14,7 @@ predicates from blueprint `def:projective-strategy-general`,
 `def:consistent-strategy`, and `def:spcc`, with source definitions in
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:68-180`.
 -/
-
 @[expose] public section
-
 namespace MIPStarRE.QPBT
 
 universe u
@@ -102,7 +99,7 @@ def IsCommutingOn {X Y α β ι : Type*}
     (B : Y → MIPStarRE.Quantum.Measurement β ι) : Prop :=
   ∀ x y, 0 < μ.weight (x, y) → ∀ a b, Commute ((A x).effect a) ((B y).effect b)
 
-private def transportOp {d₁ d₂ : Type u} (h : d₁ = d₂) (M : Op d₂) : Op d₁ :=
+def transportOp {d₁ d₂ : Type u} (h : d₁ = d₂) (M : Op d₂) : Op d₁ :=
   h.symm ▸ M
 
 /-- Transported common-space form of blueprint
@@ -996,8 +993,6 @@ theorem exists_symmetric_projective_strategy_of_strategy (G : SymmetricGame)
       _ = S₀.value := projectiveDilation_value S₀ a₀ a₀
   exact ⟨S, symmetrizedStrategy_isProjective T hT_proj,
     hvalue, h.trans_eq hvalue.symm⟩
-
-
 end
 
 end MIPStarRE.QPBT
