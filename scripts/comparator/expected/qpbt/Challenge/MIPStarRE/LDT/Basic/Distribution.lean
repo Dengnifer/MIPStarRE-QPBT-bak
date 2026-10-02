@@ -1,6 +1,8 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.ParametersBase
-import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.ParametersBase
+public import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
 
 /-! Challenge mirror of `MIPStarRE/LDT/Basic/Distribution.lean`.
 
@@ -10,6 +12,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.LDT
 
 -- source: MIPStarRE/LDT/Basic/Distribution.lean:22-27  (MIPStarRE.LDT.Distribution)

@@ -338,7 +338,8 @@ def assemble_split(
     files: dict[str, str] = {}
     for path in ordered:
         deps = minimal_mirror_imports(asm, path, contributing)
-        head = ["import Mathlib"] + [f"import {mirror_module(d)}" for d in deps]
+        head = ["module", "", "public import Mathlib"]
+        head += [f"public import {mirror_module(d)}" for d in deps]
         head += [
             "",
             f"/-! Challenge mirror of `{path}`.",
@@ -350,18 +351,21 @@ def assemble_split(
             "",
         ]
         head += opens
+        head += ["@[expose] public section", ""]
         body = asm.module_body(path, by_module[path])
         files[mirror_file(path)] = "\n".join(head) + "\n" + body + "\n"
 
     header = optional_part_text(root, challenge.header)
     footer = optional_part_text(root, challenge.footer)
-    part_imports = "\n".join(f"import {mirror_module(m)}" for m in ordered)
+    part_imports = "\n".join(f"public import {mirror_module(m)}" for m in ordered)
     marker = "import Mathlib\n"
     if not header:
         header = marker
     elif marker not in header:
         raise SystemExit("challenge header must start with `import Mathlib`")
-    header = header.replace(marker, marker + part_imports + "\n", 1)
+    module_imports = "module\n\npublic import Mathlib\n" + part_imports + "\n"
+    header = header.replace(marker, module_imports, 1)
+    header += "@[expose] public section\n\n"
 
     lines: list[str] = []
     if generated:

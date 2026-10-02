@@ -42,10 +42,11 @@ from pathlib import Path
 
 
 SORRY_RE = re.compile(r"\bsorry\b")
-# Comparator challenge scaffolding deliberately presents the target theorem with
+# The comparator footer template deliberately presents the target theorem with
 # exactly one ``sorry``; the companion repository replaces that hole with the
-# submitted proof. Additional holes in the same file must still count.
-INTENTIONAL_SORRY_PATH = "scripts/comparator/challenge_footer.lean"
+# submitted proof.  The `.lean.in` fragment is not a tracked Lean source, but
+# validate it here so an accidental additional hole still fails the badge job.
+INTENTIONAL_SORRY_PATH = "scripts/comparator/challenge_footer.lean.in"
 MAIN_FORMAL_DECL_RE = re.compile(r"(?m)^theorem\s+mainFormal\b")
 AXIOM_RE = re.compile(
     r"(?m)^\s*"
@@ -85,10 +86,10 @@ def main_formal_has_intentional_sorry(source: str) -> bool:
 
 
 def sorry_badge_count(repo_root: Path, lean_files: list[Path]) -> int:
-    """Count proof debt after validating and subtracting one challenge hole."""
+    """Count proof debt after validating the excluded challenge template."""
     intentional_path = repo_root / INTENTIONAL_SORRY_PATH
-    if intentional_path not in lean_files:
-        raise RuntimeError(f"tracked challenge footer missing: {INTENTIONAL_SORRY_PATH}")
+    if not intentional_path.is_file():
+        raise RuntimeError(f"challenge footer missing: {INTENTIONAL_SORRY_PATH}")
 
     source = strip_comments_and_strings(intentional_path.read_text(encoding="utf-8"))
     if not main_formal_has_intentional_sorry(source):
@@ -96,10 +97,12 @@ def sorry_badge_count(repo_root: Path, lean_files: list[Path]) -> int:
             "expected mainFormal to end with the intentional challenge sorry in "
             f"{INTENTIONAL_SORRY_PATH}"
         )
+    if len(SORRY_RE.findall(source)) != 1:
+        raise RuntimeError(
+            f"expected exactly one intentional sorry in {INTENTIONAL_SORRY_PATH}"
+        )
 
-    # Exempt that one structurally identified hole. Every other hole remains in
-    # the repository-wide count, including unrelated holes in the same file.
-    return count_pattern(lean_files, SORRY_RE) - 1
+    return count_pattern(lean_files, SORRY_RE)
 
 
 def strip_comments_and_strings(source: str) -> str:

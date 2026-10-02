@@ -138,8 +138,13 @@ class AssembleChallengeTests(unittest.TestCase):
             )
 
         self.assertTrue(files["Challenge.lean"].startswith(
-            "import Mathlib\nimport Challenge.MIPStarRE.Example\n"
+            "module\n\npublic import Mathlib\n"
+            "public import Challenge.MIPStarRE.Example\n"
         ))
+        self.assertIn("@[expose] public section", files["Challenge.lean"])
+        part = files["Challenge/MIPStarRE/Example.lean"]
+        self.assertTrue(part.startswith("module\n\npublic import Mathlib\n"))
+        self.assertIn("@[expose] public section", part)
 
     def test_split_assembly_omits_missing_configured_header(self) -> None:
         with tempfile.TemporaryDirectory() as td:
@@ -152,7 +157,8 @@ class AssembleChallengeTests(unittest.TestCase):
 
         root_module = files["Challenge.lean"]
         self.assertTrue(root_module.startswith(
-            "import Mathlib\nimport Challenge.MIPStarRE.Example\n"
+            "module\n\npublic import Mathlib\n"
+            "public import Challenge.MIPStarRE.Example\n"
         ))
         self.assertIn("-- footer sentinel", root_module)
 
@@ -168,7 +174,7 @@ class AssembleChallengeTests(unittest.TestCase):
             )
 
         root_module = files["Challenge.lean"]
-        self.assertIn("import Challenge.MIPStarRE.Example", root_module)
+        self.assertIn("public import Challenge.MIPStarRE.Example", root_module)
         self.assertIn("-- header sentinel", root_module)
 
 

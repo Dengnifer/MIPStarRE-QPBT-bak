@@ -1,6 +1,8 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.Distribution
-import Challenge.MIPStarRE.Quantum.Measurement
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.Distribution
+public import Challenge.MIPStarRE.Quantum.Measurement
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/Defs.lean`.
 
@@ -10,6 +12,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/Defs.lean

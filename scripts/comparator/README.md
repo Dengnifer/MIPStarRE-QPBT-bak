@@ -43,6 +43,9 @@ around the assembled body, the checked-in expected copy, and the per-challenge
 elaboration-context tables (`extras`, `module_preludes`).  The schema, with the
 meaning of every key, is documented at the top of `challenge_config.py`; unknown
 keys are rejected, so a typo fails loudly rather than silently dropping context.
+Headers and footers use the `.lean.in` suffix because they are byte-preserved
+source fragments, not independently runnable Lean files.  The split assembler
+adds the module header and visibility commands around those fragments.
 
 ### Registered definition frontiers
 
@@ -259,14 +262,14 @@ generation and deliberately does not duplicate mutable acceptance status.
   the source is marked `"noncomputable": true`, because the definitions inside
   such a section carry no `noncomputable` keyword of their own.
 - The target statements in each footer mirror the theorems in the library:
-  `challenge_footer.lean` mirrors
+  `challenge_footer.lean.in` mirrors
   `MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean`, and
-  `challenge_qpbt_footer.lean` mirrors
+  `challenge_qpbt_footer.lean.in` mirrors
   `MIPStarRE/QPBT/Test/Completeness.lean`,
   `MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean`,
   `MIPStarRE/QPBT/Test/Soundness.lean`, and
   `MIPStarRE/QPBT/Test/QubitForm.lean`.  The compact
-  `challenge_palomar_footer.lean` mirrors the aliases in
+  `challenge_palomar_footer.lean.in` mirrors the aliases in
   `MIPStarRE/QPBT/Palomar/PauliCompleteness.lean`,
   `MIPStarRE/QPBT/Palomar/LowDegreeSoundness.lean`, and
   `MIPStarRE/QPBT/Palomar/PauliSoundness.lean`.  If a library statement changes,
@@ -302,8 +305,12 @@ python3 scripts/comparator/assemble_challenge.py <closure.tsv> \
 `<out>/Challenge.lean` imports the parts under `<out>/Challenge/<library
 path>.lean` and carries the header and the `sorry`-ed target statements; each
 part imports Mathlib plus the mirrors of the library modules its source module
-imports.  The layout is what makes Lean generate the same auxiliary
-declarations, under the same names, as the library — see the "environment
-alignment" section of `docs/comparator.md`.  The checked-in copy is a
-directory, and `check_challenge_drift.py --challenge <name> [--update]`
-compares or rewrites the whole tree.
+imports.  Every generated file is a runnable module: imports are public and the
+generated declarations are in an exposed public section.  Keeping the golden
+tree as real `.lean` output lets drift checks compare exactly what the companion
+repository compiles, rather than maintaining a second filename mapping.  The
+layout is what makes Lean generate the same auxiliary declarations, under the
+same names, as the library — see the "environment alignment" section of
+`docs/comparator.md`.  The checked-in copy is a directory, and
+`check_challenge_drift.py --challenge <name> [--update]` compares or rewrites
+the whole tree.

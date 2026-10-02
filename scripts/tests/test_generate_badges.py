@@ -97,14 +97,11 @@ class GenerateBadgesTests(unittest.TestCase):
     def test_sorry_count_exempts_exactly_one_comparator_challenge_hole(
         self, check_output: mock.Mock
     ) -> None:
-        check_output.return_value = (
-            "MIPStarRE/Incomplete.lean\n"
-            "scripts/comparator/challenge_footer.lean\n"
-        )
+        check_output.return_value = "MIPStarRE/Incomplete.lean\n"
         with tempfile.TemporaryDirectory() as tmp_dir:
             repo_root = Path(tmp_dir)
             project_file = repo_root / "MIPStarRE/Incomplete.lean"
-            challenge_file = repo_root / "scripts/comparator/challenge_footer.lean"
+            challenge_file = repo_root / "scripts/comparator/challenge_footer.lean.in"
             project_file.parent.mkdir(parents=True)
             challenge_file.parent.mkdir(parents=True)
             project_file.write_text("theorem openGoal : True := by sorry\n")
@@ -125,7 +122,8 @@ class GenerateBadgesTests(unittest.TestCase):
                 "  sorry\n"
                 "end Test\n"
             )
-            self.assertEqual(sorry_badge_count(repo_root, files), 2)
+            with self.assertRaisesRegex(RuntimeError, "exactly one intentional sorry"):
+                sorry_badge_count(repo_root, files)
 
             challenge_file.write_text(
                 "namespace Test\n"

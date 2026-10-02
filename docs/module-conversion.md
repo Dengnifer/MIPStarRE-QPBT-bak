@@ -68,6 +68,20 @@ Mathlib-only challenge modules. Regeneration may update source line numbers in
 provenance comments; it must not change challenge declarations or target
 statements.
 
+Comparator header and footer files are partial source templates and therefore
+use the `.lean.in` suffix. Their bytes are inserted unchanged; the assembler is
+responsible for adding module syntax. Split challenge goldens remain runnable
+`.lean` files rather than archival `.lean.expected` files: each begins with
+`module`, uses `public import`, and places declarations in an
+`@[expose] public section`. This keeps the checked fixture identical to the
+source compiled by the companion comparator repository.
+
+The closure extractor is compile-time environment inspection. It begins with a
+module header, renders each configured dependency as `meta import all`, and
+runs in a private `meta section`. The `all` level is required because closure
+construction inspects private and compiler-generated declarations as well as
+definition values; ordinary imports do not retain that complete environment.
+
 ## Mechanical Audit
 
 For the pilot, the following command removes only the module header, public

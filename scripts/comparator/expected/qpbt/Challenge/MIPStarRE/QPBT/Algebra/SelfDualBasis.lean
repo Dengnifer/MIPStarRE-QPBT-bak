@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Algebra/SelfDualBasis.lean`.
 
@@ -9,6 +11,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- source: MIPStarRE/QPBT/Algebra/SelfDualBasis.lean:47-54  (MIPStarRE.QPBT.chiOfBasis)

@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.ParametersBase
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.ParametersBase
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Algebra/FieldBasis.lean`.
 
@@ -9,6 +11,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- source: MIPStarRE/QPBT/Algebra/FieldBasis.lean:22-26  (MIPStarRE.QPBT.IsAdmissibleSize)

@@ -1,34 +1,36 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.ParametersBase
-import Challenge.MIPStarRE.LDT.Preliminaries.Polynomials
-import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
-import Challenge.MIPStarRE.QPBT.Algebra.Subspaces
-import Challenge.MIPStarRE.Quantum.FiniteMatrix.Basic
-import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
-import Challenge.MIPStarRE.QPBT.Algebra.LowDegreeCode
-import Challenge.MIPStarRE.QPBT.State
-import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
-import Challenge.MIPStarRE.QPBT.Algebra.Lines
-import Challenge.MIPStarRE.QPBT.Algebra.Pauli
-import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasis
-import Challenge.MIPStarRE.Quantum.Measurement
-import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
-import Challenge.MIPStarRE.LDT.Basic.Distribution
-import Challenge.MIPStarRE.QPBT.Algebra.PauliTheorems
-import Challenge.MIPStarRE.QPBT.Games.Defs
-import Challenge.MIPStarRE.QPBT.Games.DistributionAux
-import Challenge.MIPStarRE.QPBT.Games.CondLinear
-import Challenge.MIPStarRE.QPBT.Games.Consistency
-import Challenge.MIPStarRE.QPBT.Test.LowDegreeGame
-import Challenge.MIPStarRE.QPBT.Test.MagicSquare
-import Challenge.MIPStarRE.QPBT.Games.TypedCondLinear
-import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
-import Challenge.MIPStarRE.QPBT.Test.SoundnessDefs
-import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
-import Challenge.MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
-import Challenge.MIPStarRE.QPBT.Observables.WinImplications.Setup
-import Challenge.MIPStarRE.QPBT.Test.Completeness
-import Challenge.MIPStarRE.QPBT.Test.QubitForm
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.ParametersBase
+public import Challenge.MIPStarRE.LDT.Preliminaries.Polynomials
+public import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
+public import Challenge.MIPStarRE.QPBT.Algebra.Subspaces
+public import Challenge.MIPStarRE.Quantum.FiniteMatrix.Basic
+public import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
+public import Challenge.MIPStarRE.QPBT.Algebra.LowDegreeCode
+public import Challenge.MIPStarRE.QPBT.State
+public import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+public import Challenge.MIPStarRE.QPBT.Algebra.Lines
+public import Challenge.MIPStarRE.QPBT.Algebra.Pauli
+public import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasis
+public import Challenge.MIPStarRE.Quantum.Measurement
+public import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
+public import Challenge.MIPStarRE.LDT.Basic.Distribution
+public import Challenge.MIPStarRE.QPBT.Algebra.PauliTheorems
+public import Challenge.MIPStarRE.QPBT.Games.Defs
+public import Challenge.MIPStarRE.QPBT.Games.DistributionAux
+public import Challenge.MIPStarRE.QPBT.Games.CondLinear
+public import Challenge.MIPStarRE.QPBT.Games.Consistency
+public import Challenge.MIPStarRE.QPBT.Test.LowDegreeGame
+public import Challenge.MIPStarRE.QPBT.Test.MagicSquare
+public import Challenge.MIPStarRE.QPBT.Games.TypedCondLinear
+public import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
+public import Challenge.MIPStarRE.QPBT.Test.SoundnessDefs
+public import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
+public import Challenge.MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+public import Challenge.MIPStarRE.QPBT.Observables.WinImplications.Setup
+public import Challenge.MIPStarRE.QPBT.Test.Completeness
+public import Challenge.MIPStarRE.QPBT.Test.QubitForm
 
 /-!
 # Challenge: headline theorems of the quantum Pauli basis test
@@ -69,6 +71,8 @@ for how to run the verification.
 -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 -- Compiler-generated declarations in the closure (no source
 -- range); they regenerate identically during elaboration:
 --   MIPStarRE.QPBT.MsType.ctorIdx  (from MIPStarRE/QPBT/Test/MagicSquare.lean)

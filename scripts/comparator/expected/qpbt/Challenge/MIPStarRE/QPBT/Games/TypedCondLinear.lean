@@ -1,6 +1,8 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Games.CondLinear
-import Challenge.MIPStarRE.QPBT.Games.DistributionAux
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Games.CondLinear
+public import Challenge.MIPStarRE.QPBT.Games.DistributionAux
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/TypedCondLinear.lean`.
 
@@ -10,6 +12,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/TypedCondLinear.lean

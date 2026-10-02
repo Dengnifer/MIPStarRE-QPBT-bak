@@ -1,8 +1,10 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Preliminaries.Polynomials
-import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
-import Challenge.MIPStarRE.QPBT.Games.TypedCondLinear
-import Challenge.MIPStarRE.QPBT.Test.LowDegreeGame
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Preliminaries.Polynomials
+public import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
+public import Challenge.MIPStarRE.QPBT.Games.TypedCondLinear
+public import Challenge.MIPStarRE.QPBT.Test.LowDegreeGame
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Test/LowDegreeGameMeasurements.lean`.
 
@@ -12,6 +14,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Test/LowDegreeGameMeasurements.lean

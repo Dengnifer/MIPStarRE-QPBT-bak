@@ -34,8 +34,12 @@ EXTRACTOR = SCRIPT_DIR / "extract_closure.lean"
 ASSEMBLER = SCRIPT_DIR / "assemble_challenge.py"
 
 # A Lean module header cannot be computed at elaboration time, so the extractor
-# is rendered per challenge with its own import block substituted.
-IMPORT_BLOCK = re.compile(r"\A(?:[ \t]*\n)*(?:import[ \t]+\S+[^\n]*\n)+")
+# is rendered per challenge with its own private meta import block substituted.
+# Keep the literal `module` command: only the configured imports vary.
+IMPORT_BLOCK = re.compile(
+    r"\A(?P<module>[ \t]*module[ \t]*\n(?:[ \t]*\n)*)"
+    r"(?:(?:meta[ \t]+)?import(?:[ \t]+all)?[ \t]+\S+[^\n]*\n)+"
+)
 
 
 def run(
@@ -106,12 +110,14 @@ def tree_diff(expected: dict[str, bytes], candidate: dict[str, bytes]) -> str:
 def render_extractor(challenge: ChallengeConfig, template: str) -> str:
     """The extractor source with this challenge's import block substituted."""
     body, substitutions = IMPORT_BLOCK.subn(
-        lambda _: challenge.import_block(), template, count=1
+        lambda match: match.group("module") + challenge.import_block(),
+        template,
+        count=1,
     )
     if substitutions != 1:
         raise ChallengeConfigError(
-            f"{EXTRACTOR} does not start with an import block; cannot render "
-            f"challenge {challenge.name!r}"
+            f"{EXTRACTOR} does not start with a module import block; cannot "
+            f"render challenge {challenge.name!r}"
         )
     return body
 

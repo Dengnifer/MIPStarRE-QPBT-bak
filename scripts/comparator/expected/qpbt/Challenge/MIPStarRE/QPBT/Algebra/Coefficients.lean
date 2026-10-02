@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Algebra/Coefficients.lean`.
 
@@ -8,6 +10,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- source: MIPStarRE/QPBT/Algebra/Coefficients.lean:26-33  (MIPStarRE.QPBT.evalCoefficient)

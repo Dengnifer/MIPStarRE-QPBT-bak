@@ -1,8 +1,10 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Algebra.Pauli
-import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
-import Challenge.MIPStarRE.QPBT.Algebra.Subspaces
-import Challenge.MIPStarRE.QPBT.State
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Algebra.Pauli
+public import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
+public import Challenge.MIPStarRE.QPBT.Algebra.Subspaces
+public import Challenge.MIPStarRE.QPBT.State
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Algebra/PauliTheorems.lean`.
 
@@ -12,6 +14,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Algebra/PauliTheorems.lean

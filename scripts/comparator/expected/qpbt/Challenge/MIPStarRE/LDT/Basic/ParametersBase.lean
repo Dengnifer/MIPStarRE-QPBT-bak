@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-! Challenge mirror of `MIPStarRE/LDT/Basic/ParametersBase.lean`.
 
@@ -8,6 +10,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.LDT
 
 -- source: MIPStarRE/LDT/Basic/ParametersBase.lean:18-18  (MIPStarRE.LDT.Error)

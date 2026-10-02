@@ -1,6 +1,8 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.State
-import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.State
+public import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Test/SoundnessDefs.lean`.
 
@@ -10,6 +12,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Test/SoundnessDefs.lean:28-229

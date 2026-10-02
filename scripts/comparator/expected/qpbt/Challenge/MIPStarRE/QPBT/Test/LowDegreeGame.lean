@@ -1,9 +1,11 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
-import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
-import Challenge.MIPStarRE.QPBT.Algebra.Lines
-import Challenge.MIPStarRE.QPBT.Games.CondLinear
-import Challenge.MIPStarRE.QPBT.Games.Defs
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
+public import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
+public import Challenge.MIPStarRE.QPBT.Algebra.Lines
+public import Challenge.MIPStarRE.QPBT.Games.CondLinear
+public import Challenge.MIPStarRE.QPBT.Games.Defs
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Test/LowDegreeGame.lean`.
 
@@ -13,6 +15,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Test/LowDegreeGame.lean:31-768
