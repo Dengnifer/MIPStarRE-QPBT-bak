@@ -39,3 +39,21 @@ workedonconvertedFiniteMatrixpilot; productionimportsarestilllegacyhereandlitera
 module-importreplayawaitsP1-P7integration. Aclearlyqualifiedlegacy-headerreplayis
 beingusedforcurrentclosure/hashchecks;itdoesnotreplacefinalsupportedmodulechecks.
 Allthreeworker slots areoccupied. Goalactive; nothing submittedorcontactedoutside.
+
+
+## F1 repair published
+
+The #745 repair completed normally and published PR755 head
+33c01ce27bd95d02052665bea21f1a521027b620. The clean branch rejects unpaired
+repository overrides before remote PR reads or runtime mutation. Fourteen focused
+routing cases,74 workflow tests and16 review/native tests passed. The normal hook
+ran913 tests total,9 skipped,904 executed. Its initial misplaced test fixture was
+corrected and is documented by the author; all three adverse reviews remain
+unchanged, with no approval asserted.
+
+MAIN started fresh canonical CI on this head (log
+/tmp/palomar-755-routing-fix-ci.log). Only after actual success may the admitted
+fourth independent review run, with1299 seconds remaining in its allocation.
+The port author has also passed both original comparator drift checks and its
+10 regression tests and is preparing the normal commit. Publication, review and
+merges for the port remain pending.
