@@ -357,7 +357,7 @@ coordinates. This is the dilation step shared by
 blueprint `def:projective-strategy-general`, and
 blueprint
 `lem:projective-strategy-setup`. -/
-def paddedStrategy {G : Game} (S : Strategy G) {κA κB : Type}
+@[reducible] def paddedStrategy {G : Game} (S : Strategy G) {κA κB : Type}
     [Fintype κA] [DecidableEq κA] [Fintype κB] [DecidableEq κB]
     (aA : κA) (bB : κB)
     (A' : G.QuestionA → MIPStarRE.Quantum.Measurement G.AnswerA (S.ιA × κA))
@@ -817,39 +817,48 @@ private theorem symmetrizedStrategy_value {G : SymmetricGame}
   rw [strategy_value_eq_avgOver_payoff, strategy_value_eq_avgOver_payoff]
   calc
     avgOver G.μ (strategyPayoff (symmetrizedStrategy S).toStrategy) =
-        avgOver G.μ (fun xy => (1 / 2 : ℝ) *
-          (strategyPayoff S xy + strategyPayoff S (xy.2, xy.1))) := by
+        avgOver G.μ (fun xy : G.Question × G.Question => (1 / 2 : ℝ) *
+          (strategyPayoff S (xy.1, xy.2) + strategyPayoff S (xy.2, xy.1))) := by
             apply avgOver_congr
             intro xy
             exact symmetrizedStrategy_payoff S xy.1 xy.2
     _ = (1 / 2 : ℝ) *
-        (avgOver G.μ (strategyPayoff S) +
-          avgOver G.μ (fun xy => strategyPayoff S (xy.2, xy.1))) := by
+        (avgOver G.μ (fun xy : G.Question × G.Question =>
+            strategyPayoff S (xy.1, xy.2)) +
+          avgOver G.μ (fun xy : G.Question × G.Question =>
+            strategyPayoff S (xy.2, xy.1))) := by
             rw [avgOver_const_mul, avgOver_add]
     _ = avgOver G.μ (strategyPayoff S) := by
           change (1 / 2 : ℝ) *
-            (avgOver G.μ (fun xy : G.Question × G.Question => strategyPayoff S xy) +
+            (avgOver G.μ (fun xy : G.Question × G.Question =>
+                strategyPayoff S (xy.1, xy.2)) +
               avgOver G.μ
                 (fun xy : G.Question × G.Question => strategyPayoff S (xy.2, xy.1))) =
-            avgOver G.μ (fun xy : G.Question × G.Question => strategyPayoff S xy)
+            avgOver G.μ (fun xy : G.Question × G.Question =>
+              strategyPayoff S (xy.1, xy.2))
           have hswapavg := avgOver_prod_swap_of_weight_symm G.μ G.μ_symm
-            (fun xy : G.Question × G.Question => strategyPayoff S xy)
+            (fun xy : G.Question × G.Question =>
+              strategyPayoff S (xy.1, xy.2))
           calc
             (1 / 2 : ℝ) *
                 (avgOver G.μ
-                    (fun xy : G.Question × G.Question => strategyPayoff S xy) +
+                    (fun xy : G.Question × G.Question =>
+                      strategyPayoff S (xy.1, xy.2)) +
                   avgOver G.μ (fun xy : G.Question × G.Question =>
                     strategyPayoff S (xy.2, xy.1))) =
               (1 / 2 : ℝ) *
                 (avgOver G.μ
-                    (fun xy : G.Question × G.Question => strategyPayoff S xy) +
+                    (fun xy : G.Question × G.Question =>
+                      strategyPayoff S (xy.1, xy.2)) +
                   avgOver G.μ
-                    (fun xy : G.Question × G.Question => strategyPayoff S xy)) :=
+                    (fun xy : G.Question × G.Question =>
+                      strategyPayoff S (xy.1, xy.2))) :=
                 congrArg (fun z : ℝ => (1 / 2 : ℝ) *
                   (avgOver G.μ (fun xy : G.Question × G.Question =>
-                    strategyPayoff S xy) + z)) hswapavg
+                    strategyPayoff S (xy.1, xy.2)) + z)) hswapavg
             _ = avgOver G.μ
-                (fun xy : G.Question × G.Question => strategyPayoff S xy) := by
+                (fun xy : G.Question × G.Question =>
+                  strategyPayoff S (xy.1, xy.2)) := by
                   ring
 
 /-- A probability distribution has a nonempty ambient sample type. -/

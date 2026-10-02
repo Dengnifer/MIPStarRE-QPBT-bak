@@ -79,6 +79,126 @@ theorem point_consistency_le (lines : ExtendedLinesWitness setting points deltaL
   (direct_point_consistency_le_point_rejection P.extendedDirectLd (strategy lines)).trans
     (point_point_rejection_le lines)
 
+/-- Ground compression transports Alice's evaluated polynomial comparison back
+to the original expanded spaces. -/
+private theorem compressed_alice_point_consistency_le
+    (lines : ExtendedLinesWitness setting points deltaL)
+    (A : DirectPolyMeasTuple P.extendedDirectLd (projectiveStrategy lines).ιA)
+    (etaA : ℝ)
+    (hA : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u a => heteroKron ((A.postprocess (evalDirectPolyTupleAt u)).effect a) 1)
+      (fun u a => heteroKron 1
+        ((((projectiveStrategy lines).B
+          (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+            (directLdPointValuesOrZero P.extendedDirectLd)).effect a))
+      (projectiveStrategy lines).ψ ≤ etaA) :
+    consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u a => heteroKron
+        (((groundCompressMeasurement none A).postprocess
+          (evalDirectPolyTupleAt u)).effect a) 1)
+      (fun u a => heteroKron 1
+        ((((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+          (directLdPointValuesOrZero P.extendedDirectLd)).effect a))
+      (strategy lines).ψ ≤ etaA := by
+  have h := (consistency_defect_ground_compress_measurement_postprocess
+    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+    none none (strategy lines).ψ (fun _ => A)
+    (fun u => dilatedMeasurement (default : DirectLdAnswer P.extendedDirectLd)
+      ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)))
+    (fun u => evalDirectPolyTupleAt u)
+    (fun _ => directLdPointValuesOrZero P.extendedDirectLd)).symm.trans_le hA
+  calc
+    _ = _ := by
+      apply consistencyDefect_congr <;> intro u c
+      · rfl
+      · rw [ground_compress_dilated_measurement]
+    _ ≤ etaA := h
+
+/-- Ground compression transports Bob's evaluated polynomial comparison back
+to the original expanded spaces. -/
+private theorem compressed_bob_point_consistency_le
+    (lines : ExtendedLinesWitness setting points deltaL)
+    (B : DirectPolyMeasTuple P.extendedDirectLd (projectiveStrategy lines).ιB)
+    (etaB : ℝ)
+    (hB : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u a => heteroKron
+        ((((projectiveStrategy lines).A
+          (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+            (directLdPointValuesOrZero P.extendedDirectLd)).effect a) 1)
+      (fun u a => heteroKron 1 ((B.postprocess (evalDirectPolyTupleAt u)).effect a))
+      (projectiveStrategy lines).ψ ≤ etaB) :
+    consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u a => heteroKron
+        ((((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+          (directLdPointValuesOrZero P.extendedDirectLd)).effect a) 1)
+      (fun u a => heteroKron 1
+        (((groundCompressMeasurement none B).postprocess
+          (evalDirectPolyTupleAt u)).effect a))
+      (strategy lines).ψ ≤ etaB := by
+  have h := (consistency_defect_ground_compress_measurement_postprocess
+    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+    none none (strategy lines).ψ
+    (fun u => dilatedMeasurement (default : DirectLdAnswer P.extendedDirectLd)
+      ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)))
+    (fun _ => B) (fun _ => directLdPointValuesOrZero P.extendedDirectLd)
+    (fun u => evalDirectPolyTupleAt u)).symm.trans_le hB
+  calc
+    _ = _ := by
+      apply consistencyDefect_congr <;> intro u c
+      · rw [ground_compress_dilated_measurement]
+      · rfl
+    _ ≤ etaB := h
+
+/-- The direct polynomial comparison specialized to the compressed extended
+measurements, assuming the two transported point bounds. -/
+private theorem compressed_polynomial_consistency_le_of_point_bounds
+    (lines : ExtendedLinesWitness setting points deltaL)
+    (A : DirectPolyMeasTuple P.extendedDirectLd (projectiveStrategy lines).ιA)
+    (B : DirectPolyMeasTuple P.extendedDirectLd (projectiveStrategy lines).ιB)
+    (etaA etaB : ℝ)
+    (hAc : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u a => heteroKron
+        (((groundCompressMeasurement none A).postprocess
+          (evalDirectPolyTupleAt u)).effect a) 1)
+      (fun u a => heteroKron 1
+        ((((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+          (directLdPointValuesOrZero P.extendedDirectLd)).effect a))
+      (strategy lines).ψ ≤ etaA)
+    (hBc : consistencyDefect
+      (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
+      (fun u a => heteroKron
+        ((((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+          (directLdPointValuesOrZero P.extendedDirectLd)).effect a) 1)
+      (fun u a => heteroKron 1
+        (((groundCompressMeasurement none B).postprocess
+          (evalDirectPolyTupleAt u)).effect a))
+      (strategy lines).ψ ≤ etaB) :
+    consistencyDefect (uniformDistribution Unit)
+      (fun _ g => heteroKron ((groundCompressMeasurement none A).effect g) 1)
+      (fun _ g => heteroKron 1 ((groundCompressMeasurement none B).effect g))
+      (strategy lines).ψ ≤
+        etaA + 2 * Real.sqrt (deltaQ + etaB) + ((2 * P.m + 2) * P.d : ℝ) / P.q := by
+  have hpoly := direct_polynomial_consistency_le_point_bounds P.extendedDirectLd
+    (groundCompressMeasurement none A) (groundCompressMeasurement none B)
+    (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+      (directLdPointValuesOrZero P.extendedDirectLd))
+    (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
+      (directLdPointValuesOrZero P.extendedDirectLd))
+    (strategy lines).ψ (strategy lines).ψ_norm etaA etaB deltaQ hAc hBc
+    (point_consistency_le lines)
+  calc
+    _ ≤ etaA + 2 * Real.sqrt (deltaQ + etaB) +
+        (P.extendedDirectLd.m * P.extendedDirectLd.d : ℝ) /
+          P.extendedDirectLd.q := hpoly
+    _ = etaA + 2 * Real.sqrt (deltaQ + etaB) +
+        ((2 * P.m + 2) * P.d : ℝ) / P.q := by
+      simp [Nat.cast_add, Nat.cast_mul]
+
 /-- Compressing any direct-soundness polynomial POVMs gives cross-player
 polynomial consistency on the original expanded spaces. The assumptions are
 exactly the two evaluated point comparisons, not polynomial consistency.
@@ -115,31 +235,14 @@ theorem compressed_polynomial_consistency_le
       (fun _ g => heteroKron 1 ((groundCompressMeasurement none B).effect g))
       (pairState setting) ≤
         etaA + 2 * Real.sqrt (deltaQ + etaB) + ((2 * P.m + 2) * P.d : ℝ) / P.q := by
-  classical
-  have hAc := (consistency_defect_ground_compress_measurement_postprocess
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    none none (pairState setting) (fun _ => A)
-    (fun u => dilatedMeasurement (default : DirectLdAnswer P.extendedDirectLd)
-      ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)))
-    (fun u => evalDirectPolyTupleAt u)
-    (fun _ => directLdPointValuesOrZero P.extendedDirectLd)).symm.trans_le hA
-  have hBc := (consistency_defect_ground_compress_measurement_postprocess
-    (uniformDistribution (Fin P.extendedDirectLd.m → DirectScalarQ P.extendedDirectLd))
-    none none (pairState setting)
-    (fun u => dilatedMeasurement (default : DirectLdAnswer P.extendedDirectLd)
-      ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u))) (fun _ => B)
-    (fun _ => directLdPointValuesOrZero P.extendedDirectLd)
-    (fun u => evalDirectPolyTupleAt u)).symm.trans_le hB
-  simp only [ground_compress_dilated_measurement] at hAc hBc
-  simpa [AdmissibleParams.extendedDirectLd, Nat.cast_add, Nat.cast_mul] using
-    direct_polynomial_consistency_le_point_bounds P.extendedDirectLd
-      (groundCompressMeasurement none A) (groundCompressMeasurement none B)
-      (fun u => ((strategy lines).A (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-        (directLdPointValuesOrZero P.extendedDirectLd))
-      (fun u => ((strategy lines).B (directLdPointQuestionOf P.extendedDirectLd u)).postprocess
-        (directLdPointValuesOrZero P.extendedDirectLd))
-      (pairState setting) (pairState_norm setting) etaA etaB deltaQ hAc hBc
-      (point_consistency_le lines)
+  change consistencyDefect (uniformDistribution Unit)
+    (fun _ g => heteroKron ((groundCompressMeasurement none A).effect g) 1)
+    (fun _ g => heteroKron 1 ((groundCompressMeasurement none B).effect g))
+    (strategy lines).ψ ≤
+      etaA + 2 * Real.sqrt (deltaQ + etaB) + ((2 * P.m + 2) * P.d : ℝ) / P.q
+  exact compressed_polynomial_consistency_le_of_point_bounds lines A B etaA etaB
+    (compressed_alice_point_consistency_le lines A etaA hA)
+    (compressed_bob_point_consistency_le lines B etaB hB)
 
 end ExtendedLineGame
 

@@ -74,7 +74,6 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 --   MIPStarRE.QPBT.MsType.ctorIdx  (from MIPStarRE/QPBT/Test/MagicSquare.lean)
 --   MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_3  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
 --   MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_4  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
---   MIPStarRE.QPBT.LdType.enumList  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
 --   MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_6  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_3  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.PauliType.ctorElimType  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
@@ -93,7 +92,6 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 --   MIPStarRE.QPBT.normal_basis_trace_dual_apply._simp_1_3  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
 --   MIPStarRE.LDT.Distribution.mk.congr_simp  (from MIPStarRE/LDT/Basic/Distribution.lean)
 --   MIPStarRE.QPBT.PauliType.ctorIdx  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
---   MIPStarRE.QPBT.PauliKind.enumList  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
 --   MIPStarRE.QPBT.PauliType.point.inj  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
 --   MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_4  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
 --   MIPStarRE.QPBT.Distribution.map_map._simp_1_1  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
@@ -101,7 +99,6 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 --   MIPStarRE.QPBT.normal_basis_trace_dual_apply._simp_1_2  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
 --   MIPStarRE.QPBT.PauliType.point.injEq  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
 --   MIPStarRE.QPBT.LdAnswer.ctorIdx  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
---   MIPStarRE.QPBT.PauliKind.enumList_nodup  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
 --   MIPStarRE.QPBT.registerSubmodule_eq_spanSubset._simp_1_2  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.instInhabitedLdType.default  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
 --   MIPStarRE.QPBT.LdType.ofNat  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
@@ -111,12 +108,9 @@ open scoped BigOperators MatrixOrder Matrix ComplexOrder
 --   MIPStarRE.QPBT.clDistribution.eq_1  (from MIPStarRE/QPBT/Games/CondLinearTheorems.lean)
 --   MIPStarRE.QPBT.instInhabitedPauliKind.default  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
 --   MIPStarRE.QPBT.canonicalComplement.eq_1  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
---   MIPStarRE.QPBT.PauliKind.enumList_getElem?_ctorIdx_eq  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
 --   MIPStarRE.QPBT.PauliKind.ctorIdx  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
---   MIPStarRE.QPBT.LdType.enumList_nodup  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
 --   MIPStarRE.QPBT.LdType.ctorIdx  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
 --   MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_2  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
---   MIPStarRE.QPBT.LdType.enumList_getElem?_ctorIdx_eq  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
 
 namespace MIPStarRE.QPBT
 

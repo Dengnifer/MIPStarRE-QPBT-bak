@@ -164,13 +164,16 @@ theorem axisAnswer_win_iff (params : AdmissibleParams)
       (axisAnswer params coeffs) (pointAnswer params ((extendedDirectScalarEquiv params) answer)) =
         true ↔ directEvalOpt (directALineDescOf params.extendedDirectLd sample)
           sample.point coeffs = some answer := by
+  classical
   rw [directEvalOpt_eq_some_iff]
   simp only [directLdWinPredicate, axisAnswer, pointAnswer, validDirectLdAnswer,
-    Bool.and_self, ↓reduceIte, decide_eq_true_eq,
-    RingEquiv.symm_apply_apply, directAlinePointCondition]
+    Bool.and_self, ↓reduceIte,
+    RingEquiv.symm_apply_apply]
+  rw [decide_eq_true_eq]
   change (∀ parameter, sample.point = _ + parameter • _ →
     ∀ _ : Fin 1, evalCoefficient (axisRead params coeffs) parameter = answer) ↔
-    (∃ parameter, sample.point = _ + parameter • _) ∧
+    (∃ parameter : DirectScalarQ params.extendedDirectLd,
+      sample.point = _ + parameter • _) ∧
       ∀ parameter, sample.point = _ + parameter • _ → evalCoefficient coeffs parameter = answer
   simp only [axisRead_eval params coeffs hsupport, forall_const]
   exact (and_iff_right (mem_linePoints_lineRepMap
@@ -189,13 +192,16 @@ theorem diagonalAnswer_win_iff (params : AdmissibleParams)
       (pointAnswer params ((extendedDirectScalarEquiv params) answer)) = true ↔
         directEvalOpt (directDLineDescOf params.extendedDirectLd sample)
           sample.point coeffs = some answer := by
+  classical
   rw [directEvalOpt_eq_some_iff]
   simp only [directLdWinPredicate, diagonalAnswer, pointAnswer, validDirectLdAnswer,
-    Bool.and_self, ↓reduceIte, decide_eq_true_eq,
-    RingEquiv.symm_apply_apply, directDlinePointCondition]
+    Bool.and_self, ↓reduceIte,
+    RingEquiv.symm_apply_apply]
+  rw [decide_eq_true_eq]
   change (∀ parameter, sample.point = _ + parameter • _ →
     ∀ _ : Fin 1, evalCoefficient (diagonalRead params coeffs) parameter = answer) ↔
-    (∃ parameter, sample.point = _ + parameter • _) ∧
+    (∃ parameter : DirectScalarQ params.extendedDirectLd,
+      sample.point = _ + parameter • _) ∧
       ∀ parameter, sample.point = _ + parameter • _ → evalCoefficient coeffs parameter = answer
   simp only [diagonalRead_eval, forall_const]
   exact (and_iff_right (mem_linePoints_lineRepMap

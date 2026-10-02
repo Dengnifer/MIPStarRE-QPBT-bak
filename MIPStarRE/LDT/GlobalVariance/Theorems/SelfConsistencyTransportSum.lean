@@ -66,12 +66,15 @@ private lemma liftLeft_lineAnswerMeasurement_outcome_at_g
     axisParallelLineAnswerMeasurement, axisParallelLineAnswerFamily,
     axisParallelLineAnswerFamilyOf,
     generalizeBLeftOperatorAtPolynomial, generalizeBLeftEventSubMeasAtPolynomial,
-    axisParallelLineQuestionParameter, subCoord, zeroCoord,
+    axisParallelLineQuestionParameter,
     SubMeas.toMeasurement_toSubMeas, mkLeftPlacedSubMeas_outcome, postprocess]
   congr 1
   congr 1
   apply Finset.ext
   intro a
+  have hzero : subCoord (s.1 s.2) (s.1 s.2) = zeroCoord := by
+    simp [subCoord, zeroCoord]
+  simp only [hzero]
   simp
 
 /-- The lifted point-answer family outcome at value `a = g(s.1)` reduces to the

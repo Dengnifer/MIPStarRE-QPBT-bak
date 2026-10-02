@@ -174,7 +174,7 @@ noncomputable def directLdWinPredicate (D : DirectLdParams) :
 /-- The directly indexed low-degree game at an arbitrary positive dimension.
 It is an internal analysis game, not the conditionally linear verifier game
 `ldGame`. -/
-noncomputable def directLdGame (D : DirectLdParams) : Game where
+@[reducible] noncomputable def directLdGame (D : DirectLdParams) : Game where
   QuestionA := DirectLdQuestion D
   QuestionB := DirectLdQuestion D
   AnswerA := DirectLdAnswer D

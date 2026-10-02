@@ -203,8 +203,11 @@ private theorem sum_phaseSign_tauDotProj_sub {params : AdmissibleParams}
       intro label _
       rw [smul_smul, smul_dotProduct, smul_eq_mul, dotProduct_comm vector label]
       congr 1
-      rw [mul_sub, fixedBinTrace, map_sub, sub_eq_add_neg,
-        ZMod.neg_eq_self_mod_two, phaseSign_add]
+      rw [mul_sub, fixedBinTrace, map_sub]
+      have phaseSign_sub (first second : ZMod 2) :
+          phaseSign (first - second) = phaseSign first * phaseSign second := by
+        rw [sub_eq_add_neg, ZMod.neg_eq_self_mod_two, phaseSign_add]
+      exact phaseSign_sub _ _
 
 /-- Product form of the pulled-apart observable, Equation
 `eq:tildewj-product-form` of `lem:tildew-product-form`. Blueprint

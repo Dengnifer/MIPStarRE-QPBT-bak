@@ -180,7 +180,11 @@ theorem directLdRejectionProbability_eq_one_sub_value
   congr 1
   rw [Strategy.value]
   symm
-  change avgOver (directLdQuestionDistribution D) _ = _
+  change avgOver (directLdQuestionDistribution D)
+      (fun xy : DirectLdQuestion D × DirectLdQuestion D =>
+        ∑ a : (directLdGame D).AnswerA, ∑ b : (directLdGame D).AnswerB,
+          if directLdWinPredicate D xy.1 xy.2 a b then
+            outcomeWeight S xy.1 xy.2 a b else 0) = _
   rw [directLdQuestionDistribution, Distribution.avgOver_map]
   exact avgOver_uniform_prod (f := accepted)
 

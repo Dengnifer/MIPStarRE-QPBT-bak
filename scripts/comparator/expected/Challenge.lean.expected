@@ -359,7 +359,7 @@ def QuantumState.IsNormalized {ι : Type*} [Fintype ι] [DecidableEq ι]
   MIPStarRE.Quantum.normalizedTrace ψ.density = 1
 namespace Polynomial
 
--- source: MIPStarRE/LDT/Basic/LowDegreePolynomial.lean:36-39  (MIPStarRE.LDT.Polynomial.toFun)
+-- source: MIPStarRE/LDT/Basic/LowDegreePolynomial.lean:39-42  (MIPStarRE.LDT.Polynomial.toFun)
 /-- Evaluation of the stored multivariate polynomial on a coded point. -/
 noncomputable def toFun {params : Parameters} [FieldModel params.q] (g : Polynomial params) :
     Point params → Fq params :=

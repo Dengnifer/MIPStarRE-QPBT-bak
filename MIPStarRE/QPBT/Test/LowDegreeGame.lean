@@ -58,7 +58,7 @@ compatibility view of the global `fixedFieldModel` selector, not an
 independently quantified field representation.  Blueprint `def:ld-game`; paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
 -/
-noncomputable def LdParams.model (P : LdParams) : FixedFieldModel P.q :=
+@[reducible] noncomputable def LdParams.model (P : LdParams) : FixedFieldModel P.q :=
   fixedFieldModel P.q P.hq
 
 /-- The scalar carrier selected by an `LdParams` record; this is the fixed
@@ -76,8 +76,9 @@ inductive LdType where
   | point
   | aline
   | dline
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
+  deriving DecidableEq, Repr, Inhabited
+instance LdType.instFintype : Fintype LdType :=
+  ⟨{.point, .aline, .dline}, by intro x; cases x <;> simp⟩
 /-- The register index used by the low-degree game (blueprint
 `def:ld-game`; paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`).

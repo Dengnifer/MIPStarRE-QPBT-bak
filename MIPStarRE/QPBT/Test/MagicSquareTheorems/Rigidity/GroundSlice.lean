@@ -172,8 +172,10 @@ theorem conjTranspose_mul_le_one_of_obsOf {ι : Type*} [Fintype ι] [DecidableEq
     (M : MIPStarRE.Quantum.Measurement (ZMod 2) ι) :
     (obsOf M)ᴴ * obsOf M ≤ 1 := by
   have hsum : M.effect 0 + M.effect 1 = 1 := by
-    have h : ∑ a : Fin 2, M.effect a = 1 := M.sum_eq_one
-    rwa [Fin.sum_univ_two] at h
+    calc
+      M.effect 0 + M.effect 1 = ∑ a : ZMod 2, M.effect a :=
+        (Fin.sum_univ_two _).symm
+      _ = 1 := M.sum_eq_one
   have hobs : obsOf M = M.effect 0 + M.effect 0 - 1 := by
     unfold obsOf
     rw [← hsum]

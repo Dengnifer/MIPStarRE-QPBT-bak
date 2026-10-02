@@ -64,12 +64,18 @@ inductive Placement where
   | BA''
   | BB'
   | AB''
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited
+
+instance : Fintype Placement where
+  elems := {.AA', .BA'', .BB', .AB''}
+  complete := by
+    intro placement
+    cases placement <;> simp
 
 /-- The strategy-player side supplying the local Hilbert space in each of the
 four register placements at paper
 `14_analysis_of_the_pauli_basis_test.tex:420-450`. -/
-def Placement.side : Placement → PlayerSide
+@[reducible] def Placement.side : Placement → PlayerSide
   | .AA' => .alice
   | .BA'' => .bob
   | .BB' => .bob

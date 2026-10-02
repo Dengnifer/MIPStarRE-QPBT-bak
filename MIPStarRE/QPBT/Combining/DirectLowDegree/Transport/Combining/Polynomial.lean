@@ -231,9 +231,9 @@ private theorem degreeOf_rename_le {σ τ K : Type*} [CommSemiring K]
   obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hs
   by_cases hi : ∃ j, f j = i
   · obtain ⟨j, rfl⟩ := hi
-    rw [Finsupp.mapDomain_apply hf]
+    rw [Finsupp.mapDomain_apply_of_injective hf]
     exact le_trans (MvPolynomial.le_degreeOf_of_mem_support j ht) (hp j)
-  · rw [Finsupp.mapDomain_notin_range t i (by simpa using hi)]
+  · rw [Finsupp.mapDomain_of_notMem_range t i (by simpa using hi)]
     exact Nat.zero_le d
 
 private theorem degreeOf_rename_eq_zero_of_notMem_range {σ τ K : Type*} [CommSemiring K]
@@ -245,7 +245,7 @@ private theorem degreeOf_rename_eq_zero_of_notMem_range {σ τ K : Type*} [CommS
   intro s hs
   rw [MvPolynomial.support_rename_of_injective hf] at hs
   obtain ⟨t, _, rfl⟩ := Finset.mem_image.mp hs
-  exact le_of_eq (Finsupp.mapDomain_notin_range t i hi)
+  exact le_of_eq (Finsupp.mapDomain_of_notMem_range t i hi)
 
 /-- The combining map preserves the individual-degree bound.  The two coordinate
 blocks are disjoint: a component polynomial depends only on the point

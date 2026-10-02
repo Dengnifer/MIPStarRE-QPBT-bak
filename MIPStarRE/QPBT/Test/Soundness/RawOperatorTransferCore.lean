@@ -52,7 +52,7 @@ theorem completedPauliEffect_eq_raw_add_wrongForm {P : AdmissibleParams} {ι : T
             (if validPauliAnswer (.pauli W) answer = false then M.effect answer else 0)) := by
         apply Finset.sum_congr rfl
         intro answer _
-        cases answer <;> simp [pauliAnswerOrZero, validPauliAnswer]
+        cases answer <;> simp [pauliAnswerOrZero, validPauliAnswer] <;> rfl
       _ = _ := by
         rw [Finset.sum_add_distrib]
         congr 1
@@ -62,15 +62,9 @@ theorem completedPauliEffect_eq_raw_add_wrongForm {P : AdmissibleParams} {ι : T
     rw [Finset.sum_eq_single (.pauliOutcome u)]
     · simp [pauliAnswerOrZero]
     · intro answer _ hanswer
-      cases answer with
-      | value _ | alinePoly _ | dlinePoly _ | pairBits _ | bit _ | msTriple _ =>
-          simp only [pauliAnswerOrZero, ite_eq_right_iff]
-          intro hzero
-          exact (hu hzero.symm).elim
-      | pauliOutcome v =>
-          simp only [pauliAnswerOrZero, ite_eq_right_iff]
-          intro hv
-          exact (hanswer (by simp [hv])).elim
+      have hzero : (0 : PauliRegister P) ≠ u := by
+        simpa [eq_comm] using hu
+      cases answer <;> simp_all [pauliAnswerOrZero]
     · simp
 
 namespace WinImplications
@@ -145,7 +139,6 @@ theorem wrongFormPauliMass_alice_le_error {P : AdmissibleParams} {ε : ℝ}
     simp only [WinImplications.pauliPointEdge, pauliCL, pauliQuestion]
     apply outcome_event_weight_mono
     intro a b ha
-    unfold pauliBasisTest
     simp [pauliWinPredicate, ha]
   calc
     stateQForm S.ψ
@@ -197,7 +190,6 @@ theorem wrongFormPauliMass_bob_le_error {P : AdmissibleParams} {ε : ℝ}
     simp only [WinImplications.pointPauliEdge, pauliCL, pauliQuestion]
     apply outcome_event_weight_mono
     intro a b hb
-    unfold pauliBasisTest
     simp [pauliWinPredicate, hb]
   calc
     stateQForm S.ψ

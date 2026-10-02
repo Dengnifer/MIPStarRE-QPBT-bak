@@ -217,7 +217,7 @@ noncomputable def independentPointPair (params : Parameters) :
   uniformDistribution (Point params × Point params)
 
 /-- An honest finite matrix register for the hypercube vertices. -/
-def pointHilbertSpace (params : Parameters) : FiniteHilbertSpace where
+@[reducible] def pointHilbertSpace (params : Parameters) : FiniteHilbertSpace where
   carrier := Point params
   instFintype := inferInstance
   instDecidableEq := inferInstance

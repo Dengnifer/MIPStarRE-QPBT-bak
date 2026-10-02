@@ -25,8 +25,11 @@ theorem degreeOf_rename_embedCoord_lastCoord (params : Parameters) [FieldModel p
     (p : PolynomialModel params) :
     MvPolynomial.degreeOf (lastCoord params)
       (MvPolynomial.rename (embedCoord params) p : PolynomialModel params.next) = 0 := by
+  change MvPolynomial.degreeOf (lastCoord params)
+    (MvPolynomial.rename (embedCoord params) p :
+      MvPolynomial (Fin params.next.m) (Scalar params)) = 0
   rw [MvPolynomial.degreeOf, MvPolynomial.degrees_rename_of_injective
-    (embedCoord_injective params)]
+    (R := Scalar params) (embedCoord_injective params)]
   simp only [Multiset.count_eq_zero, Multiset.mem_map]
   rintro ⟨b, _, hb⟩
   exact embedCoord_ne_lastCoord params b hb
@@ -109,12 +112,15 @@ theorem degreeOf_rename_embedCoord_le (params : Parameters) [FieldModel params.q
     MvPolynomial.degreeOf i
       (MvPolynomial.rename (embedCoord params) g.poly : PolynomialModel params.next) ≤
       params.d := by
+  change MvPolynomial.degreeOf i
+    (MvPolynomial.rename (embedCoord params) g.poly :
+      MvPolynomial (Fin params.next.m) (Scalar params)) ≤ params.d
   have hinj : Function.Injective (embedCoord params) := embedCoord_injective params
   by_cases h : i.val < params.m
   · -- i is in the range of embedCoord: transfer the degree bound
     have hi : embedCoord params ⟨i.val, h⟩ = i := by
       ext; simp [embedCoord]
-    rw [← hi, MvPolynomial.degreeOf_rename_of_injective hinj]
+    rw [← hi, MvPolynomial.degreeOf_rename_of_injective (R := Scalar params) hinj]
     exact g.lowIndividualDegree _
   · -- i is not in range: degreeOf = 0
     have hi_last : i = lastCoord params := by
@@ -138,18 +144,17 @@ appended coordinate. -/
     (params : Parameters) [FieldModel params.q]
     (g : Polynomial params) (x : Fq params) (u : Point params) (y : Fq params) :
     appendAtHeight params g x (appendPoint params u y) = g u := by
-  change encodeScalar
+  change encodeScalar (params := params)
       (MvPolynomial.eval (decodePoint (appendPoint params u y))
         (MvPolynomial.rename (embedCoord params) g.poly)) =
-    encodeScalar (MvPolynomial.eval (decodePoint u) g.poly)
-  rw [MvPolynomial.eval_rename]
+    encodeScalar (params := params) (MvPolynomial.eval (decodePoint u) g.poly)
+  rw [MvPolynomial.eval_rename (R := Scalar params)]
   have hcoords :
       decodePoint (appendPoint params u y) ∘ embedCoord params = decodePoint u := by
     funext i
     simp [decodePoint, appendPoint, embedCoord]
     rfl
   rw [hcoords]
-  rfl
 
 /-- Coordinate map for restricting a polynomial in `m+1` variables to the slice `X_m = x`. -/
 noncomputable def restrictAtHeightCoordinateMap (params : Parameters) [FieldModel params.q]
@@ -208,7 +213,7 @@ theorem degreeOf_eval₂Hom_restrictAtHeightCoordinateMap_le
     rw [map_sum
       (g := MvPolynomial.eval₂Hom MvPolynomial.C (restrictAtHeightCoordinateMap params x))
       (s := p.support)
-      (f := fun n => (MvPolynomial.monomial n) (MvPolynomial.coeff n p))]
+      (f := fun n => (MvPolynomial.monomial n) (p.coeff n))]
     calc
       MvPolynomial.degreeOf i
           (∑ n ∈ p.support,

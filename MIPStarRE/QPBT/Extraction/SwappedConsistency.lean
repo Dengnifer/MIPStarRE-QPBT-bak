@@ -89,8 +89,11 @@ theorem opDistSq_extracted_eq_tildeObs
     _ (S.placeBoth_swap_left_unitary w)
     (fun u => S.placeSide .alice (tildeObs w .alice W u j))
     (fun u => S.placeSide .bob (tildeObs w .bob W u j)) S.psiHat
-  simpa only [S.conjBy_placeBoth_swap_placeSide, swapUnitary_conj_tildeObs,
-    ProjectiveSetting.applyBoth] using h
+  simp_rw [S.conjBy_placeBoth_swap_placeSide w .alice,
+    S.conjBy_placeBoth_swap_placeSide w .bob,
+    swapUnitary_conj_tildeObs w .alice W,
+    swapUnitary_conj_tildeObs w .bob W] at h
+  simpa only [ProjectiveSetting.applyBoth] using h
 
 /-- The supplied global witness bounds the canonical Pauli disagreement on
 the swapped state, with a universal constant independent of the parameters.

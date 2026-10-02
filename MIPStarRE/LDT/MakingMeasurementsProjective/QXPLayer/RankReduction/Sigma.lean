@@ -304,13 +304,13 @@ lemma sigmaFinRangeEmbedding_qa_eq {Outcome : Type uOutcome}
                 (onb (e.symm x.1)).vec x.2 i *
                   star ((onb (e.symm x.1)).vec x.2 j)
               else 0 := by
-              simpa [Equiv.ulift] using
-                (Equiv.sum_comp (Equiv.ulift : ULift.{uι} S ≃ S)
+              exact
+                Equiv.sum_comp (Equiv.ulift : ULift.{uι} S ≃ S)
                   (fun x : S =>
                     if x.1 = e a then
                       (onb (e.symm x.1)).vec x.2 i *
                         star ((onb (e.symm x.1)).vec x.2 j)
-                    else 0))
+                    else 0)
       _ = ∑ k : Fin (Q a).rank,
           (onb a).vec k i * star ((onb a).vec k j) := by
           suffices

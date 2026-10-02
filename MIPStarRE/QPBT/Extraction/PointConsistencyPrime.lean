@@ -85,7 +85,6 @@ theorem sum_tildeM_mul_pointMeas_eq_decoded_overlap
   simp only [S.placeSide_alice_tensor_mul_placePlayer_bob]
   rw [← Finset.mul_sum, ← S.place_finset_sum,
     S.pointMeasExp_effect_eq_sum_sub .bob W u]
-  rfl
 
 /-- The Alice-pulled/Bob-point consistency defect is one minus the decoded
 overlap. This uses completeness but no encoding restriction or mass estimate. -/

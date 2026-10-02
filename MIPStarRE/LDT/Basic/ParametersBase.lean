@@ -20,8 +20,8 @@ abbrev Error := ℝ
 inductive Role where
   | A
   | B
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
+  deriving DecidableEq, Repr, Inhabited
+instance Role.instFintype : Fintype Role := ⟨{.A, .B}, by intro x; cases x <;> simp⟩
 def Role.other : Role → Role
   | .A => .B
   | .B => .A
@@ -104,7 +104,7 @@ instance : Inhabited Parameters where
   default := Parameters.ofTwo 1 0 (by decide)
 
 /-- The successor test obtained by appending one coordinate. -/
-def Parameters.next (params : Parameters) : Parameters :=
+@[reducible] def Parameters.next (params : Parameters) : Parameters :=
   { m := params.m + 1
     q := params.q
     d := params.d
@@ -270,9 +270,9 @@ noncomputable instance (priority := 100) (params : Parameters) : FieldModel para
 /-- Reuse an already chosen field model for successor parameters. Since Lean
 prefers larger numeric priorities, this transport uses `200` so it is tried
 before the canonical fallback above. -/
-instance (priority := 200) {params : Parameters} [inst : FieldModel params.q] :
-    FieldModel params.next.q := by
-  simpa [Parameters.next] using inst
+@[instance_reducible] instance (priority := 200) {params : Parameters}
+    [inst : FieldModel params.q] :
+    FieldModel params.next.q := inst
 
 abbrev Scalar (params : Parameters) [FieldModel params.q] := FieldModel.K params.q
 abbrev PolynomialModel (params : Parameters) [FieldModel params.q] :=

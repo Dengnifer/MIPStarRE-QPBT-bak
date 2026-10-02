@@ -201,7 +201,10 @@ theorem placePlayer_eq_placeSide (side : PlayerSide)
   cases side <;> ext row column <;>
     simp only [placePlayer, placeSide, onPlayer, place, reindexOp, Matrix.reindex_apply,
       Equiv.symm_symm, Matrix.submatrix_apply, sixRegExtractionEquiv, Equiv.coe_fn_mk,
-      ← heteroKron_one_one, heteroKron, Matrix.kronecker, Matrix.kroneckerMap_apply] <;> ring
+      heteroKron, Matrix.kronecker, Matrix.kroneckerMap,
+      Matrix.of_apply, Matrix.one_apply, Prod.mk.injEq, ite_and, ite_mul, mul_ite,
+      one_mul, mul_one, zero_mul, mul_zero] <;>
+    split_ifs <;> rfl
 
 /-- The crossed six-register placement of an extracted-register operator
 agrees with its local extraction-block placement. No property of the operator
@@ -255,12 +258,10 @@ theorem conjBy_placeSide (side : PlayerSide)
       change conjBy (setting.placeBoth conjugator 1) (setting.placeBoth operator 1) = _
       rw [setting.conjBy_placeBoth]
       simp [conjBy, placeBoth, placeSide]
-      rfl
   | bob =>
       change conjBy (setting.placeBoth 1 conjugator) (setting.placeBoth 1 operator) = _
       rw [setting.conjBy_placeBoth]
       simp [conjBy, placeBoth, placeSide]
-      rfl
 
 /-- Simultaneous unitary conjugation of a one-side operator equals conjugation
 on that side alone. The only hypotheses are the explicit right-unitary

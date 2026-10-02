@@ -340,9 +340,7 @@ theorem ldStrategyToDirect_pointPolynomial_compression
           (((seedFiberCompressPolyMeasTuple L GB).postprocess
             (evalPolyTupleAt u)).effect outcome)) S.ψ := by
   rw [show (ldStrategyToDirect L S).ψ = seedFiberLiftedState S L by rfl]
-  simp only [ldStrategyToDirect_pointMeasurementA,
-    blockDiagonalMeasurement_effect,
-    seedFiberCompressPolyMeasTuple_evaluation,
+  simp only [seedFiberCompressPolyMeasTuple_evaluation,
     seedFiberCompressMeasurement_effect]
   convert consistencyDefect_seedFiber_compress_right S L
     (X := Fin L.m → ScalarQ L) (alpha := Fin L.k → ScalarQ L)
@@ -352,7 +350,12 @@ theorem ldStrategyToDirect_pointPolynomial_compression
         (ldPointValuesOrZero L)).effect outcome)
     (fun u outcome =>
       (GB.postprocess (evalDirectPolyTupleAt u)).effect outcome) using 1
-  apply consistencyDefect_congr <;> intros <;> rfl
+  apply consistencyDefect_congr
+  · intro u outcome
+    rw [ldStrategyToDirect_pointMeasurementA, blockDiagonalMeasurement_effect]
+    congr 2
+  · intros
+    rfl
 
 /-- The global-on-Alice/point-on-Bob defect of the correlated-residue extension
 of the strategy is exactly the defect of the compressed polynomial tuple on the
@@ -378,9 +381,7 @@ theorem ldStrategyToDirect_polynomialPoint_compression
           (((S.B (ldPointQuestionOf L u)).postprocess
             (ldPointValuesOrZero L)).effect outcome)) S.ψ := by
   rw [show (ldStrategyToDirect L S).ψ = seedFiberLiftedState S L by rfl]
-  simp only [ldStrategyToDirect_pointMeasurementB,
-    blockDiagonalMeasurement_effect,
-    seedFiberCompressPolyMeasTuple_evaluation,
+  simp only [seedFiberCompressPolyMeasTuple_evaluation,
     seedFiberCompressMeasurement_effect]
   convert consistencyDefect_seedFiber_compress_left S L
     (X := Fin L.m → ScalarQ L) (alpha := Fin L.k → ScalarQ L)
@@ -390,8 +391,12 @@ theorem ldStrategyToDirect_polynomialPoint_compression
     (fun u outcome =>
       ((S.B (ldPointQuestionOf L u)).postprocess
         (ldPointValuesOrZero L)).effect outcome) using 1
-  all_goals
-    apply consistencyDefect_congr <;> intros <;> rfl
+  apply consistencyDefect_congr
+  · intros
+    rfl
+  · intro u outcome
+    rw [ldStrategyToDirect_pointMeasurementB, blockDiagonalMeasurement_effect]
+    congr 2
 
 end
 

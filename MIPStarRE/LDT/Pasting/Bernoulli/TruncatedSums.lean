@@ -25,16 +25,14 @@ private lemma gHatTypeWeight_le {k : ℕ} (τ : GHatType k) :
 private lemma gHatTypeWeight_prepend_true {k : ℕ} (τ : GHatType k) :
     gHatTypeWeight (prependTypeBit true τ) = gHatTypeWeight τ + 1 := by
   unfold gHatTypeWeight
-  simpa [prependTypeBit, Fin.cons_zero, Fin.cons_succ, add_comm] using
-    (Fin.card_filter_univ_succ
-      (n := k) (p := fun i : Fin (k + 1) => (Fin.cons true τ : GHatType (k + 1)) i = true))
+  rw [Fin.card_filter_univ_succ]
+  simp [prependTypeBit, Fin.cons_zero, Fin.cons_succ, add_comm]
 
 private lemma gHatTypeWeight_prepend_false {k : ℕ} (τ : GHatType k) :
     gHatTypeWeight (prependTypeBit false τ) = gHatTypeWeight τ := by
   unfold gHatTypeWeight
-  simpa [prependTypeBit, Fin.cons_zero, Fin.cons_succ] using
-    (Fin.card_filter_univ_succ
-      (n := k) (p := fun i : Fin (k + 1) => (Fin.cons false τ : GHatType (k + 1)) i = true))
+  rw [Fin.card_filter_univ_succ]
+  simp [prependTypeBit, Fin.cons_zero, Fin.cons_succ]
 
 private lemma gHatTypeOperator_nonneg
     (G : MIPStarRE.Quantum.Op ι)

@@ -24,6 +24,15 @@ noncomputable section
 
 namespace WinImplications
 
+local instance (priority := 10) {α β : Type*} (r : α → β → Prop) :
+    DecidableRel r :=
+  fun a b => Classical.propDecidable (r a b)
+
+local instance linePointFintypeCanonical (P : AdmissibleParams) :
+    Fintype (LineDesc P.toLdParams ×
+      (Fin P.toLdParams.m → ScalarQ P.toLdParams)) :=
+  linePointFintype P
+
 /-- Coordinates outside one low-degree register in the Pauli seed. -/
 abbrev PauliLdRemainder (P : AdmissibleParams) :=
   (Fin P.m → PauliScalar P) × PauliScalar P × PauliScalar P
