@@ -41,3 +41,23 @@ lease directory and owner information only. The CI run itself remains the source
 of build-lock ownership and outcome evidence.
 
 No source was submitted, no final readiness was claimed, and all final gates remain.
+
+## Freshness repair published
+
+MAIN's unchanged-patch normal commit succeeded at
+697b5e23292eea7fd8d49c9342dd10e55ccc4d61 after919tests in333.660seconds,
+9skipped/910executed. The checked publisher adopted PR755 at that exact head.
+Fresh canonicalCI is active; its next independent900second repair verification
+remains the explicitly recorded admission from comment5946424482. No review
+history was erased and no adjudication/force flag is authorized.
+
+Port778's exact-head fullbuild passed in172seconds and blueprint render in74.
+The remainingCI steps and refreshed2187-declaration blueprint axiom audit run
+before its third independent review. The conversion worker reports that17 data
+helpers need public visibility while25 proof-only helpers can remain private;
+these are provisional until its actual module checks and final audit finish.
+
+Archive777 now has one1,200second Sol preparation tranche, retaining prior5,146
+seconds (newceiling6,346), to mergef0ab8399 and archive one additional immutable
+raw-session batch with allfour prior manifests. Comment5947152021 records this
+admission. No final source cap or parent-gate approval is inferred from it.
