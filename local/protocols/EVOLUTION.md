@@ -2064,3 +2064,29 @@ continue unchanged.
 related review/dispatch tests pass. Shell and Python syntax and
 `git diff --check` pass. No full build, canonical CI, independent review, companion
 mutation, merge or gate override ran in the author phase.
+
+## 2026-10-02 - Freeze companion review inputs at Git commits (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Checkout sampling did
+not prove companion review bytes", and independent review 5390270756. Its F1
+showed that pre/post cleanliness checks did not establish which bytes the model
+read while a mutable checkout could contain ignored instructions, index-hidden
+edits or a transient mutation restored before publication.
+
+**Change:** `review.sh` now creates one unique private, mode-read-only Git
+snapshot pinned to the resolved trusted-primary commit and another pinned to the
+exact companion head. Regular files are materialized from Git blob objects, not
+the live worktree or index; ignored, untracked and index-hidden bytes are absent,
+and tracked symlinks, gitlinks, `.git` and `.lake` paths fail closed. Codex
+project discovery, personas and prompts use only the trusted snapshot; caller
+and configuration validation, subject, diff and reviewed source use only the
+candidate snapshot. Live repositories remain identity and movement inputs. The
+official CI gate and remote head are revalidated before publication, whose body
+and private receipt bind both snapshot commits and trees to admission and
+publication run, attempt, job and check identities. Companion carry-forward
+remains disabled; the default primary route is unchanged.
+
+**Expected effect:** every companion verdict is reproducibly attributable to
+the committed instruction and candidate bytes the model could read, independent
+of live checkout state or ref movement, while stale source heads and CI still
+block publication.

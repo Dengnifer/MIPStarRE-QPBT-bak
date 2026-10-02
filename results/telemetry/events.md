@@ -10288,3 +10288,18 @@ workflow tests and 52 related review/dispatch tests pass, together with shell
 and Python syntax and `git diff --check`. No full build, canonical CI,
 independent review, companion mutation, merge, cost reset or gate override ran
 in this author phase; every prior adverse review and cost record remains.
+
+### 2026-10-02 — Checkout sampling did not prove companion review bytes
+
+Independent review 5390270756 (`reviewer-pr755-20261002-08`) found that the
+companion route still let the model read the live primary and companion
+worktrees. Pre-dispatch and post-dispatch cleanliness checks could miss ignored
+`AGENTS.override.md`, assume-unchanged or skip-worktree edits, and a mutation
+restored before publication. The review verdict therefore could not prove which
+instruction and source bytes the model actually read. The repair gives each run
+two unique private, mode-read-only Git snapshots materialized from the pinned
+trusted and candidate commit objects, rejects tracked symlinks and reserved
+paths, and records snapshot and twice-validated CI identity in a receipt.
+Lesson: sampling mutable state around a model call is not evidence of the bytes
+consumed during the call; security-sensitive review inputs must be immutable by
+construction and tested through the model-facing paths.

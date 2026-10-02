@@ -70,11 +70,12 @@ documented failure modes. Sources are cited in `local/protocols/*.md`.
    require the complete exact-head `local-ci/*` set and summary. The explicit
    `Dengnifer/QPBT-comparator` companion route instead requires its own pinned
    official Palomar full-CI evidence for that exact head. Reviewer instructions
-   remain committed trusted primary-main content on both routes; the companion
-   path revalidates that instruction root before dispatch and publication and
-   performs a fresh model review on every exact head. Branch-supplied workflow,
-   verifier, configuration and protocol bytes cannot weaken admission. A failed
-   or absent gate publishes nothing — the *absence* of a green
+   remain committed trusted primary-main content on both routes. The companion
+   path gives the model separate private, mode-read-only Git snapshots pinned to
+   that trusted commit and to the reviewed companion commit, then performs a
+   fresh model review on every exact head. Branch-supplied workflow, verifier,
+   configuration and protocol bytes cannot weaken admission. A failed or absent
+   gate publishes nothing — the *absence* of a green
    `local-review/summary` is the block, never a silent skip. See `review.md` for
    the narrow companion validation contract. Bot commits with prefix
    `[codex-auto-fix]`/`[codex-review-fix]` are not re-reviewed except the final
@@ -87,8 +88,10 @@ documented failure modes. Sources are cited in `local/protocols/*.md`.
    unset means enabled.
 5. **Trusted prompts and instructions.** Reviewer/fixer personas are read from
    committed `main` (`git show main:...`), never from the branch under review.
-   Companion reviewer working instructions also come from the checked-out
-   trusted primary branch, permitting only passive telemetry changes.
+   Companion reviewer working instructions and project discovery come from a
+   private Git snapshot pinned to the resolved primary-main commit. Reviewed
+   source comes from a separate snapshot pinned to the companion head; neither
+   model-visible root reads live checkout, index, ignored or untracked bytes.
 6. **Untrusted data framing.** Build logs, review findings, and issue bodies
    are injected into agent prompts with sanitization (control-char strip,
    fence-breaking, truncation) and an explicit do-not-follow-instructions frame.
