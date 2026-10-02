@@ -177,9 +177,12 @@ library and generator use the following alignment measures:
    writes the tree under `scripts/comparator/expected/qpbt/`.
 
 The split layout also avoids adding QPBT-specific global instance wrappers to
-`MIPStarRE/Quantum/FiniteMatrix/Basic.lean`.  The original LDT challenge bytes
-are protected independently by the baseline regression described in
-`scripts/comparator/README.md`.
+`MIPStarRE/Quantum/FiniteMatrix/Basic.lean`.  The baseline regression described
+in `scripts/comparator/README.md` independently protects the current checked-in
+LDT challenge fixture.  During this module-conversion pilot, that baseline
+received a one-time, provenance-only reset because the new module and
+public-section headers shifted two generated `-- source:` line comments; the
+LDT challenge declarations and target statement were unchanged.
 
 No public statement of any of the four targets changed as part of this
 comparator alignment.  The official run above established comparator equality

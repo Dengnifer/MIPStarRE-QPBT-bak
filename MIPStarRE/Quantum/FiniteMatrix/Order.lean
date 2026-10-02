@@ -1,4 +1,6 @@
-import MIPStarRE.Quantum.FiniteMatrix.Basic
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix.Basic
 
 /-!
 # Positive-semidefinite finite matrix order
@@ -11,6 +13,8 @@ monotonicity facts for sandwiches, Kronecker products, and reindexing.
 These are the matrix-operator facts used by the canonical SDP strong-duality
 argument in Section 9.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise
 open WithLp

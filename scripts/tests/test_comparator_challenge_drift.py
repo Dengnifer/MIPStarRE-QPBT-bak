@@ -20,7 +20,7 @@ README = COMPARATOR / "README.md"
 EXTRACTOR = COMPARATOR / "extract_closure.lean"
 LDT_EXPECTED = COMPARATOR / "expected" / "Challenge.lean.expected"
 LDT_BASELINE_SHA256 = (
-    "cbe5642bb88db75f86bd79936896e684aa407a02108d8259ead71a0738783e73"
+    "e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b"
 )
 
 # the drift checker imports its sibling `challenge_config`, which a script run
@@ -90,7 +90,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         self.assertIn("MIPStarRE/QPBT/Test/QubitForm.lean", readme)
         self.assertIn(LDT_BASELINE_SHA256, readme)
 
-    def test_ldt_expected_matches_original_baseline(self) -> None:
+    def test_ldt_expected_matches_baseline(self) -> None:
         actual = hashlib.sha256(LDT_EXPECTED.read_bytes()).hexdigest()
 
         self.assertEqual(

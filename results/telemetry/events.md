@@ -10161,3 +10161,42 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
   Python syntax, `git diff --check`, and the installed-hook check pass. No full
   build, live companion run, push, publication or companion mutation occurred;
   `comparator / verify` remains a first-live-run integration assumption.
+
+### 2026-10-02 — Reuse the recorded companion metadata dispatch setup
+
+The second754 writer failed launcher preflight before model activation because
+the standalone companion clone has no library-specific `.githooks` directory.
+The identical layout and dispatch exception were already recorded in this file
+at the first754 admission (line10116 at8a96787c). MAIN reuses that established
+setup: `--skip-hook-check` skips only the inapplicable library-hook installation
+probe for this metadata/Python-only local preparation. Companion publication
+and merge still require official CI and exact-head independent review; this
+assignment cannot push, change Lean files, run CI or merge. No library hook,
+merge gate, account, sandbox privilege or provider setting is being waived or
+changed. The failed preflight used no model allocation; the1800s repair budget
+and all prior754 costs remain unchanged.
+
+
+## 2026-10-02 — shared Codex launch path unavailable (B13)
+
+The first current-main archive continuation failed before any model request:
+orc-777-20261002-03,exit127,wall0s,nullthread. Both
+project owner-bin/codex and /home/drx/local/bin/codex ultimately execute
+/home/drx/.local/bin/codex, which is absent; direct --version of the second
+wrapper fails identically. A live scout also observed transient ETXTBSY command
+launch failures, and rg is no longer available in the current PATH. No machine
+software, launcher, key or account was modified. B13 was posted under owner
+briefing section9: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/500#issuecomment-5944821689.
+
+The1200s archive phase remains unused, and its worktree remains clean at7acfc259.
+MAIN may continue read-only diagnostics and ordinary in-project operator actions;
+new model workers await restoration of the configured runtime. This is not a
+provider-balance failure, so the key-failure pause rule is not being reused.
+
+
+B13 follow-up: the configured Codex path was restored externally. Unchanged
+authorized wrapper reports0.158.0; rg and direct same-route worker responses
+work again. MAIN changed no machine/launcher/account setting and closed the
+owner-inbox blocker on observed recovery. The archive phase then exposed a
+separate real multi-batch coverage defect, now assigned with preserved data;
+this is recorded in the Palomar runtime-recovery checkpoint.
