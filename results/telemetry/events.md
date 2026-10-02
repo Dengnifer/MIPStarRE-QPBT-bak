@@ -10144,6 +10144,14 @@ and all prior754 costs remain unchanged.
   diagnostics, and validates the prior union before creation mutates a new
   batch. Lesson: a selectable manifest is not cumulative coverage unless prior
   batches are part of the verification contract.
+- Issue #777 retained only 3,648,918 bytes of Palomar source-cap headroom after
+  the three session-capture batches. Four retired native-session JSONL logs
+  total 4,980,227 raw bytes and 896,948 bytes under the existing deterministic
+  gzip format. The authorized repair adds one schema-2 scope naming exactly
+  those four paths while preserving schema-1 session-directory coverage,
+  unselected native evidence, immutable Git preimages and strict global archive
+  union checks. Lesson: exceptional evidence packaging needs an explicit finite
+  selection, not a widened root that silently changes old manifest meaning.
 
 
 ## 2026-10-02 — shared Codex launch path unavailable (B13)

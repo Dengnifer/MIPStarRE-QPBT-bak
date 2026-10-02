@@ -419,13 +419,48 @@ python3 local/bin/archive_session_captures.py \
   verify
 ```
 
-The tool verifies each supplied manifest independently against all raw captures
-at that manifest's source commit. It then requires their collision-free union
-to cover every checked-out `.jsonl.gz` archive. Omitting a prior manifest,
-supplying colliding archive paths or leaving an unmanifested archive fails
-before a new batch is created. A missing, malformed or truncated archive is a
-failure, not an empty session. The private runtime raw copy is never modified
-by this packaging step.
+The tool verifies each supplied manifest independently against its complete
+source scope at that manifest's source commit. Schema 1 remains fixed to every
+raw `.jsonl` capture under `results/telemetry/sessions`; adding another archive
+root does not reinterpret an old manifest. It then requires the manifests'
+collision-free union to cover every checked-out `.jsonl.gz` archive in the
+recognized roots. Omitting a prior manifest, supplying colliding archive paths
+or leaving an unmanifested archive fails before a new batch is created. A
+missing, malformed or truncated archive is a failure, not an empty session.
+The private runtime raw copy is never modified by this packaging step.
+
+Issue #777 authorizes one additional schema-2 scope,
+`issue-777-retired-native-evidence`, hard-coded to exactly these four retired
+native-session evidence files:
+
+- `results/telemetry/native-reviews/pr432-5c62-01a0a695/reports.jsonl`
+- `results/telemetry/native-reviews/pr460-terminal-01a0aebe/evidence.jsonl`
+- `results/telemetry/native-audits/pr453-integration-01a0a4e0/evidence.jsonl`
+- `results/telemetry/native-audits/pr460-current-disposition-01a0aea6/evidence.jsonl`
+
+Create and verify that batch with all three session-capture manifests present:
+
+```bash
+python3 local/bin/archive_session_captures.py \
+  --manifest results/telemetry/native-evidence-archives-palomar-20261002.jsonl \
+  --prior-manifest results/telemetry/session-capture-archive-manifest.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-later.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-third.jsonl \
+  create --source-ref HEAD --scope issue-777-retired-native-evidence
+python3 local/bin/archive_session_captures.py \
+  --manifest results/telemetry/native-evidence-archives-palomar-20261002.jsonl \
+  --prior-manifest results/telemetry/session-capture-archive-manifest.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-later.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-third.jsonl \
+  verify
+```
+
+The schema-2 `source_scope` field binds the manifest to that exact selection.
+Unselected native evidence remains raw and unchanged. The union check includes
+`.jsonl.gz` files below `native-reviews` and `native-audits`, so an omitted
+selected row or an unmanifested native archive fails closed. The existing
+generic JSONL reader uses the same `.gz` fallback for these paths; no retired
+review or finding is reinterpreted.
 
 The `<name>.last.md` files and top-level `sessions.jsonl` registry remain
 readable, committed and uncompressed. Existing registry rows may retain their

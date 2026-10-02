@@ -1915,3 +1915,25 @@ Coverage diagnostics report counts and at most five example paths.
 without weakening source, archive or decoded-byte checks. Missing manifests,
 orphan archives, collisions and tampering fail closed, while the original
 single-batch command remains valid.
+
+## 2026-10-02 - Archive selected retired native evidence (#777)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Issue #777 retained
+only 3,648,918 bytes of Palomar source-cap headroom". The three session-capture
+batches left insufficient margin for the remaining source and review work. Four
+retired native-session evidence logs occupy 4,980,227 raw bytes and 896,948
+bytes in the established deterministic gzip format.
+
+**Change:** `local/protocols/sessions.md` and
+`local/bin/archive_session_captures.py` add one schema-2 source scope hard-coded
+to the four authorized native evidence paths. Existing schema-1 manifests keep
+their original complete `results/telemetry/sessions` preimage semantics. The
+global union now also inventories `.jsonl.gz` files under `native-reviews` and
+`native-audits`; omitted selected rows, orphan archives, path collisions,
+noncanonical gzip and byte mismatches fail closed. Unselected native evidence
+and the generic raw-to-gzip JSONL reader remain unchanged.
+
+**Expected effect:** the selected historical evidence remains byte-exactly
+recoverable while source-cap headroom increases by about four megabytes. Prior
+manifests remain independently attributable and no retired mathematical review,
+finding, registry or live writer changes meaning.

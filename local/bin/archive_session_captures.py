@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create and verify deterministic archives of historical session captures."""
+"""Create and verify deterministic archives of historical JSONL evidence."""
 
 from __future__ import annotations
 
@@ -22,12 +22,29 @@ from typing import Any
 REPO_ROOT_DEFAULT = Path(__file__).resolve().parents[2]
 CAPTURE_DIRECTORY = Path("results/telemetry/sessions")
 MANIFEST_DEFAULT = Path("results/telemetry/session-capture-archive-manifest.jsonl")
-SCHEMA_VERSION = 1
+SESSION_CAPTURE_SCOPE = "session-captures"
+NATIVE_EVIDENCE_SCOPE = "issue-777-retired-native-evidence"
+NATIVE_EVIDENCE_PATHS = (
+    Path("results/telemetry/native-reviews/pr432-5c62-01a0a695/reports.jsonl"),
+    Path("results/telemetry/native-reviews/pr460-terminal-01a0aebe/evidence.jsonl"),
+    Path("results/telemetry/native-audits/pr453-integration-01a0a4e0/evidence.jsonl"),
+    Path(
+        "results/telemetry/native-audits/"
+        "pr460-current-disposition-01a0aea6/evidence.jsonl"
+    ),
+)
+ARCHIVE_DIRECTORIES = (
+    CAPTURE_DIRECTORY,
+    Path("results/telemetry/native-reviews"),
+    Path("results/telemetry/native-audits"),
+)
+LEGACY_SCHEMA_VERSION = 1
+SCOPED_SCHEMA_VERSION = 2
 GZIP_LEVEL = 9
 GZIP_MTIME = 0
 MAX_COMPRESSION_WORKERS = 8
 PATH_DIAGNOSTIC_LIMIT = 5
-MANIFEST_FIELDS = {
+LEGACY_MANIFEST_FIELDS = {
     "archive_bytes",
     "archive_path",
     "archive_sha256",
@@ -42,6 +59,7 @@ MANIFEST_FIELDS = {
     "source_path",
     "source_sha256",
 }
+SCOPED_MANIFEST_FIELDS = LEGACY_MANIFEST_FIELDS | {"source_scope"}
 
 
 class ArchiveError(Exception):
@@ -158,8 +176,18 @@ def resolve_commit(repo: Path, ref: str) -> str:
     return git(repo, "rev-parse", "--verify", f"{ref}^{{commit}}").decode().strip()
 
 
-def source_entries(repo: Path, commit: str) -> list[dict[str, Any]]:
-    """List raw capture blobs at ``commit`` in stable path order."""
+def scope_pathspecs(scope: str) -> tuple[Path, ...]:
+    """Return the fixed Git pathspecs for a supported archival scope."""
+    if scope == SESSION_CAPTURE_SCOPE:
+        return (CAPTURE_DIRECTORY,)
+    if scope == NATIVE_EVIDENCE_SCOPE:
+        return NATIVE_EVIDENCE_PATHS
+    raise ArchiveError(f"unsupported archive source scope: {scope}")
+
+
+def source_entries(repo: Path, commit: str, scope: str) -> list[dict[str, Any]]:
+    """List raw evidence blobs in ``scope`` at ``commit`` in stable path order."""
+    pathspecs = scope_pathspecs(scope)
     output = git(
         repo,
         "ls-tree",
@@ -169,7 +197,7 @@ def source_entries(repo: Path, commit: str) -> list[dict[str, Any]]:
         "--full-tree",
         commit,
         "--",
-        str(CAPTURE_DIRECTORY),
+        *(str(path) for path in pathspecs),
     )
     entries = []
     for record in output.split(b"\0"):
@@ -178,10 +206,10 @@ def source_entries(repo: Path, commit: str) -> list[dict[str, Any]]:
         header, raw_path = record.split(b"\t", 1)
         mode, object_type, blob, size = header.decode("ascii").split()
         path = raw_path.decode("utf-8", errors="strict")
-        if not path.endswith(".jsonl"):
+        if scope == SESSION_CAPTURE_SCOPE and not path.endswith(".jsonl"):
             continue
         if object_type != "blob" or not mode.startswith("100"):
-            raise ArchiveError(f"capture is not a regular Git blob: {path}")
+            raise ArchiveError(f"archival source is not a regular Git blob: {path}")
         entries.append(
             {
                 "source_blob": blob,
@@ -191,8 +219,18 @@ def source_entries(repo: Path, commit: str) -> list[dict[str, Any]]:
             }
         )
     entries.sort(key=lambda entry: entry["source_path"])
+    if scope == NATIVE_EVIDENCE_SCOPE:
+        expected_paths = {str(path) for path in NATIVE_EVIDENCE_PATHS}
+        actual_paths = {entry["source_path"] for entry in entries}
+        if actual_paths != expected_paths:
+            missing = expected_paths - actual_paths
+            extra = actual_paths - expected_paths
+            raise ArchiveError(
+                f"source scope {scope} mismatch at {commit}; "
+                f"missing={path_summary(missing)}, extra={path_summary(extra)}"
+            )
     if not entries:
-        raise ArchiveError(f"no raw captures found at {commit}")
+        raise ArchiveError(f"no raw evidence found in scope {scope} at {commit}")
     return entries
 
 
@@ -229,22 +267,33 @@ def read_manifest(path: Path) -> list[dict[str, Any]]:
             ) from error
         if not isinstance(row, dict):
             raise ArchiveError(f"manifest {path} line {line_number} is not an object")
-        if set(row) != MANIFEST_FIELDS:
-            missing = sorted(MANIFEST_FIELDS - set(row))
-            extra = sorted(set(row) - MANIFEST_FIELDS)
-            raise ArchiveError(
-                f"manifest {path} line {line_number} has wrong fields; "
-                f"missing={missing}, extra={extra}"
-            )
         rows.append(row)
     if not rows:
         raise ArchiveError(f"archive manifest is empty: {path}")
     return rows
 
 
-def validate_row_shape(row: dict[str, Any], line_number: int) -> None:
-    if row["schema_version"] != SCHEMA_VERSION:
+def validate_row_shape(row: dict[str, Any], line_number: int) -> str:
+    schema_version = row.get("schema_version")
+    if schema_version == LEGACY_SCHEMA_VERSION:
+        expected_fields = LEGACY_MANIFEST_FIELDS
+        scope = SESSION_CAPTURE_SCOPE
+    elif schema_version == SCOPED_SCHEMA_VERSION:
+        expected_fields = SCOPED_MANIFEST_FIELDS
+        scope = row.get("source_scope")
+        if scope != NATIVE_EVIDENCE_SCOPE:
+            raise ArchiveError(
+                f"manifest line {line_number} has unsupported source scope: {scope}"
+            )
+    else:
         raise ArchiveError(f"manifest line {line_number} has unsupported schema version")
+    if set(row) != expected_fields:
+        missing = sorted(expected_fields - set(row))
+        extra = sorted(set(row) - expected_fields)
+        raise ArchiveError(
+            f"manifest line {line_number} has wrong fields; "
+            f"missing={missing}, extra={extra}"
+        )
     if row["format"] != "gzip":
         raise ArchiveError(f"manifest line {line_number} has unsupported format")
     if row["gzip_compresslevel"] != GZIP_LEVEL or row["gzip_mtime"] != GZIP_MTIME:
@@ -266,19 +315,25 @@ def validate_row_shape(row: dict[str, Any], line_number: int) -> None:
             or any(character not in "0123456789abcdef" for character in value)
         ):
             raise ArchiveError(f"manifest line {line_number} has invalid {key}")
+    return scope
 
 
 def verify_manifest_batch(repo: Path, manifest: Path) -> VerifiedManifest:
-    """Verify one batch against every raw capture at its immutable source commit."""
+    """Verify one batch against its complete immutable source scope."""
     rows = read_manifest(manifest)
-    for line_number, row in enumerate(rows, 1):
+    scopes = {
         validate_row_shape(row, line_number)
+        for line_number, row in enumerate(rows, 1)
+    }
+    if len(scopes) != 1:
+        raise ArchiveError(f"manifest mixes source scopes: {manifest}")
+    scope = next(iter(scopes))
 
     commits = {row["source_commit"] for row in rows}
     if len(commits) != 1:
         raise ArchiveError(f"manifest must bind one immutable source commit: {manifest}")
     source_commit = next(iter(commits))
-    expected_entries = source_entries(repo, source_commit)
+    expected_entries = source_entries(repo, source_commit, scope)
     expected = {entry["source_path"]: entry for entry in expected_entries}
 
     paths = [row["source_path"] for row in rows]
@@ -348,10 +403,14 @@ def verify_manifest_batch(repo: Path, manifest: Path) -> VerifiedManifest:
 
 def actual_archive_paths(repo: Path) -> set[str]:
     """Return every gzip-shaped path, including non-regular orphan entries."""
-    return {
-        str(path.relative_to(repo))
-        for path in (repo / CAPTURE_DIRECTORY).rglob("*.jsonl.gz")
-    }
+    paths = set()
+    for directory in ARCHIVE_DIRECTORIES:
+        root = repo / directory
+        if root.exists():
+            paths.update(
+                str(path.relative_to(repo)) for path in root.rglob("*.jsonl.gz")
+            )
+    return paths
 
 
 def verify_archive_union(repo: Path, expected_archives: set[str]) -> None:
@@ -419,9 +478,13 @@ def verify_manifest(
 
 
 def stage_archive(
-    repo: Path, staging: Path, indexed_entry: tuple[int, dict[str, Any]], source_commit: str
+    repo: Path,
+    staging: Path,
+    indexed_entry: tuple[int, dict[str, Any]],
+    source_commit: str,
+    scope: str,
 ) -> dict[str, Any]:
-    """Compress one checked-out source capture into its deterministic staging path."""
+    """Compress one checked-out source file into its deterministic staging path."""
     index, entry = indexed_entry
     source = repo / entry["source_path"]
     if source.is_symlink() or not source.is_file():
@@ -431,14 +494,18 @@ def stage_archive(
         raise ArchiveError(f"source size changed for {entry['source_path']}")
     archived = deterministic_gzip(raw)
     write_bytes(staging / f"{index:06d}.jsonl.gz", archived)
-    return {
+    row = {
         "archive_bytes": len(archived),
         "archive_path": entry["source_path"] + ".gz",
         "archive_sha256": sha256(archived),
         "format": "gzip",
         "gzip_compresslevel": GZIP_LEVEL,
         "gzip_mtime": GZIP_MTIME,
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": (
+            LEGACY_SCHEMA_VERSION
+            if scope == SESSION_CAPTURE_SCOPE
+            else SCOPED_SCHEMA_VERSION
+        ),
         "source_blob": entry["source_blob"],
         "source_bytes": len(raw),
         "source_commit": source_commit,
@@ -446,6 +513,9 @@ def stage_archive(
         "source_path": entry["source_path"],
         "source_sha256": sha256(raw),
     }
+    if scope == NATIVE_EVIDENCE_SCOPE:
+        row["source_scope"] = scope
+    return row
 
 
 def create_archives(
@@ -453,6 +523,7 @@ def create_archives(
     source_ref: str,
     manifest: Path,
     prior_manifests: list[Path] | None = None,
+    scope: str = SESSION_CAPTURE_SCOPE,
 ) -> dict[str, Any]:
     prior_manifests = prior_manifests or []
     if manifest.resolve() in {path.resolve() for path in prior_manifests}:
@@ -467,13 +538,23 @@ def create_archives(
         raise ArchiveError("archive creation requires --source-ref to equal HEAD")
     if manifest.exists():
         raise ArchiveError(f"manifest already exists: {manifest}")
+    pathspecs = scope_pathspecs(scope)
     if subprocess.run(
-        ["git", "-C", str(repo), "diff", "--quiet", source_commit, "--", str(CAPTURE_DIRECTORY)],
+        [
+            "git",
+            "-C",
+            str(repo),
+            "diff",
+            "--quiet",
+            source_commit,
+            "--",
+            *(str(path) for path in pathspecs),
+        ],
         check=False,
     ).returncode != 0:
-        raise ArchiveError("tracked session captures differ from the source commit")
+        raise ArchiveError(f"tracked archival sources differ in scope {scope}")
 
-    entries = source_entries(repo, source_commit)
+    entries = source_entries(repo, source_commit, scope)
     final_archives = [repo / (entry["source_path"] + ".gz") for entry in entries]
     existing = [path for path in final_archives if path.exists() or path.is_symlink()]
     if existing:
@@ -488,7 +569,7 @@ def create_archives(
         with ThreadPoolExecutor(max_workers=workers) as executor:
             rows.extend(
                 executor.map(
-                    lambda item: stage_archive(repo, staging, item, source_commit),
+                    lambda item: stage_archive(repo, staging, item, source_commit, scope),
                     enumerate(entries),
                 )
             )
@@ -512,7 +593,7 @@ def create_archives(
 
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(
-        description="Create or verify deterministic historical session-capture archives."
+        description="Create or verify deterministic historical JSONL archives."
     )
     result.add_argument(
         "--repo-root",
@@ -534,8 +615,14 @@ def parser() -> argparse.ArgumentParser:
         help="prior batch manifest relative to the repository; repeat for multiple batches",
     )
     commands = result.add_subparsers(dest="command", required=True)
-    create = commands.add_parser("create", help="archive every tracked historical capture")
+    create = commands.add_parser("create", help="archive one fixed historical source scope")
     create.add_argument("--source-ref", default="HEAD", help="immutable preimage ref")
+    create.add_argument(
+        "--scope",
+        choices=(SESSION_CAPTURE_SCOPE, NATIVE_EVIDENCE_SCOPE),
+        default=SESSION_CAPTURE_SCOPE,
+        help="fixed source selection (default: session-captures)",
+    )
     commands.add_parser("verify", help="verify manifest coverage and exact recovery")
     return result
 
@@ -553,7 +640,13 @@ def main(argv: list[str] | None = None) -> int:
         prior_manifests.append(prior_manifest)
     try:
         if args.command == "create":
-            summary = create_archives(repo, args.source_ref, manifest, prior_manifests)
+            summary = create_archives(
+                repo,
+                args.source_ref,
+                manifest,
+                prior_manifests,
+                args.scope,
+            )
         else:
             summary = verify_manifest(repo, manifest, prior_manifests)
     except (ArchiveError, OSError, subprocess.SubprocessError) as error:

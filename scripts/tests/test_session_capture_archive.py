@@ -14,6 +14,17 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 ARCHIVER = ROOT / "local/bin/archive_session_captures.py"
 DEFAULT_MANIFEST = Path("results/telemetry/session-capture-archive-manifest.jsonl")
+NATIVE_MANIFEST = Path("results/telemetry/native-evidence-archives-issue777.jsonl")
+NATIVE_SCOPE = "issue-777-retired-native-evidence"
+NATIVE_PATHS = (
+    Path("results/telemetry/native-reviews/pr432-5c62-01a0a695/reports.jsonl"),
+    Path("results/telemetry/native-reviews/pr460-terminal-01a0aebe/evidence.jsonl"),
+    Path("results/telemetry/native-audits/pr453-integration-01a0a4e0/evidence.jsonl"),
+    Path(
+        "results/telemetry/native-audits/"
+        "pr460-current-disposition-01a0aea6/evidence.jsonl"
+    ),
+)
 sys.path.insert(0, str(ROOT / "local/bin"))
 import telemetry
 
@@ -47,6 +58,20 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         }
         for name, data in self.payloads.items():
             (captures / name).write_bytes(data)
+        self.native_payloads = {
+            path: f'{{"kind":"native","path":"{path}"}}\n'.encode()
+            for path in NATIVE_PATHS
+        }
+        for path, data in self.native_payloads.items():
+            source = self.repo / path
+            source.parent.mkdir(parents=True, exist_ok=True)
+            source.write_bytes(data)
+        self.unselected_native = Path(
+            "results/telemetry/native-audits/"
+            "pr453-integration-01a0a4e0/admission.jsonl"
+        )
+        self.unselected_payload = b'{"kind":"admission","preserve":true}\n'
+        (self.repo / self.unselected_native).write_bytes(self.unselected_payload)
         git(self.repo, "add", ".")
         git(
             self.repo,
@@ -66,6 +91,7 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         *,
         manifest: Path = DEFAULT_MANIFEST,
         prior_manifests: tuple[Path, ...] = (),
+        scope: str | None = None,
     ) -> subprocess.CompletedProcess[str]:
         arguments = [
             sys.executable,
@@ -78,6 +104,8 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         for prior_manifest in prior_manifests:
             arguments.extend(("--prior-manifest", str(prior_manifest)))
         arguments.append(command)
+        if scope is not None:
+            arguments.extend(("--scope", scope))
         return subprocess.run(
             arguments,
             check=False,
@@ -118,10 +146,116 @@ class SessionCaptureArchiveTests(unittest.TestCase):
             self.assertEqual(gzip.decompress(archive.read_bytes()), expected)
             blob = git(self.repo, "rev-parse", f"{self.source_commit}:{source.as_posix()}")
             self.assertEqual(row["source_blob"], blob)
+        for path, expected in self.native_payloads.items():
+            self.assertEqual((self.repo / path).read_bytes(), expected)
+            self.assertFalse((self.repo / f"{path}.gz").exists())
+        self.assertEqual(
+            (self.repo / self.unselected_native).read_bytes(),
+            self.unselected_payload,
+        )
 
         verified = self.run_archiver("verify")
         self.assertEqual(verified.returncode, 0, verified.stderr)
         self.assertEqual(json.loads(verified.stdout), summary)
+
+    def test_explicit_native_scope_coexists_with_legacy_batch(self) -> None:
+        first = self.run_archiver("create")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        legacy_manifest = self.repo / DEFAULT_MANIFEST
+        legacy_manifest_bytes = legacy_manifest.read_bytes()
+        native_source_commit = self.commit("archive session fixtures")
+
+        created = self.run_archiver(
+            "create",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+            scope=NATIVE_SCOPE,
+        )
+        self.assertEqual(created.returncode, 0, created.stderr)
+        summary = json.loads(created.stdout)
+        self.assertEqual(summary["manifests"], 2)
+        self.assertEqual(summary["files"], len(self.payloads) + len(NATIVE_PATHS))
+        self.assertEqual(legacy_manifest.read_bytes(), legacy_manifest_bytes)
+
+        rows = [
+            json.loads(line)
+            for line in (self.repo / NATIVE_MANIFEST).read_text().splitlines()
+        ]
+        self.assertEqual([row["source_path"] for row in rows], sorted(map(str, NATIVE_PATHS)))
+        for row in rows:
+            self.assertEqual(row["schema_version"], 2)
+            self.assertEqual(row["source_scope"], NATIVE_SCOPE)
+            self.assertEqual(row["source_commit"], native_source_commit)
+            source = Path(row["source_path"])
+            archive = self.repo / row["archive_path"]
+            self.assertFalse((self.repo / source).exists())
+            self.assertEqual(gzip.decompress(archive.read_bytes()), self.native_payloads[source])
+            self.assertEqual(
+                telemetry.read_jsonl(self.repo / source),
+                telemetry.read_jsonl(archive),
+            )
+
+        self.assertEqual(
+            (self.repo / self.unselected_native).read_bytes(),
+            self.unselected_payload,
+        )
+        self.assertFalse((self.repo / f"{self.unselected_native}.gz").exists())
+
+        verified = self.run_archiver(
+            "verify",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        self.assertEqual(json.loads(verified.stdout), summary)
+
+    def test_native_scope_rejects_manifest_omitting_selected_file(self) -> None:
+        first = self.run_archiver("create")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        self.commit("archive session fixtures")
+        created = self.run_archiver(
+            "create",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+            scope=NATIVE_SCOPE,
+        )
+        self.assertEqual(created.returncode, 0, created.stderr)
+
+        manifest = self.repo / NATIVE_MANIFEST
+        lines = manifest.read_bytes().splitlines(keepends=True)
+        manifest.write_bytes(b"".join(lines[:-1]))
+        verified = self.run_archiver(
+            "verify",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertNotEqual(verified.returncode, 0)
+        self.assertIn("manifest coverage mismatch", verified.stderr)
+        self.assertIn("missing=1 [", verified.stderr)
+
+    def test_native_scope_rejects_unmanifested_native_archive(self) -> None:
+        first = self.run_archiver("create")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        self.commit("archive session fixtures")
+        created = self.run_archiver(
+            "create",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+            scope=NATIVE_SCOPE,
+        )
+        self.assertEqual(created.returncode, 0, created.stderr)
+
+        orphan = self.repo / "results/telemetry/native-audits/orphan/evidence.jsonl.gz"
+        orphan.parent.mkdir(parents=True)
+        orphan.write_bytes(gzip.compress(b'{"orphan":true}\n'))
+        verified = self.run_archiver(
+            "verify",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertNotEqual(verified.returncode, 0)
+        self.assertIn("archive coverage mismatch across supplied manifests", verified.stderr)
+        self.assertIn("extra=1 [results/telemetry/native-audits/orphan", verified.stderr)
 
     def test_two_successive_batches_require_and_verify_the_prior_manifest(self) -> None:
         first = self.run_archiver("create")
