@@ -51,3 +51,17 @@ PerfectStrategy/Measurements (binaryJointMeasurement) andExtendedLineGame/
 LinePointRejection (onlyCoordinate), withdependentdiagnostics. This is a partial
 frontier, not a completefailurelist. The docbuildwriter hasallpinnedpackages ready
 and waitsfor the samelease. Existingfiles/patchidentitiesremainpreserved.
+
+## Complete converted-build frontier
+
+MAIN's serialized753fullbuild endedexit1 after reachingthefinalscheduledtargets;
+there are exactlythreefailedroots in its finalsummary:
+MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Measurements
+(binaryJointMeasurement),
+MIPStarRE.QPBT.Combining.ExtendedLineGame.LinePointRejection (onlyCoordinate), and
+MIPStarRE.QPBT.Combining.ExtendedLines.Measurement (exists_affineData).
+The firsttwo areprivate data dependencies, thethird aprivateproofreference in an
+exportedconstruction. Dependenttype/tacticerrors arepreservedinthefull log. The
+753worker nowowns theboundedrepairs; MAINwillnotstart a competingbuild inthattree.
+The docbuildwriter observedthelease release and started its retry withall package
+revisionsmaterialized. No buildsuccess isclaimed untiltheactualcommandcompletes.
