@@ -35,3 +35,25 @@ countaspass. No fixturetimeout/skip/buildgateisaltered. Everypasswritesactual
 outcome/time/logtelemetry; partialpasseswillnotbereportedassuccess. Currentrunner:
 /tmp/palomar-756-docbuild-long-check.sh, log/tmp/palomar-756-docbuild-main-pass1.log.
 MAINwill inspect each result before authorizinganotherpass; no automaticspinloop.
+
+## Archive parent preparation complete; documentation diagnosis admitted
+
+Orc-777-20261002-09 finishedexit0 in1002actualseconds (itsfinalprose cites961at an
+interimcheck). Actual777authorcost8928seconds. Parentmerges06ee66b4 and1c830188
+passedbothpending/committedguards andnormalhooks, including936tests/9skipped.
+Allfive-manifest/payloadbytes remainunchanged. Privatecomplete4.35packages and
+projectbuildcopies replacedoldincomplete/incompatiblecachetierswithbackupsretained;
+fouraffectedLeanfilestype-check andfocusedproofscansareempty. Exactpreparedtree
+493,824,021bytes,headroom30,463,979. Nopublication/fullCI/review/mergeclaim.
+
+MAINdocsvalidationpass1 endedexit124 after240s at9821/10072; pass2 withverbose
+endedexit124 after240s at9825/10962. Thereisno fulltargetpass. Logs:
+docbuild-issue756-main-20261002T083224Z-32289.log and
+ docbuild-issue756-main-20261002T083657Z-49746.log under~/.cache/mipstarre-dev/logs.
+A scopedpass1processobservation found Lakealivewithoutchildren atabout20CPU-seconds;
+theprojectAPI databaseexistsat~98MB. Thesefactsalone do notprove progressorgreen.
+MAINadmittedaseparate600secondread-onlySolscout toinspectdoc-gen4facets/current
+artifactsandgiveanevidence-basednextaction. Itmustnotedit,build,writeDBs,fetch or
+inspectotherprojects. Brief/tmp/palomar-756-docbuild-scout.md; no furtheridentical
+pass isqueuedbeforethatdiagnosis. Currentworkers:745trustrepair,753portintegration,
+756docs-scout. Goalactive; allfinalgatesanddeliverablesremainrequired.
