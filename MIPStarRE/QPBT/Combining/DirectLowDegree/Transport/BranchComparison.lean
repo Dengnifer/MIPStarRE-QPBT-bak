@@ -274,10 +274,6 @@ private theorem diagonal_readout_of_condition (D : DirectLdParams) (r : Fin D.k)
 /-- On the axis-line branch with the line on the left, an accepted direct
 answer pair has the rebased line answer, evaluated at the LDT base point,
 equal to the point readout. -/
-private theorem of_decide_eq_true_with (p : Prop) (d : Decidable p)
-    (h : @decide p d = true) : p :=
-  @of_decide_eq_true p d h
-
 theorem directAxisAnswerReadout_zeroCoord_eq_of_win (D : DirectLdParams)
     (r : Fin D.k) (line : AxisParallelLine D.toLDTParameters)
     (a b : DirectLdAnswer D)
@@ -296,7 +292,7 @@ theorem directAxisAnswerReadout_zeroCoord_eq_of_win (D : DirectLdParams)
           simp only [directLdWinPredicate, directAxisQuestionOf, directPointQuestionOf,
             directLdPointQuestionOf, validDirectLdAnswer, Bool.and_self,
             ↓reduceIte] at hcondition
-          exact of_decide_eq_true_with _ _ hcondition
+          exact @of_decide_eq_true _ (Classical.propDecidable _) hcondition
       | alinePolys _ =>
           simp [directLdWinPredicate, directAxisQuestionOf, directPointQuestionOf,
             directLdPointQuestionOf, validDirectLdAnswer] at hwin
@@ -331,7 +327,7 @@ theorem directPointAnswerReadout_eq_axis_zeroCoord_of_win (D : DirectLdParams)
           simp only [directLdWinPredicate, directAxisQuestionOf, directPointQuestionOf,
             directLdPointQuestionOf, validDirectLdAnswer, Bool.and_self,
             ↓reduceIte] at hcondition
-          exact of_decide_eq_true_with _ _ hcondition
+          exact @of_decide_eq_true _ (Classical.propDecidable _) hcondition
       | pointVals _ =>
           simp [directLdWinPredicate, directAxisQuestionOf, directPointQuestionOf,
             directLdPointQuestionOf, validDirectLdAnswer] at hwin
@@ -366,7 +362,7 @@ theorem directDiagonalAnswerReadout_zeroCoord_eq_of_win (D : DirectLdParams)
           simp only [directLdWinPredicate, directDiagonalQuestionOf,
             directPointQuestionOf, directLdPointQuestionOf,
             validDirectLdAnswer, Bool.and_self, ↓reduceIte] at hcondition
-          exact of_decide_eq_true_with _ _ hcondition
+          exact @of_decide_eq_true _ (Classical.propDecidable _) hcondition
       | alinePolys _ =>
           simp [directLdWinPredicate, directDiagonalQuestionOf, directPointQuestionOf,
             directLdPointQuestionOf, validDirectLdAnswer] at hwin
@@ -401,7 +397,7 @@ theorem directPointAnswerReadout_eq_diagonal_zeroCoord_of_win (D : DirectLdParam
           simp only [directLdWinPredicate, directDiagonalQuestionOf,
             directPointQuestionOf, directLdPointQuestionOf,
             validDirectLdAnswer, Bool.and_self, ↓reduceIte] at hcondition
-          exact of_decide_eq_true_with _ _ hcondition
+          exact @of_decide_eq_true _ (Classical.propDecidable _) hcondition
       | pointVals _ =>
           simp [directLdWinPredicate, directDiagonalQuestionOf, directPointQuestionOf,
             directLdPointQuestionOf, validDirectLdAnswer] at hwin

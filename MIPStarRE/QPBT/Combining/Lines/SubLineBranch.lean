@@ -88,27 +88,14 @@ theorem directPointToPauli_smul (P : AdmissibleParams)
     extendedDirectScalarEquiv P t * extendedDirectScalarEquiv P (u i)
   rw [map_mul]
 
-/-- The coordinate-direction identity with the extended dimension expanded.
-This local spelling avoids implicit-transparency mismatches in branch proofs. -/
+/-- The coordinate-direction identity with the extended dimension expanded. -/
 private theorem directPointToPauli_coordinateDirection_expanded
     (P : AdmissibleParams) (k : Fin (2 * P.m + 2)) :
     directPointToPauli P
         (coordinateDirection k : Fin (2 * P.m + 2) →
           DirectScalarQ P.extendedDirectLd) =
       (coordinateDirection k : Fin (2 * P.m + 2) → PauliScalar P) := by
-  funext j
-  by_cases h : k = j
-  · subst j
-    change extendedDirectScalarEquiv P
-        ((Pi.single k 1 : Fin (2 * P.m + 2) →
-          DirectScalarQ P.extendedDirectLd) k) =
-      (Pi.single k 1 : Fin (2 * P.m + 2) → PauliScalar P) k
-    rw [Pi.single_eq_same, map_one]
-  · change extendedDirectScalarEquiv P
-        ((Pi.single k 1 : Fin (2 * P.m + 2) →
-          DirectScalarQ P.extendedDirectLd) j) =
-      (Pi.single k 1 : Fin (2 * P.m + 2) → PauliScalar P) j
-    rw [Pi.single_eq_of_ne (Ne.symm h), map_zero]
+  exact directPointToPauli_coordinateDirection P k
 
 /-! ## The coordinate index carried by each source line -/
 
