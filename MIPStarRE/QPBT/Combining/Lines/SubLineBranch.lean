@@ -88,15 +88,6 @@ theorem directPointToPauli_smul (P : AdmissibleParams)
     extendedDirectScalarEquiv P t * extendedDirectScalarEquiv P (u i)
   rw [map_mul]
 
-/-- The coordinate-direction identity with the extended dimension expanded. -/
-private theorem directPointToPauli_coordinateDirection_expanded
-    (P : AdmissibleParams) (k : Fin (2 * P.m + 2)) :
-    directPointToPauli P
-        (coordinateDirection k : Fin (2 * P.m + 2) →
-          DirectScalarQ P.extendedDirectLd) =
-      (coordinateDirection k : Fin (2 * P.m + 2) → PauliScalar P) := by
-  exact directPointToPauli_coordinateDirection P k
-
 /-! ## The coordinate index carried by each source line -/
 
 /-- The first coordinate of the source space.  Blueprint
@@ -243,7 +234,7 @@ theorem projX_subLineExtDirection_mem_span (P : AdmissibleParams)
         (coordinateDirection (embX P.m i))) =
         (coordinateDirection i : Fin P.m → PauliScalar P) := by
       exact (congrArg projX
-        (directPointToPauli_coordinateDirection_expanded P (embX P.m i))).trans
+        (directPointToPauli_coordinateDirection P (embX P.m i))).trans
           (projX_coordinateDirection_embX i)
     rw [subLineXIndex_embX]
     change projX (directPointToPauli P
@@ -258,7 +249,7 @@ theorem projX_subLineExtDirection_mem_span (P : AdmissibleParams)
   · have hval : projX (directPointToPauli P
         (coordinateDirection (embZ P.m j))) = 0 := by
       exact (congrArg projX
-        (directPointToPauli_coordinateDirection_expanded P (embZ P.m j))).trans
+        (directPointToPauli_coordinateDirection P (embZ P.m j))).trans
           (projX_coordinateDirection_embZ j)
     change projX (directPointToPauli P
       (coordinateDirection (embZ P.m j))) ∈ _
@@ -271,7 +262,7 @@ theorem projX_subLineExtDirection_mem_span (P : AdmissibleParams)
   · have hval : projX (directPointToPauli P
         (coordinateDirection (alphaVar P.m))) = 0 := by
       exact (congrArg projX
-        (directPointToPauli_coordinateDirection_expanded P (alphaVar P.m))).trans
+        (directPointToPauli_coordinateDirection P (alphaVar P.m))).trans
           projX_coordinateDirection_alphaVar
     change projX (directPointToPauli P
       (coordinateDirection (alphaVar P.m))) ∈ _
@@ -284,7 +275,7 @@ theorem projX_subLineExtDirection_mem_span (P : AdmissibleParams)
   · have hval : projX (directPointToPauli P
         (coordinateDirection (betaVar P.m))) = 0 := by
       exact (congrArg projX
-        (directPointToPauli_coordinateDirection_expanded P (betaVar P.m))).trans
+        (directPointToPauli_coordinateDirection P (betaVar P.m))).trans
           projX_coordinateDirection_betaVar
     change projX (directPointToPauli P
       (coordinateDirection (betaVar P.m))) ∈ _
@@ -313,7 +304,7 @@ theorem projZ_subLineExtDirection_mem_span (P : AdmissibleParams)
   · have hval : projZ (directPointToPauli P
         (coordinateDirection (embX P.m i))) = 0 := by
       exact (congrArg projZ
-        (directPointToPauli_coordinateDirection_expanded P (embX P.m i))).trans
+        (directPointToPauli_coordinateDirection P (embX P.m i))).trans
           (projZ_coordinateDirection_embX i)
     change projZ (directPointToPauli P
       (coordinateDirection (embX P.m i))) ∈ _
@@ -333,7 +324,7 @@ theorem projZ_subLineExtDirection_mem_span (P : AdmissibleParams)
         (coordinateDirection (embZ P.m j))) =
         (coordinateDirection j : Fin P.m → PauliScalar P) := by
       exact (congrArg projZ
-        (directPointToPauli_coordinateDirection_expanded P (embZ P.m j))).trans
+        (directPointToPauli_coordinateDirection P (embZ P.m j))).trans
           (projZ_coordinateDirection_embZ j)
     rw [subLineZIndex_embZ]
     change projZ (directPointToPauli P
@@ -348,7 +339,7 @@ theorem projZ_subLineExtDirection_mem_span (P : AdmissibleParams)
   · have hval : projZ (directPointToPauli P
         (coordinateDirection (alphaVar P.m))) = 0 := by
       exact (congrArg projZ
-        (directPointToPauli_coordinateDirection_expanded P (alphaVar P.m))).trans
+        (directPointToPauli_coordinateDirection P (alphaVar P.m))).trans
           projZ_coordinateDirection_alphaVar
     change projZ (directPointToPauli P
       (coordinateDirection (alphaVar P.m))) ∈ _
@@ -361,7 +352,7 @@ theorem projZ_subLineExtDirection_mem_span (P : AdmissibleParams)
   · have hval : projZ (directPointToPauli P
         (coordinateDirection (betaVar P.m))) = 0 := by
       exact (congrArg projZ
-        (directPointToPauli_coordinateDirection_expanded P (betaVar P.m))).trans
+        (directPointToPauli_coordinateDirection P (betaVar P.m))).trans
           projZ_coordinateDirection_betaVar
     change projZ (directPointToPauli P
       (coordinateDirection (betaVar P.m))) ∈ _
