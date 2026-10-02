@@ -1870,3 +1870,223 @@ override is still never self-granted.
 **Expected effect:** the guard still stops runaway scaffolding, at five times the old ceiling. The per-episode
 discipline in `local/personas/main.md` (stop at the limit, commit what stands, record, rescope) is unchanged, and
 review still checks the PR's cumulative workflow diff.
+
+## 2026-10-02 - Bind companion reviews to their source checkout (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Companion-review
+routing gap" and "Companion-review trust-boundary findings". The first
+implementation supplied a source route, but independent review 5383425988
+showed that a same-named check was not bound to its workflow run and that the
+companion checkout still supplied dispatch-time instructions.
+
+**Change:** `local/bin/review.sh` accepts one explicit `--source-repo PATH`
+route, restricted to `Dengnifer/QPBT-comparator`. It requires a clean checkout
+whose origin, PR repositories, branch, base and head all agree; replaces the
+library's `local-ci/summary` gate with exact-head GitHub Actions evidence. The
+selected check is bound to the actual `.github/workflows/comparator.yml` run,
+its current attempt and exact job; the workflow and `verify.sh` bytes are pinned
+to reviewed comparator main commit `360402fdf4a39399f94331452d6e5d0a35c144be`.
+The reviewer runs from the primary instruction root, while the companion tree
+is explicitly framed as untrusted data. Prompts, protocols, dispatch and account
+admission remain primary, and companion cache, lock and session scopes include
+the repository identity. `gh_common.py` gains read-only check-run, Actions-run
+and exact-attempt job queries. Offline fixtures cover decoy workflows/jobs,
+dead/comment-only launchers and malicious companion instructions in addition to
+the original exact-head cases.
+
+**Expected effect:** MAIN can request an independent review of the comparator's
+actual PR head without mutating its checkout or confusing it with a library PR
+having the same number. Missing or mismatched local or GitHub evidence fails
+closed; the default library review and existing reviewer/account gates are
+unchanged.
+
+## 2026-10-02 - Pin the official native Palomar preflight (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "PR755
+native-preflight rescope", and independent review 5384612101. Its F1 showed
+that the previously pinned `verify.sh` trusted a tracked branch comparator; F2
+showed that `enable_nanoda` alone did not bind modules, declarations,
+definitions or permitted axioms. The earlier review and its cost remain part of
+the episode.
+
+**Change:** the companion route now pins the complete caller fixture for the
+official reusable PalomarSubmission full workflow at
+`65f0154ed776cd26c224254aa57b379137f28b0d`. The caller selects explicit
+GitHub-hosted profile `palomar-standard-v1` (digest
+`eb97b7b548c5d016967434818f0ed48a215e7fdc15528f564ab21ff2927cfd69`).
+`review.sh` accepts only the exact `comparator / verify` check from a push run,
+retains exact-head/current-attempt/job binding, and exactly validates the
+Challenge/Solution modules, four theorem targets, one definition, three axioms
+and compatibility field. It executes no candidate launcher or comparator.
+Focused regressions mutate caller and every configuration surface, inject a
+tracked fake comparator, and retain decoy workflow/job, stale-attempt,
+wrong-head, repository-independence and trusted-primary-root coverage.
+
+**Expected effect:** branch-provided verification tools and weakened target
+configurations cannot manufacture review admission. A first real companion run
+must confirm GitHub's `comparator / verify` naming; until then the route fails
+closed and no review is dispatched.
+
+**Outcome:** the companion-routing class passes 13 tests, the complete GitHub
+workflow module passes 73, and the related review/native modules pass 16.
+Shell/Python syntax, hook installation and whitespace checks pass. No full build
+or live companion run was performed, so the check-name assumption remains open.
+
+## 2026-10-02 - Fail closed on unpaired review repository overrides (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "PR755
+repository-routing finding", and independent review 5388322891. Its F1 showed
+that `MIPSTARRE_GITHUB_REPO` still redirected default-route PR reads while the
+reviewer used the primary checkout's local refs, diff and worktree.
+
+**Change:** `review.sh` now derives the trusted primary repository from the
+primary checkout's `github` remote independently of the API override. Before a
+PR read, runtime-directory creation or worktree resolution, the default route
+requires the API target to match that repository exactly. The explicit route
+remains limited to `Dengnifer/QPBT-comparator` and now prevalidates the named
+checkout's exact root, `origin` and cleanliness before the PR read; its existing
+PR repository, branch, base and head checks run afterward and recheck the source
+identity. A fake-GitHub regression supplies colliding foreign PR metadata and
+proves the mismatch produces no API call or runtime record, while the valid
+default and explicit companion tests remain active.
+
+**Expected effect:** remote evidence cannot be paired with bytes from another
+repository merely by exporting `MIPSTARRE_GITHUB_REPO`. Repository selection is
+explicit and fail-closed before either route consumes PR state.
+
+**Outcome:** the 14 companion-routing tests, all 74 GitHub-workflow tests and
+all 16 related review/native tests pass. Shell and Python syntax, whitespace,
+hook installation and the changed-line length check pass. No full build, live
+companion review, canonical CI or independent review was run in the author
+phase.
+
+## 2026-10-02 - Accept exact ref-qualified companion workflow paths (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "PR755 ref-qualified
+workflow-path finding", and independent review 5388498920. GitHub's REST
+workflow-run representation permits `.github/workflows/<file>@<ref>`, while
+the companion gate required the bare path exactly.
+
+**Change:** `review.sh` retains support for the observed bare canonical path and
+also accepts `.github/workflows/comparator.yml@<branch>` only when `<branch>` is
+the same already-validated push branch from the exact Actions run and PR. Every
+other path or ref remains nonofficial evidence. Focused fixtures cover the
+documented qualified form, a qualified decoy path and the canonical path at the
+wrong ref, while retaining the prior bare-path and authenticity cases.
+
+**Expected effect:** either GitHub workflow-run metadata representation can
+admit the same official comparator run without allowing a path suffix to bypass
+workflow or branch identity checks.
+
+**Outcome:** all 16 companion-routing tests, all 76 GitHub-workflow tests and
+all 16 related review/native tests pass. Shell and Python syntax, whitespace,
+installed-hook and changed-line length checks pass. No full build, live
+companion review, canonical CI, independent review or merge ran in the author
+phase.
+
+## 2026-10-02 - Order companion checks by validated completion time (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Companion check
+freshness used undocumented ID order", and independent review 5388674269. Its
+F1 showed that reverse numeric check-ID order could accept an older success when
+a lower-ID official failure completed later on the same SHA.
+
+**Change:** `review.sh` keeps check and run IDs only for object binding. It
+classifies the exact official workflow before freshness selection, validates
+timezone-aware `started_at` and `completed_at`, and orders completed official
+checks only by `completed_at`. A nonofficial workflow remains ignorable. An
+unfinished official check, missing or malformed temporal metadata, conflicting
+duplicate check ID, or tie for latest official completion now blocks because
+the newest evidence is unknown or ambiguous. The selected check still must bind
+to the workflow run's current attempt, job and check URL, report successful run,
+job and check results, and survive the existing run and publication rechecks.
+Focused fixtures invert ID and completion order in both directions and retain
+pending, stale-attempt, foreign-workflow and prior authenticity cases.
+
+**Expected effect:** a newer official pending or failed comparator run cannot
+fall through to an older green check merely because its numeric ID is lower.
+The companion route remains narrow and fail-closed without adding a new CI
+service or trust path.
+
+**Outcome:** the focused companion-routing class passes 20 tests, the complete
+GitHub-workflow module passes 80, and the related review/native modules pass 16.
+Shell/Python syntax, whitespace, changed-line length, installed-hook and normal
+pre-commit checks pass. No full build, live companion review, canonical CI,
+independent review, companion mutation or merge ran in the author phase.
+
+## 2026-10-02 - Synchronize companion-review architecture summaries (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02,
+"Companion-review architecture summaries lagged the route." The sixth PR755
+review attempt timed out without a final verdict; its preserved commentary was
+an observation, not a published finding. MAIN independently confirmed the
+documentation drift against `local/protocols/review.md`.
+
+**Change:** `AGENTS.md`, `local/DESIGN.md` and `local/README.md` now distinguish
+the normal primary-library review chain from the sole explicit
+`Dengnifer/QPBT-comparator` source route. The summaries state that primary PRs
+use complete exact-head local CI, while the companion route uses its pinned
+official Palomar full-CI evidence on the exact head and retains trusted
+primary-main reviewer instructions. The detailed validation contract remains
+centralized in `local/protocols/review.md`; no script or gate semantics changed.
+
+**Expected effect:** operators see the implemented companion exception without
+mistaking arbitrary repositories, branch-supplied verification or an
+unpublished timeout commentary for admissible review evidence.
+
+## 2026-10-02 - Pin companion instructions and require fresh reviews (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Companion review reused
+mutable instructions and prior bodies", and independent review 5389660071. Its
+F1 showed that the companion reviewer read `AGENTS.md` and protocols from an
+unchecked primary working tree; F2 showed that companion carry-forward could
+authenticate one review row and republish another row's body.
+
+**Change:** `review.sh` resolves the companion instruction source to one commit
+of the checked-out trusted primary branch. It rejects modified, untracked,
+ignored or off-ref instruction state before PR lookup and dispatch, and repeats
+the check before publication. The existing passive telemetry path-and-mode
+boundary permits concurrent committed or working-tree telemetry updates without
+making them instructions. Persona and trusted prompt reads use the pinned
+commit. Companion reviews no longer enter the carry-forward fast path, so every
+exact head receives a fresh independent model review; the default primary route
+retains its existing carry-forward behavior. `review.md`, `DESIGN.md` and the
+operator guide state the narrowed contract. Exploit-shaped fixtures cover
+primary instruction mutation, untracked protocols, off-ref roots, publication
+revalidation, passive telemetry and unauthenticated preceding review bodies.
+
+**Expected effect:** a companion branch, mutable primary checkout or unrelated
+prior COMMENT body cannot become reviewer authority or exact-head review
+evidence, while normal telemetry publication and all primary-route behavior
+continue unchanged.
+
+**Outcome:** the 27 focused companion tests, all 87 GitHub-workflow tests and 52
+related review/dispatch tests pass. Shell and Python syntax and
+`git diff --check` pass. No full build, canonical CI, independent review, companion
+mutation, merge or gate override ran in the author phase.
+
+## 2026-10-02 - Freeze companion review inputs at Git commits (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Checkout sampling did
+not prove companion review bytes", and independent review 5390270756. Its F1
+showed that pre/post cleanliness checks did not establish which bytes the model
+read while a mutable checkout could contain ignored instructions, index-hidden
+edits or a transient mutation restored before publication.
+
+**Change:** `review.sh` now creates one unique private, mode-read-only Git
+snapshot pinned to the resolved trusted-primary commit and another pinned to the
+exact companion head. Regular files are materialized from Git blob objects, not
+the live worktree or index; ignored, untracked and index-hidden bytes are absent,
+and tracked symlinks, gitlinks, `.git` and `.lake` paths fail closed. Codex
+project discovery, personas and prompts use only the trusted snapshot; caller
+and configuration validation, subject, diff and reviewed source use only the
+candidate snapshot. Live repositories remain identity and movement inputs. The
+official CI gate and remote head are revalidated before publication, whose body
+and private receipt bind both snapshot commits and trees to admission and
+publication run, attempt, job and check identities. Companion carry-forward
+remains disabled; the default primary route is unchanged.
+
+**Expected effect:** every companion verdict is reproducibly attributable to
+the committed instruction and candidate bytes the model could read, independent
+of live checkout state or ref movement, while stale source heads and CI still
+block publication.

@@ -1,0 +1,19 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+    "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+    "MIPStarRE.QPBT.Palomar.pauli_soundness",
+    "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit"
+  ],
+  "definition_names": [
+    "MIPStarRE.QPBT.fixedFieldModel"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}
