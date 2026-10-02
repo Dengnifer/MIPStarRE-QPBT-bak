@@ -263,21 +263,6 @@ theorem combined_line_conditioned_defect_le_explicit
   simp_rw [setting.combinedLineMeasurement_evaluated_eq_pasted]
   unfold heterogeneousPastingError
   convert hresult using 1
-  clear hbound hmarginal hresult
-  apply avgOver_congr
-  intro sample
-  apply Finset.sum_congr rfl
-  intro output _
-  apply Finset.sum_congr rfl
-  intro other _
-  by_cases hsame : output = other
-  · subst other
-    simp
-  · have hsame' : ¬ @Eq
-        (Option (ScalarQ params.toLdParams) × Option (ScalarQ params.toLdParams))
-        output other := hsame
-    simp only [if_neg hsame, if_neg hsame']
-    congr 1
 
 /-- A two-variable polynomial error bounds the conditioned combined-line defect,
 with line-marginal coefficient `2080`. -/

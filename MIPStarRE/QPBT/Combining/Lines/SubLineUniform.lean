@@ -295,7 +295,10 @@ theorem directPointToPauli_mem_linePoints (P : AdmissibleParams)
   obtain ⟨t, rfl⟩ := hx
   refine ⟨extendedDirectScalarEquiv P t, ?_⟩
   funext i
-  simp [directPointToPauli]
+  change extendedDirectScalarEquiv P (b i + t * d i) =
+    extendedDirectScalarEquiv P (b i) +
+      extendedDirectScalarEquiv P t * extendedDirectScalarEquiv P (d i)
+  rw [map_add, map_mul]
 
 /-- The `X` block of a point of a line lies on the source line through the
 canonical representative of the `X` block of the base, as soon as the `X`
@@ -343,8 +346,20 @@ direction at the same coordinate.  Blueprint
 theorem directPointToPauli_coordinateDirection (P : AdmissibleParams)
     (k : Fin P.extendedDirectLd.m) :
     directPointToPauli P (coordinateDirection k) = coordinateDirection k := by
+  change Fin (2 * P.m + 2) at k
   funext j
-  simp [directPointToPauli, coordinateDirection, Pi.single_apply]
+  by_cases h : k = j
+  · subst j
+    change extendedDirectScalarEquiv P
+        ((Pi.single k 1 : Fin (2 * P.m + 2) →
+          DirectScalarQ P.extendedDirectLd) k) =
+      (Pi.single k 1 : Fin (2 * P.m + 2) → PauliScalar P) k
+    rw [Pi.single_eq_same, map_one]
+  · change extendedDirectScalarEquiv P
+        ((Pi.single k 1 : Fin (2 * P.m + 2) →
+          DirectScalarQ P.extendedDirectLd) j) =
+      (Pi.single k 1 : Fin (2 * P.m + 2) → PauliScalar P) j
+    rw [Pi.single_eq_of_ne (Ne.symm h), map_zero]
 
 /-- Incidence of the `X` blocks: if a source line has as base the canonical
 representative, in its own direction, of the `X` block of the base of an

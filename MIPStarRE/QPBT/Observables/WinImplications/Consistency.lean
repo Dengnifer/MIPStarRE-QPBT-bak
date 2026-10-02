@@ -50,7 +50,6 @@ theorem loopMismatch_le_rejection {P : AdmissibleParams} {ε : ℝ}
   dsimp
   apply outcome_event_weight_mono
   intro A B hne
-  simp only [pauliBasisTest]
   simp only [pauliWinPredicate, Bool.and_eq_true, ↓reduceIte,
     Bool.if_false_right, Bool.decide_and, Bool.decide_eq_true,
     Bool.and_eq_false_imp, decide_eq_false_iff_not, and_imp]

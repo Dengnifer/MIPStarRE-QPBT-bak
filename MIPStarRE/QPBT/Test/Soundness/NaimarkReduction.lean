@@ -44,7 +44,7 @@ def pauliNaimarkEmbeddingB (P : AdmissibleParams)
 
 /-- Complete the Naimark dilation separately for every question and both
 players, padding the original bipartite state at the ground coordinates. -/
-def pauliNaimarkStrategy (P : AdmissibleParams)
+@[reducible] def pauliNaimarkStrategy (P : AdmissibleParams)
     (S : Strategy (pauliBasisTest P)) : Strategy (pauliBasisTest P) :=
   paddedStrategy S (none : Option (PauliAnswer P)) (none : Option (PauliAnswer P))
     (fun question => dilatedMeasurement (default : PauliAnswer P) (S.A question))
@@ -112,7 +112,6 @@ theorem pauliNaimarkStrategy_pauli_compressA (P : AdmissibleParams)
       (S.A (pauliQuestion P W))).postprocess pauliAnswerOrZero).compressAt none = _
   rw [MIPStarRE.Quantum.Measurement.compressAt_postprocess,
     Measurement.compressAt_dilatedMeasurement]
-  rfl
 
 /-- Compression commutes with the complete `pauliAnswerOrZero` postprocessing
 of Bob's Pauli-question measurement, including wrong-form outcomes. -/
@@ -125,16 +124,19 @@ theorem pauliNaimarkStrategy_pauli_compressB (P : AdmissibleParams)
       (S.B (pauliQuestion P W))).postprocess pauliAnswerOrZero).compressAt none = _
   rw [MIPStarRE.Quantum.Measurement.compressAt_postprocess,
     Measurement.compressAt_dilatedMeasurement]
-  rfl
 
 /-- Compose a witness on the dilated strategy with the ground embeddings,
 keeping both auxiliary carrier spaces and the same normalized auxiliary state. -/
-def pauliNaimarkWitness (P : AdmissibleParams)
+@[reducible] def pauliNaimarkWitness (P : AdmissibleParams)
     (S : Strategy (pauliBasisTest P))
     (w : PauliSoundnessWitness P (pauliNaimarkStrategy P S)) :
     PauliSoundnessWitness P S where
   ιA' := w.ιA'
   ιB' := w.ιB'
+  ιAFintype := w.ιAFintype
+  ιBFintype := w.ιBFintype
+  ιADecidableEq := w.ιADecidableEq
+  ιBDecidableEq := w.ιBDecidableEq
   φA := w.φA.comp (pauliNaimarkEmbeddingA P S)
   φB := w.φB.comp (pauliNaimarkEmbeddingB P S)
   aux := w.aux
@@ -160,9 +162,8 @@ theorem pauli_naimark_witness_state_distance_eq (P : AdmissibleParams)
         (pauliNaimarkWitness P S w).φB S.ψ -
       idealState P (pauliNaimarkWitness P S w).aux‖ =
     ‖isometryTensor w.φA w.φB (pauliNaimarkStrategy P S).ψ -
-      idealState P w.aux‖ := by
+  idealState P w.aux‖ := by
   rw [pauli_naimark_witness_state_eq]
-  rfl
 
 end
 

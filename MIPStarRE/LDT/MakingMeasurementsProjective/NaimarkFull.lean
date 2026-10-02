@@ -104,7 +104,7 @@ The one-measurement theorem produces projectors on `H × Option Outcome`.  Since
 all questions on one side have the same outcome type, the different question
 measurements may be represented on the same auxiliary space, with a different
 Naimark unitary for each question. -/
-def oneNaimarkAuxHilbertSpace (Outcome : Type u)
+@[reducible] def oneNaimarkAuxHilbertSpace (Outcome : Type u)
     [Fintype Outcome] [DecidableEq Outcome] :
     FiniteHilbertSpace.{u} where
   carrier := Option Outcome
@@ -177,6 +177,7 @@ theorem OneMeasNaimarkData.compression_none_none
         data.source.effect a i j * (↑(Fintype.card Outcome) + 1 : ℂ) := h.symm
       _ = (↑(Fintype.card Outcome) + 1 : ℂ) * data.source.effect a i j := by ring)
 
+set_option maxHeartbeats 1600000 in
 /-- The two-sided trace identity for the full tensor-product Naimark assembly.
 
 Paper origin: `references/ldt-paper/orthonormalization.tex:161-187`, where the
@@ -225,10 +226,11 @@ theorem OneMeasNaimarkData.twoSidedCorrelationPreservation
     PureState.density, pureDensity, PureState.basis, Matrix.mul_apply,
     Matrix.trace, opTensor, Matrix.kronecker, Matrix.vecMulVec]
   simp [Fintype.sum_prod_type, OneMeasNaimarkData.toProjSubMeas,
-    mul_assoc, mul_left_comm, mul_comm]
+    restrictSomeProjSubMeas, OneMeasNaimarkData.toProjSubMeasOption]
+  simp [mul_assoc, mul_left_comm, mul_comm]
   field_simp
-  let cA : ℂ := Fintype.card (oneNaimarkAuxHilbertSpace OutcomeA).carrier
-  let cB : ℂ := Fintype.card (oneNaimarkAuxHilbertSpace OutcomeB).carrier
+  let cA : ℂ := (Fintype.card OutcomeA : ℂ) + 1
+  let cB : ℂ := (Fintype.card OutcomeB : ℂ) + 1
   let S : ℂ :=
     ∑ x : HA.carrier,
       ∑ x_1 : HB.carrier,

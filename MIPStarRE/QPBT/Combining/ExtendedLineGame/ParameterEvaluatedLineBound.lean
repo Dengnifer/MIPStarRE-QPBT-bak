@@ -269,11 +269,13 @@ private theorem diagonal_none_mass_eq
       simp
     · cases answerA <;> simp [validDirectLdAnswer] at hinvalid
       simp [diagonalCoefficients, diagonalGameRead, coordinate_eq_lineCoordinate]
+      rfl
   · by_cases hinvalid : validDirectLdAnswer (D := P.extendedDirectLd) .dline answerB = false
     · rw [outcomeWeight_eq_zero_of_invalid lines _ _ answerA answerB (Or.inr hinvalid)]
       simp
     · cases answerB <;> simp [validDirectLdAnswer] at hinvalid
       simp [diagonalCoefficients, diagonalGameRead, coordinate_eq_lineCoordinate]
+      rfl
 
 /-- Averaging the parameter/completed-read comparison over the actual axis law. -/
 private theorem axis_parameter_evaluation_defect_le_completed

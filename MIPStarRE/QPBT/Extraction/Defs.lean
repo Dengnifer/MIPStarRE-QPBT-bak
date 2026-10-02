@@ -209,12 +209,16 @@ theorem tauDotProj_isProj {P : AdmissibleParams} (W : PauliKind)
     IsProj (tauDotProj W u a) := by
   classical
   let basisMatrix : Op (PauliRegister P) := fun row label => pauliVec W label row
+  have hbasisMatrix_conjTranspose (label row : PauliRegister P) :
+      basisMatrixᴴ label row = star (pauliVec W label row) := by
+    rfl
   have hbasis : basisMatrix * basisMatrixᴴ = 1 := by
     calc
       basisMatrix * basisMatrixᴴ = ∑ label : PauliRegister P, pauliProj W label := by
         ext row column
-        simp [basisMatrix, Matrix.mul_apply, pauliProj, Matrix.sum_apply,
-          Matrix.vecMulVec_apply]
+        rw [Matrix.mul_apply]
+        simp only [basisMatrix, hbasisMatrix_conjTranspose, pauliProj,
+          Matrix.sum_apply, Matrix.vecMulVec_apply]
       _ = 1 := sum_pauliProj_eq_one W
   let diagonalProj : Op (PauliRegister P) :=
     Matrix.diagonal (fun label => if dotProduct label u = a then (1 : ℂ) else 0)
@@ -232,7 +236,7 @@ theorem tauDotProj_isProj {P : AdmissibleParams} (W : PauliKind)
     simp only [tauDotProj, bracketOp, Matrix.sum_apply, pauliProj, Matrix.vecMulVec_apply]
     rw [Matrix.mul_apply]
     simp only [diagonalProj, Matrix.mul_diagonal]
-    simp [basisMatrix, Finset.sum_filter, mul_ite, ite_mul]
+    simp [basisMatrix, hbasisMatrix_conjTranspose, Finset.sum_filter, mul_ite, ite_mul]
   rw [hcoarse]
   exact hdiagonal.map (Unitary.conjStarAlgAut ℂ (Op (PauliRegister P))
     ⟨basisMatrix, Matrix.mem_unitaryGroup_iff.mpr hbasis⟩)

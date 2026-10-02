@@ -138,7 +138,10 @@ private lemma exists_frequencyWeight_one (params : Parameters) :
     ext j
     by_cases hji : j = i
     · subst j
-      simp [α, hone]
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+      have hαi : α i = one := by simp [α]
+      rw [hαi]
+      simp [hone]
     · simp [α, Function.update, hji]
   rw [hfilter]
   simp
@@ -201,7 +204,6 @@ private lemma orthogonalModeProjectorMatrix_eq_sum (params : Parameters) :
           rw [orthogonalModeProjectorMatrix,
             constantModeProjectorMatrix_eq_fourierBasisProjector_zero,
             sum_fourierBasisProjector_eq_one]
-          rfl
     _ = ∑ α ∈ (Finset.univ.erase (0 : Point params)), fourierBasisProjector params α := by
           rw [← hsplit]
           simp [sub_eq_add_neg, add_left_comm]
@@ -235,7 +237,6 @@ private lemma matrixAdjacencyOperator_spectral_decomp (params : Parameters) :
               star (fourierBasisState params α v) * fourierBasisState params α w := by
             congr 1 with w
             rw [fourierBasisState_inner_product_dual params v w]
-            rfl
     _ = ∑ α : Point params,
           star (fourierBasisState params α v) *
             ((matrixAdjacencyOperator params).mulVec (fourierBasisState params α)) u := by
@@ -304,7 +305,6 @@ private lemma matrixLaplacianOperator_spectral_decomp (params : Parameters) :
             (((adjacencyEigenvalue params α : Error) : ℂ) • fourierBasisProjector params α) := by
           rw [matrixLaplacianOperator, sum_fourierBasisProjector_eq_one,
             matrixAdjacencyOperator_spectral_decomp]
-          rfl
     _ = ∑ α : Point params,
           (((hypercubeVertexCount params : ℂ)⁻¹ -
               (((adjacencyEigenvalue params α : Error) : ℂ))) •
@@ -362,7 +362,6 @@ private lemma matrixLaplacianOperator_mul_fourierBasisState (params : Parameters
     _ = ((hypercubeVertexCount params : ℂ)⁻¹) • fourierBasisState params α -
           (((adjacencyEigenvalue params α : Error) : ℂ) • fourierBasisState params α) := by
             rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, eigenvectors params α]
-            rfl
     _ = (((hypercubeVertexCount params : ℂ)⁻¹ -
             (((adjacencyEigenvalue params α : Error) : ℂ))) • fourierBasisState params α) := by
             rw [← sub_smul]
@@ -416,7 +415,6 @@ private lemma fourierBasisChange_conj_laplacian (params : Parameters) :
     _ = (((laplacianEigenvalue params β : Error) : ℂ) *
           (if α = β then 1 else 0)) := by
             rw [fourierBasisState_inner_product params α β]
-            rfl
     _ = Matrix.diagonal (fun γ => ((laplacianEigenvalue params γ : Error) : ℂ)) α β := by
             by_cases hαβ : α = β
             · subst hαβ
@@ -439,7 +437,9 @@ private lemma matrixLaplacianOperator_charpoly_roots_eq_fourier (params : Parame
         star (fourierBasisState params α v) * fourierBasisState params α u
     · refine Finset.sum_congr rfl ?_
       intro α _
-      simp [F, mul_comm]
+      change fourierBasisState params α u * star (fourierBasisState params α v) =
+        star (fourierBasisState params α v) * fourierBasisState params α u
+      ring
     · rw [fourierBasisState_inner_product_dual params v u]
       by_cases h : v = u
       · subst v

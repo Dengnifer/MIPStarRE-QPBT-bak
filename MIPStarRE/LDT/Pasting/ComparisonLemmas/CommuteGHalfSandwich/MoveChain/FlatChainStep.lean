@@ -163,6 +163,10 @@ lemma commuteGHalfSandwich_postMoveFlatStep
                         let G := (gHatIdxMeas params family q.2.1).outcome ogs.2.1
                         leftTensor (ι₂ := ι) G * X)
                       hzero_active
+            have hi_ne_zero : i ≠ 0 := by
+              intro hi
+              subst i
+              exact hi0 rfl
             calc
               ((commuteGHalfSandwich_postMoveFlatFamily params family (r + 1))
                   i.succ q).outcome ogs
@@ -171,7 +175,7 @@ lemma commuteGHalfSandwich_postMoveFlatStep
                       ((commuteGHalfSandwich_postMoveFlatFamily params family r) 0)) q).outcome
                     ogs := by
                         conv_lhs => simp [commuteGHalfSandwich_postMoveFlatFamily, hi2, hi2']
-                        simp [hi0, hinner0]
+                        simp [hi_ne_zero, hinner0]
               _ = (commuteGHalfSandwich_secondSliceLiftFamily params family r
                     (commuteGHalfSandwich_moveFamily params family r) q).outcome ogs := hsecond_eq
               _ = ((commuteGHalfSandwich_moveBackChainFamily params family r) 0 q).outcome
@@ -234,6 +238,10 @@ lemma commuteGHalfSandwich_postMoveFlatStep
             intro q ogs
             have htgt_not0 : i.1 + 1 ≠ 0 := by omega
             have htgt_not1 : i.1 + 1 ≠ 1 := by omega
+            have hi_ne_zero : i ≠ 0 := by
+              intro hi
+              subst i
+              exact hi0 rfl
             have hj_succ :
                 (j.succ : Fin (commuteGHalfSandwich_postMoveFlatLength r + 1)) =
                   ⟨i.1 - 1, by
@@ -255,7 +263,7 @@ lemma commuteGHalfSandwich_postMoveFlatStep
                           omega⟩)) q).outcome ogs := by
                         conv_lhs => simp [commuteGHalfSandwich_postMoveFlatFamily, htgt_not0,
                             htgt_not1]
-                        simp [hi0]
+                        simp [hi_ne_zero]
               _ = (commuteGHalfSandwich_prefixSecondSliceLeftFamily params family (r + 1)
                     (commuteGHalfSandwich_splitSuccLiftFamily params r
                       ((commuteGHalfSandwich_postMoveFlatFamily params family r) j.succ))

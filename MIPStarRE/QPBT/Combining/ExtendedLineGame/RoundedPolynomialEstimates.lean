@@ -229,12 +229,17 @@ private theorem rounded_polynomial_ordered_estimates_of_soundness
     lhs; arg 2; ext u c; arg 1; arg 1
     erw [point_scalar_measurement lines .alice u]
   simp only [MIPStarRE.Quantum.Measurement.postprocess_comp] at hAscalar hBscalar
+  conv at hAscalar =>
+    lhs; arg 2; ext u c; arg 1; arg 1
+    rw [← extendedPolynomialRead_equiv P u]
+  conv at hBscalar =>
+    lhs; arg 3; ext u c; arg 2; arg 1
+    rw [← extendedPolynomialRead_equiv P u]
   have hAquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
       (fun x c => heteroKron ((RA.postprocess (extendedPolynomialRead P x)).effect c) 1)
       (fun x c => heteroKron 1
         ((points.extendedQ .bob x.1.1 x.1.2 x.2.1 x.2.2).effect c)) (pairState S) ≤ eta := by
     rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
-    simp only [extendedPolynomialRead_equiv]
     exact hAscalar
   have hBquestion : consistencyDefect (uniformDistribution (ExtendedPointQuestion P))
       (fun x c => heteroKron
@@ -242,7 +247,6 @@ private theorem rounded_polynomial_ordered_estimates_of_soundness
       (fun x c => heteroKron 1 ((RB.postprocess (extendedPolynomialRead P x)).effect c))
       (pairState S) ≤ eta := by
     rw [← consistencyDefect_uniform_question_equiv (directPointExtendedQuestionEquiv P)]
-    simp only [extendedPolynomialRead_equiv]
     exact hBscalar
   have hAplaced := (placed_consistency_pairState S
     (uniformDistribution (ExtendedPointQuestion P))

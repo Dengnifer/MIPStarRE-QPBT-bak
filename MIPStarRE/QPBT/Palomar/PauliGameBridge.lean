@@ -22,7 +22,8 @@ namespace MIPStarRE.QPBT.Palomar
 noncomputable section
 
 /-- Copy the registered Pauli parameters into the compact numerical domain. -/
-def PauliParams.ofAdmissibleParams (P : MIPStarRE.QPBT.AdmissibleParams) : PauliParams where
+@[reducible] def PauliParams.ofAdmissibleParams
+    (P : MIPStarRE.QPBT.AdmissibleParams) : PauliParams where
   q := P.q
   m := P.m
   d := P.d
@@ -488,16 +489,17 @@ theorem pauliQuestionPMF_map (P : MIPStarRE.QPBT.AdmissibleParams) :
       MIPStarRE.QPBT.lowDegreeEnc h x := by
   rw [MIPStarRE.QPBT.lowDegreeEnc_eq_dotProduct]
   simp [pauliEncoded, pauliIndicator_fun_eq_indicatorVec]
-  rfl
 
 /-- The compact phase gate is exactly the registered Pauli pair gamma bit. -/
 @[simp] theorem pauliGamma_equiv (P : MIPStarRE.QPBT.AdmissibleParams)
     (z : PauliSpace (PauliParams.ofAdmissibleParams P) (MIPStarRE.QPBT.PauliScalar P)) :
     pauliGamma (MIPStarRE.QPBT.fixedBinTrace P.model) z =
       MIPStarRE.QPBT.pauliPairGamma P (pauliSpaceEquiv P z) := by
-  simp [pauliGamma, MIPStarRE.QPBT.pauliPairGamma, MIPStarRE.QPBT.gammaValue,
-    pauliIndicator_fun_eq_indicatorVec]
-  rfl
+  simp only [pauliGamma, MIPStarRE.QPBT.pauliPairGamma, MIPStarRE.QPBT.gammaValue,
+    pauliSpaceEquiv_rxBlock, pauliSpaceEquiv_rzBlock, pauliSpaceEquiv_xBlock,
+    pauliSpaceEquiv_zBlock]
+  rw [pauliIndicator_fun_eq_indicatorVec P z.1,
+    pauliIndicator_fun_eq_indicatorVec P z.2.1]
 
 /-- The compact and registered exceptional Magic Square parities coincide. -/
 @[simp] theorem magicParity_eq_msParity (i : Fin 6) :

@@ -77,12 +77,10 @@ private theorem axisCoefficientAnswerDefect_le_raw
   let wrap : DirectDegPoly P.extendedDirectLd P.d ->
       DirectLdAnswer P.extendedDirectLd := fun coefficients =>
     @DirectLdAnswer.alinePolys P.extendedDirectLd
-      (fun _ index => coefficients
-        (Fin.cast (by simp [AdmissibleParams.extendedDirectLd]) index))
+      (fun _ index => coefficients index)
   have hwrap : (fun coefficients => wrap (axisRead P coefficients)) = axisAnswer P := by
     funext coefficients
     dsimp [wrap, axisAnswer]
-    congr 1
   have h := consistencyDefect_postprocess_le
     ((directALinePointDist P.extendedDirectLd).map Prod.fst)
     A B (pairState setting) wrap

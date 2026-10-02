@@ -426,7 +426,8 @@ theorem tauObservable_X_mul_Z {K ι : Type*} [Field K] [Fintype K] [DecidableEq 
           phaseSign (binTrace K (dotProduct a b)) := by
         rw [ffChar_two_eq_phaseSign]
         congr 1
-        simp only [map_neg, ZMod.neg_eq_self_mod_two]
+        rw [map_neg]
+        exact ZMod.neg_eq_self_mod_two _
       simpa only [tauObservable_eq_primeTauObservable, hphase] using
         (primeTauObservable_X_mul_Z (p := 2) a b)
 

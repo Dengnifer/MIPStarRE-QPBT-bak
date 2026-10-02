@@ -122,7 +122,6 @@ theorem lowDegreeStrategyToLibrary_alice_point_effect
       (MIPStarRE.QPBT.ldPointValuesOrZero L)).effect a) = _
   rw [toMeasurement_relabel_postprocess_effect]
   simp
-  rfl
 
 /-- Bob's point-answer effect is unchanged by strategy and answer transport. -/
 theorem lowDegreeStrategyToLibrary_bob_point_effect
@@ -140,7 +139,6 @@ theorem lowDegreeStrategyToLibrary_bob_point_effect
       (MIPStarRE.QPBT.ldPointValuesOrZero L)).effect a) = _
   rw [toMeasurement_relabel_postprocess_effect]
   simp
-  rfl
 
 /-- The compact PMF defect is exactly the library defect for the same distribution. -/
 theorem consistencyDefect_toPMF {X O I J : Type*}

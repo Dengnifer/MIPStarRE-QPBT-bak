@@ -285,10 +285,13 @@ lemma zeroCoordinateCount_eq (params : Parameters) (α : Point params) :
     (Finset.univ.filter (fun i : Fin params.m => α i = (0 : Fq params))).card =
       params.m - frequencyWeight params α := by
   rw [frequencyWeight]
-  have h := Finset.card_filter_add_card_filter_not (s := (Finset.univ : Finset (Fin params.m)))
-    (p := fun i : Fin params.m => α i ≠ (0 : Fq params))
-  simp only [ne_eq, Decidable.not_not, Finset.card_univ, Fintype.card_fin] at h
-  exact Nat.eq_sub_of_add_eq (by simpa [add_comm] using h)
+  apply Nat.eq_sub_of_add_eq
+  have h := Finset.card_filter_add_card_filter_not
+    (s := (Finset.univ : Finset (Fin params.m)))
+    (p := fun i : Fin params.m => α i = (0 : Fq params))
+  rw [Finset.card_univ, Fintype.card_fin] at h
+  convert h using 1
+  congr 1
 
 lemma zeroCoordinateContributionSum (params : Parameters) (α : Point params) :
     ∑ i : Fin params.m, (((if α i = (0 : Fq params) then params.q else 0 : ℕ) : ℂ)) =
@@ -551,6 +554,7 @@ theorem eigenvectors (params : Parameters) (α : Point params) :
     (matrixAdjacencyOperator params).mulVec (fourierBasisState params α) =
       ((adjacencyEigenvalue params α : ℝ) : ℂ) • fourierBasisState params α := by
   ext u
+  change Point params at u
   let c : ℂ := (((params.m : ℂ) * (params.q : ℂ) * (hypercubeVertexCount params : ℂ))⁻¹)
   have hmul :
       (matrixAdjacencyOperator params).mulVec (fourierBasisState params α) u =

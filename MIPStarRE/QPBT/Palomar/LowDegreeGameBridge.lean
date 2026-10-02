@@ -22,7 +22,8 @@ namespace MIPStarRE.QPBT.Palomar
 open MIPStarRE.LDT
 
 /-- Copy the original numerical parameter record into the compact domain. -/
-def LowDegreeParams.ofLdParams (P : MIPStarRE.QPBT.LdParams) : LowDegreeParams where
+@[reducible] def LowDegreeParams.ofLdParams
+    (P : MIPStarRE.QPBT.LdParams) : LowDegreeParams where
   q := P.q
   m := P.m
   d := P.d
@@ -59,7 +60,7 @@ def lowDegreeQuestionEquiv (P : MIPStarRE.QPBT.LdParams) :
   Equiv.prodCongr lowDegreeTypeEquiv (lowDegreeSpaceEquiv P)
 
 /-- The three answer summands are exactly the original answer constructors. -/
-noncomputable def lowDegreeAnswerEquiv (P : MIPStarRE.QPBT.LdParams) :
+@[reducible] noncomputable def lowDegreeAnswerEquiv (P : MIPStarRE.QPBT.LdParams) :
     LowDegreeAnswer (LowDegreeParams.ofLdParams P) (MIPStarRE.QPBT.ScalarQ P) ≃
       MIPStarRE.QPBT.LdAnswer P :=
   (MIPStarRE.QPBT.ldAnswerEquiv P).symm
@@ -171,7 +172,6 @@ theorem lowDegreeMap_dline_equiv (P : MIPStarRE.QPBT.LdParams)
         (MIPStarRE.QPBT.prefixProjection
           (MIPStarRE.QPBT.chiIndex P z.1.2) z.2) z.1.1 j
     rw [lowDegreeLineRep_eq_lineRepMap]
-    rfl
   · cases u
     rfl
   · rfl
@@ -293,6 +293,7 @@ theorem lowDegreeWin_equiv (P : MIPStarRE.QPBT.LdParams)
       cases tA <;> cases tB <;>
         simp [lowDegreeWin, validLowDegreeAnswer, MIPStarRE.QPBT.ldWinPredicate,
           MIPStarRE.QPBT.validLdAnswer, lowDegreeQuestionEquiv,
+          lowDegreeAnswerEquiv, MIPStarRE.QPBT.ldAnswerEquiv,
           lowDegreeTypeEquiv, MIPStarRE.QPBT.alinePointCondition,
           MIPStarRE.QPBT.dlinePointCondition, MIPStarRE.QPBT.coordinateDirection] <;>
         rfl
