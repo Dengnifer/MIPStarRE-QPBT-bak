@@ -10236,3 +10236,21 @@ work again. MAIN changed no machine/launcher/account setting and closed the
 owner-inbox blocker on observed recovery. The archive phase then exposed a
 separate real multi-batch coverage defect, now assigned with preserved data;
 this is recorded in the Palomar runtime-recovery checkpoint.
+
+### 2026-10-02 — Companion check freshness used undocumented ID order
+
+Independent review 5388674269 found that PR755 sorted exact-head comparator
+checks by numeric check ID, then accepted the first authentic success. GitHub's
+documented freshness field is `completed_at`; IDs identify checks but do not
+establish chronology. A lower-ID failure could therefore complete after a
+higher-ID success and be ignored. The repair classifies the official workflow
+first, parses timezone-aware `started_at` and `completed_at`, orders completed
+official checks only by completion time, and blocks unfinished, malformed,
+missing or tied official freshness evidence. Existing repository, branch, SHA,
+caller, configuration, workflow, current-attempt, job, URL, result and
+publication-time checks remain. Focused inverted-ID, pending and ambiguity
+regressions pass: 20 focused companion tests, all 80 GitHub-workflow tests and
+all 16 related review/native tests. Shell/Python syntax, whitespace, changed-line
+length, installed-hook and normal pre-commit checks pass. Lesson: external
+evidence IDs are binding keys, never clocks; unknown temporal order must block
+rather than fall through to older green data.
