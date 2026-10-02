@@ -57,3 +57,19 @@ artifactsandgiveanevidence-basednextaction. Itmustnotedit,build,writeDBs,fetch o
 inspectotherprojects. Brief/tmp/palomar-756-docbuild-scout.md; no furtheridentical
 pass isqueuedbeforethatdiagnosis. Currentworkers:745trustrepair,753portintegration,
 756docs-scout. Goalactive; allfinalgatesanddeliverablesremainrequired.
+
+## Evidence for an uninterrupted docs window
+
+The docs scout has isolated the real dependency: all module docInfo jobs await
+coreDocs, which requires Init/Std/Lake/Lean markers. Only thefirst3exist. The exact
+genCoreLean implementation analyzes allLean-prefixmodules beforeopening/writing
+theDB, so240sinterruptions repeatthatmonolithicphase andcannotcheckpointit.
+Read-onlyDB integrity_checkisok;1282coremodules arepresent (653Init/494Std/135Lake),
+zeroLean/Mathlib/MIPStarRE, andnoWAL/journalresidue orfinalHTMLmanifest/index. This
+is incompletevalidstate,notcorruptionor a reason todeletecache/markers.
+
+The earliermain-thread-only/procchildren observationwasinsufficienttoinferthatno
+Lake worker-threadchildrenexisted. The source/artifactanalysis,notthatweakprocess
+observation,governs thenextaction. MAINwillrun the completecommand uninterrupted
+with1800s boundafter currentnormalhook/CIwindowsclear; the preparedrunnerwasupdated,
+notstarted. No fabricatedmarker/traceor upstreamdependencyedit isauthorized.
