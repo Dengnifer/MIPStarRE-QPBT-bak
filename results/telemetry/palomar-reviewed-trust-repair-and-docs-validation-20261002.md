@@ -73,3 +73,21 @@ Lake worker-threadchildrenexisted. The source/artifactanalysis,notthatweakproces
 observation,governs thenextaction. MAINwillrun the completecommand uninterrupted
 with1800s boundafter currentnormalhook/CIwindowsclear; the preparedrunnerwasupdated,
 notstarted. No fabricatedmarker/traceor upstreamdependencyedit isauthorized.
+
+## Module repair integration complete
+
+Orc-753-20261002-05 finishedexit0 in1101actualseconds,total753author10431s.
+Cleanlocalmergee21adf045b44154d7afb3a6e3be78a255f4494ea integratesf424ffefwithall
+module/extractorrepairs. Bothguards andnormalhooks passed; fourLeanrepairpaths
+normalizeexactlytoincomingf424ffef andfournon-Leanblobsarebyte-identical. Targeted
+Lean/axiomchecks,typedstatementequality,all3drifts andstandaloneacbChallengepass.
+Correctedwholeinventoryagainstf424ffef:709convertedmathfiles,657exactnormalizations,
+52auditedvisibility/proof-contextexceptions. Noincomingrepair isanexception.
+No fullprojectbuildwasruninthislocalintegrationphase; finalnormalCI/reviewpending.
+
+Docs-scoutreached600scap(exit124)withoutafinalanswer; itsactualsource/database
+observationsabovearepreserved,notpromotedto a fullrevieworvalidationverdict.
+Docs-scoutcost600s,separatefromearlier532scompiler-scout. The remaininguncertainty
+is howmuchof240s wasLakegraphsetupversusLean-prefixanalysis; the corecompletion
+markerandallnon-coreDBrowsaredefinitivelymissing. No thirdidenticalshortpasswill
+run. An uninterruptedcompletecommandaftercurrentnormaltests remainsneeded.
