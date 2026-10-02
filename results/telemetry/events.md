@@ -10152,6 +10152,13 @@ and all prior754 costs remain unchanged.
   unselected native evidence, immutable Git preimages and strict global archive
   union checks. Lesson: exceptional evidence packaging needs an explicit finite
   selection, not a widened root that silently changes old manifest meaning.
+- Issue #777 created the four-file native evidence batch from immutable commit
+  `90d3c01144e82751207d0d55390d912c68e5e245`. The cumulative verifier checked
+  2,123 archives across all four manifests, including canonical gzip and exact
+  Git-blob recovery; the three prior manifest hashes remained unchanged. The
+  new manifest SHA-256 is
+  `7f869101dbf9cc51bb515ec2aee76faf33f765aded9efb120c9ea0da762271b2`.
+  No unselected native evidence or append-only registry changed.
 
 
 ## 2026-10-02 — shared Codex launch path unavailable (B13)
