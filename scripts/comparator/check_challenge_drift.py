@@ -65,7 +65,7 @@ def run(
 def clean_closure_rows(raw_tsv: Path, clean_tsv: Path) -> None:
     rows = []
     for line in raw_tsv.read_text(encoding="utf-8").splitlines():
-        if len(line.split("\t")) == 4:
+        if len(line.split("\t")) in (4, 5):
             rows.append(line)
     clean_tsv.write_text("\n".join(rows) + ("\n" if rows else ""), encoding="utf-8")
 

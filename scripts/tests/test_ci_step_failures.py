@@ -153,11 +153,25 @@ class CiStepFailureTests(workflow.LayerTestCase):
                         "texra-blueprint web",
                         "blueprint_lean_sync.py --root . --ci"):
             self.assertIn(command, commands)
+        self.assertTrue(any(
+            command.startswith(
+                "check_challenge_drift.py --root . --challenge palomar --write "
+            )
+            for command in commands
+        ))
+        self.assertTrue(any(
+            command.startswith("lake env lean ")
+            and command.endswith("/palomar/Challenge.lean")
+            for command in commands
+        ))
 
     def test_required_failures_stop_step_but_allow_later_steps(self) -> None:
         cases = (
             ("build", "lake exe cache get", "lake build"),
             ("build", "lake build", "check_challenge_drift.py --root ."),
+            ("build", "check_challenge_drift.py --root . --challenge palomar --write ",
+             "lake env lean "),
+            ("build", "lake env lean ", None),
             ("blueprint-render", "texra-blueprint bbl", "texra-blueprint web"),
             ("blueprint-render", "texra-blueprint web", None),
             ("blueprint-sync", "test_required.py",

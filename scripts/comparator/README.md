@@ -12,8 +12,10 @@ library proves the target theorems.  Background and trust model:
 
 A generated challenge imports only Mathlib and, when split, its own mirror
 modules.  It re-declares, verbatim and in dependency order, every declaration
-in the kernel closure of its target statements, each with a provenance comment;
-the targets themselves are stated with `sorry`.
+in the kernel closure of its target statements.  Per-declaration provenance
+comments are included by default; a size-constrained configuration may omit
+them without changing the declaration text.  The targets themselves are stated
+with `sorry`.
 
 ## Challenges
 
@@ -23,10 +25,17 @@ Each challenge is one configuration file under `challenges/`:
 |---|---|---|---|
 | `challenges/ldt.json` | `MIPStarRE.LDT.Test.mainFormal` | `expected/Challenge.lean.expected` | [LDT-comparator](https://github.com/LionSR/LDT-comparator) |
 | `challenges/qpbt.json` | four QPBT headline theorems | `expected/qpbt/` (one module per library module) | [QPBT-comparator](https://github.com/Dengnifer/QPBT-comparator) |
+| `challenges/palomar.json` | four compact Palomar aliases | `expected/palomar/Challenge.lean.expected` | Palomar prototype |
 
 The four QPBT targets are `MIPStarRE.QPBT.exists_spcc_value_one`,
 `MIPStarRE.QPBT.exists_ld_soundness`, `MIPStarRE.QPBT.pauli_soundness`, and
 `MIPStarRE.QPBT.pauli_soundness_qubit`.
+
+The Palomar targets are the corresponding compact aliases under
+`MIPStarRE.QPBT.Palomar`.  Its configuration registers exactly
+`MIPStarRE.QPBT.fixedFieldModel` as a named-definition value frontier and sets
+`provenance_comments` to `false`; all declaration source remains verbatim, but
+the repeated source-range lines do not consume the single-file line budget.
 
 A configuration names the Lean modules the extractor imports, the target
 theorems whose statement closure it takes, the header and footer files wrapped
@@ -35,14 +44,97 @@ elaboration-context tables (`extras`, `module_preludes`).  The schema, with the
 meaning of every key, is documented at the top of `challenge_config.py`; unknown
 keys are rejected, so a typo fails loudly rather than silently dropping context.
 
+### Registered definition frontiers
+
+The optional `definition_names` list implements the official comparator's
+named-definition frontier.  Each registered name must resolve to a
+repository-local definition.  Its full type and every dependency of that type
+remain in the extracted closure, but its value is not traversed.  Every
+unregistered definition value and theorem proof reached by the ordinary closure
+is still traversed.
+
+The assembler copies the registered declaration's source header, preserving its
+name, universe parameters, binders, return type, and safety modifier, and
+replaces only its generated Challenge value with `by sorry`.  Missing names and
+names that are not definitions fail extraction.  The fifth closure-TSV column
+records the definition safety checked from Lean metadata.
+
+This Challenge hole is not a permission for an unchecked Solution axiom.  The
+official comparator compares the registered definition's name, universes, type,
+and safety while deliberately ignoring its Challenge value.  It separately
+traverses the actual Solution definition value during the Solution axiom audit.
+Thus the generated Challenge may contain `sorryAx` at the registered value, but
+the checked Solution must still supply an implementation using only the
+permitted axioms.  Registering one definition does not erase unrelated helper
+proofs or values.  `MIPStarRE/QPBT/Test/AxiomAudit.lean` checks the actual
+`fixedFieldModel` value transitively and currently requires exactly the same
+three standard Lean axioms as the four theorem aliases.
+
+The historical LDT and QPBT challenges do not set `definition_names`; omitting
+it or setting it to `[]` preserves their extraction and golden fixtures
+byte-for-byte.  The compact Palomar challenge registers only
+`MIPStarRE.QPBT.fixedFieldModel`.
+
+### Compact Palomar prototype measurement
+
+The checked-in Palomar artifact has 989 physical lines and 51,979 UTF-8 bytes.
+It contains exactly four theorem holes and the sole registered
+`fixedFieldModel` value hole.  Its other reachable definitions and proofs are
+present in full, and the standalone file compiles with only a public Mathlib
+import.
+
+The normal local build gate and its frozen GitHub-workflow mirror first build
+the three configured compact modules through the QPBT axiom-audit target, then
+regenerate and byte-compare the Palomar artifact.  A separate regeneration to a
+temporary path is compiled with the repository's pinned Lean and Mathlib, so a
+byte-current but ill-typed standalone file still fails the gate.
+
+This is a coherent compact prototype, not final Palomar/native verification.
+The regenerated standalone file type-checked under the previous Lean 4.32
+environment and type-checks under the current pinned Lean 4.35.0-rc2
+environment.  Final
+supported-library integration, native comparison, canonical CI, and a renewed
+independent faithfulness assessment of the new artifact hash remain pending.
+
+### Fixed-field prototype measurement
+
+Issue #769 measured a temporary copy of the four-target QPBT configuration at
+library base `9643b5ad12422babd3c7245bb0743e54395c30b5`.  The copy registered
+only `MIPStarRE.QPBT.fixedFieldModel` and removed the two `FieldBasis` prelude
+scopes that became correctly unmatched when the construction disappeared.  It
+did not modify `challenges/qpbt.json` or either expected fixture.
+
+The compiled-metadata extraction produced the same 31-file split layout.  The
+checked-in tree has 3,956 physical lines and 181,818 bytes; the prototype has
+3,509 physical lines and 161,038 bytes, a reduction of 447 lines and 20,780
+bytes.  Its unique dependency inventory fell from 275 to 252: 19 ranged field-
+construction declarations and four generated helpers disappeared, with no
+prototype-only dependency.  The `FieldBasis` mirror fell from 551 lines and
+25,746 bytes to 108 lines and 5,396 bytes.  No construction-only dependency
+remained in the measured closure.
+
+The prototype still retains `FieldModel`, `IsAdmissibleSize`, the complete
+`FixedFieldModel` contract (cardinality, algebra, natural binary encoding,
+self-duality, and normality), its instances and accessors, and the exact
+`fixedFieldModel` type.  Only the generated Challenge value is unspecified.  In
+the unchanged library Solution, the selector remains
+`Classical.choice (exists_fixed_field_model q hq)`, so its construction is still
+subject to the Solution axiom audit.
+
+This old four-statement tree still exceeds Palomar's 1,000-line and 100-KiB hard
+limits.  It is evidence for the definition frontier, not the final single-file
+Challenge or a readiness claim; the compact statement/bridge work remains
+separate.
+
 `require_expected` distinguishes a challenge that must stay regenerated (`true`,
 a missing expected copy is an error) from one still being developed (`false`,
 a missing expected copy is reported and skipped).
 
-Adding a challenge means adding a configuration file, a header and a footer —
-no generator code changes and, for the machine-wide guard in `local/bin/ci.sh`,
-no CI change either, because that guard passes no `--challenge` and therefore
-checks every configuration it finds.
+Adding a conventional challenge means adding a configuration file, a header and
+a footer.  The machine-wide guard in `local/bin/ci.sh` needs no challenge list
+change because it passes no `--challenge` and checks every configuration it
+finds.  The optional `provenance_comments` key defaults to `true`, preserving
+existing generated bytes.
 
 ## Drift guard and regeneration
 
@@ -59,6 +151,7 @@ library).  With no `--challenge` every configured challenge is checked:
 ```sh
 python3 scripts/comparator/check_challenge_drift.py --root .
 python3 scripts/comparator/check_challenge_drift.py --root . --challenge qpbt
+python3 scripts/comparator/check_challenge_drift.py --root . --challenge palomar
 ```
 
 Add `--challenge <name>` (repeatable) to restrict the run to one challenge.
@@ -133,7 +226,7 @@ PY
 #    variable unset it closes the LDT main theorem:
 MIPSTARRE_COMPARATOR_TARGETS="MIPStarRE.QPBT.pauli_soundness,MIPStarRE.QPBT.pauli_soundness_qubit,MIPStarRE.QPBT.exists_spcc_value_one,MIPStarRE.QPBT.exists_ld_soundness" \
   lake env lean extract_closure_qpbt.lean > closure.tsv
-awk -F'\t' 'NF==4' closure.tsv > closure.clean.tsv
+awk -F'\t' 'NF==4 || NF==5' closure.tsv > closure.clean.tsv
 
 # 3. assemble the challenge body (topological order, namespace handling)
 # `qpbt` is split, so the assembler writes a directory:
@@ -177,12 +270,20 @@ generation and deliberately does not duplicate mutable acceptance status.
   `MIPStarRE/QPBT/Test/Completeness.lean`,
   `MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean`,
   `MIPStarRE/QPBT/Test/Soundness.lean`, and
-  `MIPStarRE/QPBT/Test/QubitForm.lean`.  If a library statement changes, update
-  the footer too - comparator fails with "theorem statement do not match" until
-  the two agree.
+  `MIPStarRE/QPBT/Test/QubitForm.lean`.  The compact
+  `challenge_palomar_footer.lean` mirrors the aliases in
+  `MIPStarRE/QPBT/Palomar/PauliCompleteness.lean`,
+  `MIPStarRE/QPBT/Palomar/LowDegreeSoundness.lean`, and
+  `MIPStarRE/QPBT/Palomar/PauliSoundness.lean`.  If a library statement changes,
+  update the footer too - comparator fails with "theorem statement do not
+  match" until the two agree.
 - Declarations without a source range (compiler-generated congruence lemmas
   and `autoParam` helpers) are emitted as explanatory comments; they
   regenerate identically during elaboration of the challenge file.
+- `extract_closure.lean` is an executable tracked Lean source.  The final
+  dynamic source inventory in module-conversion packet #753 must include it and
+  give it the module header required by that packet; it is not exempt merely
+  because it is a generator rather than a library module.
 - A configured header or footer file that is not in the tree is reported and
   omitted, so a challenge under development can be generated before its footer
   exists.  That omission is confined to `--write`: `--update` refuses such a

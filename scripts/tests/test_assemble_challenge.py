@@ -46,11 +46,13 @@ class AssembleChallengeTests(unittest.TestCase):
             description="split fixture",
             imports=("MIPStarRE.Example",),
             targets=("Example.value",),
+            definition_names=(),
             header=header,
             footer=footer,
             expected="expected/test",
             require_expected=False,
             split=True,
+            provenance_comments=True,
             common_opens=(),
             extras={},
             module_preludes={},
@@ -107,6 +109,27 @@ class AssembleChallengeTests(unittest.TestCase):
                 "MIPStarRE/All.lean",
             ],
         )
+
+    def test_namespace_stack_tracks_noncomputable_sections(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "MIPStarRE" / "Example.lean"
+            source.parent.mkdir(parents=True)
+            source.write_text(
+                "namespace Example\n"
+                "noncomputable section\n"
+                "def first : Nat := 1\n"
+                "end\n"
+                "def second : Nat := 2\n"
+                "end Example\n",
+                encoding="utf-8",
+            )
+
+            stack = assemble_challenge.Assembler(root).ns_stack_at(
+                "MIPStarRE/Example.lean", 5
+            )
+
+        self.assertEqual(stack, ["Example"])
 
     def test_split_assembly_omits_unconfigured_parts(self) -> None:
         with tempfile.TemporaryDirectory() as td:

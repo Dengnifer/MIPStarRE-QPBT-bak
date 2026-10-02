@@ -5,8 +5,11 @@ from __future__ import annotations
 
 import io
 import json
+import os
+import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
@@ -48,6 +51,7 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
         by_name = {challenge.name: challenge for challenge in challenges}
 
         self.assertIn("ldt", by_name)
+        self.assertIn("palomar", by_name)
         self.assertIn("qpbt", by_name)
         self.assertEqual(
             by_name["ldt"].targets, ("MIPStarRE.LDT.Test.mainFormal",)
@@ -61,6 +65,15 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
                 "MIPStarRE.QPBT.exists_ld_soundness",
             ),
         )
+        self.assertEqual(
+            by_name["palomar"].targets,
+            (
+                "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+                "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+                "MIPStarRE.QPBT.Palomar.pauli_soundness",
+                "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit",
+            ),
+        )
         # the context tables are per challenge: neither challenge's keys may
         # constrain the other's closure
         self.assertTrue(by_name["ldt"].extras)
@@ -70,10 +83,21 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
             & set(by_name["qpbt"].module_preludes),
             {"MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean"},
         )
-        # both challenges have a checked-in expected copy
+        # every configured challenge has a checked-in expected copy
         self.assertTrue(by_name["ldt"].require_expected)
+        self.assertTrue(by_name["palomar"].require_expected)
         self.assertTrue(by_name["qpbt"].require_expected)
+        self.assertEqual(by_name["ldt"].definition_names, ())
+        self.assertEqual(
+            by_name["palomar"].definition_names,
+            ("MIPStarRE.QPBT.fixedFieldModel",),
+        )
+        self.assertEqual(by_name["qpbt"].definition_names, ())
+        self.assertTrue(by_name["ldt"].provenance_comments)
+        self.assertFalse(by_name["palomar"].provenance_comments)
+        self.assertTrue(by_name["qpbt"].provenance_comments)
         self.assertTrue((REPO_ROOT / by_name["ldt"].expected).exists())
+        self.assertTrue((REPO_ROOT / by_name["palomar"].expected).exists())
         self.assertTrue((REPO_ROOT / by_name["qpbt"].expected).exists())
 
     def test_ldt_expected_path_and_tables_are_unchanged(self) -> None:
@@ -194,6 +218,15 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
             with self.assertRaises(challenge_config.ChallengeConfigError):
                 challenge_config.load_challenge(path)
 
+    def test_provenance_comments_must_be_boolean(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            path = write_config(Path(td), "sample", provenance_comments="no")
+
+            with self.assertRaises(challenge_config.ChallengeConfigError) as ctx:
+                challenge_config.load_challenge(path)
+
+            self.assertIn("provenance_comments", str(ctx.exception))
+
     def test_unknown_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             path = write_config(Path(td), "sample", extra_tables={})
@@ -233,6 +266,44 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
                 {challenge_config.TARGETS_ENV: "A.one,A.two"},
             )
             self.assertEqual(challenge.import_block(), "import A\nimport B\n")
+
+    def test_definition_names_are_optional_and_reach_the_extractor(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            path = write_config(
+                Path(td),
+                "sample",
+                definition_names=["A.selected"],
+            )
+            challenge = challenge_config.load_challenge(path)
+
+            self.assertEqual(challenge.definition_names, ("A.selected",))
+            self.assertEqual(
+                challenge.extractor_env(),
+                {
+                    challenge_config.TARGETS_ENV: "MIPStarRE.Foo.bar",
+                    challenge_config.DEFINITIONS_ENV: "A.selected",
+                },
+            )
+
+            empty_path = write_config(Path(td), "empty", definition_names=[])
+            empty = challenge_config.load_challenge(empty_path)
+            self.assertNotIn(
+                challenge_config.DEFINITIONS_ENV,
+                empty.extractor_env(),
+            )
+
+    def test_duplicate_definition_names_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            path = write_config(
+                Path(td),
+                "sample",
+                definition_names=["A.selected", "A.selected"],
+            )
+
+            with self.assertRaises(challenge_config.ChallengeConfigError) as ctx:
+                challenge_config.load_challenge(path)
+
+            self.assertIn("duplicates", str(ctx.exception))
 
 
 class MultiTargetAssemblyTests(unittest.TestCase):
@@ -332,6 +403,23 @@ class MultiTargetAssemblyTests(unittest.TestCase):
 
         self.assertEqual(first, second)
 
+    def test_provenance_comments_can_be_disabled(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            self._tree(root)
+            tsv = self._tsv(root)
+            challenge = challenge_config.load_challenge(
+                write_config(root, "sample", provenance_comments=False)
+            )
+
+            body = assemble_challenge.assemble(challenge, root, tsv)
+
+        self.assertNotIn("-- source:", body)
+        self.assertLess(body.index("def base"), body.index("def later"))
+        self.assertLess(body.index("def later"), body.index("def mid"))
+        self.assertLess(body.index("def mid"), body.index("def top"))
+        self.assertIn("--   MIPStarRE.generated  (from MIPStarRE/Top.lean)", body)
+
     def test_stale_context_table_names_the_offending_challenge(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -347,6 +435,195 @@ class MultiTargetAssemblyTests(unittest.TestCase):
             message = str(ctx.exception)
             self.assertIn("sample.json", message)
             self.assertIn("MIPStarRE.gone", message)
+
+
+class DefinitionFrontierAssemblyTests(unittest.TestCase):
+    def _source_tree(self, root: Path) -> tuple[Path, dict[str, int]]:
+        source = root / "MIPStarRE" / "Frontier.lean"
+        source.parent.mkdir(parents=True)
+        lines = [
+            "import Mathlib",
+            "namespace MIPStarRE.Frontier",
+            "def typeDependency : Type := Nat",
+            "def valueOnlyHelper : Nat := 7",
+            "noncomputable def selected.{u} (α : Type u)",
+            "    (_n : typeDependency) : Type u :=",
+            "  if valueOnlyHelper = 7 then α else α",
+            "theorem proofHelper : True := trivial",
+            "def ordinary : True := proofHelper",
+            "end MIPStarRE.Frontier",
+        ]
+        source.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        return source, {line: index + 1 for index, line in enumerate(lines)}
+
+    def test_registered_value_is_replaced_and_other_values_remain(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, line = self._source_tree(root)
+            tsv = root / "closure.tsv"
+            tsv.write_text(
+                "\n".join(
+                    [
+                        "MIPStarRE.Frontier.typeDependency\t"
+                        f"MIPStarRE/Frontier.lean\t{line['def typeDependency : Type := Nat']}\t"
+                        f"{line['def typeDependency : Type := Nat']}",
+                        "MIPStarRE.Frontier.selected\tMIPStarRE/Frontier.lean\t"
+                        f"{line['noncomputable def selected.{u} (α : Type u)']}\t"
+                        f"{line['  if valueOnlyHelper = 7 then α else α']}\tDEF_SAFE",
+                        "MIPStarRE.Frontier.proofHelper\tMIPStarRE/Frontier.lean\t"
+                        f"{line['theorem proofHelper : True := trivial']}\t"
+                        f"{line['theorem proofHelper : True := trivial']}",
+                        "MIPStarRE.Frontier.ordinary\tMIPStarRE/Frontier.lean\t"
+                        f"{line['def ordinary : True := proofHelper']}\t"
+                        f"{line['def ordinary : True := proofHelper']}",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            challenge = challenge_config.load_challenge(
+                write_config(
+                    root,
+                    "sample",
+                    definition_names=["MIPStarRE.Frontier.selected"],
+                )
+            )
+
+            body = assemble_challenge.assemble(challenge, root, tsv)
+
+            self.assertIn("def typeDependency : Type := Nat", body)
+            self.assertIn("noncomputable def selected.{u} (α : Type u)", body)
+            self.assertIn("(_n : typeDependency) : Type u := by\n  sorry", body)
+            self.assertNotIn("valueOnlyHelper", body)
+            self.assertIn("theorem proofHelper : True := trivial", body)
+            self.assertIn("def ordinary : True := proofHelper", body)
+
+    def test_registered_definition_without_metadata_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, line = self._source_tree(root)
+            tsv = root / "closure.tsv"
+            selected = line["noncomputable def selected.{u} (α : Type u)"]
+            tsv.write_text(
+                "MIPStarRE.Frontier.selected\tMIPStarRE/Frontier.lean\t"
+                f"{selected}\t{selected + 2}\n",
+                encoding="utf-8",
+            )
+            challenge = challenge_config.load_challenge(
+                write_config(
+                    root,
+                    "sample",
+                    definition_names=["MIPStarRE.Frontier.selected"],
+                )
+            )
+
+            with self.assertRaises(assemble_challenge.StaleContextTables):
+                assemble_challenge.assemble(challenge, root, tsv)
+
+    def test_value_replacement_preserves_definition_safety_modifier(self) -> None:
+        cases = {
+            "safe": "def selected : Nat := 1",
+            "unsafe": "unsafe def selected : Nat := 1",
+            "partial": "partial def selected : Nat := selected",
+        }
+        for safety, source in cases.items():
+            with self.subTest(safety=safety):
+                replaced = assemble_challenge.replace_definition_value(
+                    "selected",
+                    [source],
+                    assemble_challenge.DefinitionHole(safety=safety),
+                )
+                self.assertEqual(
+                    replaced,
+                    source.split(":=", 1)[0].rstrip() + " := by\n  sorry",
+                )
+
+
+class DefinitionFrontierExtractionTests(unittest.TestCase):
+    FIXTURE = """
+namespace MIPStarRE.ComparatorDefinitionFrontierFixture
+
+def typeDependency : Type := Nat
+def registeredValueHelper : Nat := 7
+def registered (_n : typeDependency) : Nat := registeredValueHelper
+theorem ordinaryProofHelper (n : Nat) : n = n := rfl
+def ordinaryValueHelper : Nat := 1
+def ordinary : { n : Nat // n = n } :=
+  ⟨registered ordinaryValueHelper, ordinaryProofHelper _⟩
+theorem target : ordinary = ordinary := rfl
+
+end MIPStarRE.ComparatorDefinitionFrontierFixture
+"""
+
+    def _run_extractor(self, definition_names: str | None) -> subprocess.CompletedProcess[str]:
+        template = (COMPARATOR / "extract_closure.lean").read_text(encoding="utf-8")
+        source = check_challenge_drift.IMPORT_BLOCK.sub(
+            "import Mathlib\n", template, count=1
+        )
+        source = source.replace(
+            "\n#eval runExtract\n",
+            "\n" + textwrap.dedent(self.FIXTURE) + "\n#eval runExtract\n",
+        )
+        with tempfile.TemporaryDirectory() as td:
+            extractor = Path(td) / "extract_fixture.lean"
+            extractor.write_text(source, encoding="utf-8")
+            env = dict(os.environ)
+            env[challenge_config.TARGETS_ENV] = (
+                "MIPStarRE.ComparatorDefinitionFrontierFixture.target"
+            )
+            env.pop(challenge_config.DEFINITIONS_ENV, None)
+            if definition_names is not None:
+                env[challenge_config.DEFINITIONS_ENV] = definition_names
+            return subprocess.run(
+                ["lake", "env", "lean", str(extractor)],
+                cwd=REPO_ROOT,
+                env=env,
+                check=False,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            )
+
+    @staticmethod
+    def _declaration_names(output: str) -> set[str]:
+        return {
+            line.split("\t", 1)[0]
+            for line in output.splitlines()
+            if len(line.split("\t")) in (4, 5)
+        }
+
+    def test_real_extraction_stops_only_the_registered_value(self) -> None:
+        prefix = "MIPStarRE.ComparatorDefinitionFrontierFixture."
+        selected = prefix + "registered"
+        result = self._run_extractor(selected)
+
+        self.assertEqual(result.returncode, 0, result.stdout)
+        names = self._declaration_names(result.stdout)
+        self.assertIn(selected, names)
+        self.assertIn(prefix + "typeDependency", names)
+        self.assertNotIn(prefix + "registeredValueHelper", names)
+        self.assertIn(prefix + "ordinary", names)
+        self.assertIn(prefix + "ordinaryValueHelper", names)
+        self.assertIn(prefix + "ordinaryProofHelper", names)
+        selected_row = next(
+            line for line in result.stdout.splitlines() if line.startswith(selected + "\t")
+        )
+        self.assertTrue(selected_row.endswith("\tDEF_SAFE"), selected_row)
+
+        ordinary = self._run_extractor(None)
+        self.assertEqual(ordinary.returncode, 0, ordinary.stdout)
+        self.assertIn(prefix + "registeredValueHelper", self._declaration_names(ordinary.stdout))
+
+    def test_real_extraction_rejects_bad_registered_names(self) -> None:
+        prefix = "MIPStarRE.ComparatorDefinitionFrontierFixture."
+        for name, message in (
+            (prefix + "missing", "registered definition not found"),
+            (prefix + "target", "registered definition is not a definition"),
+        ):
+            with self.subTest(name=name):
+                result = self._run_extractor(name)
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn(message, result.stdout)
 
 
 class AbsentExpectedFileTests(unittest.TestCase):

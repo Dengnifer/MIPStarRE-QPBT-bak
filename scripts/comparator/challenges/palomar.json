@@ -1,0 +1,49 @@
+{
+  "name": "palomar",
+  "description": "The four compact QPBT headline aliases for the Palomar challenge.",
+  "imports": [
+    "MIPStarRE.QPBT.Palomar.PauliCompleteness",
+    "MIPStarRE.QPBT.Palomar.LowDegreeSoundness",
+    "MIPStarRE.QPBT.Palomar.PauliSoundness"
+  ],
+  "targets": [
+    "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+    "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+    "MIPStarRE.QPBT.Palomar.pauli_soundness",
+    "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit"
+  ],
+  "definition_names": [
+    "MIPStarRE.QPBT.fixedFieldModel"
+  ],
+  "header": "scripts/comparator/challenge_palomar_header.lean",
+  "footer": "scripts/comparator/challenge_palomar_footer.lean",
+  "expected": "scripts/comparator/expected/palomar/Challenge.lean.expected",
+  "require_expected": true,
+  "split": false,
+  "provenance_comments": false,
+  "extras": {
+    "MIPStarRE.LDT.FieldModel": [
+      "",
+      "-- source: MIPStarRE/LDT/Basic/ParametersBase.lean (attribute command)",
+      "attribute [instance_reducible, instance] FieldModel.instField FieldModel.instFintype",
+      "  FieldModel.instDecidableEq"
+    ],
+    "MIPStarRE.QPBT.Palomar.Strategy": [
+      "",
+      "-- source: compact Palomar definitions (attribute command)",
+      "attribute [instance] Strategy.ιAFintype Strategy.ιBFintype",
+      "  Strategy.ιADecidableEq Strategy.ιBDecidableEq"
+    ],
+    "MIPStarRE.QPBT.Palomar.SymmetricStrategy": [
+      "",
+      "-- source: compact Palomar definitions (attribute command)",
+      "attribute [instance] SymmetricStrategy.ιFintype SymmetricStrategy.ιDecidableEq"
+    ],
+    "MIPStarRE.QPBT.Palomar.ExtractionWitness": [
+      "",
+      "-- source: compact Palomar definitions (attribute command)",
+      "attribute [instance] ExtractionWitness.ιAFintype ExtractionWitness.ιBFintype",
+      "  ExtractionWitness.ιADecidableEq ExtractionWitness.ιBDecidableEq"
+    ]
+  }
+}

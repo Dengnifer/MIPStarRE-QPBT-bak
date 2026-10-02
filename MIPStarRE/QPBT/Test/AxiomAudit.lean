@@ -12,6 +12,9 @@ import MIPStarRE.QPBT.Combining.Lines
 import MIPStarRE.QPBT.Combining.Apply
 import MIPStarRE.QPBT.Combining.ActualErrorBounds
 import MIPStarRE.QPBT.Games.Symmetrization
+import MIPStarRE.QPBT.Palomar.PauliCompleteness
+import MIPStarRE.QPBT.Palomar.LowDegreeSoundness
+import MIPStarRE.QPBT.Palomar.PauliSoundness
 
 /-!
 # Axiom audits for the quantum Pauli basis test
@@ -21,8 +24,8 @@ nothing beyond Lean's three standard axioms.  Before this module the claim was
 reproducible only by running a throwaway metaprogram outside the repository; a
 reader of the artifact could not re-derive it.
 
-Each audit below both **prints** the axiom set of a headline declaration and
-**fails elaboration** unless that set is exactly
+Each audit below both **prints** the axiom set of a declaration and **fails
+elaboration** unless that set is exactly
 
 `{Classical.choice, Quot.sound, propext}`.
 
@@ -72,6 +75,8 @@ soundness statement down to the combining and extraction layers:
   `exists_arbitrary_strategy_isometry_bounds`,
   `pauli_soundness_deltaQld_ofExtractionWitness` — the extraction layer.
 * `exists_symmetric_projective_strategy_approx` — the symmetrization interface.
+* The four compact Palomar aliases and the actual value of their registered
+  `fixedFieldModel` definition frontier.
 
 `exists_extendedLinesWitness_established` and
 `exists_symmetric_projective_strategy_approx` are the two *corrected* forms
@@ -204,3 +209,15 @@ audit_standard_axioms MIPStarRE.QPBT.pauli_soundness_deltaQld_ofExtractionWitnes
 /-! ### Symmetrization interface -/
 
 audit_standard_axioms MIPStarRE.QPBT.exists_symmetric_projective_strategy_approx
+
+/-! ### Compact Palomar challenge
+
+The theorem aliases must retain the same exact standard-axiom closure as their
+library counterparts.  The registered `fixedFieldModel` frontier is checked on
+its actual Solution value, which also uses exactly the three standard axioms. -/
+
+audit_standard_axioms MIPStarRE.QPBT.Palomar.exists_spcc_value_one
+audit_standard_axioms MIPStarRE.QPBT.Palomar.exists_ld_soundness
+audit_standard_axioms MIPStarRE.QPBT.Palomar.pauli_soundness
+audit_standard_axioms MIPStarRE.QPBT.Palomar.pauli_soundness_qubit
+audit_standard_axioms MIPStarRE.QPBT.fixedFieldModel

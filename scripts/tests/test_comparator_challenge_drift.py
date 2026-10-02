@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import re
 import sys
 import tempfile
 import unittest
@@ -16,11 +17,16 @@ COMPARATOR = REPO_ROOT / "scripts" / "comparator"
 SCRIPT = COMPARATOR / "check_challenge_drift.py"
 PR_CI = REPO_ROOT / ".github" / "workflows" / "pr-ci.yml"
 CI_SH = REPO_ROOT / "local" / "bin" / "ci.sh"
+QPBT_AXIOM_AUDIT = REPO_ROOT / "MIPStarRE" / "QPBT" / "Test" / "AxiomAudit.lean"
 README = COMPARATOR / "README.md"
 EXTRACTOR = COMPARATOR / "extract_closure.lean"
 LDT_EXPECTED = COMPARATOR / "expected" / "Challenge.lean.expected"
+PALOMAR_EXPECTED = COMPARATOR / "expected" / "palomar" / "Challenge.lean.expected"
 LDT_BASELINE_SHA256 = (
     "d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2"
+)
+PALOMAR_BASELINE_SHA256 = (
+    "acb66991fbdbc80a9c5d0a7e522f572ba604e6c88b2907f9c43a477438ebe6f8"
 )
 
 # the drift checker imports its sibling `challenge_config`, which a script run
@@ -37,7 +43,7 @@ _spec.loader.exec_module(check_challenge_drift)
 
 
 class ComparatorChallengeDriftTests(unittest.TestCase):
-    def test_clean_closure_rows_keeps_only_four_column_tsv_rows(self) -> None:
+    def test_clean_closure_rows_keeps_supported_tsv_rows(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             raw = root / "closure.tsv"
@@ -48,6 +54,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
                         "noise from an unexpected diagnostic",
                         "Decl\tMIPStarRE/Foo.lean\t1\t2",
                         "too\tmany\tcolumns\tfor\tthis\trow",
+                        "Hole\tMIPStarRE/Hole.lean\t3\t4\tDEF_SAFE",
                         "Generated\tMIPStarRE/Bar.lean\tNORANGE\tNORANGE",
                     ]
                 )
@@ -60,6 +67,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
             self.assertEqual(
                 clean.read_text(encoding="utf-8"),
                 "Decl\tMIPStarRE/Foo.lean\t1\t2\n"
+                "Hole\tMIPStarRE/Hole.lean\t3\t4\tDEF_SAFE\n"
                 "Generated\tMIPStarRE/Bar.lean\tNORANGE\tNORANGE\n",
             )
 
@@ -69,16 +77,27 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         self.assertIn("- 'scripts/comparator/**'", workflow)
         self.assertIn("needs.changes.outputs.comparator == 'true'", workflow)
         build = workflow.index("lake build MIPStarRE.LDT.Test.AxiomAudit")
-        guard = workflow.index("python3 scripts/comparator/check_challenge_drift.py --root .")
-        self.assertLess(build, guard)
+        palomar_guard = workflow.index(
+            "python3 scripts/comparator/check_challenge_drift.py "
+            "--root . --challenge palomar"
+        )
+        palomar_write = workflow.index("--challenge palomar --write")
+        palomar_compile = workflow.index('lake env lean "$PALOMAR_CHALLENGE"')
+        self.assertLess(build, palomar_guard)
+        self.assertLess(palomar_guard, palomar_write)
+        self.assertLess(palomar_write, palomar_compile)
 
     def test_readme_documents_update_command_and_footer_source(self) -> None:
         readme = README.read_text(encoding="utf-8")
-        self.assertIn("python3 scripts/comparator/check_challenge_drift.py --root . --update", readme)
+        self.assertIn(
+            "python3 scripts/comparator/check_challenge_drift.py --root . --update",
+            readme,
+        )
         self.assertIn("challenge_footer.lean", readme)
         self.assertIn("MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean", readme)
         self.assertIn("--challenge", readme)
         self.assertIn("challenges/qpbt.json", readme)
+        self.assertIn("challenges/palomar.json", readme)
         self.assertIn(
             "refuses a challenge whose configured header or footer file is not",
             readme,
@@ -88,6 +107,14 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         self.assertIn("MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean", readme)
         self.assertIn("MIPStarRE/QPBT/Test/Soundness.lean", readme)
         self.assertIn("MIPStarRE/QPBT/Test/QubitForm.lean", readme)
+        self.assertIn("definition_names", readme)
+        self.assertIn("provenance_comments", readme)
+        self.assertIn("Solution axiom audit", readme)
+        self.assertIn("989 physical lines and 51,979 UTF-8 bytes", readme)
+        self.assertIn("Lean 4.32", readme)
+        self.assertIn("Lean 4.35", readme)
+        self.assertIn("3,509 physical lines and 161,038 bytes", readme)
+        self.assertIn("module-conversion packet #753", readme)
         self.assertIn(LDT_BASELINE_SHA256, readme)
 
     def test_ldt_expected_matches_baseline(self) -> None:
@@ -107,28 +134,48 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         # challenges/ is checked; a new challenge is picked up by adding its
         # file alone.
         configured = {path.stem for path in (COMPARATOR / "challenges").glob("*.json")}
-        self.assertEqual(sorted(configured), ["ldt", "qpbt"])
+        self.assertEqual(sorted(configured), ["ldt", "palomar", "qpbt"])
 
         self.assertIn(
             "python3 scripts/comparator/check_challenge_drift.py --root .\n",
             CI_SH.read_text(encoding="utf-8"),
         )
+        local_ci = CI_SH.read_text(encoding="utf-8")
+        self.assertIn("--root . --challenge palomar --write", local_ci)
+        self.assertIn('lake env lean "$palomar_challenge"', local_ci)
 
-    def test_pr_ci_names_only_configured_challenges(self) -> None:
+    def test_pr_ci_names_published_challenges(self) -> None:
         workflow = PR_CI.read_text(encoding="utf-8")
-        for name in ("ldt", "qpbt"):
+        for name in ("ldt", "qpbt", "palomar"):
             self.assertIn(
                 "python3 scripts/comparator/check_challenge_drift.py "
                 f"--root . --challenge {name}",
                 workflow,
             )
 
+    def test_palomar_solution_axiom_roots_are_explicit(self) -> None:
+        audit = QPBT_AXIOM_AUDIT.read_text(encoding="utf-8")
+        for module in (
+            "MIPStarRE.QPBT.Palomar.PauliCompleteness",
+            "MIPStarRE.QPBT.Palomar.LowDegreeSoundness",
+            "MIPStarRE.QPBT.Palomar.PauliSoundness",
+        ):
+            self.assertIn(f"import {module}", audit)
+        for declaration in (
+            "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+            "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+            "MIPStarRE.QPBT.Palomar.pauli_soundness",
+            "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit",
+            "MIPStarRE.QPBT.fixedFieldModel",
+        ):
+            self.assertIn(f"audit_standard_axioms {declaration}", audit)
+
     def test_every_challenge_is_configured_completely(self) -> None:
         challenges = {
             challenge.name: challenge
             for challenge in challenge_config.load_challenges()
         }
-        self.assertEqual(sorted(challenges), ["ldt", "qpbt"])
+        self.assertEqual(sorted(challenges), ["ldt", "palomar", "qpbt"])
         for name, challenge in challenges.items():
             with self.subTest(challenge=name):
                 self.assertTrue(challenge.targets)
@@ -203,6 +250,40 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
                         f"{part}: challenge modules may only import Mathlib and "
                         f"other challenge modules, found {line!r}",
                     )
+
+    def test_palomar_challenge_is_monolithic_bounded_and_mathlib_only(self) -> None:
+        palomar = challenge_config.load_challenges(["palomar"])[0]
+        self.assertFalse(palomar.split)
+        self.assertEqual(
+            palomar.definition_names,
+            ("MIPStarRE.QPBT.fixedFieldModel",),
+        )
+        data = PALOMAR_EXPECTED.read_bytes()
+        self.assertEqual(hashlib.sha256(data).hexdigest(), PALOMAR_BASELINE_SHA256)
+        text = data.decode("utf-8")
+        self.assertLessEqual(len(text.splitlines()), 1000)
+        self.assertLessEqual(len(data), 102400)
+        self.assertIn("public import Mathlib", text)
+        imports = re.findall(r"^(?:public )?import\s+(.+)$", text, re.MULTILINE)
+        self.assertEqual(imports, ["Mathlib"])
+        self.assertEqual(
+            len(re.findall(r"^\s+sorry$", text, re.MULTILINE)),
+            5,
+        )
+        self.assertNotRegex(text, r"^\s*axiom\s", "challenge declares an axiom")
+        self.assertEqual(
+            len(re.findall(r"^noncomputable def fixedFieldModel\b", text, re.MULTILINE)),
+            1,
+        )
+        for target in palomar.targets:
+            self.assertEqual(
+                len(re.findall(
+                    rf"^theorem {re.escape(target.rsplit('.', 1)[1])}\b",
+                    text,
+                    re.MULTILINE,
+                )),
+                1,
+            )
 
     def test_extractor_reads_targets_from_the_environment(self) -> None:
         extractor = EXTRACTOR.read_text(encoding="utf-8")

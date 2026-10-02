@@ -1871,6 +1871,27 @@ override is still never self-granted.
 discipline in `local/personas/main.md` (stop at the limit, commit what stands, record, rescope) is unchanged, and
 review still checks the PR's cumulative workflow diff.
 
+## 2026-10-02 — Compile and audit the compact Palomar challenge (#774)
+
+**Trigger:** the 2026-10-02 PR #775 compact-gate observation in
+`results/telemetry/events.md`: default `lake build` did not reach the unimported
+Palomar modules, the existing QPBT audit omitted the compact aliases and the
+registered selector value, and byte regeneration did not type-check the final
+standalone file.
+
+**Change:** `MIPStarRE.QPBT.Test.AxiomAudit` imports the three configured Palomar
+modules, checks the four theorem aliases against the exact standard-axiom set,
+and checks the actual `fixedFieldModel` value against that same exact set.  The
+local build step and frozen `pr-ci.yml` mirror both run Palomar drift, regenerate
+to a temporary path, and compile that fresh `Challenge.lean` with the pinned
+environment.  Regression tests bind the five roots, the standalone compile, its
+blocking failure behavior, and the preserved expected-file hash.
+
+**Expected effect:** ordinary gate execution compiles the complete compact
+dependency DAG before extraction, rejects missing or nonstandard Solution axiom
+dependencies, and rejects a byte-current generated artifact that no longer
+elaborates, without changing the audited Challenge bytes.
+
 ## 2026-10-02 — Pin the Palomar toolchain release (#756)
 
 **Trigger:** `results/telemetry/events.md`, 2026-10-02, "Palomar preparation",

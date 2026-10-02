@@ -10,22 +10,31 @@ and recursor rules; theorem proof bodies are traversed for the constants they
 use).  Auto-generated auxiliaries (`_proof_`, `match_`, `_autoParam`,
 constructors, projections) are collapsed into their parent declarations.
 
+Definitions named by the challenge's optional `definition_names` frontier are
+included with their complete types, but their values are not traversed.  The
+extractor emits their safety metadata so the assembler can preserve the exact
+source signature and replace only their Challenge values with `sorry`.
+
 The challenge is selected by `scripts/comparator/challenges/<name>.json`:
 
 * its `targets` reach this file through the environment variable
   `MIPSTARRE_COMPARATOR_TARGETS` (comma-separated, fully qualified).  With the
   variable unset the extractor closes the LDT main theorem, so running this
   file directly reproduces the historical single-challenge behaviour.
+* its optional `definition_names` reach this file through
+  `MIPSTARRE_COMPARATOR_DEFINITIONS`.  Missing or empty means that every
+  reachable value is traversed, preserving the historical behaviour.
 * its `imports` replace the `import` block above.  `check_challenge_drift.py`
   renders a copy of this file with that block substituted, because a Lean
   module header cannot be computed at elaboration time.
 
 Output: one TSV row per declaration — name, module path, start line, end line
-(`NORANGE` for compiler-generated declarations without a source range) —
-consumed by `assemble_challenge.py`.  Rows are emitted in `NameSet` order,
-which is deterministic; the dependency ordering (module import rank, then line
-number) happens downstream in the assembler.  See README.md in this directory
-for the full regeneration pipeline.
+(`NORANGE` for compiler-generated declarations without a source range), and an
+optional fifth-column definition-hole marker — consumed by
+`assemble_challenge.py`.  Rows are emitted in `NameSet` order, which is
+deterministic; the dependency ordering (module import rank, then line number)
+happens downstream in the assembler.  See README.md in this directory for the
+full regeneration pipeline.
 -/
 
 open Lean
@@ -78,13 +87,15 @@ def canon (env : Environment) (closure : NameSet) (n : Name) : Name :=
 /-- All local constants referenced by declaration `n`.
 Mirrors comparator's `runForUsedConsts`: type + value (incl. theorem proofs)
 + inductive ctors + recursor rule RHSs. -/
-def refsOf (env : Environment) (n : Name) : Array Name :=
+def refsOf (env : Environment) (definitionHoles : NameSet) (n : Name) : Array Name :=
   match env.find? n with
   | some ci =>
     let fromType := ci.type.getUsedConstants
-    let fromValue := match ci.value? (allowOpaque := true) with
-      | some v => v.getUsedConstants
-      | none => #[]
+    let fromValue :=
+      if definitionHoles.contains n then #[]
+      else match ci.value? (allowOpaque := true) with
+        | some v => v.getUsedConstants
+        | none => #[]
     let extra : Array Name :=
       match ci with
       | .inductInfo v => v.ctors.toArray ++ v.all.toArray
@@ -94,18 +105,21 @@ def refsOf (env : Environment) (n : Name) : Array Name :=
     (fromType ++ fromValue ++ extra).filter (isLocal env)
   | none => #[]
 
-partial def collect (env : Environment) (queue : List Name) (seen : NameSet) : NameSet :=
+partial def collect (env : Environment) (definitionHoles : NameSet)
+    (queue : List Name) (seen : NameSet) : NameSet :=
   match queue with
   | [] => seen
   | n :: rest =>
-    if seen.contains n || !isLocal env n then collect env rest seen
-    else collect env ((refsOf env n).toList ++ rest) (seen.insert n)
+    if seen.contains n || !isLocal env n then collect env definitionHoles rest seen
+    else
+      collect env definitionHoles
+        ((refsOf env definitionHoles n).toList ++ rest) (seen.insert n)
 
 /-- Target theorems closed when `MIPSTARRE_COMPARATOR_TARGETS` is unset. -/
 def defaultTargets : List Name := [`MIPStarRE.LDT.Test.mainFormal]
 
-/-- Parse the comma-separated target list written by `challenge_config.py`. -/
-def parseTargets (s : String) : List Name :=
+/-- Parse a comma-separated declaration list written by `challenge_config.py`. -/
+def parseNames (s : String) : List Name :=
   ((s.splitOn ",").map fun part => part.trimAscii.copy).filterMap fun part =>
     if part.isEmpty then none else some part.toName
 
@@ -113,21 +127,48 @@ def challengeTargets : IO (List Name) := do
   match ← IO.getEnv "MIPSTARRE_COMPARATOR_TARGETS" with
   | none => return defaultTargets
   | some raw =>
-    let targets := parseTargets raw
+    let targets := parseNames raw
     if targets.isEmpty then
       throw (IO.userError "MIPSTARRE_COMPARATOR_TARGETS is set but names no target")
     return targets
 
+/-- Definition values omitted from the generated Challenge. -/
+def challengeDefinitionNames : IO (List Name) := do
+  match ← IO.getEnv "MIPSTARRE_COMPARATOR_DEFINITIONS" with
+  | none => return []
+  | some raw => return parseNames raw
+
+/-- Stable text used in the extractor's definition-hole TSV marker. -/
+def definitionSafetyName : DefinitionSafety → String
+  | .safe => "safe"
+  | .unsafe => "unsafe"
+  | .partial => "partial"
+
+/-- Fifth-column marker identifying a validated registered-definition frontier. -/
+def definitionHoleMetadata (v : DefinitionVal) : String :=
+  "DEF_" ++ (definitionSafetyName v.safety).toUpper
+
 def runExtract : MetaM Unit := do
   let env ← getEnv
   let targets ← challengeTargets
+  let definitionNames ← challengeDefinitionNames
+  let mut definitionHoles : NameSet := {}
+  for name in definitionNames do
+    match env.find? name with
+    | none => throwError "registered definition not found: {name}"
+    | some (.defnInfo _) =>
+      unless isLocal env name do
+        throwError "registered definition is not repository-local: {name}"
+      definitionHoles := definitionHoles.insert name
+    | some _ => throwError "registered definition is not a definition: {name}"
   -- Roots are the local constants of every target's *statement*, accumulated in
-  -- configuration order; the closure itself is order-independent.
-  let mut roots : List Name := []
+  -- configuration order.  Registered definitions are roots in their own right;
+  -- their types are traversed while their values are the frontier.
+  let mut roots : List Name := definitionNames
   for target in targets do
     let some ci := env.find? target | throwError "target not found: {target}"
     roots := roots ++ ci.type.getUsedConstants.toList.filter (isLocal env ·)
-  let closure := collect env roots {}
+  let closure := collect env definitionHoles roots {}
   let mut canonSet : NameSet := {}
   for n in closure.toArray do
     canonSet := canonSet.insert (canon env closure n)
@@ -138,8 +179,18 @@ def runExtract : MetaM Unit := do
       | some idx => env.header.moduleNames[idx.toNat]!
       | none => Name.anonymous
     let path := mod.toString.replace "." "/" ++ ".lean"
+    let metadata ←
+      if definitionHoles.contains c then
+        match env.find? c with
+        | some (.defnInfo v) => pure (some (definitionHoleMetadata v))
+        | _ => throwError "registered definition changed kind during extraction: {c}"
+      else pure none
     match ← Lean.findDeclarationRanges? c with
-    | some r => IO.println s!"{c}\t{path}\t{r.range.pos.line}\t{r.range.endPos.line}"
-    | none => IO.println s!"{c}\t{path}\tNORANGE\tNORANGE"
+    | some r =>
+      let row := s!"{c}\t{path}\t{r.range.pos.line}\t{r.range.endPos.line}"
+      IO.println <| metadata.map (row ++ "\t" ++ ·) |>.getD row
+    | none =>
+      let row := s!"{c}\t{path}\tNORANGE\tNORANGE"
+      IO.println <| metadata.map (row ++ "\t" ++ ·) |>.getD row
 
 #eval runExtract

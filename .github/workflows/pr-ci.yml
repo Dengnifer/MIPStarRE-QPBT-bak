@@ -163,6 +163,17 @@ jobs:
         run: |
           python3 scripts/comparator/check_challenge_drift.py --root . --challenge qpbt
 
+      - name: Check comparator challenge regeneration drift (Palomar)
+        run: |
+          python3 scripts/comparator/check_challenge_drift.py --root . --challenge palomar
+
+      - name: Compile regenerated standalone Palomar challenge
+        run: |
+          PALOMAR_CHALLENGE="$(mktemp -d)/Challenge.lean"
+          python3 scripts/comparator/check_challenge_drift.py \
+            --root . --challenge palomar --write "$PALOMAR_CHALLENGE"
+          lake env lean "$PALOMAR_CHALLENGE"
+
       # Save even when the build failed: a partial cache still spares the
       # next run the modules that did compile.
       - name: Save Lean build cache (main only)
