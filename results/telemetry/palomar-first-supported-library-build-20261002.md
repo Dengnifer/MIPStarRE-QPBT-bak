@@ -24,3 +24,16 @@ In parallel, #745's routing repair has passed 14 focused cases and is running
 normal commit hooks. #753's auxiliary preparation is also in a normal operator
 commit hook after compiling all31 generated QPBT modules and proving normalized
 byte equality. Both remain unmerged, with final gates still pending.
+
+
+Both explicit axiom targets subsequently completed successfully in the same
+supported-version tree: `lake build MIPStarRE.LDT.Test.AxiomAudit
+MIPStarRE.QPBT.Test.AxiomAudit`, exit0, 9593jobs. Their assertion mechanism accepts
+only the exact standard three-axiom set. This is the original library audit;
+the four compact aliases and selector will be covered when their prepared stack
+is integrated. No final CI or compact-stack inclusion is implied.
+
+The remaining comparator extractor needed the supported compiler's slice-based
+string API (`dropEnd` followed by `.copy`, and `trimAscii.copy`). The author is
+repairing that API usage before canonical generation and drift checks. FinalP8
+integration must preserve these API repairs alongside its newmodule/meta rendering.
