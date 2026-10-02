@@ -80,7 +80,7 @@ byte-for-byte.  The compact Palomar challenge registers only
 
 ### Compact Palomar prototype measurement
 
-The checked-in Palomar artifact has 989 physical lines and 51,979 UTF-8 bytes.
+The checked-in Palomar artifact has 994 physical lines and 52,141 UTF-8 bytes.
 It contains exactly four theorem holes and the sole registered
 `fixedFieldModel` value hole.  Its other reachable definitions and proofs are
 present in full, and the standalone file compiles with only a public Mathlib
