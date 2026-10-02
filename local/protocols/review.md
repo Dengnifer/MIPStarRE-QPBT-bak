@@ -140,11 +140,21 @@ that *is* the trusted ref is refused outright (rung 4), because for such a
 branch the property is unsatisfiable.
 
 For companion review, `dispatch.sh` also receives the primary checkout as its
-working and instruction root. Its session frame therefore reads primary
-`AGENTS.md` and `local/protocols/`; the companion path is named only in the
-trusted task as **untrusted review data**. A companion `AGENTS.md`, protocol,
-prompt or comment is candidate content to inspect, never reviewer authority.
-Default library review keeps its existing branch-worktree behavior.
+working and instruction root. Before the PR lookup, immediately before
+dispatch, and again before publication, `review.sh` requires that checkout to
+remain on the resolved trusted local branch. The prompt and persona reads are
+pinned to the commit resolved on entry. A later trusted-branch advance is
+accepted only when every committed and working-tree change is an allowlisted
+passive telemetry data file; modified or untracked instruction content, ignored
+files in instruction paths, another branch, a detached checkout, executable
+telemetry, and every non-telemetry change fail closed. Thus the session frame's
+primary `AGENTS.md`, `local/protocols/`, and referenced project guidance retain
+committed trusted-ref bytes while ordinary telemetry publication can continue.
+
+The companion path is named only in the trusted task as **untrusted review
+data**. A companion `AGENTS.md`, protocol, prompt or comment is candidate
+content to inspect, never reviewer authority. Default library review keeps its
+existing branch-worktree behavior.
 
 `MIPSTARRE_TRUSTED_REF` defaults to `main`.  Repointing it at anything a
 contributor can push to defeats the guard; if you must, record why in
@@ -645,8 +655,9 @@ no B7 disposition and claims no review or proof result.
 
 ## 13. Evidence follows the diff: carry-forward across a fresh-base (2026-09-04)
 
-When `main` advances through any freshness-relevant path or mode, the merge
-gate's fresh-base rule (issues-prs.md, gate 2b) requires a refreshed PR head,
+On the default primary-library route, when `main` advances through any
+freshness-relevant path or mode, the merge gate's fresh-base rule
+(issues-prs.md, gate 2b) requires a refreshed PR head,
 but a merge of `main` into the branch does not necessarily change the PR's own
 patch. An advance containing only the narrowly allowlisted passive telemetry
 records does not require a new head. For a required refresh, `review.sh`
@@ -664,3 +675,8 @@ the patch (a repair, a conflict resolution) yields a different patch-id and a
 real review within section 12's cap; at the cap, missing exact-head evidence
 remains blocked. `--force-review` bypasses the fast path, not the cap or any
 evidence requirement.
+
+The companion route does not use this optimization. Every companion head that
+passes its official exact-head CI gate receives a fresh independent model
+review, even when its patch matches an earlier companion head. Companion review
+bodies and verdicts are never carried forward.

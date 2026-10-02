@@ -10267,3 +10267,24 @@ This observation is not a published review finding or approval. The prose
 change adds no repository, evidence source, verifier, gate or bypass; it only
 documents the existing comparator-specific exception and primary-main trust
 boundary.
+
+### 2026-10-02 — Companion review reused mutable instructions and prior bodies
+
+Independent review 5389660071 (`reviewer-pr755-20261002-07`) found two
+companion-only trust defects in PR755. The reviewer cwd was the mutable primary
+checkout rather than verified committed trusted-ref instructions, and the new
+companion carry-forward path authenticated one review row but selected a body
+from a separate row by head substring. MAIN chose the narrow repair: pin prompt
+and persona reads to one resolved primary-main commit, require the primary
+instruction checkout to remain on that branch with only passive telemetry
+changes before lookup, dispatch and publication, and disable companion
+carry-forward completely. Primary-library carry-forward is unchanged. A normal
+unforced exploit regression now places an unauthenticated approval before an
+authenticated adverse review and proves that a fresh model review runs and
+neither old body is republished. Modified, untracked and off-ref primary
+instruction cases fail closed; committed and uncommitted passive telemetry
+updates remain admissible. The 27 focused companion tests, all 87 GitHub
+workflow tests and 52 related review/dispatch tests pass, together with shell
+and Python syntax and `git diff --check`. No full build, canonical CI,
+independent review, companion mutation, merge, cost reset or gate override ran
+in this author phase; every prior adverse review and cost record remains.

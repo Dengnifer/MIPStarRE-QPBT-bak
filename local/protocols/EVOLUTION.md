@@ -2033,3 +2033,34 @@ centralized in `local/protocols/review.md`; no script or gate semantics changed.
 **Expected effect:** operators see the implemented companion exception without
 mistaking arbitrary repositories, branch-supplied verification or an
 unpublished timeout commentary for admissible review evidence.
+
+## 2026-10-02 - Pin companion instructions and require fresh reviews (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Companion review reused
+mutable instructions and prior bodies", and independent review 5389660071. Its
+F1 showed that the companion reviewer read `AGENTS.md` and protocols from an
+unchecked primary working tree; F2 showed that companion carry-forward could
+authenticate one review row and republish another row's body.
+
+**Change:** `review.sh` resolves the companion instruction source to one commit
+of the checked-out trusted primary branch. It rejects modified, untracked,
+ignored or off-ref instruction state before PR lookup and dispatch, and repeats
+the check before publication. The existing passive telemetry path-and-mode
+boundary permits concurrent committed or working-tree telemetry updates without
+making them instructions. Persona and trusted prompt reads use the pinned
+commit. Companion reviews no longer enter the carry-forward fast path, so every
+exact head receives a fresh independent model review; the default primary route
+retains its existing carry-forward behavior. `review.md`, `DESIGN.md` and the
+operator guide state the narrowed contract. Exploit-shaped fixtures cover
+primary instruction mutation, untracked protocols, off-ref roots, publication
+revalidation, passive telemetry and unauthenticated preceding review bodies.
+
+**Expected effect:** a companion branch, mutable primary checkout or unrelated
+prior COMMENT body cannot become reviewer authority or exact-head review
+evidence, while normal telemetry publication and all primary-route behavior
+continue unchanged.
+
+**Outcome:** the 27 focused companion tests, all 87 GitHub-workflow tests and 52
+related review/dispatch tests pass. Shell and Python syntax and
+`git diff --check` pass. No full build, canonical CI, independent review, companion
+mutation, merge or gate override ran in the author phase.

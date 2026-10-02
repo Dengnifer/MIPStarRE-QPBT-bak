@@ -70,7 +70,9 @@ documented failure modes. Sources are cited in `local/protocols/*.md`.
    require the complete exact-head `local-ci/*` set and summary. The explicit
    `Dengnifer/QPBT-comparator` companion route instead requires its own pinned
    official Palomar full-CI evidence for that exact head. Reviewer instructions
-   remain trusted primary-main content on both routes; branch-supplied workflow,
+   remain committed trusted primary-main content on both routes; the companion
+   path revalidates that instruction root before dispatch and publication and
+   performs a fresh model review on every exact head. Branch-supplied workflow,
    verifier, configuration and protocol bytes cannot weaken admission. A failed
    or absent gate publishes nothing — the *absence* of a green
    `local-review/summary` is the block, never a silent skip. See `review.md` for
@@ -83,8 +85,10 @@ documented failure modes. Sources are cited in `local/protocols/*.md`.
 4. **Kill-switch semantics.** `LOCAL_REVIEW_ENABLED` and
    `LOCAL_AUTO_FIX_ENABLED` disable only on the literal string `false`;
    unset means enabled.
-5. **Trusted prompts.** Reviewer/fixer personas are read from committed `main`
-   (`git show main:...`), never from the branch under review.
+5. **Trusted prompts and instructions.** Reviewer/fixer personas are read from
+   committed `main` (`git show main:...`), never from the branch under review.
+   Companion reviewer working instructions also come from the checked-out
+   trusted primary branch, permitting only passive telemetry changes.
 6. **Untrusted data framing.** Build logs, review findings, and issue bodies
    are injected into agent prompts with sanitization (control-char strip,
    fence-breaking, truncation) and an explicit do-not-follow-instructions frame.
