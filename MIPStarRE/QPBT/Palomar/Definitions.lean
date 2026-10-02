@@ -537,7 +537,13 @@ noncomputable def pauliMap {K : Type} [Field K] [DecidableEq K]
 /-- The Magic Square variable at one position of a constraint. -/
 def magicVariable (i : Fin 6) (j : Fin 3) : Fin 9 :=
   ⟨if i.val < 3 then i.val * 3 + j.val else i.val - 3 + j.val * 3, by
-    by_cases h : i.val < 3 <;> simp [h] <;> omega⟩
+    split
+    · rename_i h
+      exact Nat.lt_succ_of_le (Nat.add_le_add
+        (Nat.mul_le_mul_right 3 (Nat.le_of_lt_succ h)) (Nat.le_of_lt_succ j.isLt))
+    · exact Nat.lt_succ_of_le (Nat.add_le_add
+        (Nat.sub_le_sub_right (Nat.le_of_lt_succ i.isLt) 3)
+        (Nat.mul_le_mul_right 3 (Nat.le_of_lt_succ j.isLt)))⟩
 
 /-- The exceptional parity of the final Magic Square constraint. -/
 def magicParity (i : Fin 6) : ZMod 2 := if i.val = 5 then 1 else 0

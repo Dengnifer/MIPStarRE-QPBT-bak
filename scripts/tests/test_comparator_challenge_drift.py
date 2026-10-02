@@ -27,7 +27,7 @@ LDT_BASELINE_SHA256 = (
     "3430abaf0e82e3527a8f64719f5da2740f3a84d4169a3391be8af6650179c434"
 )
 PALOMAR_BASELINE_SHA256 = (
-    "acb66991fbdbc80a9c5d0a7e522f572ba604e6c88b2907f9c43a477438ebe6f8"
+    "74f16feefedf98b442a143836d8a720e39748561ebdd32e8e8041b55b2621bc3"
 )
 TEMPLATE_BASELINE_SHA256 = {
     "challenge_header.lean.in":
@@ -181,7 +181,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         self.assertIn("definition_names", readme)
         self.assertIn("provenance_comments", readme)
         self.assertIn("Solution axiom audit", readme)
-        self.assertIn("989 physical lines and 51,979 UTF-8 bytes", readme)
+        self.assertIn("994 physical lines and 52,141 UTF-8 bytes", readme)
         self.assertIn("Lean 4.32", readme)
         self.assertIn("Lean 4.35", readme)
         self.assertIn("3,509 physical lines and 161,038 bytes", readme)
