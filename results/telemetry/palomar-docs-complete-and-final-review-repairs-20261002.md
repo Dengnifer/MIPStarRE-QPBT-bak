@@ -58,3 +58,25 @@ free; further final-stack publication depends on the parent repairs and
 their normal gates. The final companion pin, official native comparator run,
 local final mechanical report and owner handoff remain pending. The goal is
 active; no keeper stop marker or submission action has been made.
+
+## Alias repair published and compact child admitted
+
+Actor `orc-756-20261002-12` completed normally and published PR #778 at
+`c36faf1935fba3c27051dcdf10a9d108d59ec3e5`. The only changed file is
+`SubLineBranch.lean`: one private alias was removed, and eight callers use
+the existing public theorem directly. Focused Lean/integrity checks, normal
+commit hooks, and checked exact-ref publication passed. Actual registry time
+is 404s, giving issue #756 cumulative author time 23,328s; the worker's 367s
+prose figure was an interim observation. Fresh canonical CI is running in
+`/tmp/palomar-778-alias-ci.log`. Independent approval is still required.
+
+MAIN also admitted the compact child propagation before the parent review
+finishes, as recorded in #27 comment `5949818112`. This overlaps preparation
+without inheriting approval: the child still requires its own complete CI
+and independent review before any normal merge. The #774 worker owns only
+the compact worktree at `f424ffefbcbc620055303bc503429aa05f87c04a`, merges
+immutable `c36faf19`, preserves Challenge hash `acb66991...ebe6f8`, and
+publishes through the ordinary PR #775 route. Prior author time is 8,821s;
+the new tranche is 900s, with a cumulative ceiling of 9,721s. The brief and
+runtime log are `/tmp/palomar-774-port-alias-publication.md` and
+`/tmp/palomar-774-port-alias-publication.log`.
