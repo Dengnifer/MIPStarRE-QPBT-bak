@@ -103,3 +103,52 @@ The compact #775 checked publication remains a live MAIN procedural tail.
 Scoped process inspection confirmed it was type-checking changed QPBT files,
 not stopped. No duplicate publication or bypass was launched. Final source
 merges, official wrapper CI, mechanical evidence and owner handoff remain owed.
+
+## Compact publication and completed module preparation
+
+The MAIN procedural publication of PR #775 completed normally before its
+1,800s bound. GitHub confirms exact head `57f1c873`; the log is
+`/tmp/palomar-774-main-publication.log`. GitHub also reports a passive-telemetry
+merge conflict. CI was therefore deferred until a bounded telemetry refresh,
+with all mathematical inputs preserved. The refreshed-port CI meanwhile
+passed all eight steps and its summary at `283d4fa2`; the additional actual
+blueprint axiom audit passed. Ordinary `review.sh` dispatched reviewer
+`reviewer-pr778-20261002-06` rather than carrying the prior review. It remains
+bounded to 900s, prior review time 2,597s, and no override is used. Admission
+is #27 comment `5950659940`, log `/tmp/palomar-778-refreshed-review.log`.
+
+Module actor `orc-753-20261002-07` completed normally in 1,081s, giving #753
+cumulative author time 11,749s. Its earlier 1,044s/11,712s prose figures were
+interim. Clean head `73edb6d1c5254aacce0bddaafce3a056c59fd966` includes
+`391eabbf0a64ef29d95e78cfbfc96b35556af114` (merge of compact `57f1c873`) and
+then snapshot `a7cb947e`. The only mathematical change from the preceding
+conversion is the approved alias deletion; the snapshot merge preserves the
+mathematical and comparator trees exactly. Normal merge guards and hooks
+passed, including 942 tests with 9 skipped, focused Lean checks, three drift
+checks and standalone Challenge compilation. All 755 tracked Lean files use
+`module` and have at most 1,000 lines. Against the earlier compact f424
+inventory, 709 math files comprise 656 exact header normalizations, 52 prior
+context/visibility exceptions and one approved alias-removal delta.
+
+The prepared body is `/tmp/palomar-753-pr-body.md`. It is a handoff draft:
+after the parents merge, the final PR description must describe the actual
+remaining conversion diff rather than parent-integration history. Publication,
+current-main reconciliation, full canonical CI and independent review remain
+required. The Challenge hash remains the accepted acb66991...ebe6f8.
+
+After confirming that actor terminal, MAIN assigned the released slot to
+#774's 600s telemetry-only refresh onto immutable main `f0c9f906`, preserving
+all non-telemetry blobs/modes from published `57f1c873`. Prior author cost is
+9,721s, ceiling 10,321s. Brief/log:
+`/tmp/palomar-774-published-telemetry-refresh.md` and
+`/tmp/palomar-774-published-telemetry-refresh.log`. Admission and parent order
+are recorded in #27 comment `5950761760`: 778, 775, 755, 753, then 777.
+This order reduces repeated substantive-base refreshes without waiving gates.
+
+The archive worker has committed its seventh batch at
+`c0e30660645cd6eec0028828f70c7d02726b8732`, with seven manifests and 2,168
+payloads. Its reported immutable tree is 504,982,991 bytes, with 19,305,009
+bytes of remaining margin. All prior 2,163 manifest/payload objects are
+reported unchanged. Its final receipt is still running and will be adopted
+from the dispatch registry; no final publication or independent approval is
+claimed yet.
