@@ -80,3 +80,38 @@ publishes through the ordinary PR #775 route. Prior author time is 8,821s;
 the new tranche is 900s, with a cumulative ceiling of 9,721s. The brief and
 runtime log are `/tmp/palomar-774-port-alias-publication.md` and
 `/tmp/palomar-774-port-alias-publication.log`.
+
+## Fresh port gate and bounded snapshot completion
+
+All eight canonical CI steps and the summary passed on `c36faf19`.
+The additional actual blueprint axiom audit also passed at that exact head:
+2,187 declarations in 407 modules, zero failures, and no proof-level
+`sorryAx`. Logs are `/tmp/palomar-778-alias-ci.log` and
+`/tmp/palomar-778-alias-blueprint-axioms.log`. MAIN admitted the fifth
+independent Sol Ultra review at 900s (prior 2,002s, ceiling 2,902s), recorded
+in #27 comment `5950038206`. It is running through ordinary `review.sh`
+without force or adjudication, in `/tmp/palomar-778-alias-review.log`.
+
+Snapshot actor `orc-745-20261002-12` ended at the 1,800s bound, exit 124,
+with no final message. Its eight-file patch is preserved uncommitted on
+`083dfeed`. The 28 companion tests and full 88-test workflow module passed
+before the final private-empty-Git-template amendment. That final amendment's
+focused run was interrupted, so those earlier passes do not validate its
+last edit. Author time is now 12,459s; usage is unknown, not zero.
+
+MAIN admitted a 900s completion-only continuation, actor
+`orc-745-20261002-13`, through the same primary space-3 route. The ceiling
+is 13,359s. The worker must validate the existing patch, complete normal
+hooks, and publish; there is no new scope or gate waiver. Admission is #27
+comment `5950012737`, brief `/tmp/palomar-745-snapshot-publication.md`,
+runtime log `/tmp/palomar-745-snapshot-publication.log`. The previous session
+handle was confirmed terminal before this writer started.
+
+A concrete final-checker issue was noted for the eventual #776 admission:
+`proof.lexical_source_scan` is always marked `unknown`, and that diagnostic
+feeds overall status even when all mechanical and runtime checks pass. The
+final worker should retain these non-certifying observations separately from
+unresolved requirements. Missing runtime evidence must still prevent a pass;
+a lexical scan must never be presented as proof of axiom closure. This has
+been added to the prepared companion publication plan, not implemented or
+claimed solved.
