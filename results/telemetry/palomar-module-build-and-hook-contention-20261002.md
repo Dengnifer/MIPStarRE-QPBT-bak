@@ -49,3 +49,19 @@ denialwasasandboxcondition,notakeyfailure. Handle92130,
 log/tmp/qpbt-palomar-774-final-faithfulness.log.
 
 Allremaininggatesarekept: no submission, no mergeoverride, nofinalreadinessclaim.
+
+
+## Contention reproduced and isolated
+
+The queued rerun observed the existingbuildslot idle at06:42:27Z, then ran the
+EXACTfailedtestunchanged. It passed in2.880seconds,exit0. No source, fixture,
+lockpath, timeout orskip flag waschanged. This confirms the preceding failure was
+caused by scheduling the real-build fixture across a busy machine-lock window.
+Log:/tmp/palomar-745-lock-fixture-recheck.log. The fullnormal919-testcommithook
+stillmustpass; MAINwillavoidstartingitwhile753'snextlongfullbuildisrunning.
+The stagedfreshnesspatch is preserved and no commit/publication is claimed yet.
+
+PR778's refreshed blueprintaxiomaudit on60981f57 also exited0:2187pass,0fail,
+407modules, with no proof-levelsorryAx. Log:
+/tmp/palomar-778-style-fix-blueprint-axioms.log. Its second independentreview is
+active viahandle73466 and /tmp/palomar-778-style-fix-review.log.
