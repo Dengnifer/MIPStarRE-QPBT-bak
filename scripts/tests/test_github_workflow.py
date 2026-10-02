@@ -647,6 +647,8 @@ class CompanionReviewRoutingTests(LayerTestCase):
 
         self.repo = self.tmp / "primary"
         self.init_repo(self.repo, templates)
+        _git(self.repo, "remote", "add", "github",
+             f"https://github.com/{REPO}.git")
         local_bin = self.repo / "local" / "bin"
         local_bin.mkdir(parents=True)
         for name in ("review.sh", "gh_common.py", "wf_util.py", "model_policy.py"):
@@ -886,6 +888,49 @@ print(f"last_message: {last}")
         self.assertTrue((cache / "reviews" / "pr7" / self.library_head / "code-task.md").exists())
         self.assertFalse(any("check-runs" in call["rel"] for call in self.gh.calls()))
 
+    def test_foreign_override_without_source_fails_before_any_record_use(self) -> None:
+        self.gh.reset()
+        self.gh.route(r"^pulls/7$", {
+            "number": 7,
+            "state": "open",
+            "head": {
+                "sha": self.library_head,
+                "ref": self.LIBRARY_BRANCH,
+                "repo": {"full_name": self.COMPANION},
+            },
+            "base": {
+                "sha": self.library_base,
+                "ref": "main",
+                "repo": {"full_name": self.COMPANION},
+            },
+        })
+        self.gh.route(r"^commits/[0-9a-f]+/statuses", [
+            {"context": "local-ci/summary", "state": "success"},
+        ])
+        self.gh.route(r"^pulls/7/reviews", [])
+        cache = self.tmp / "cache-foreign-default"
+        environment = dict(os.environ, **self.gh.env())
+        environment.update({
+            "MIPSTARRE_GITHUB_REPO": self.COMPANION,
+            "MIPSTARRE_CACHE_ROOT": str(cache),
+            "LOCAL_REVIEW_ENABLED": "true",
+            "MIPSTARRE_REVIEW_EFFORT": "ultra",
+            "PYTHONDONTWRITEBYTECODE": "1",
+        })
+        result = subprocess.run(
+            ["bash", str(self.repo / "local/bin/review.sh"), "7",
+             "--force-review", "--dry-run"],
+            cwd=self.repo, capture_output=True, text=True, env=environment,
+        )
+        self.assertNotEqual(result.returncode, 0, result.stderr)
+        self.assertIn("default review route is bound to trusted primary repository",
+                      result.stderr)
+        self.assertEqual(self.gh.calls(), [],
+                         "a mismatched route must fail before reading or publishing a PR")
+        self.assertFalse(cache.exists(),
+                         "a mismatched route must fail before recording runtime state")
+        self.assertEqual(_git(self.repo, "rev-parse", "HEAD"), self.library_head)
+
     def test_valid_companion_route_is_exact_clean_and_prompt_isolated(self) -> None:
         self.arm_companion([self.successful_check()])
         sentinel = self.tmp / "cache-valid" / "reviews" / "pr7" / "sentinel"
@@ -1114,6 +1159,8 @@ class ReviewRoundCounterTests(LayerTestCase):
         _git(self.repo, "config", "user.email", "tests@example.invalid")
         _git(self.repo, "config", "user.name", "MIPStarRE tests")
         _git(self.repo, "config", "commit.gpgsign", "false")
+        _git(self.repo, "remote", "add", "github",
+             f"https://github.com/{REPO}.git")
 
         local_bin = self.repo / "local" / "bin"
         local_bin.mkdir(parents=True)

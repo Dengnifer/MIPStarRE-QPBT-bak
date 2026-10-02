@@ -62,8 +62,9 @@
 #                              retired legacy routing variables; ignored for
 #                              current reviews. Unset both before operation.
 #   MIPSTARRE_GITHUB_REPO      owner/repo override for gh_common.py
-#                              (must be Dengnifer/QPBT-comparator when
-#                              --source-repo is used)
+#                              (must match the trusted primary repository
+#                              unless --source-repo selects the one allowed
+#                              companion repository)
 #
 set -euo pipefail
 
@@ -261,12 +262,13 @@ lint_branch_name() {
   fi
 }
 
-# git_remote_slug <checkout> — canonical owner/repo from the explicit origin.
-# The companion route must not let MIPSTARRE_GITHUB_REPO point API reads at one
-# repository while the reviewer inspects bytes from another.
+# git_remote_slug <checkout> [remote] — canonical owner/repo from one explicit
+# remote (default: origin). Repository routing must not let
+# MIPSTARRE_GITHUB_REPO point API reads at one repository while the reviewer
+# inspects bytes from another.
 git_remote_slug() {
-  local url
-  url="$(git -C "$1" remote get-url origin 2>/dev/null || true)"
+  local checkout="$1" remote="${2:-origin}" url
+  url="$(git -C "$checkout" remote get-url "$remote" 2>/dev/null || true)"
   [ -n "$url" ] || return 1
   python3 - "$url" <<'PY'
 import re, sys
@@ -285,9 +287,10 @@ else:
 PY
 }
 
-# validate_source_checkout — fail closed before consuming external CI evidence.
-validate_source_checkout() {
-  local top slug current_branch current_head branch_tip base_tip dirty
+# validate_source_identity — establish the allowed companion checkout before
+# any PR read, runtime record, or local worktree resolution.
+validate_source_identity() {
+  local top slug dirty
   top="$(git -C "$REVIEW_ROOT" rev-parse --show-toplevel 2>/dev/null || true)"
   [ -n "$top" ] || die "--source-repo $REVIEW_ROOT is not a Git checkout"
   top="$(cd "$top" && pwd -P)"
@@ -296,6 +299,17 @@ validate_source_checkout() {
   slug="$(git_remote_slug "$REVIEW_ROOT" || true)"
   [ "$slug" = "$TARGET_REPO" ] ||
     die "source checkout origin is '${slug:-unrecognized}', not target repository $TARGET_REPO"
+  dirty="$(git -C "$REVIEW_ROOT" status --porcelain --untracked-files=all)"
+  [ -z "$dirty" ] || die "source checkout $REVIEW_ROOT is dirty;" \
+    "companion reviews require a clean exact-head tree:
+$dirty"
+}
+
+# validate_source_checkout — recheck source identity and bind it to the PR's
+# exact repository, branch, base, and head before consuming external CI.
+validate_source_checkout() {
+  local current_branch current_head branch_tip base_tip
+  validate_source_identity
   [ "$PR_HEAD_REPO" = "$TARGET_REPO" ] ||
     die "PR #$PR_NUM head repository is '${PR_HEAD_REPO:-missing}', expected $TARGET_REPO"
   [ "$PR_BASE_REPO" = "$TARGET_REPO" ] ||
@@ -316,10 +330,6 @@ validate_source_checkout() {
   [ "$base_tip" = "$BASE_SHA" ] ||
     die "source base '$BASE' is $base_tip, but PR #$PR_NUM base is $BASE_SHA;" \
       "fetch the exact PR base"
-  dirty="$(git -C "$REVIEW_ROOT" status --porcelain --untracked-files=all)"
-  [ -z "$dirty" ] || die "source checkout $REVIEW_ROOT is dirty;" \
-    "companion reviews require a clean exact-head tree:
-$dirty"
 }
 
 # fetch_trusted <repo-relative-path> <dest> — reviewer prompts come from the
@@ -533,6 +543,9 @@ case "$PR_ARG" in
 esac
 PR_NUM="$((10#$PR_ARG))"
 
+PRIMARY_REPO="$(git_remote_slug "$ROOT" github || true)"
+[ -n "$PRIMARY_REPO" ] ||
+  die "cannot resolve the trusted primary repository from $ROOT's 'github' remote"
 TARGET_REPO="$(ghc repo-slug)" ||
   die "could not resolve the GitHub repository for PR #$PR_NUM"
 REVIEW_ROOT="$ROOT"
@@ -544,10 +557,15 @@ if [ -n "$SOURCE_REPO_ARG" ]; then
       "MIPSTARRE_GITHUB_REPO resolved to $TARGET_REPO"
   REVIEW_ROOT="$(cd "$SOURCE_REPO_ARG" 2>/dev/null && pwd -P || true)"
   [ -n "$REVIEW_ROOT" ] || die "--source-repo '$SOURCE_REPO_ARG' is not an accessible directory"
+  validate_source_identity
   REPO_KEY="dengnifer-qpbt-comparator"
   REVIEW_SCOPE="$REPO_KEY-pr$PR_NUM"
   RUN_ROOT="$CACHE/reviews/$REPO_KEY/pr$PR_NUM"
 else
+  [ "$TARGET_REPO" = "$PRIMARY_REPO" ] ||
+    die "default review route is bound to trusted primary repository $PRIMARY_REPO," \
+      "but MIPSTARRE_GITHUB_REPO resolved to $TARGET_REPO;" \
+      "use --source-repo only for $COMPANION_REPO"
   RUN_ROOT="$CACHE/reviews/pr$PR_NUM"
 fi
 mkdir -p "$RUN_ROOT"

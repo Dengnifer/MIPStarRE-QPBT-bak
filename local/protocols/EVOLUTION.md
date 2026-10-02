@@ -1931,3 +1931,31 @@ closed and no review is dispatched.
 workflow module passes 73, and the related review/native modules pass 16.
 Shell/Python syntax, hook installation and whitespace checks pass. No full build
 or live companion run was performed, so the check-name assumption remains open.
+
+## 2026-10-02 - Fail closed on unpaired review repository overrides (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "PR755
+repository-routing finding", and independent review 5388322891. Its F1 showed
+that `MIPSTARRE_GITHUB_REPO` still redirected default-route PR reads while the
+reviewer used the primary checkout's local refs, diff and worktree.
+
+**Change:** `review.sh` now derives the trusted primary repository from the
+primary checkout's `github` remote independently of the API override. Before a
+PR read, runtime-directory creation or worktree resolution, the default route
+requires the API target to match that repository exactly. The explicit route
+remains limited to `Dengnifer/QPBT-comparator` and now prevalidates the named
+checkout's exact root, `origin` and cleanliness before the PR read; its existing
+PR repository, branch, base and head checks run afterward and recheck the source
+identity. A fake-GitHub regression supplies colliding foreign PR metadata and
+proves the mismatch produces no API call or runtime record, while the valid
+default and explicit companion tests remain active.
+
+**Expected effect:** remote evidence cannot be paired with bytes from another
+repository merely by exporting `MIPSTARRE_GITHUB_REPO`. Repository selection is
+explicit and fail-closed before either route consumes PR state.
+
+**Outcome:** the 14 companion-routing tests, all 74 GitHub-workflow tests and
+all 16 related review/native tests pass. Shell and Python syntax, whitespace,
+hook installation and the changed-line length check pass. No full build, live
+companion review, canonical CI or independent review was run in the author
+phase.

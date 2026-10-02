@@ -26,7 +26,13 @@ only on code that at least compiles.
 
 Locally the normal chain is: `ci.sh` publishes the `local-ci/*` statuses on the
 head SHA; `review.sh` refuses to do anything until the `local-ci/summary`
-roll-up is `success` for the **current** head.  The explicit
+roll-up is `success` for the **current** head. Before any PR API read, cache
+record or worktree resolution, the default route requires the API repository
+to equal the trusted primary checkout's `github` remote. A foreign
+`MIPSTARRE_GITHUB_REPO` value without `--source-repo` is an error even when the
+primary repository happens to contain colliding refs or objects.
+
+The explicit
 `--source-repo PATH` route is restricted to `Dengnifer/QPBT-comparator`: it
 instead requires a successful GitHub Actions `comparator / verify` check on
 that exact SHA. Its run must use `.github/workflows/comparator.yml`, be a push
@@ -65,7 +71,7 @@ as a green one.
 | # | Rung | Outcome when it fires |
 |---|---|---|
 | 1 | `LOCAL_REVIEW_ENABLED` is the literal string `false` | skip, exit 0 |
-| 2 | no open GitHub PR for the number, or no head SHA | error, exit 1 |
+| 2 | route/source identity mismatch, or no usable PR/head | error, exit 1 |
 | 3 | branch name contains `] ~ ^ : ? *`, space or backslash | error, exit 1 |
 | 4 | branch under review equals `MIPSTARRE_TRUSTED_REF` | error, exit 1 |
 | 5 | required exact-head CI is missing or unsuccessful | **block**, exit 3 |
@@ -80,6 +86,15 @@ literal string `false` disables it**; unset, empty, `"0"`, `"no"` and `"False"`
 all leave the reviewer enabled.  This is DESIGN.md invariant 4, and it is not a
 stylistic preference: a port that treats unset as false silently stops
 reviewing and reports nothing.
+
+The route part of rung 2 runs before a PR read or runtime-directory creation.
+It derives the primary identity from the primary checkout's `github` remote,
+independently of `MIPSTARRE_GITHUB_REPO`. Without `--source-repo`, those names
+must match exactly. With `--source-repo`, the API target must be the one allowed
+companion repository, and the named checkout must already be its exact clean
+root with a matching `origin`; the PR-specific repository, branch, base and
+head checks then run after the PR record is read. Thus the environment override
+cannot pair remote records from one repository with local bytes from another.
 
 Rung 7 is the ping-pong guard, and §5 explains it.
 

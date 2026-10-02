@@ -10161,6 +10161,24 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
   Python syntax, `git diff --check`, and the installed-hook check pass. No full
   build, live companion run, push, publication or companion mutation occurred;
   `comparator / verify` remains a first-live-run integration assumption.
+- PR755 repository-routing finding: independent review 5388322891 confirmed
+  that `MIPSTARRE_GITHUB_REPO` still selected foreign PR records on the default
+  route while refs, diff and worktree bytes came from the trusted primary
+  checkout. The accepted repair derives the primary repository independently
+  from its `github` remote and rejects mismatched default routing before any PR
+  read, runtime record or worktree resolution. Explicit companion routing keeps
+  its one allowed target and now validates checkout root, origin and cleanliness
+  before the PR read, then repeats the exact PR/head checks. The finding remains
+  adverse historical review evidence; this repair is not an approval, and fresh
+  exact-head CI plus the admitted fourth independent review remain required.
+- PR755 repository-routing repair validation: the first focused run failed
+  because the new trusted-remote fixture was placed in the neighboring CI test
+  class rather than the companion-review class. No production path or remote
+  record was touched; the fixture placement was corrected. The 14 focused
+  routing tests, all 74 GitHub-workflow tests and all 16 related review/native
+  tests then passed, together with shell/Python syntax, `git diff --check`, the
+  changed-line length check and installed-hook check. No full build, canonical
+  CI, live companion review, independent review or merge was performed.
 
 ### 2026-10-02 — Reuse the recorded companion metadata dispatch setup
 
