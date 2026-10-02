@@ -61,3 +61,25 @@ Archive777 now has one1,200second Sol preparation tranche, retaining prior5,146
 seconds (newceiling6,346), to mergef0ab8399 and archive one additional immutable
 raw-session batch with allfour prior manifests. Comment5947152021 records this
 admission. No final source cap or parent-gate approval is inferred from it.
+
+## Exact port gates and third review
+
+CanonicalCI778 completed successfully onf01d195b: all8contexts plus summarygreen.
+Fullbuild172s,blueprint-render74s,blueprint-sync313s,proof-debt18s,proof-evasion59s;
+otherchecks passed. The separately required actualblueprintaxiomaudit also passed:
+2,187declarations across407modules,0fail,403statement-only and1,784proof-level
+placements, no proof-levelsorryAx. Logs:/tmp/palomar-778-norm-fix-ci.log and
+/tmp/palomar-778-norm-fix-blueprint-axioms.log.
+
+Normal thirdindependentreview started as reviewer-pr778-20261002-03 using SolUltra,
+900seconds under the usual gate; priorreviews1,052seconds remain charged and the
+ceilingis1,952. Comment5947219825 records the admission. Prompt111,187bytes was
+accepted with documented90,000aggregate/27,000citation caps; the full diff remains
+available on disk. No force/adjudication/old-headapproval is used.
+
+At this checkpoint allthree external slots carry useful work: module visibility
+continuation, archive batch and portreview. Fresh755CI is still running before its
+independent verification may be admitted. The753longbuild release remains withheld
+through that normalPython test window. Nextslot goes to755review ifitsCIisgreen;
+otherwise actualmergedportmain enablescompact775refresh/publication. The prepared
+compact successor is /tmp/palomar-774-current-main-publication.md; it is notadmitted.
