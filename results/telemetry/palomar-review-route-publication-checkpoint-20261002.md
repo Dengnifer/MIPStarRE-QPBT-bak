@@ -1,0 +1,71 @@
+# Native review route publication checkpoint — 2026-10-02
+
+The actual refreshed #745 author name isorc-745-20261002-06, correcting the
+priorcheckpoint's guessed-04suffix. Thread01a0fac1-3882-7d13-b4cf-c4922f500c9c
+usedall776remainingseconds, exit124; cumulativeauthor5698seconds. No keyfailure.
+Preparednativecontractacc was merged normally withpublisheda2d98834, producing
+447e2d29aea4a53995355b96f36e8893284069ca. Pending andcommittedmergeguards passed.
+Normalhook912total/9skipped/903executed passed, plus13companiontests,73workflowtests,
+16review/native tests, syntax andinstalledhookchecks. Worktreeclean.
+
+Thefirstcheckedpush correctlycaughtstalepre-moduleBasic.olean afterthepilotmerge.
+Theworker refresheditsprivatebuildfromdocumentedcompletea029snapshot usingprimary
+warm-worktree--force--skip-packages--no-build. The previouslyfailingFiniteMatrix
+sourcecheckthenpassed. No package/global/machinechanges were made.
+
+Deadlineinterruptedpr_open duringthesecondpublicationattempt. MAINrereadremote
+branchandPR755:both stilloldb265ccb1. MAINthen continuedtheordinaryprepared
+pr_openoperation with/tmp/pr755-body.md andtitle
+fix(local): pin official companion review preflight. Handle29419,
+log/tmp/palomar-745-main-publication.log. Bodypreservesbothadversereviews,
+5383425988and5384612101, namesrepairs, andclaimsnoinheritedapproval.
+ExactheadcanonicalCIandpreviouslyauthorizedadditional1800secondindependentreview
+stillfollowactualpublication. No companionmutation oroutsideaction occurred.
+
+#777 remainsclean at779146a1, withbotharchivesverified and6.34MBsourceheadroom
+atthatsnapshot. MAINwill normallymerge currentpassivetelemetry anduse theexisting
+multi-batcharchivertool fornewcapturedrecords asaseparatelyattributedthirdbatch;
+no newimplementationbudget orsourceproofhiding. Allimmutablepreimages preserved.
+This keepsactualfinalsource-sizechecking close to currentdevelopmentstate.
+
+
+## Actual publication and canonical CI
+
+PreparedPR755publicationcompletednormallyat447e2d29aea4a53995355b96f36e8893284069ca,
+titlefix(local): pin official companion review preflight. Remotehead/bodyreread
+confirmedtheupdate. MAINstartednormalci.sh755--worktreewithoutskiporpartialflags;
+handle4679,log/tmp/palomar-755-canonical-ci-native.log. Build,blueprintrender and
+paper-gaps havepassed;otherchecksandindependentreviewarestillpendingatthisrecord.
+Theauthorizedadditional1800secondSolreviewstartsONLYaftercanonicalgreenCI.
+
+## Third archive batch verified
+
+MAINnormallymergedpublished816f5643459476cdbeb5da54c543292c243274d8into777,
+preimage815901d349fd7ee4f69082ead836c75b2e5bf397. Bothpendingandcommittedmerge-loss
+guardspassed,andnormalhookscompleted. Existingmulti-batchcreatecheckedtheprior
+unionbeforemutationandverifiedallthreebatchesafterward,exit0:
+/tmp/palomar-777-third-batch.log.
+
+Newbatch8captures:14,221,102originalbytes,2,650,976gzipbytes;
+manifestresults/telemetry/session-capture-archives-palomar-20261002-third.jsonl,
+SHA256a9facd11fb551cc39b8f12fdfe2e6f618c4c0cd37fdda1c04b18895791df2309.
+Union2119captures,2,054,206,151originalbytes,464,722,309gzipbytes,threecomplete
+immutablepreimagesandbyte-exactrecovery. Previousmanifesthashesremainunchanged.
+
+Normaloperatorcommit396f87f346bf0539419f784b67b5a1bcfc7fc4d2preservesallnew
+archivesandthemanifest. ExactGit-treecount(allentriesregularblobs;nosymlink/
+gitlinkexceptions)520,639,082bytes,headroom3,648,918bytesbelow524,288,000.
+Thisislocalpreparedarchivework,notcanonicalapprovalorfinalpinreadiness. The
+finalsourcecheckmustremeasureatitsactualpinandhandleanylatercaptureshonestly.
+No implementationedit/newauthorbudgetwasrequiredforusingtheverifiedtool.
+
+
+At04:21ZcanonicalCI755finishedexit0:all8stepsandsummarysuccess on447e2d29.
+Authoritative manifest:
+~/.cache/mipstarre-dev/ci-manifests/pr755-447e2d29aea4a53995355b96f36e8893284069ca.json.
+MAINstarted the previouslyadmittedadditional1800secondSol/Ultraindependentreview
+throughprimaryreview.sh755,handle23688,
+log/tmp/palomar-755-native-independent-review.log. Prioradverseledgerretained;
+nooverride,forcedroundorapprovalcarry-forward. Reviewnotyetfinishedatcheckpoint.
+#756and#753occupytheothertwoslots. Nextactionisactualverdictadoptionandnormal
+pr_mergeonlyifitscompleteexactheadgatepasses, otherwiseprecisefindingrepair.

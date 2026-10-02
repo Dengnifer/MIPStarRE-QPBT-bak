@@ -144,3 +144,90 @@ add the long reasoning to the pointed record.
 | 2026-09-30T19:12:21.538496+00:00 | Complete residual native-G comparison via277248 M² E_(2b), preserving all rates and headlineH | MAIN under owner error-bound aim; accepted508s Astra construction | Uses checked root certificate;14596remains explicit coefficient-only refinement; requires real sibling, legacy corollary and normal gates | error-bounds-20260929.md: Adopt fractional checkpoint; recipe-adopted-1001 receipt |
 | 2026-10-02 | Upgrade to Lean/Mathlib v4.35.0-rc2 after pilot744 and before bulk746 | MAIN under owner briefing section9 | Live Palomar minimum excludes current4.32; matching Mathlib tag verified. Pin dependencies, port only required APIs/proofs, preserve all statements/bounds, full CI/axiom audits and review | Issue756; Progress Log27 comment5937082185 |
 | 2026-10-02 | Register exactly fixedFieldModel and prove compact generic strategy equivalences | MAIN adopting bounded Astra source judgement | Retain complete field/basis/encoding contract and existing checked construction; textual saving375lines/16672bytes. Two Astra reports1141s total; additive Sol proof packet760 gets3600s. No proof-helper erasure or mathematical weakening | Progress Log27 comment5937200054; issue760; palomar-pilot-ci-20261002.md |
+
+| 2026-10-02 | Admit bounded continuation766 after proved game checkpoint | MAIN under owner section9 | First3600s reached budget; exact PMF/verifier checked, strategy/value/SPCC still required. Allocate2700s once, cumulative6300s; preserve normal gates | palomar-pauli-continuation-20261002.md; #27 comment5940259520 |
+
+| 2026-10-02 | Prepare exact compact completeness/qudit/qubit aliases770 | MAIN under the Palomar goal | Registered statements are still required after game/error bridges. First3600s Sol tranche reserved, not yet admitted; dependencies766/763 and all normal gates retained | palomar-final-aliases-prepared-20261002.md; issue770 |
+
+| 2026-10-02 | Align module packets with recorded upgrade756 and prepare142-path packet746 | MAIN under owner section9 | Remove stale4.32 plan; retain exact statements and normal gates. First3600s Sol budget reserved but not admitted before756 merges | palomar-conversion-briefs-aligned-20261002.md; #27 comment5940485566 |
+
+| 2026-10-02 | Admit one1500s extraction769 continuation | MAIN under owner section9 | Initial1800s ended during dependency build; preserve41-test checkpoint and six-file patch, complete prototype/publication under3300s cumulative author ceiling | palomar-frontier-continuation-20261002.md; #27 comment5940572876 |
+
+| 2026-10-02 | Admit2700s continuation of upgrade756 | MAIN under owner section9 | Initial3600s preserves authenticated setup, checked pilot and small port patch; resolve remaining instance/API failures under6300s cumulative author ceiling without statement/bound changes | palomar-toolchain-continuation-20261002.md; #27 comment5940915438 |
+
+| 2026-10-02 | Audit frozen754 checker evidence contract while756/770 run | MAIN under required mechanical-check deliverable | New compact aliases/registered definition require profile validation; settle real official report semantics and self-binding before final use.900s Sol read-only scout, prior1547s retained | palomar-frontier-published-mechanical-audit-20261002.md; #27 comment5941133801 |
+
+| 2026-10-02 | Adopt pinned reusable full Palomar preflight for own-repository final CI; repair checker754 | MAIN under owner section9 and mechanical-check goal | Authenticated65f0154e workflow is predictive and has no registry state. Correct real report shape and commit final runtime output in library to avoid wrapper self-reference.1800s repair, prior1547+876s retained | palomar-native-preflight-checker-repair-20261002.md; #27 comment5941543317 |
+
+| 2026-10-02 | Admit single-file extraction774 and rescope remaining756 compatibility work | MAIN under owner section9 | Four compact aliases now proved;774 first3600s. Actual756 full-build failure has11 roots; extend6300s spent by3600s once to9900s, preserving every gate and bound | palomar-single-challenge-started-20261002.md; #27 comment5941848506 |
+
+| 2026-10-02 | Prepare746 mechanically before756 merge while keeping all final gates | MAIN under owner section9 | Use freed754 slot for1200s of the original3600s reservation;142-path byte audit/local commit only, no full old-version build or publication.2400s reconciliation remains unadmitted | palomar-checker-finished-module-preparation-20261002.md; #27 comment5942140880 |
+
+| 2026-10-02 | Admit109-path preparation747 on immutable local P1 result | MAIN under owner section9 | P1 finishes142/142 byte audit in561s. Use1200s for P2 editing/audit/local commit only; preserve all full new-version and publication gates | palomar-draft-compiles-p2-preparation-20261002.md; #27 comment5942298074 |
+
+
+## 2026-10-02 — Palomar hosted preflight and compact-stack integration
+
+MAIN chooses explicit `execution_profile: palomar-standard-v1` for the pinned
+PalomarSubmission reusable full preflight at
+`65f0154ed776cd26c224254aa57b379137f28b0d`. The upstream resolver explicitly
+accepts this built-in GitHub-hosted profile even though the catalogue default
+uses Namespace. Local pure resolution yielded profile digest
+`eb97b7b548c5d016967434818f0ed48a215e7fdc15528f564ab21ff2927cfd69`.
+No workflow dispatch, registry operation or new account/resource occurred.
+
+After #756, PR #775 will be reconciled and reviewed as the complete compact
+statement/extractor integration against main, including the work published in
+#761/#764/#765/#768/#771/#772/#773. Its whole diff must pass canonical CI and
+independent exact-head review, and the actual Challenge must pass the required
+Astra faithfulness audit. This replaces seven serial refresh/build cycles with
+one larger review; it carries every author cost and grants no inherited approval.
+Parent work stays open until the integrated candidate lands through normal gates.
+The deferred #755 review-route findings and module packets remain separately
+gated. Decision and cost recorded in #27 comment5942473721.
+
+
+## 2026-10-02 — bounded continuation of required port and native review route
+
+The supported-toolchain port has cleared successive concrete API/elaboration
+failure sets, but has not passed a full build. MAIN preserves9900s author cost
+and admits a further3600s tranche (ceiling13500s) to repair the pending PointLine
+elaboration and finish the required validation. No statement/bound/pin change or
+gate waiver is authorized. #27comment5942526100 records this in-project cost.
+
+The final official native-preflight contract now permits preparing #745/PR755
+before756merges:1800s local editing/tests/commit, no fullbuild/publication, total
+author ceiling5698s. The two previous reviews and unresolved5384612101findings
+remain binding. MAIN explicitly permits one additional1800s independent canonical
+review of the changed native route after fresh exact-head CI; it does not reset
+history or carry approval. This replaces the obsolete legacy-launcher repair and
+preserves its provenance/instruction-root fixes. #27comment5942565919.
+
+
+## 2026-10-02 — integrate module packets before their full gate
+
+Under owner section9, MAIN retains the disjoint Sol author packets and all
+normalized path audits/commits, then reconciles them in final #753 on the
+normally merged #756 toolchain and #774 compact surface. The entire integrated
+diff must pass full canonical CI, both axiom audits, comparator drift, a complete
+normalized comparison to that current base, and independent exact-head review
+before normal pr_merge.py. No prepared packet is approved/complete before this
+lands, and all costs/findings remain recorded. The tradeoff is one larger
+mechanical review with its complete diff available, avoiding eight serial
+dependent full-library rebuild cycles. No gate or mathematical invariant is
+waived. Pilot744 already passed its normal gate. #27comment5942728582.
+
+
+## 2026-10-02 — preserve telemetry losslessly within substantive source cap
+
+Official validate_preservable_remote_source also imposes500MiB on the separately
+declared substantive library. At36805f1d, tracked blobs total2079423932bytes,
+2056375693of them under results; the mathematical source is not the size problem.
+MAIN assigns #777 a bounded1800s Sol preparation to losslessly compress historical
+per-session raw JSONL archives, with full original-blob/SHA256/size/archive manifests
+and byte-for-byte recovery checks. Keep public history, project runtime raw copies,
+registry append semantics, summaries/reviews and mathematical source unchanged.
+Narrow archive-reader compatibility and protocol clarification require normal CI
+and independent review. No LFS/external service/history rewrite or proof hiding.
+Final #776 local checks must measure the substantive pin as well as the wrapper.
+Decision/cost: #27comment5942781550.

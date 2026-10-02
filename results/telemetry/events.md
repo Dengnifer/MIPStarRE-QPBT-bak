@@ -10120,3 +10120,42 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
 - Palomar pilot full build passed in865s. Its subsequent real-build CI fixtures contend with the separately queued #759 full build for the same machine lock; fixture wait is300s. MAIN will let current checks report and rerun canonical CI uncontended if necessary, preserving serialization and all checks. New additive proof packet760 implements the accepted compact generic strategy/game foundation with exact equivalences, one bounded3600s Sol assignment. Two Sol workers live; third slot reserved for independent review after green CI. Decisions/costs and exact heads recorded on #27 and palomar-pilot-ci-20261002.md.
 - Before first publication, normalized trailing Markdown whitespace in newly captured rendered last-message files: results/telemetry/sessions/orc-745-20261002-01.last.md, results/telemetry/sessions/orc-754-20261002-01.last.md, results/telemetry/sessions/prover-757-20261002-01.last.md, results/telemetry/sessions/reviewer-pr755-20261002-01.last.md, results/telemetry/sessions/scout-palomar-faithfulness-route-20261002-02.last.md, results/telemetry/sessions/simplifier-744-20261002-01.last.md. Raw JSONL and private runtime last messages retain original bytes; no mathematical wording changed.
 - Pilot PR758 first complete CI failed only test_cold_project_build_catches_axiom_audit_failure: the real-build fixture returned lock-timeout outcome error while the concurrent PR759 build owned the global lock, instead of reaching its deliberately failing axiom example. All other steps passed. Preserved first-run logs/manifest with -first-run suffix and started complete unmodified-head CI again after PR759's build released the lock (handle7303; /tmp/qpbt-palomar-pattern-ci-retry.log). PR759 full build/both axiom audits and all other CI steps passed; only QPBT generated provenance/import-order drift failed. Fresh linked simplifier-757-20261002-01 gets900s to regenerate that fixture with862s predecessor proof cost retained (handle22910; /tmp/qpbt-palomar-line-provenance-repair.log). No source or gate relaxation. Three primary space-3 Sol workers now live:745 repair,757 fixture repair,760 exact strategy bridges.
+
+### 2026-10-02 — Reuse the recorded companion metadata dispatch setup
+
+The second754 writer failed launcher preflight before model activation because
+the standalone companion clone has no library-specific `.githooks` directory.
+The identical layout and dispatch exception were already recorded in this file
+at the first754 admission (line10116 at8a96787c). MAIN reuses that established
+setup: `--skip-hook-check` skips only the inapplicable library-hook installation
+probe for this metadata/Python-only local preparation. Companion publication
+and merge still require official CI and exact-head independent review; this
+assignment cannot push, change Lean files, run CI or merge. No library hook,
+merge gate, account, sandbox privilege or provider setting is being waived or
+changed. The failed preflight used no model allocation; the1800s repair budget
+and all prior754 costs remain unchanged.
+
+
+## 2026-10-02 — shared Codex launch path unavailable (B13)
+
+The first current-main archive continuation failed before any model request:
+orc-777-20261002-03,exit127,wall0s,nullthread. Both
+project owner-bin/codex and /home/drx/local/bin/codex ultimately execute
+/home/drx/.local/bin/codex, which is absent; direct --version of the second
+wrapper fails identically. A live scout also observed transient ETXTBSY command
+launch failures, and rg is no longer available in the current PATH. No machine
+software, launcher, key or account was modified. B13 was posted under owner
+briefing section9: https://github.com/Dengnifer/MIPStarRE-QPBT/issues/500#issuecomment-5944821689.
+
+The1200s archive phase remains unused, and its worktree remains clean at7acfc259.
+MAIN may continue read-only diagnostics and ordinary in-project operator actions;
+new model workers await restoration of the configured runtime. This is not a
+provider-balance failure, so the key-failure pause rule is not being reused.
+
+
+B13 follow-up: the configured Codex path was restored externally. Unchanged
+authorized wrapper reports0.158.0; rg and direct same-route worker responses
+work again. MAIN changed no machine/launcher/account setting and closed the
+owner-inbox blocker on observed recovery. The archive phase then exposed a
+separate real multi-batch coverage defect, now assigned with preserved data;
+this is recorded in the Palomar runtime-recovery checkpoint.
