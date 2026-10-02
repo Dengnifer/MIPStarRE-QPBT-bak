@@ -10179,6 +10179,24 @@ MAIN used the keeper's documented existing stop control, `/home/drx/.cache/mipst
   tests then passed, together with shell/Python syntax, `git diff --check`, the
   changed-line length check and installed-hook check. No full build, canonical
   CI, live companion review, independent review or merge was performed.
+- PR755 ref-qualified workflow-path finding: independent review 5388498920
+  found that the companion gate accepted only the bare canonical Actions path,
+  while GitHub's REST documentation also represents a workflow-run path as
+  `.github/workflows/<file>@<ref>`. Read-only inspection of the repository's
+  existing companion runs found bare paths, so the finding did not establish
+  that every live run failed; the API compatibility gap was nevertheless real.
+  The repair accepts only the existing bare comparator path or that same path
+  qualified by the already-validated push branch. A different path or ref is
+  still rejected, and every prior repository, source, event, branch, head,
+  attempt, job, check URL, status and conclusion check remains in force. Review
+  5388498920 remains adverse historical evidence pending fresh exact-head CI
+  and the separately admitted final independent recheck.
+- PR755 ref-qualified workflow-path repair validation: all 16 focused companion
+  routing tests, all 76 GitHub-workflow tests and all 16 related review/native
+  tests pass. Shell and Python syntax, `git diff --check`, changed-added-line
+  length and installed-hook checks also pass. No full build, live companion
+  review, canonical CI, independent review, companion mutation or merge ran in
+  the author phase.
 
 ### 2026-10-02 — Reuse the recorded companion metadata dispatch setup
 

@@ -770,7 +770,8 @@ path, run_id, head, workflow, branch = sys.argv[1:6]
 row = json.load(open(path, encoding="utf-8"))
 if str(row.get("id")) != run_id or row.get("head_sha") != head:
     raise SystemExit(1)
-if row.get("path") != workflow:
+workflow_paths = {workflow, f"{workflow}@{branch}"}
+if row.get("path") not in workflow_paths:
     print("skip")
     raise SystemExit(0)
 if row.get("event") != "push" or row.get("head_branch") != branch:

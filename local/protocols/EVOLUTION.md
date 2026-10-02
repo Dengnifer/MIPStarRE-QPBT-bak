@@ -1959,3 +1959,27 @@ all 16 related review/native tests pass. Shell and Python syntax, whitespace,
 hook installation and the changed-line length check pass. No full build, live
 companion review, canonical CI or independent review was run in the author
 phase.
+
+## 2026-10-02 - Accept exact ref-qualified companion workflow paths (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "PR755 ref-qualified
+workflow-path finding", and independent review 5388498920. GitHub's REST
+workflow-run representation permits `.github/workflows/<file>@<ref>`, while
+the companion gate required the bare path exactly.
+
+**Change:** `review.sh` retains support for the observed bare canonical path and
+also accepts `.github/workflows/comparator.yml@<branch>` only when `<branch>` is
+the same already-validated push branch from the exact Actions run and PR. Every
+other path or ref remains nonofficial evidence. Focused fixtures cover the
+documented qualified form, a qualified decoy path and the canonical path at the
+wrong ref, while retaining the prior bare-path and authenticity cases.
+
+**Expected effect:** either GitHub workflow-run metadata representation can
+admit the same official comparator run without allowing a path suffix to bypass
+workflow or branch identity checks.
+
+**Outcome:** all 16 companion-routing tests, all 76 GitHub-workflow tests and
+all 16 related review/native tests pass. Shell and Python syntax, whitespace,
+installed-hook and changed-line length checks pass. No full build, live
+companion review, canonical CI, independent review or merge ran in the author
+phase.

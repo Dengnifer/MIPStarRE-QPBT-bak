@@ -952,6 +952,18 @@ print(f"last_message: {last}")
         self.assertEqual(_git(self.source, "status", "--porcelain"), "")
         self.assertNotIn("core.sparseCheckout", _git(self.source, "config", "--list"))
 
+    def test_companion_route_accepts_ref_qualified_workflow_path(self) -> None:
+        check = self.successful_check()
+        qualified_path = (
+            f".github/workflows/comparator.yml@{self.COMPANION_BRANCH}")
+        self.arm_companion([check], run_paths={31: qualified_path})
+        result, cache = self.run_companion("qualified-workflow")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        run = json.loads((
+            cache / "reviews" / "dengnifer-qpbt-comparator" / "pr7" /
+            "actions-run-31.json").read_text(encoding="utf-8"))
+        self.assertEqual(run["path"], qualified_path)
+
     def test_companion_route_ignores_same_named_decoy_workflow(self) -> None:
         official = self.successful_check(check_id=41, run_id=31)
         decoy = self.successful_check(check_id=99, run_id=99)
@@ -965,6 +977,20 @@ print(f"last_message: {last}")
                 self.companion_head / "code-task.md").read_text(encoding="utf-8")
         self.assertIn("official Palomar workflow run 31 attempt 1", task)
         self.assertNotIn("workflow run 99 attempt", task)
+
+    def test_companion_route_rejects_qualified_wrong_path_and_ref(self) -> None:
+        check = self.successful_check()
+        invalid_paths = {
+            "wrong-path": (
+                f".github/workflows/decoy.yml@{self.COMPANION_BRANCH}"),
+            "wrong-ref": ".github/workflows/comparator.yml@main",
+        }
+        for label, path in invalid_paths.items():
+            with self.subTest(label=label):
+                self.arm_companion([check], run_paths={31: path})
+                result, _ = self.run_companion(f"qualified-{label}")
+                self.assertEqual(result.returncode, 3, result.stderr)
+                self.assertIn("no Palomar check belongs", result.stderr)
 
     def test_companion_route_rejects_decoy_job_not_bound_to_check(self) -> None:
         check = self.successful_check(check_id=41, run_id=31, job_id=41)

@@ -107,6 +107,9 @@ nothing, so a subset cannot green-light review.  On the companion route, rung
 Actions run and job, skips same-named checks from other workflows, and accepts
 only the newest official workflow evidence whose exact-head run, current
 attempt, push branch, job id, check-run URL, status and conclusion all agree.
+The run path may be the bare canonical `.github/workflows/comparator.yml` or
+GitHub's ref-qualified form with exactly that path and the validated push branch;
+another path or ref is skipped as nonofficial evidence.
 The pinned caller delegates to Palomar's unmodified full verifier, whose
 successful `verify` job includes its final report gate. The complete local
 configuration check prevents target or axiom weakening, while branch launchers
