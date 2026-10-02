@@ -113,3 +113,21 @@ options or relax mathematics/kernel gates. This is additional600s diagnosis cost
 not a reset of the existing13500s author ceiling. Brief
 /tmp/palomar-756-transparency-scout.md;log
 /tmp/qpbt-palomar-756-transparency-scout.log;handle67316.
+
+## Compiler author boundary
+
+The resumed author ended at its1610s cap,exit124,no final message. Combined
+with11890s earlier author time, the13500s ceiling is now consumed. This is a
+budget timeout, not a provider failure. The uncommitted work remains preserved;
+no new author has been admitted. The600s read-only transparency scout is active
+and will inform a bounded further scope/validation decision. Latest full build
+worktree-build-20261002T024224Z-2384308.log failed on these five roots (some following edits may be partially checked):
+
+- MIPStarRE/QPBT/Combining/Lines/SubLineUniform.lean
+- MIPStarRE/QPBT/Combining/Points/PlacementSupport.lean
+- MIPStarRE/QPBT/Combining/PointsDataProcessing.lean
+- MIPStarRE/QPBT/Extraction/Observables.lean
+- MIPStarRE/QPBT/Extraction/RegisterTransport.lean
+
+Do not infer full build success from the later focused checks. Preserve this
+spent budget and every prior failure in any continuation.
