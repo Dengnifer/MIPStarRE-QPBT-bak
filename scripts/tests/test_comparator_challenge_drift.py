@@ -26,7 +26,7 @@ LDT_BASELINE_SHA256 = (
     "e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b"
 )
 PALOMAR_BASELINE_SHA256 = (
-    "4600b1c3e2409edf2a68df53a2055516c99646e42750f966cf02e60437700de3"
+    "acb66991fbdbc80a9c5d0a7e522f572ba604e6c88b2907f9c43a477438ebe6f8"
 )
 
 # the drift checker imports its sibling `challenge_config`, which a script run
@@ -110,7 +110,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         self.assertIn("definition_names", readme)
         self.assertIn("provenance_comments", readme)
         self.assertIn("Solution axiom audit", readme)
-        self.assertIn("992 physical lines and 52,483 UTF-8 bytes", readme)
+        self.assertIn("989 physical lines and 51,979 UTF-8 bytes", readme)
         self.assertIn("Lean 4.32", readme)
         self.assertIn("Lean 4.35", readme)
         self.assertIn("3,509 physical lines and 161,038 bytes", readme)

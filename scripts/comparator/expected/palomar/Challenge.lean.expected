@@ -28,15 +28,10 @@ open scoped BigOperators Matrix ComplexOrder
 --   MIPStarRE.QPBT.Palomar.PauliAnswer.ctorElimType  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliType.ctorElimType  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliKind.ofNat  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
---   MIPStarRE.QPBT.Palomar.LowDegreeType.enumList_getElem?_ctorIdx_eq  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   _private.MIPStarRE.QPBT.Palomar.Definitions.0.MIPStarRE.QPBT.Palomar.magicVariable  (from [anonymous].lean)
 --   MIPStarRE.QPBT.Palomar.PauliKind.ctorIdx  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
---   _private.MIPStarRE.QPBT.Palomar.Definitions.0  (from [anonymous].lean)
 --   MIPStarRE.QPBT.Palomar.lowDegreePivot._simp_1  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
---   MIPStarRE.QPBT.Palomar.PauliKind.enumList_nodup  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliAnswer.ctorIdx  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
---   MIPStarRE.QPBT.Palomar.LowDegreeType.enumList  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
---   MIPStarRE.QPBT.Palomar.PauliKind.enumList  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliKind.ofNat_ctorIdx  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliType.proxyTypeEquiv  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.LowDegreeType.ofNat  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
@@ -46,8 +41,6 @@ open scoped BigOperators Matrix ComplexOrder
 --   MIPStarRE.QPBT.Palomar.LowDegreeType.ofNat_ctorIdx  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliType.point.injEq  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliType.point.inj  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
---   MIPStarRE.QPBT.Palomar.LowDegreeType.enumList_nodup  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
---   MIPStarRE.QPBT.Palomar.PauliKind.enumList_getElem?_ctorIdx_eq  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.LowDegreeType.ctorIdx  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.PauliAnswer.proxyTypeEquiv  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
 --   MIPStarRE.QPBT.Palomar.lowDegreePivot._simp_2  (from MIPStarRE/QPBT/Palomar/Definitions.lean)
@@ -160,7 +153,9 @@ inductive LowDegreeType where
   | point
   | aline
   | dline
-  deriving DecidableEq, Fintype, Inhabited
+  deriving DecidableEq, Inhabited
+instance instFintypeLowDegreeType : Fintype LowDegreeType :=
+  ⟨{.point, .aline, .dline}, by intro x; cases x <;> simp⟩
 /-- The full point, seed, and direction space sampled by the verifier. -/
 abbrev LowDegreeSpace (P : LowDegreeParams) (K : Type) :=
   ((Fin P.m → K) × K) × (Fin P.m → K)
@@ -448,7 +443,9 @@ def PauliParams.toLowDegreeParams (P : PauliParams) : LowDegreeParams where
 inductive PauliKind where
   | X
   | Z
-  deriving DecidableEq, Fintype, Inhabited
+  deriving DecidableEq, Inhabited
+instance instFintypePauliKind : Fintype PauliKind :=
+  ⟨{.X, .Z}, by intro x; cases x <;> simp⟩
 /-- The complete 26-element Pauli question-type carrier. -/
 inductive PauliType where
   | point (W : PauliKind)

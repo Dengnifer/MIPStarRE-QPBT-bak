@@ -77,7 +77,7 @@ byte-for-byte.  The compact Palomar challenge registers only
 
 ### Compact Palomar prototype measurement
 
-The checked-in Palomar artifact has 992 physical lines and 52,483 UTF-8 bytes.
+The checked-in Palomar artifact has 989 physical lines and 51,979 UTF-8 bytes.
 It contains exactly four theorem holes and the sole registered
 `fixedFieldModel` value hole.  Its other reachable definitions and proofs are
 present in full, and the standalone file compiles with only a public Mathlib
@@ -89,10 +89,11 @@ regenerate and byte-compare the Palomar artifact.  A separate regeneration to a
 temporary path is compiled with the repository's pinned Lean and Mathlib, so a
 byte-current but ill-typed standalone file still fails the gate.
 
-This is a coherent local Lean 4.32 prototype, not final Palomar/native
-verification.  The mandatory Lean 4.35 native replay, exact-environment
-comparison, and all-library module gates remain part of the later reconciliation
-and publication work.
+This is a coherent compact prototype, not final Palomar/native verification.
+The regenerated standalone file type-checks under the repository's Lean 4.32
+environment and the supported Lean 4.35.0-rc2 environment.  Final
+supported-library integration, native comparison, canonical CI, and a renewed
+independent faithfulness assessment of the new artifact hash remain pending.
 
 ### Fixed-field prototype measurement
 

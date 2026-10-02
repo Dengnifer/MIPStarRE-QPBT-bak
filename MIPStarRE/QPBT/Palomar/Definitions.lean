@@ -157,7 +157,10 @@ inductive LowDegreeType where
   | point
   | aline
   | dline
-  deriving DecidableEq, Fintype, Inhabited
+  deriving DecidableEq, Inhabited
+
+instance instFintypeLowDegreeType : Fintype LowDegreeType :=
+  ⟨{.point, .aline, .dline}, by intro x; cases x <;> simp⟩
 
 /-- The full point, seed, and direction space sampled by the verifier. -/
 abbrev LowDegreeSpace (P : LowDegreeParams) (K : Type) :=
@@ -472,7 +475,10 @@ def PauliParams.toLowDegreeParams (P : PauliParams) : LowDegreeParams where
 inductive PauliKind where
   | X
   | Z
-  deriving DecidableEq, Fintype, Inhabited
+  deriving DecidableEq, Inhabited
+
+instance instFintypePauliKind : Fintype PauliKind :=
+  ⟨{.X, .Z}, by intro x; cases x <;> simp⟩
 
 /-- The complete 26-element Pauli question-type carrier. -/
 inductive PauliType where
