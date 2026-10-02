@@ -56,3 +56,50 @@ The snapshot publication receipt subsequently completed normally. Actor
 It confirmed remote PR #755 head and body at `a7cb947e`. Its raw receipt
 arrived after the first telemetry commit, causing the checked main push to
 refuse the now-dirty tree; this follow-up preserves the receipt before retry.
+
+## Mergeability refresh and completed wrapper preparation
+
+The first normal merge attempt passed all seven gates but GitHub refused it
+with HTTP405, reporting merge conflicts. No merge occurred. MAIN admitted a
+600s passive-telemetry refresh in #27 comment `5950366413`.
+Actor `orc-756-20261002-13` published clean head
+`283d4fa2fc189d4762ace1fb4cc17acbf95bb47d`, with parents `c36faf19` and
+`5cb9512f`. The configured union merge driver preserved all 1,824 build-ledger
+rows without missing, extra or duplicate rows; 178 other incoming telemetry
+paths retain main's bytes and modes. Every non-telemetry blob and mode is
+identical to the independently approved port. All normal merge guards and
+hooks passed, and GitHub reports the refreshed PR mergeable.
+
+Actual refresh cost is 535s, giving #756 author total 23,863s; the worker's
+493s/23,821s prose figures were interim. Canonical CI is running at this head
+in `/tmp/palomar-778-refreshed-ci.log`; its build step has passed. The actual
+blueprint axiom audit has also passed again: 2,187 declarations in 407 modules,
+zero failures and no proof-level sorryAx. Its log is
+`/tmp/palomar-778-refreshed-blueprint-axioms.log`. Review evidence on the new
+head remains pending; no approval has been copied by hand.
+
+Wrapper actor `orc-776-20261002-03` completed in 441s, giving #776 cumulative
+author time 1,690s. Local clean commit
+`98f617347eaef2ca113a642269a5bdfb094af1c9` contains the exact accepted Challenge
+and retains lexical observations in non-certifying diagnostics. All 19 tests
+pass, and actual requirements alone determine the report's overall status.
+Missing or failed runtime evidence still blocks success. Regeneration is
+byte-stable at report SHA-256
+`eaa4cda6` (full hash is in the worker capture). The draft remains failed for
+the old toolchain/pin/source conditions and missing official runtime proof.
+No branch push, official run, final pin or independent wrapper approval occurred.
+
+Two independent preparation lanes are now admitted. #753 integrates immutable
+compact `57f1c873` and snapshot `a7cb947e` into conversion `f742cd66`, preserving
+all math and exact Challenge bytes. Budget 1,200s, prior author 10,668s,
+ceiling 11,868s; #27 comment `5950442638`. #777 merges immutable `c36faf19`,
+`a7cb947e`, and primary checkpoint `5cb9512f`, preserving its six existing
+manifests/2,157 payloads before creating one new verified capture batch.
+Budget 1,800s, prior author 10,023s, ceiling 11,823s; comment `5950515262`.
+Neither preparation inherits parent approval or publishes in its worker phase.
+The source archive must still meet the actual 524,288,000-byte cap.
+
+The compact #775 checked publication remains a live MAIN procedural tail.
+Scoped process inspection confirmed it was type-checking changed QPBT files,
+not stopped. No duplicate publication or bypass was launched. Final source
+merges, official wrapper CI, mechanical evidence and owner handoff remain owed.
