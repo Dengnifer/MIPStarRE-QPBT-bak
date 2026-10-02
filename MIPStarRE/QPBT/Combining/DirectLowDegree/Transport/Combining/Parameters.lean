@@ -45,7 +45,7 @@ noncomputable section
 simultaneity parameter `1`: the dimension grows from `m` to `m + k` and the
 simultaneity parameter becomes `1`, while the field size, the degree, and the
 admissibility hypothesis are unchanged. -/
-def DirectLdParams.combined (D : DirectLdParams) : DirectLdParams where
+@[reducible] def DirectLdParams.combined (D : DirectLdParams) : DirectLdParams where
   q := D.q
   m := D.m + D.k
   d := D.d

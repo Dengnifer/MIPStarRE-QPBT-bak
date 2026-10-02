@@ -44,7 +44,8 @@ structure DirectLdParams where
   hq : IsAdmissibleSize q
 
 /-- The canonical scalar model for directly indexed parameters. -/
-noncomputable def DirectLdParams.model (D : DirectLdParams) : FixedFieldModel D.q :=
+@[reducible] noncomputable def DirectLdParams.model
+    (D : DirectLdParams) : FixedFieldModel D.q :=
   fixedFieldModel D.q D.hq
 
 /-- The scalar field of a directly indexed low-degree game. -/
@@ -65,7 +66,7 @@ The construction has dimension `2 * P.m + 2` without requiring
 `2 * P.m + 2 ∣ P.q`; it supplies the directly indexed line and coordinate
 spaces used in the dimension-extension argument of blueprint `lem:qld-sublines`.
 -/
-def AdmissibleParams.extendedDirectLd (P : AdmissibleParams) : DirectLdParams where
+@[reducible] def AdmissibleParams.extendedDirectLd (P : AdmissibleParams) : DirectLdParams where
   q := P.q
   m := 2 * P.m + 2
   d := P.d

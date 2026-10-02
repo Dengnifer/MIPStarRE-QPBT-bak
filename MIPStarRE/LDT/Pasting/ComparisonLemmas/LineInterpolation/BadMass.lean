@@ -362,7 +362,6 @@ lemma ldSandwichLineOnePointRightMeasurement_outcome_some_eq_sum
         else 0 := by
   simp [ldSandwichLineOnePointRightMeasurement, ldSandwichLineOnePointRightFamily,
     postprocess, i.2, Finset.sum_filter]
-  rfl
 
 lemma grouped_coordinate_mismatch_le_left_falseOutcome
     (params : Parameters) [FieldModel params.q]

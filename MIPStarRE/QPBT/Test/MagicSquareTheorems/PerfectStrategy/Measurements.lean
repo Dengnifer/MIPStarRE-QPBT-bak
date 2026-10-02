@@ -153,6 +153,7 @@ theorem parityTriple_sum (i : Fin 6) (ab : ZMod 2 × ZMod 2) :
     ∑ k : Fin 3, parityTriple i ab k = msParity i := by
   rw [Fin.sum_univ_three]
   simp [parityTriple]
+  ring
 
 private theorem bit_embedding_injective :
     Function.Injective (MsAnswer.bit : ZMod 2 → MsAnswer) := by
@@ -433,12 +434,24 @@ theorem msCellConstraintJoint_mul
     fun i k l a b => reflectionEffect_commute
       (msConstraintObservable_commute OA OB hOA_sq hOB_sq hac i k l) a b
   fin_cases k
-  · simpa [parityTriple, msConstraintJoint, P, hP, hcomm] using
-      binaryJointMeasurement_mul_first (P (msConstraintVars i 0))
-        (P (msConstraintVars i 1)) (hP _) (hP _) (hcomm i 0 1) ab b
-  · simpa [parityTriple, msConstraintJoint, P, hP, hcomm] using
-      binaryJointMeasurement_mul_second (P (msConstraintVars i 0))
-        (P (msConstraintVars i 1)) (hP _) (hP _) (hcomm i 0 1) ab b
+  · change
+      (binaryJointMeasurement (P (msConstraintVars i 0)) (P (msConstraintVars i 1))
+          (hP _) (hP _) (hcomm i 0 1)).effect ab *
+          (P (msConstraintVars i 0)).effect b =
+        if ab.1 = b then
+          (binaryJointMeasurement (P (msConstraintVars i 0)) (P (msConstraintVars i 1))
+            (hP _) (hP _) (hcomm i 0 1)).effect ab else 0
+    exact binaryJointMeasurement_mul_first (P (msConstraintVars i 0))
+      (P (msConstraintVars i 1)) (hP _) (hP _) (hcomm i 0 1) ab b
+  · change
+      (binaryJointMeasurement (P (msConstraintVars i 0)) (P (msConstraintVars i 1))
+          (hP _) (hP _) (hcomm i 0 1)).effect ab *
+          (P (msConstraintVars i 1)).effect b =
+        if ab.2 = b then
+          (binaryJointMeasurement (P (msConstraintVars i 0)) (P (msConstraintVars i 1))
+            (hP _) (hP _) (hcomm i 0 1)).effect ab else 0
+    exact binaryJointMeasurement_mul_second (P (msConstraintVars i 0))
+      (P (msConstraintVars i 1)) (hP _) (hP _) (hcomm i 0 1) ab b
   · change
       (reflectionEffect (msCellObservable OA OB (msConstraintVars i 0)) ab.1 *
           reflectionEffect (msCellObservable OA OB (msConstraintVars i 1)) ab.2) *

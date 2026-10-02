@@ -310,7 +310,7 @@ private theorem specialization_ne_linear_of_coeff {n : ℕ}
       MvPolynomial.C b * MvPolynomial.X 0 + MvPolynomial.C c * MvPolynomial.X 1 := by
   intro h
   apply hu
-  have hc := congrArg (MvPolynomial.coeff e) h
+  have hc := congrArg (fun p => p.coeff e) h
   simpa [MvPolynomial.coeff_map, MvPolynomial.coeff_C_mul, MvPolynomial.coeff_X,
     Ne.symm he0, Ne.symm he1] using hc
 

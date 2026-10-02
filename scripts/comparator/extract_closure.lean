@@ -55,7 +55,7 @@ def canon (env : Environment) (closure : NameSet) (n : Name) : Name :=
   -- collapse compiler-generated companions into their parent inductive
   let byTail := generatedTails.findSome? fun tail =>
     if s.endsWith ("." ++ tail) then
-      let parent := (s.dropRight (tail.length + 1)).toName
+      let parent := (s.dropEnd (tail.length + 1)).copy.toName
       match env.find? parent with
       | some (.inductInfo _) => if closure.contains parent then some parent else none
       | _ => none
@@ -106,7 +106,7 @@ def defaultTargets : List Name := [`MIPStarRE.LDT.Test.mainFormal]
 
 /-- Parse the comma-separated target list written by `challenge_config.py`. -/
 def parseTargets (s : String) : List Name :=
-  ((s.splitOn ",").map String.trim).filterMap fun part =>
+  ((s.splitOn ",").map fun part => part.trimAscii.copy).filterMap fun part =>
     if part.isEmpty then none else some part.toName
 
 def challengeTargets : IO (List Name) := do

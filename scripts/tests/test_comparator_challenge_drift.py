@@ -20,7 +20,7 @@ README = COMPARATOR / "README.md"
 EXTRACTOR = COMPARATOR / "extract_closure.lean"
 LDT_EXPECTED = COMPARATOR / "expected" / "Challenge.lean.expected"
 LDT_BASELINE_SHA256 = (
-    "e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b"
+    "d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2"
 )
 
 # the drift checker imports its sibling `challenge_config`, which a script run

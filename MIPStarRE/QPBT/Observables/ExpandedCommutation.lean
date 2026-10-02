@@ -223,7 +223,6 @@ theorem twisted_commutator_avg_le_explicit :
           rw [← WinImplications.heteroKron_smul_left]
           exact h1
         rw [hop]
-        rfl
       · have hcoeff : 0 ≤
             2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
                 1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +
@@ -256,7 +255,6 @@ theorem twisted_commutator_avg_le_explicit :
           rw [← MagicSquareRigidity.heteroKron_smul_right]
           exact h1
         rw [hop]
-        rfl
       · have hcoeff : 0 ≤
             2 * (1024 * (2 * (Fintype.card PauliEdge : ℝ)) +
                 1024 * Real.sqrt (4 * (Fintype.card PauliEdge : ℝ))) +

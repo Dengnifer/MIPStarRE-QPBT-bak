@@ -33,7 +33,7 @@ private theorem coeff_coeff_sumRingEquiv {F A B : Type*} [CommSemiring F]
     (p : MvPolynomial (A ⊕ B) F) (a : A →₀ ℕ) (b : B →₀ ℕ) :
     ((MvPolynomial.sumRingEquiv F A B p).coeff a).coeff b =
       p.coeff (Finsupp.sumFinsuppAddEquivProdFinsupp.symm (a, b)) := by
-  simp [MvPolynomial.sumRingEquiv, MvPolynomial.coeff,
+  simp [MvPolynomial.sumRingEquiv,
     AddMonoidAlgebra.curryRingEquiv, AddMonoidAlgebra.curryAddEquiv]
 
 private theorem totalDegree_le_of_exponents {F : Type*} [CommSemiring F]

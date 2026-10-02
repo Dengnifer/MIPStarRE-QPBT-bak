@@ -371,7 +371,6 @@ private lemma answerSuccessorRestrictedDiagonalSampleError_eq
   simp [AnswerSymStrat.diagonalPointAnswerFamily,
     AnswerSymStrat.diagonalLineAnswerFamily, xRestrictedAnswerSymStratOfAnswer]
   simp [diagonalPointAnswerFamilyOf, diagonalLineAnswerFamilyOf, hline]
-  rfl
 
 private noncomputable def answerSuccessorDiagonalSliceIndexError
     (params : Parameters)

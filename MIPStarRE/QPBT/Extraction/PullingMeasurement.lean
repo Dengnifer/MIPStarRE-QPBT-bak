@@ -190,9 +190,23 @@ theorem tildeM_consistencyDefect_le_pulling_eval_add {P : AdmissibleParams}
       (pullingMeas w .alice W) (pullingMeas w .bob W)
       (reindexState (sixRegExtractionEquiv P S.toStrategy.ιA S.toStrategy.ιB) S.psiHat)
       (by rw [reindexState_norm_eq, S.psiHat_norm])
-  simp only [pullingMeas_postprocess_effect] at h
-  convert h using 1
-  all_goals congr 1
+  have hAlice :
+      (fun u a => heteroKron (tildeM w .alice W u a)
+        (1 : Op (ExtractionBlock P S.toStrategy.ιB))) =
+        fun u a => heteroKron
+          (((pullingMeas w .alice W).postprocess (fun g => dotProduct (decodeFq g) u)).effect a)
+          (1 : Op (ExtractionBlock P S.toStrategy.ιB)) := by
+    funext u a
+    rw [pullingMeas_postprocess_effect]
+  have hBob :
+      (fun u a => heteroKron (1 : Op (ExtractionBlock P S.toStrategy.ιA))
+        (tildeM w .bob W u a)) =
+        fun u a => heteroKron (1 : Op (ExtractionBlock P S.toStrategy.ιA))
+          (((pullingMeas w .bob W).postprocess (fun g => dotProduct (decodeFq g) u)).effect a) := by
+    funext u a
+    rw [pullingMeas_postprocess_effect]
+  rw [hAlice, hBob]
+  exact h
 
 /-- Observable consistency reduces to the evaluated difference-polynomial
 defect. The coefficient four, uniform register average, and fixed basis

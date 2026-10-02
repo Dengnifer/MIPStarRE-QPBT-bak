@@ -138,9 +138,13 @@ theorem directLdBranchRejectionProbability_directCombinedStrategy_le
     (types : LdType × LdType) :
     directLdBranchRejectionProbability D.combined (directCombinedStrategy D S)
         types ≤
-      directLdBranchRejectionProbability D S types +
+        directLdBranchRejectionProbability D S types +
         directLdBranchRejectionProbability D S (.point, .point) := by
   classical
+  have hmpos : 0 < D.m := Nat.lt_of_lt_of_le Nat.zero_lt_one D.hm
+  have hkpos : 0 < D.k := Nat.lt_of_lt_of_le Nat.zero_lt_one D.hk
+  let _ : Nonempty (Fin D.combined.m) :=
+    ⟨⟨0, by change 0 < D.m + D.k; exact Nat.add_pos_left hmpos D.k⟩⟩
   have hstep : directLdBranchRejectionProbability D.combined
       (directCombinedStrategy D S) types ≤
       avgOver (uniformDistribution (Fin D.combined.m ×
@@ -155,8 +159,6 @@ theorem directLdBranchRejectionProbability_directCombinedStrategy_le
       directCombinedMeasuredRejectedMass D S types i pd),
     avgOver_uniform_eq_inv_card_mul_sum, Fintype.card_fin]
   have hmkNat : D.combined.m = D.m + D.k := rfl
-  have hmpos : 0 < D.m := Nat.lt_of_lt_of_le Nat.zero_lt_one D.hm
-  have hkpos : 0 < D.k := Nat.lt_of_lt_of_le Nat.zero_lt_one D.hk
   have hcard : (D.m : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hmpos.ne'
   have hmk : ((D.combined.m : ℕ) : ℝ) = (D.m : ℝ) + (D.k : ℝ) := by
     rw [hmkNat]

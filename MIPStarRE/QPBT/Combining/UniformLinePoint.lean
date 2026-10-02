@@ -168,7 +168,6 @@ theorem SubLineWitness.avgOver_projX_projZ (P : AdmissibleParams)
       projZ (directPointToPauli P u)))).trans ?_
   rw [uniformDistribution_prod, ← uniformDistribution_map_projX_projZ_pauli,
     Distribution.avgOver_map]
-  rfl
 
 end
 

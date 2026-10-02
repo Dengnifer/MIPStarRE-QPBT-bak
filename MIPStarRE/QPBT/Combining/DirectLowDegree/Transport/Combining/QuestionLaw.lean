@@ -44,6 +44,10 @@ open MIPStarRE.LDT.Preliminaries
 
 noncomputable section
 
+local instance directCombinedIndexNonempty (D : DirectLdParams) :
+    Nonempty (Fin D.combined.m) :=
+  ⟨D.combined.firstIndex⟩
+
 /-! ## Coordinates of the combined dimension -/
 
 @[simp] theorem combinedPointVar_val (m k : ℕ) (j : Fin m) :

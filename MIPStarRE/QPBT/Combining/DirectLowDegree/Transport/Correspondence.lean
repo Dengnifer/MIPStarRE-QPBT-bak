@@ -200,7 +200,7 @@ theorem directDiagonalAnswerEquiv_apply (D : DirectLdParams)
 /-! ## Parameters and answers of the two QPBT game presentations -/
 
 /-- Forget the divisibility field and expose the directly indexed parameters. -/
-def LdParams.toDirectLdParams (L : LdParams) : DirectLdParams where
+@[reducible] def LdParams.toDirectLdParams (L : LdParams) : DirectLdParams where
   q := L.q
   m := L.m
   d := L.d

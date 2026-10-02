@@ -276,7 +276,7 @@ theorem reindexOp_aaBaBipartition_left (S : ProjectiveSetting P ε)
       S.place .AA' O := by
   ext i j
   simp [reindexOp, aaBaBipartition, place, heteroKron, Matrix.kronecker,
-    Matrix.kroneckerMap_apply, Matrix.one_apply, Prod.ext_iff]
+    Matrix.kroneckerMap_apply, Matrix.one_apply, LocalSpace, Prod.ext_iff]
   split_ifs
   all_goals simp_all
   all_goals rfl
@@ -291,7 +291,7 @@ theorem reindexOp_aaBaBipartition_right (S : ProjectiveSetting P ε)
       S.place .BA'' O := by
   ext i j
   simp [reindexOp, aaBaBipartition, place, heteroKron, Matrix.kronecker,
-    Matrix.kroneckerMap_apply, Matrix.one_apply, Prod.ext_iff]
+    Matrix.kroneckerMap_apply, Matrix.one_apply, LocalSpace, Prod.ext_iff]
   split_ifs
   all_goals simp_all
   all_goals rfl
@@ -307,7 +307,7 @@ theorem reindexOp_abBbBipartition_left (S : ProjectiveSetting P ε)
       S.place .AB'' O := by
   ext i j
   simp [reindexOp, abBbBipartition, place, heteroKron, Matrix.kronecker,
-    Matrix.kroneckerMap_apply, Matrix.one_apply, Prod.ext_iff]
+    Matrix.kroneckerMap_apply, Matrix.one_apply, LocalSpace, Prod.ext_iff]
   split_ifs
   all_goals simp_all
   all_goals rfl
@@ -322,7 +322,7 @@ theorem reindexOp_abBbBipartition_right (S : ProjectiveSetting P ε)
       S.place .BB' O := by
   ext i j
   simp [reindexOp, abBbBipartition, place, heteroKron, Matrix.kronecker,
-    Matrix.kroneckerMap_apply, Matrix.one_apply, Prod.ext_iff]
+    Matrix.kroneckerMap_apply, Matrix.one_apply, LocalSpace, Prod.ext_iff]
   split_ifs
   all_goals simp_all
   all_goals rfl
@@ -344,7 +344,7 @@ theorem reindexOp_sixRegShuffle_place_AA'_heteroKron
   obtain ⟨⟨⟨jA, jB⟩, jA', jA''⟩, jB', jB''⟩ := j
   simp only [reindexOp, Matrix.reindex_apply, Matrix.submatrix_apply,
     Equiv.symm_symm, place, sixRegShuffle, Equiv.coe_fn_mk, heteroKron,
-    Matrix.kronecker, Matrix.kroneckerMap_apply]
+    Matrix.kronecker, Matrix.kroneckerMap, Matrix.of_apply, Matrix.one_apply]
   ring
 
 /-- The `BA''` placement in the unshuffled tensor order of `psiHat`. -/
@@ -362,7 +362,7 @@ theorem reindexOp_sixRegShuffle_place_BA''_heteroKron
   obtain ⟨⟨⟨jA, jB⟩, jA', jA''⟩, jB', jB''⟩ := j
   simp only [reindexOp, Matrix.reindex_apply, Matrix.submatrix_apply,
     Equiv.symm_symm, place, sixRegShuffle, Equiv.coe_fn_mk, heteroKron,
-    Matrix.kronecker, Matrix.kroneckerMap_apply]
+    Matrix.kronecker, Matrix.kroneckerMap, Matrix.of_apply, Matrix.one_apply]
   ring
 
 /-- The `BB'` placement in the unshuffled tensor order of `psiHat`. -/
@@ -380,7 +380,7 @@ theorem reindexOp_sixRegShuffle_place_BB'_heteroKron
   obtain ⟨⟨⟨jA, jB⟩, jA', jA''⟩, jB', jB''⟩ := j
   simp only [reindexOp, Matrix.reindex_apply, Matrix.submatrix_apply,
     Equiv.symm_symm, place, sixRegShuffle, Equiv.coe_fn_mk, heteroKron,
-    Matrix.kronecker, Matrix.kroneckerMap_apply]
+    Matrix.kronecker, Matrix.kroneckerMap, Matrix.of_apply, Matrix.one_apply]
   ring
 
 /-- The `AB''` placement in the unshuffled tensor order of `psiHat`. -/
@@ -398,7 +398,7 @@ theorem reindexOp_sixRegShuffle_place_AB''_heteroKron
   obtain ⟨⟨⟨jA, jB⟩, jA', jA''⟩, jB', jB''⟩ := j
   simp only [reindexOp, Matrix.reindex_apply, Matrix.submatrix_apply,
     Equiv.symm_symm, place, sixRegShuffle, Equiv.coe_fn_mk, heteroKron,
-    Matrix.kronecker, Matrix.kroneckerMap_apply]
+    Matrix.kronecker, Matrix.kroneckerMap, Matrix.of_apply, Matrix.one_apply]
   ring
 
 /-- The product of opposite `AA'` and `BA''` placements separates into the

@@ -38,7 +38,6 @@ lemma ldSandwichLineOnePointRightEndpointMeasurement_toSubMeas
       postprocess (verticalLineMeasurementFamily params strategy ux.1) (fun f => f ux.2) := by
   simp [ldSandwichLineOnePointRightEndpointMeasurement, verticalLineMeasurementFamily,
     postprocessMeasurement]
-  rfl
 
 lemma ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self
     (params : Parameters)
@@ -110,7 +109,6 @@ lemma ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self
   convert hprod' using 2
   · rename_i ux
     rw [ldSandwichLineOnePointRightEndpointMeasurement_toSubMeas]
-    rfl
 
 -- The proof lifts the endpoint consistency relation through the split
 -- sandwiched-line equivalence; the chain of rewriting identities unfolds this
