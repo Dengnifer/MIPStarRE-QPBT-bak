@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
 import json
+import lzma
 from pathlib import Path
 import subprocess
 import sys
@@ -126,6 +128,26 @@ class SessionCaptureArchiveTests(unittest.TestCase):
             message,
         )
         return git(self.repo, "rev-parse", "HEAD")
+
+    def ensure_repack_population(self, total: int = 22) -> None:
+        """Add enough distinct session captures for the fixed 20-file repack."""
+        captures = self.repo / "results/telemetry/sessions"
+        for index in range(len(self.payloads), total):
+            name = f"bulk-{index:02d}.jsonl"
+            payload = (
+                json.dumps(
+                    {
+                        "index": index,
+                        "payload": (f"value-{index}-" * (index + 10)),
+                        "type": "fixture",
+                    },
+                    sort_keys=True,
+                )
+                + "\n"
+            ).encode()
+            self.payloads[name] = payload
+            (captures / name).write_bytes(payload)
+        self.source_commit = self.commit("add bounded repack fixtures")
 
     def test_create_is_deterministic_and_recovers_every_git_blob(self) -> None:
         created = self.run_archiver("create")
@@ -314,6 +336,51 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         self.assertNotEqual(verified.returncode, 0)
         self.assertIn("archive path collision across supplied manifests", verified.stderr)
 
+    def test_verify_rejects_mixed_format_source_collision(self) -> None:
+        created = self.run_archiver("create")
+        self.assertEqual(created.returncode, 0, created.stderr)
+        mixed_manifest = Path("results/telemetry/session-capture-archive-xz-copy.jsonl")
+        rows = [
+            json.loads(line)
+            for line in (self.repo / DEFAULT_MANIFEST).read_text().splitlines()
+        ]
+        for row in rows:
+            raw = self.payloads[Path(row["source_path"]).name]
+            archived = lzma.compress(
+                raw,
+                format=lzma.FORMAT_XZ,
+                check=lzma.CHECK_CRC64,
+                preset=6,
+            )
+            del row["gzip_compresslevel"]
+            del row["gzip_mtime"]
+            row.update(
+                {
+                    "archive_bytes": len(archived),
+                    "archive_path": row["source_path"] + ".xz",
+                    "archive_sha256": hashlib.sha256(archived).hexdigest(),
+                    "format": "xz",
+                    "schema_version": 3,
+                    "xz_check": "crc64",
+                    "xz_preset": 6,
+                }
+            )
+            (self.repo / row["archive_path"]).write_bytes(archived)
+        (self.repo / mixed_manifest).write_text(
+            "".join(
+                json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+                for row in rows
+            )
+        )
+
+        verified = self.run_archiver(
+            "verify",
+            manifest=mixed_manifest,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertNotEqual(verified.returncode, 0)
+        self.assertIn("source path collision across supplied manifests", verified.stderr)
+
     def test_verify_rejects_unmanifested_archive_with_bounded_diagnostic(self) -> None:
         created = self.run_archiver("create")
         self.assertEqual(created.returncode, 0, created.stderr)
@@ -336,23 +403,228 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         self.assertNotEqual(verified.returncode, 0)
         self.assertIn("archive size mismatch", verified.stderr)
 
-    def test_reader_matches_raw_compressed_and_registry_fallback(self) -> None:
+    def test_reader_matches_raw_gzip_xz_and_registry_fallback(self) -> None:
         raw = self.repo / "capture.jsonl"
         raw.write_bytes(self.payloads["ok.jsonl"])
+        self.assertEqual(telemetry.read_jsonl(raw)[0][0]["type"], "thread.started")
+
         compressed = raw.with_name(raw.name + ".gz")
         compressed.write_bytes(gzip.compress(raw.read_bytes(), compresslevel=9, mtime=0))
-        self.assertEqual(telemetry.read_jsonl(raw), telemetry.read_jsonl(compressed))
-
+        expected = telemetry.read_jsonl(compressed)
         raw.unlink()
         self.assertEqual(telemetry.resolve_jsonl_path(raw), compressed)
-        self.assertEqual(telemetry.read_jsonl(raw), telemetry.read_jsonl(compressed))
+        self.assertEqual(telemetry.read_jsonl(raw), expected)
         self.assertEqual(telemetry.jsonl_stem(compressed), "capture")
+
+        compressed.unlink()
+        xz = raw.with_name(raw.name + ".xz")
+        xz.write_bytes(
+            lzma.compress(
+                self.payloads["ok.jsonl"],
+                format=lzma.FORMAT_XZ,
+                check=lzma.CHECK_CRC64,
+                preset=6,
+            )
+        )
+        self.assertEqual(telemetry.resolve_jsonl_path(raw), xz)
+        self.assertEqual(telemetry.read_jsonl(raw), expected)
+        self.assertEqual(telemetry.jsonl_stem(xz), "capture")
 
     def test_reader_rejects_truncated_gzip_instead_of_returning_empty(self) -> None:
         path = self.repo / "damaged.jsonl.gz"
         path.write_bytes(gzip.compress(self.payloads["ok.jsonl"], mtime=0)[:-5])
         with self.assertRaisesRegex(ValueError, "damaged compressed JSONL"):
             telemetry.read_jsonl(path)
+
+    def test_reader_rejects_truncated_xz_and_duplicate_representations(self) -> None:
+        raw = self.repo / "damaged.jsonl"
+        xz = raw.with_name(raw.name + ".xz")
+        encoded = lzma.compress(
+            self.payloads["ok.jsonl"],
+            format=lzma.FORMAT_XZ,
+            check=lzma.CHECK_CRC64,
+            preset=6,
+        )
+        xz.write_bytes(encoded[:-5])
+        with self.assertRaisesRegex(ValueError, "damaged compressed JSONL"):
+            telemetry.read_jsonl(raw)
+
+        xz.write_bytes(encoded)
+        gzip_path = raw.with_name(raw.name + ".gz")
+        gzip_path.write_bytes(gzip.compress(self.payloads["ok.jsonl"], mtime=0))
+        with self.assertRaisesRegex(ValueError, "multiple JSONL representations"):
+            telemetry.resolve_jsonl_path(raw)
+
+    def test_repack_xz_preserves_sources_and_legacy_rows(self) -> None:
+        self.ensure_repack_population()
+        created = self.run_archiver("create")
+        self.assertEqual(created.returncode, 0, created.stderr)
+        manifest = self.repo / DEFAULT_MANIFEST
+        original_lines = manifest.read_bytes().splitlines(keepends=True)
+        original_rows = [json.loads(line) for line in original_lines]
+        original_by_path = {row["source_path"]: row for row in original_rows}
+        original_line_by_path = {
+            row["source_path"]: line for row, line in zip(original_rows, original_lines)
+        }
+        expected_selected = {
+            row["source_path"]
+            for row in sorted(
+                original_rows,
+                key=lambda row: (-row["archive_bytes"], row["archive_path"]),
+            )[:20]
+        }
+        self.commit("archive repack fixtures")
+
+        native_created = self.run_archiver(
+            "create",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+            scope=NATIVE_SCOPE,
+        )
+        self.assertEqual(native_created.returncode, 0, native_created.stderr)
+        native_manifest = self.repo / NATIVE_MANIFEST
+        native_manifest_bytes = native_manifest.read_bytes()
+        operation_commit = self.commit("archive native fixtures")
+
+        repacked = self.run_archiver(
+            "repack-xz",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertEqual(repacked.returncode, 0, repacked.stderr)
+        summary = json.loads(repacked.stdout)
+        self.assertEqual(summary["operation_commit"], operation_commit)
+        self.assertEqual(summary["repacked_files"], 20)
+        self.assertEqual(summary["xz_check"], "crc64")
+        self.assertEqual(summary["xz_preset"], 6)
+        self.assertEqual(summary["formats"]["xz"]["files"], 20)
+        self.assertEqual(summary["formats"]["gzip"]["files"], 6)
+        self.assertEqual(
+            summary["recovered_bytes"],
+            summary["repacked_gzip_bytes"] - summary["repacked_xz_bytes"],
+        )
+        self.assertEqual(native_manifest.read_bytes(), native_manifest_bytes)
+
+        new_lines = manifest.read_bytes().splitlines(keepends=True)
+        new_rows = [json.loads(line) for line in new_lines]
+        self.assertEqual([row["source_path"] for row in new_rows], sorted(original_by_path))
+        for row, line in zip(new_rows, new_lines):
+            source_path = row["source_path"]
+            original = original_by_path[source_path]
+            for key in (
+                "source_blob",
+                "source_bytes",
+                "source_commit",
+                "source_mode",
+                "source_path",
+                "source_sha256",
+            ):
+                self.assertEqual(row[key], original[key])
+            if source_path in expected_selected:
+                self.assertEqual(row["schema_version"], 3)
+                self.assertEqual(row["format"], "xz")
+                self.assertEqual(row["xz_check"], "crc64")
+                self.assertEqual(row["xz_preset"], 6)
+                self.assertNotIn("gzip_compresslevel", row)
+                old_archive = self.repo / original["archive_path"]
+                new_archive = self.repo / row["archive_path"]
+                self.assertFalse(old_archive.exists())
+                self.assertEqual(
+                    lzma.decompress(new_archive.read_bytes(), format=lzma.FORMAT_XZ),
+                    self.payloads[Path(source_path).name],
+                )
+                self.assertEqual(
+                    telemetry.read_jsonl(self.repo / source_path),
+                    telemetry.read_jsonl(new_archive),
+                )
+            else:
+                self.assertEqual(line, original_line_by_path[source_path])
+                self.assertEqual(row["schema_version"], 1)
+                self.assertEqual(row["format"], "gzip")
+
+        verified = self.run_archiver(
+            "verify",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        verified_summary = json.loads(verified.stdout)
+        self.assertEqual(verified_summary["formats"], summary["formats"])
+
+        selected_row = next(row for row in new_rows if row["format"] == "xz")
+        raw = self.payloads[Path(selected_row["source_path"]).name]
+        duplicate = self.repo / (selected_row["source_path"] + ".gz")
+        duplicate.write_bytes(gzip.compress(raw, compresslevel=9, mtime=0))
+        collision = self.run_archiver(
+            "verify",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertNotEqual(collision.returncode, 0)
+        self.assertIn("archive coverage mismatch across supplied manifests", collision.stderr)
+        duplicate.unlink()
+
+        original_manifest = manifest.read_bytes()
+        strict_rows = [json.loads(line) for line in original_manifest.splitlines()]
+        xz_index = next(index for index, row in enumerate(strict_rows) if row["format"] == "xz")
+        strict_rows[xz_index]["xz_preset"] = 5
+        manifest.write_text(
+            "".join(
+                json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+                for row in strict_rows
+            )
+        )
+        noncanonical = self.run_archiver(
+            "verify",
+            manifest=NATIVE_MANIFEST,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertNotEqual(noncanonical.returncode, 0)
+        self.assertIn("noncanonical XZ parameters", noncanonical.stderr)
+        manifest.write_bytes(original_manifest)
+
+    def test_repack_verifies_existing_archives_before_mutation(self) -> None:
+        self.ensure_repack_population()
+        created = self.run_archiver("create")
+        self.assertEqual(created.returncode, 0, created.stderr)
+        manifest = self.repo / DEFAULT_MANIFEST
+        manifest_bytes = manifest.read_bytes()
+        first_row = json.loads(manifest_bytes.splitlines()[0])
+        archive = self.repo / first_row["archive_path"]
+        archive.write_bytes(archive.read_bytes() + b"tampered")
+        self.commit("commit corrupt archive fixture")
+
+        repacked = self.run_archiver("repack-xz")
+        self.assertNotEqual(repacked.returncode, 0)
+        self.assertIn("archive size mismatch", repacked.stderr)
+        self.assertEqual(manifest.read_bytes(), manifest_bytes)
+        self.assertEqual(list((self.repo / "results/telemetry/sessions").glob("*.xz")), [])
+
+    def test_verify_rejects_unsupported_gzip_format_parameters_and_path(self) -> None:
+        created = self.run_archiver("create")
+        self.assertEqual(created.returncode, 0, created.stderr)
+        manifest = self.repo / DEFAULT_MANIFEST
+        original = manifest.read_bytes()
+
+        cases = (
+            ("format", "zip", "unsupported format"),
+            ("gzip_compresslevel", 8, "noncanonical gzip parameters"),
+            ("archive_path", "wrong.jsonl.gz", "noncanonical archive path"),
+        )
+        for key, value, diagnostic in cases:
+            with self.subTest(key=key):
+                rows = [json.loads(line) for line in original.splitlines()]
+                rows[0][key] = value
+                manifest.write_text(
+                    "".join(
+                        json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+                        for row in rows
+                    )
+                )
+                verified = self.run_archiver("verify")
+                self.assertNotEqual(verified.returncode, 0)
+                self.assertIn(diagnostic, verified.stderr)
+                manifest.write_bytes(original)
 
     def test_session_summarize_uses_archived_fallback(self) -> None:
         raw = self.repo / "archived.jsonl"

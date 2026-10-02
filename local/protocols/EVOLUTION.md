@@ -2068,3 +2068,27 @@ all 16 related review/native tests pass. Shell and Python syntax, whitespace,
 installed-hook and changed-line length checks pass. No full build, live
 companion review, canonical CI, independent review or merge ran in the author
 phase.
+
+## 2026-10-02 - Add bounded XZ archive headroom (#777)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Issue #777 bounded XZ
+headroom repair". The five verified gzip batches at `834d7962` left the tracked
+regular-file tree 762,834 bytes above the 500 MiB Palomar cap. A fixed probe of
+the 20 largest gzip session captures showed 31,274,619 bytes of additional
+lossless recovery under standard-library XZ preset 6 with CRC64.
+
+**Change:** `local/bin/archive_session_captures.py` adds strict schema-3 XZ rows
+for session captures while preserving schema-1 session gzip and schema-2 fixed
+native gzip validation. The one `repack-xz` operation verifies the complete
+manifest union and immutable Git preimages, selects exactly the 20 largest gzip
+session rows, stages canonical XZ bytes and only the affected manifest lines,
+validates the prospective mixed-format union, and publishes through per-path
+atomic replacements with rollback for ordinary failures. Archive coverage now
+includes both `.jsonl.gz` and `.jsonl.xz`. `telemetry.py` reads raw, gzip or XZ
+JSONL and rejects duplicate representations instead of choosing one silently.
+
+**Expected effect:** the committed checkout gains more than 20 MiB of practical
+Palomar headroom without removing evidence, changing source bindings, widening
+the four-file native scope or altering live append-only telemetry. Unsupported
+formats, parameters, paths, damaged streams, omissions, orphans and collisions
+continue to fail closed.

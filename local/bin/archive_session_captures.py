@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create and verify deterministic archives of historical JSONL evidence."""
+"""Create, verify and repack deterministic archives of historical JSONL evidence."""
 
 from __future__ import annotations
 
@@ -8,10 +8,12 @@ import gzip
 import hashlib
 import io
 import json
+import lzma
 import os
 import subprocess
 import sys
 import tempfile
+import zlib
 from concurrent.futures import ThreadPoolExecutor
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -40,17 +42,20 @@ ARCHIVE_DIRECTORIES = (
 )
 LEGACY_SCHEMA_VERSION = 1
 SCOPED_SCHEMA_VERSION = 2
+XZ_SCHEMA_VERSION = 3
 GZIP_LEVEL = 9
 GZIP_MTIME = 0
+XZ_PRESET = 6
+XZ_CHECK = "crc64"
+XZ_REPACK_COUNT = 20
 MAX_COMPRESSION_WORKERS = 8
+MAX_XZ_WORKERS = 2
 PATH_DIAGNOSTIC_LIMIT = 5
-LEGACY_MANIFEST_FIELDS = {
+COMMON_MANIFEST_FIELDS = {
     "archive_bytes",
     "archive_path",
     "archive_sha256",
     "format",
-    "gzip_compresslevel",
-    "gzip_mtime",
     "schema_version",
     "source_blob",
     "source_bytes",
@@ -59,7 +64,12 @@ LEGACY_MANIFEST_FIELDS = {
     "source_path",
     "source_sha256",
 }
+LEGACY_MANIFEST_FIELDS = COMMON_MANIFEST_FIELDS | {
+    "gzip_compresslevel",
+    "gzip_mtime",
+}
 SCOPED_MANIFEST_FIELDS = LEGACY_MANIFEST_FIELDS | {"source_scope"}
+XZ_MANIFEST_FIELDS = COMMON_MANIFEST_FIELDS | {"xz_check", "xz_preset"}
 
 
 class ArchiveError(Exception):
@@ -73,6 +83,28 @@ class VerifiedManifest:
     path: Path
     rows: tuple[dict[str, Any], ...]
     summary: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class StagedRepack:
+    """One validated gzip-to-XZ replacement staged for publication."""
+
+    batch_index: int
+    row_index: int
+    old_path: Path
+    new_path: Path
+    staged_path: Path
+    backup_path: Path
+    row: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class StagedManifest:
+    """One manifest update with its original bytes retained for rollback."""
+
+    path: Path
+    staged_path: Path
+    backup_path: Path
 
 
 def git(repo: Path, *args: str) -> bytes:
@@ -170,6 +202,18 @@ def deterministic_gzip(data: bytes) -> bytes:
     ) as handle:
         handle.write(data)
     return output.getvalue()
+
+
+def deterministic_xz(data: bytes) -> bytes:
+    """Return canonical XZ bytes using preset 6 and a CRC64 integrity check."""
+    if not lzma.is_check_supported(lzma.CHECK_CRC64):
+        raise ArchiveError("the local LZMA library does not support XZ CRC64")
+    return lzma.compress(
+        data,
+        format=lzma.FORMAT_XZ,
+        check=lzma.CHECK_CRC64,
+        preset=XZ_PRESET,
+    )
 
 
 def resolve_commit(repo: Path, ref: str) -> str:
@@ -278,13 +322,19 @@ def validate_row_shape(row: dict[str, Any], line_number: int) -> str:
     if schema_version == LEGACY_SCHEMA_VERSION:
         expected_fields = LEGACY_MANIFEST_FIELDS
         scope = SESSION_CAPTURE_SCOPE
+        expected_format = "gzip"
     elif schema_version == SCOPED_SCHEMA_VERSION:
         expected_fields = SCOPED_MANIFEST_FIELDS
         scope = row.get("source_scope")
+        expected_format = "gzip"
         if scope != NATIVE_EVIDENCE_SCOPE:
             raise ArchiveError(
                 f"manifest line {line_number} has unsupported source scope: {scope}"
             )
+    elif schema_version == XZ_SCHEMA_VERSION:
+        expected_fields = XZ_MANIFEST_FIELDS
+        scope = SESSION_CAPTURE_SCOPE
+        expected_format = "xz"
     else:
         raise ArchiveError(f"manifest line {line_number} has unsupported schema version")
     if set(row) != expected_fields:
@@ -294,10 +344,23 @@ def validate_row_shape(row: dict[str, Any], line_number: int) -> str:
             f"manifest line {line_number} has wrong fields; "
             f"missing={missing}, extra={extra}"
         )
-    if row["format"] != "gzip":
+    if row["format"] != expected_format:
         raise ArchiveError(f"manifest line {line_number} has unsupported format")
-    if row["gzip_compresslevel"] != GZIP_LEVEL or row["gzip_mtime"] != GZIP_MTIME:
-        raise ArchiveError(f"manifest line {line_number} has noncanonical gzip parameters")
+    if expected_format == "gzip":
+        if (
+            row["gzip_compresslevel"] != GZIP_LEVEL
+            or row["gzip_mtime"] != GZIP_MTIME
+        ):
+            raise ArchiveError(
+                f"manifest line {line_number} has noncanonical gzip parameters"
+            )
+        archive_suffix = ".gz"
+    else:
+        if row["xz_preset"] != XZ_PRESET or row["xz_check"] != XZ_CHECK:
+            raise ArchiveError(
+                f"manifest line {line_number} has noncanonical XZ parameters"
+            )
+        archive_suffix = ".xz"
     if not isinstance(row["source_bytes"], int) or row["source_bytes"] < 0:
         raise ArchiveError(f"manifest line {line_number} has invalid source size")
     if not isinstance(row["archive_bytes"], int) or row["archive_bytes"] < 0:
@@ -305,7 +368,7 @@ def validate_row_shape(row: dict[str, Any], line_number: int) -> str:
     for key in ("source_blob", "source_commit", "source_mode", "source_path", "archive_path"):
         if not isinstance(row[key], str) or not row[key]:
             raise ArchiveError(f"manifest line {line_number} has invalid {key}")
-    if row["archive_path"] != row["source_path"] + ".gz":
+    if row["archive_path"] != row["source_path"] + archive_suffix:
         raise ArchiveError(f"manifest line {line_number} has a noncanonical archive path")
     for key in ("source_sha256", "archive_sha256"):
         value = row[key]
@@ -316,6 +379,35 @@ def validate_row_shape(row: dict[str, Any], line_number: int) -> str:
         ):
             raise ArchiveError(f"manifest line {line_number} has invalid {key}")
     return scope
+
+
+def decode_archive(row: dict[str, Any], archived: bytes) -> bytes:
+    """Decode one validated manifest row, rejecting damaged compressed bytes."""
+    try:
+        if row["format"] == "gzip":
+            return gzip.decompress(archived)
+        return lzma.decompress(archived, format=lzma.FORMAT_XZ)
+    except (EOFError, gzip.BadGzipFile, lzma.LZMAError, OSError, zlib.error) as error:
+        raise ArchiveError(
+            f"damaged {row['format']} archive {row['archive_path']}: {error}"
+        ) from error
+
+
+def canonical_archive(row: dict[str, Any], raw: bytes) -> bytes:
+    """Recreate the canonical compressed representation for one manifest row."""
+    if row["format"] == "gzip":
+        return deterministic_gzip(raw)
+    return deterministic_xz(raw)
+
+
+def summarize_formats(rows: tuple[dict[str, Any], ...] | list[dict[str, Any]]) -> dict[str, Any]:
+    """Count files and compressed bytes by archive format."""
+    summary: dict[str, dict[str, int]] = {}
+    for row in rows:
+        values = summary.setdefault(row["format"], {"archive_bytes": 0, "files": 0})
+        values["archive_bytes"] += row["archive_bytes"]
+        values["files"] += 1
+    return {name: summary[name] for name in sorted(summary)}
 
 
 def verify_manifest_batch(repo: Path, manifest: Path) -> VerifiedManifest:
@@ -373,14 +465,13 @@ def verify_manifest_batch(repo: Path, manifest: Path) -> VerifiedManifest:
             raise ArchiveError(f"archive size mismatch: {row['archive_path']}")
         if sha256(archived) != row["archive_sha256"]:
             raise ArchiveError(f"archive SHA-256 mismatch: {row['archive_path']}")
-        try:
-            decoded = gzip.decompress(archived)
-        except (EOFError, OSError) as error:
-            raise ArchiveError(f"damaged gzip archive {row['archive_path']}: {error}") from error
+        decoded = decode_archive(row, archived)
         if decoded != raw:
             raise ArchiveError(f"decoded bytes differ from Git blob: {row['archive_path']}")
-        if deterministic_gzip(raw) != archived:
-            raise ArchiveError(f"archive is not the canonical deterministic gzip: {archive}")
+        if canonical_archive(row, raw) != archived:
+            raise ArchiveError(
+                f"archive is not the canonical deterministic {row['format']}: {archive}"
+            )
         if (repo / row["source_path"]).exists():
             raise ArchiveError(f"raw historical capture remains in the tree: {row['source_path']}")
 
@@ -393,6 +484,7 @@ def verify_manifest_batch(repo: Path, manifest: Path) -> VerifiedManifest:
         summary={
             "archive_bytes": total_archive,
             "files": len(rows),
+            "formats": summarize_formats(rows),
             "manifest_sha256": sha256(manifest.read_bytes()),
             "saved_bytes": total_source - total_archive,
             "source_bytes": total_source,
@@ -402,14 +494,15 @@ def verify_manifest_batch(repo: Path, manifest: Path) -> VerifiedManifest:
 
 
 def actual_archive_paths(repo: Path) -> set[str]:
-    """Return every gzip-shaped path, including non-regular orphan entries."""
+    """Return every recognized archive path, including non-regular orphans."""
     paths = set()
     for directory in ARCHIVE_DIRECTORIES:
         root = repo / directory
         if root.exists():
-            paths.update(
-                str(path.relative_to(repo)) for path in root.rglob("*.jsonl.gz")
-            )
+            for pattern in ("*.jsonl.gz", "*.jsonl.xz"):
+                paths.update(
+                    str(path.relative_to(repo)) for path in root.rglob(pattern)
+                )
     return paths
 
 
@@ -425,8 +518,8 @@ def verify_archive_union(repo: Path, expected_archives: set[str]) -> None:
         )
 
 
-def verify_manifests(repo: Path, manifests: list[Path]) -> dict[str, Any]:
-    """Verify independent batches and complete, collision-free global coverage."""
+def verified_manifest_batches(repo: Path, manifests: list[Path]) -> list[VerifiedManifest]:
+    """Return verified batches after complete, collision-free global coverage."""
     if not manifests:
         raise ArchiveError("at least one archive manifest is required")
 
@@ -436,6 +529,7 @@ def verify_manifests(repo: Path, manifests: list[Path]) -> dict[str, Any]:
 
     verified: list[VerifiedManifest] = []
     archive_owners: dict[str, Path] = {}
+    source_owners: dict[str, Path] = {}
     for manifest in manifests:
         batch = verify_manifest_batch(repo, manifest)
         for row in batch.rows:
@@ -448,11 +542,33 @@ def verify_manifests(repo: Path, manifests: list[Path]) -> dict[str, Any]:
                     f"second={display_path(repo, manifest)}"
                 )
             archive_owners[archive_path] = manifest
+            source_path = row["source_path"]
+            source_owner = source_owners.get(source_path)
+            if source_owner is not None:
+                raise ArchiveError(
+                    "source path collision across supplied manifests; "
+                    f"path={source_path}, first={display_path(repo, source_owner)}, "
+                    f"second={display_path(repo, manifest)}"
+                )
+            source_owners[source_path] = manifest
         verified.append(batch)
 
     verify_archive_union(repo, set(archive_owners))
+    return verified
+
+
+def verify_manifests(repo: Path, manifests: list[Path]) -> dict[str, Any]:
+    """Verify independent batches and summarize complete global coverage."""
+    verified = verified_manifest_batches(repo, manifests)
     if len(verified) == 1:
         return verified[0].summary
+
+    formats: dict[str, dict[str, int]] = {}
+    for batch in verified:
+        for name, values in batch.summary["formats"].items():
+            combined = formats.setdefault(name, {"archive_bytes": 0, "files": 0})
+            combined["archive_bytes"] += values["archive_bytes"]
+            combined["files"] += values["files"]
 
     return {
         "archive_bytes": sum(batch.summary["archive_bytes"] for batch in verified),
@@ -464,6 +580,7 @@ def verify_manifests(repo: Path, manifests: list[Path]) -> dict[str, Any]:
             for batch in verified
         ],
         "files": sum(batch.summary["files"] for batch in verified),
+        "formats": {name: formats[name] for name in sorted(formats)},
         "manifests": len(verified),
         "saved_bytes": sum(batch.summary["saved_bytes"] for batch in verified),
         "source_bytes": sum(batch.summary["source_bytes"] for batch in verified),
@@ -591,9 +708,264 @@ def create_archives(
     return verify_manifest(repo, manifest, prior_manifests)
 
 
+def require_clean_worktree(repo: Path) -> str:
+    """Require a clean checkout and return the immutable operation commit."""
+    status = git(repo, "status", "--porcelain=v1", "--untracked-files=all")
+    if status:
+        first = status.decode("utf-8", errors="replace").splitlines()[0]
+        raise ArchiveError(f"XZ repack requires a clean worktree; first change: {first}")
+    return resolve_commit(repo, "HEAD")
+
+
+def updated_manifest_bytes(
+    batch: VerifiedManifest, updates: dict[int, dict[str, Any]]
+) -> tuple[bytes, list[dict[str, Any]]]:
+    """Replace selected rows while preserving every unaffected line byte-for-byte."""
+    original_lines = batch.path.read_bytes().splitlines(keepends=True)
+    if len(original_lines) != len(batch.rows):
+        raise ArchiveError(f"manifest line count changed during repack: {batch.path}")
+    rows = list(batch.rows)
+    for row_index, row in updates.items():
+        rows[row_index] = row
+        original_lines[row_index] = manifest_bytes([row])
+    return b"".join(original_lines), rows
+
+
+def stage_xz_repack(
+    repo: Path,
+    staging: Path,
+    target: tuple[int, int, int, dict[str, Any]],
+) -> StagedRepack:
+    """Stage one canonical XZ replacement from its verified immutable Git blob."""
+    order, batch_index, row_index, row = target
+    raw = git(repo, "cat-file", "blob", row["source_blob"])
+    if len(raw) != row["source_bytes"] or sha256(raw) != row["source_sha256"]:
+        raise ArchiveError(f"source binding failed during repack: {row['source_path']}")
+
+    old_path = repo / row["archive_path"]
+    old_bytes = old_path.read_bytes()
+    if len(old_bytes) != row["archive_bytes"] or sha256(old_bytes) != row["archive_sha256"]:
+        raise ArchiveError(f"gzip archive changed during repack: {row['archive_path']}")
+
+    archived = deterministic_xz(raw)
+    new_row = dict(row)
+    del new_row["gzip_compresslevel"]
+    del new_row["gzip_mtime"]
+    new_row.update(
+        {
+            "archive_bytes": len(archived),
+            "archive_path": row["source_path"] + ".xz",
+            "archive_sha256": sha256(archived),
+            "format": "xz",
+            "schema_version": XZ_SCHEMA_VERSION,
+            "xz_check": XZ_CHECK,
+            "xz_preset": XZ_PRESET,
+        }
+    )
+    validate_row_shape(new_row, row_index + 1)
+    if decode_archive(new_row, archived) != raw:
+        raise ArchiveError(f"staged XZ bytes do not recover {row['source_path']}")
+    if canonical_archive(new_row, raw) != archived:
+        raise ArchiveError(f"staged XZ bytes are not canonical: {row['source_path']}")
+
+    new_path = repo / new_row["archive_path"]
+    if new_path.exists() or new_path.is_symlink():
+        raise ArchiveError(f"XZ archive destination already exists: {new_row['archive_path']}")
+    staged_path = staging / "archives" / f"{order:02d}.jsonl.xz"
+    backup_path = staging / "originals" / f"{order:02d}.jsonl.gz"
+    write_bytes(staged_path, archived)
+    write_bytes(backup_path, old_bytes)
+    return StagedRepack(
+        batch_index=batch_index,
+        row_index=row_index,
+        old_path=old_path,
+        new_path=new_path,
+        staged_path=staged_path,
+        backup_path=backup_path,
+        row=new_row,
+    )
+
+
+def validate_staged_repack(
+    repo: Path,
+    batches: list[VerifiedManifest],
+    replacements: list[StagedRepack],
+    staging: Path,
+) -> tuple[list[StagedManifest], list[list[dict[str, Any]]]]:
+    """Validate prospective manifests and archive-union coverage before publication."""
+    updates: dict[int, dict[int, dict[str, Any]]] = {}
+    for replacement in replacements:
+        updates.setdefault(replacement.batch_index, {})[replacement.row_index] = (
+            replacement.row
+        )
+
+    staged_manifests = []
+    prospective_rows = []
+    for batch_index, batch in enumerate(batches):
+        batch_updates = updates.get(batch_index, {})
+        if not batch_updates:
+            prospective_rows.append(list(batch.rows))
+            continue
+        new_bytes, rows = updated_manifest_bytes(batch, batch_updates)
+        staged_path = staging / "manifests" / f"{batch_index:02d}.jsonl"
+        backup_path = staging / "manifest-originals" / f"{batch_index:02d}.jsonl"
+        write_bytes(staged_path, new_bytes)
+        write_bytes(backup_path, batch.path.read_bytes())
+        if read_manifest(staged_path) != rows:
+            raise ArchiveError(f"staged manifest does not match intended rows: {batch.path}")
+        staged_manifests.append(
+            StagedManifest(
+                path=batch.path,
+                staged_path=staged_path,
+                backup_path=backup_path,
+            )
+        )
+        prospective_rows.append(rows)
+
+    current_paths = actual_archive_paths(repo)
+    old_paths = {str(replacement.old_path.relative_to(repo)) for replacement in replacements}
+    new_paths = {str(replacement.new_path.relative_to(repo)) for replacement in replacements}
+    expected_paths = {
+        row["archive_path"] for rows in prospective_rows for row in rows
+    }
+    prospective_paths = (current_paths - old_paths) | new_paths
+    if prospective_paths != expected_paths:
+        missing = expected_paths - prospective_paths
+        extra = prospective_paths - expected_paths
+        raise ArchiveError(
+            "staged archive coverage mismatch; "
+            f"missing={path_summary(missing)}, extra={path_summary(extra)}"
+        )
+    if len(expected_paths) != sum(len(rows) for rows in prospective_rows):
+        raise ArchiveError("staged archive path collision across supplied manifests")
+    return staged_manifests, prospective_rows
+
+
+def publish_xz_repack(
+    repo: Path,
+    manifests: list[Path],
+    replacements: list[StagedRepack],
+    staged_manifests: list[StagedManifest],
+) -> dict[str, Any]:
+    """Publish validated replacements with rollback for ordinary filesystem failures."""
+    installed: list[StagedRepack] = []
+    replaced_manifests: list[StagedManifest] = []
+    removed: list[StagedRepack] = []
+    try:
+        for replacement in replacements:
+            replacement.new_path.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(replacement.staged_path, replacement.new_path)
+            installed.append(replacement)
+        for staged_manifest in staged_manifests:
+            os.replace(staged_manifest.staged_path, staged_manifest.path)
+            replaced_manifests.append(staged_manifest)
+        for replacement in replacements:
+            replacement.old_path.unlink()
+            removed.append(replacement)
+        return verify_manifests(repo, manifests)
+    except BaseException as error:
+        rollback_errors = []
+        for staged_manifest in reversed(replaced_manifests):
+            try:
+                os.replace(staged_manifest.backup_path, staged_manifest.path)
+            except OSError as rollback_error:
+                rollback_errors.append(str(rollback_error))
+        for replacement in reversed(removed):
+            try:
+                os.replace(replacement.backup_path, replacement.old_path)
+            except OSError as rollback_error:
+                rollback_errors.append(str(rollback_error))
+        for replacement in reversed(installed):
+            try:
+                replacement.new_path.unlink(missing_ok=True)
+            except OSError as rollback_error:
+                rollback_errors.append(str(rollback_error))
+        if rollback_errors:
+            raise ArchiveError(
+                "XZ repack failed and rollback was incomplete: "
+                + "; ".join(rollback_errors)
+            ) from error
+        raise
+
+
+def repack_largest_session_archives_xz(
+    repo: Path, manifest: Path, prior_manifests: list[Path] | None = None
+) -> dict[str, Any]:
+    """Repack exactly the 20 largest gzip session captures as canonical XZ."""
+    operation_commit = require_clean_worktree(repo)
+    manifests = [*(prior_manifests or []), manifest]
+    batches = verified_manifest_batches(repo, manifests)
+    all_rows = [row for batch in batches for row in batch.rows]
+    existing_xz = [row["archive_path"] for row in all_rows if row["format"] == "xz"]
+    if existing_xz:
+        raise ArchiveError(
+            "bounded XZ repack already has XZ rows; refusing to select another set"
+        )
+
+    candidates = []
+    for batch_index, batch in enumerate(batches):
+        for row_index, row in enumerate(batch.rows):
+            if validate_row_shape(row, row_index + 1) != SESSION_CAPTURE_SCOPE:
+                continue
+            if row["format"] == "gzip":
+                candidates.append((batch_index, row_index, row))
+    candidates.sort(key=lambda item: (-item[2]["archive_bytes"], item[2]["archive_path"]))
+    if len(candidates) < XZ_REPACK_COUNT:
+        raise ArchiveError(
+            f"XZ repack requires {XZ_REPACK_COUNT} gzip session captures; "
+            f"found {len(candidates)}"
+        )
+    selected = candidates[:XZ_REPACK_COUNT]
+    targets = [
+        (order, batch_index, row_index, row)
+        for order, (batch_index, row_index, row) in enumerate(selected)
+    ]
+
+    staging_parent = repo / manifest.parent
+    with tempfile.TemporaryDirectory(
+        prefix=".session-xz-repack-", dir=staging_parent
+    ) as directory:
+        staging = Path(directory)
+        workers = min(MAX_XZ_WORKERS, len(targets), os.cpu_count() or 1)
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            replacements = list(
+                executor.map(lambda target: stage_xz_repack(repo, staging, target), targets)
+            )
+        staged_manifests, _ = validate_staged_repack(
+            repo, batches, replacements, staging
+        )
+        summary = publish_xz_repack(
+            repo, manifests, replacements, staged_manifests
+        )
+
+    gzip_bytes = sum(row["archive_bytes"] for _, _, row in selected)
+    xz_bytes = sum(replacement.row["archive_bytes"] for replacement in replacements)
+    summary.update(
+        {
+            "operation_commit": operation_commit,
+            "recovered_bytes": gzip_bytes - xz_bytes,
+            "repacked_files": len(replacements),
+            "repacked_gzip_bytes": gzip_bytes,
+            "repacked_xz_bytes": xz_bytes,
+            "selection": "20-largest-gzip-session-captures",
+            "selected": [
+                {
+                    "gzip_bytes": old_row["archive_bytes"],
+                    "source_path": old_row["source_path"],
+                    "xz_bytes": replacement.row["archive_bytes"],
+                }
+                for (_, _, old_row), replacement in zip(selected, replacements)
+            ],
+            "xz_check": XZ_CHECK,
+            "xz_preset": XZ_PRESET,
+        }
+    )
+    return summary
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(
-        description="Create or verify deterministic historical JSONL archives."
+        description="Create, verify or repack deterministic historical JSONL archives."
     )
     result.add_argument(
         "--repo-root",
@@ -624,6 +996,10 @@ def parser() -> argparse.ArgumentParser:
         help="fixed source selection (default: session-captures)",
     )
     commands.add_parser("verify", help="verify manifest coverage and exact recovery")
+    commands.add_parser(
+        "repack-xz",
+        help="repack exactly the 20 largest gzip session captures as canonical XZ",
+    )
     return result
 
 
@@ -646,6 +1022,12 @@ def main(argv: list[str] | None = None) -> int:
                 manifest,
                 prior_manifests,
                 args.scope,
+            )
+        elif args.command == "repack-xz":
+            summary = repack_largest_session_archives_xz(
+                repo,
+                manifest,
+                prior_manifests,
             )
         else:
             summary = verify_manifest(repo, manifest, prior_manifests)

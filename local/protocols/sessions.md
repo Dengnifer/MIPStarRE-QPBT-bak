@@ -423,11 +423,11 @@ The tool verifies each supplied manifest independently against its complete
 source scope at that manifest's source commit. Schema 1 remains fixed to every
 raw `.jsonl` capture under `results/telemetry/sessions`; adding another archive
 root does not reinterpret an old manifest. It then requires the manifests'
-collision-free union to cover every checked-out `.jsonl.gz` archive in the
-recognized roots. Omitting a prior manifest, supplying colliding archive paths
-or leaving an unmanifested archive fails before a new batch is created. A
-missing, malformed or truncated archive is a failure, not an empty session.
-The private runtime raw copy is never modified by this packaging step.
+collision-free union to cover every checked-out `.jsonl.gz` or `.jsonl.xz`
+archive in the recognized roots. Omitting a prior manifest, supplying colliding
+archive paths or leaving an unmanifested archive fails before a new batch is
+created. A missing, malformed or truncated archive is a failure, not an empty
+session. The private runtime raw copy is never modified by this packaging step.
 
 Issue #777 authorizes one additional schema-2 scope,
 `issue-777-retired-native-evidence`, hard-coded to exactly these four retired
@@ -452,24 +452,52 @@ python3 local/bin/archive_session_captures.py \
   --prior-manifest results/telemetry/session-capture-archive-manifest.jsonl \
   --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-later.jsonl \
   --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-third.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-fourth.jsonl \
   verify
 ```
 
 The schema-2 `source_scope` field binds the manifest to that exact selection.
 Unselected native evidence remains raw and unchanged. The union check includes
-`.jsonl.gz` files below `native-reviews` and `native-audits`, so an omitted
-selected row or an unmanifested native archive fails closed. The existing
-generic JSONL reader uses the same `.gz` fallback for these paths; no retired
-review or finding is reinterpreted.
+compressed JSONL below `native-reviews` and `native-audits`, so an omitted
+selected row or an unmanifested native archive fails closed. No retired review
+or finding is reinterpreted.
+
+Issue #777 also authorizes one bounded representation repair for exactly the
+20 largest gzip session captures across the supplied manifests, ordered by
+decreasing compressed byte count and then archive path. Run it only from the
+clean immutable code commit and supply all five current manifests:
+
+```bash
+python3 local/bin/archive_session_captures.py \
+  --manifest results/telemetry/native-evidence-archives-palomar-20261002.jsonl \
+  --prior-manifest results/telemetry/session-capture-archive-manifest.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-later.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-third.jsonl \
+  --prior-manifest results/telemetry/session-capture-archives-palomar-20261002-fourth.jsonl \
+  repack-xz
+```
+
+The command first verifies the complete current union against the original Git
+blobs. It stages XZ containers produced by Python's standard `lzma` module with
+`FORMAT_XZ`, preset 6 and `CHECK_CRC64`, together with only the affected
+manifest lines. Schema 3 is restricted to those session-capture XZ rows and
+records `format: xz`, `xz_preset: 6` and `xz_check: crc64`; schema 1 remains
+strict gzip and schema 2 remains the fixed native gzip scope. Every unaffected
+manifest line is byte-identical. After staged recovery and prospective-union
+validation, publication uses per-path atomic replacement and rolls back
+ordinary filesystem or verification failures. The old gzip paths disappear
+only after the new archives and manifests are installed. The global verifier
+rejects duplicate gzip/XZ representations and any raw/archive collision.
 
 The `<name>.last.md` files and top-level `sessions.jsonl` registry remain
 readable, committed and uncompressed. Existing registry rows may retain their
 original `.jsonl` capture path; telemetry readers resolve the corresponding
-`.jsonl.gz` file only when the raw path is absent. The worktree is disposable
-and the codex rollout under `~/.codex/sessions/YYYY/MM/DD/` is outside the
-repository and outside our control. The registry line records the resolved
-rollout path when one is found, because the store is date-sharded and a bare
-thread id is not enough to locate it later.
+`.jsonl.gz` or `.jsonl.xz` file only when the raw path is absent and exactly one
+compressed representation exists. The worktree is disposable and the codex
+rollout under `~/.codex/sessions/YYYY/MM/DD/` is outside the repository and
+outside our control. The registry line records the resolved rollout path when
+one is found, because the store is date-sharded and a bare thread id is not
+enough to locate it later.
 
 The registry is append-only (`meta.md`, "Two memory disciplines"): archival
 appends a new line for the same `name` rather than editing the old one, and
@@ -588,7 +616,7 @@ fix sessions; no role name identifies one, so `dispatch.sh` cannot.
 
 | Artifact | Path | Lifetime |
 |---|---|---|
-| event stream | `results/telemetry/sessions/<name>.jsonl[.gz]` | permanent lossless archive |
+| event stream | `results/telemetry/sessions/<name>.jsonl[.gz|.xz]` | permanent lossless archive |
 | final message | `results/telemetry/sessions/<name>.last.md` | permanent, committed |
 | registry line | `results/telemetry/sessions.jsonl` | permanent, append-only |
 | codex rollout | `~/.codex/sessions/YYYY/MM/DD/rollout-*-<thread-id>.jsonl` | outside the repo; path recorded, contents not relied on |

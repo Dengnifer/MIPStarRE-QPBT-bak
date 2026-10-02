@@ -10261,3 +10261,13 @@ work again. MAIN changed no machine/launcher/account setting and closed the
 owner-inbox blocker on observed recovery. The archive phase then exposed a
 separate real multi-batch coverage defect, now assigned with preserved data;
 this is recorded in the Palomar runtime-recovery checkpoint.
+- Issue #777 bounded XZ headroom repair: at immutable commit `834d7962`, the
+  6,262 regular tracked files total 525,050,834 bytes, 762,834 bytes above the
+  Palomar cap. The admitted fixed probe selected the 20 largest gzip session
+  captures by compressed size and reproduced their immutable Git blobs before
+  encoding them with Python `lzma` XZ preset 6 and CRC64. Their 44,346,027 gzip
+  bytes become 13,071,408 XZ bytes, recovering 31,274,619 bytes. The repair adds
+  strict schema-3 XZ rows, keeps schema-1 and schema-2 gzip semantics unchanged,
+  and stages the complete bounded replacement before publication. Lesson:
+  format compatibility should be explicit and finite; decompression alone is
+  never source validation.
