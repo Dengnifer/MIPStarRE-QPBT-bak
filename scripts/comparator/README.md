@@ -78,7 +78,7 @@ it or setting it to `[]` preserves their extraction and golden fixtures
 byte-for-byte.  The compact Palomar challenge registers only
 `MIPStarRE.QPBT.fixedFieldModel`.
 
-### Compact Palomar prototype measurement
+### Compact Palomar challenge
 
 The checked-in Palomar artifact has 994 physical lines and 52,141 UTF-8 bytes.
 It contains exactly four theorem holes and the sole registered
@@ -92,12 +92,13 @@ regenerate and byte-compare the Palomar artifact.  A separate regeneration to a
 temporary path is compiled with the repository's pinned Lean and Mathlib, so a
 byte-current but ill-typed standalone file still fails the gate.
 
-This is a coherent compact prototype, not final Palomar/native verification.
-The regenerated standalone file type-checked under the previous Lean 4.32
-environment and type-checks under the current pinned Lean 4.35.0-rc2
-environment.  Final
-supported-library integration, native comparison, canonical CI, and a renewed
-independent faithfulness assessment of the new artifact hash remain pending.
+The current artifact type-checks under the pinned Lean 4.35.0-rc2 environment.
+Local native comparison of the Challenge and Solution passed Lean, NanoDa,
+and con-ron verification, and the library integration passed canonical CI.
+The [submission handoff](../../docs/palomar-submission.md) records the wrapper
+revision and the status of official Palomar verification. The final wrapper
+has an operator self-review; no independent final review or human mathematical
+review is claimed.
 
 ### Fixed-field prototype measurement
 

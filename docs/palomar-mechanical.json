@@ -1,0 +1,717 @@
+{
+  "checker": "tools/palomar/check.py",
+  "checks": [
+    {
+      "details": {
+        "errors": []
+      },
+      "evidence": "static",
+      "id": "upstream.snapshots",
+      "status": "pass",
+      "summary": "vendored upstream policy snapshots match their pins"
+    },
+    {
+      "details": {
+        "lakefiles": [
+          "lakefile.toml"
+        ],
+        "missing": []
+      },
+      "evidence": "static",
+      "id": "layout.project_root",
+      "status": "pass",
+      "summary": "the selected project is the repository root with one lakefile.toml"
+    },
+    {
+      "details": {
+        "byte_limit": 524288000,
+        "bytes": 197081,
+        "compiled_artifacts": [],
+        "submodules": []
+      },
+      "evidence": "static",
+      "id": "repository.integrity",
+      "status": "pass",
+      "summary": "repository source snapshot meets static integrity limits"
+    },
+    {
+      "details": {
+        "note": "This mirrors Palomar's git check-attr --cached check and does not ban harmless file contents.",
+        "tracked_lfs_paths": []
+      },
+      "evidence": "static",
+      "id": "repository.git_lfs",
+      "status": "pass",
+      "summary": "no tracked path has the cached Git attribute filter=lfs"
+    },
+    {
+      "details": {
+        "bytes": 4227,
+        "limit": 262144
+      },
+      "evidence": "static",
+      "id": "metadata.size",
+      "status": "pass",
+      "summary": "metadata is 4227 bytes (limit 262144)"
+    },
+    {
+      "details": {
+        "errors": []
+      },
+      "evidence": "schema",
+      "id": "metadata.schema",
+      "status": "pass",
+      "summary": "formalization.yaml validates against upstream v0.4"
+    },
+    {
+      "details": {
+        "errors": []
+      },
+      "evidence": "static",
+      "id": "metadata.palomar_minimum",
+      "status": "pass",
+      "summary": "metadata satisfies the selected Palomar semantic minimum"
+    },
+    {
+      "details": {
+        "invalid_utf8": [],
+        "symlinks": []
+      },
+      "evidence": "static",
+      "id": "source.wrapper_integrity",
+      "status": "pass",
+      "summary": "wrapper Lean sources are regular UTF-8 files"
+    },
+    {
+      "details": {
+        "examples": [],
+        "files_checked": 3
+      },
+      "evidence": "static",
+      "id": "source.wrapper_modules",
+      "status": "pass",
+      "summary": "all wrapper Lean sources have module headers"
+    },
+    {
+      "details": {
+        "examples": [],
+        "maximum_lines": 994
+      },
+      "evidence": "static",
+      "id": "source.wrapper_line_cap",
+      "status": "pass",
+      "summary": "all wrapper Lean sources are at most 10000 physical lines"
+    },
+    {
+      "details": {
+        "value": "leanprover/lean4:v4.35.0-rc2"
+      },
+      "evidence": "static",
+      "id": "toolchain.pinned_release",
+      "status": "pass",
+      "summary": "toolchain is pinned to v4.35.0-rc2"
+    },
+    {
+      "details": {
+        "minimum": "v4.35.0-rc2",
+        "selected": "v4.35.0-rc2"
+      },
+      "evidence": "static",
+      "id": "toolchain.supported",
+      "status": "pass",
+      "summary": "Lean v4.35.0-rc2 meets the current minimum v4.35.0-rc2"
+    },
+    {
+      "details": {
+        "input_revision": "v4.35.0-rc2",
+        "revision": "065356127b1dc0016f66b7283ce0ce2c4055aa55",
+        "url": "https://github.com/leanprover-community/mathlib4"
+      },
+      "evidence": "static",
+      "id": "mathlib.wrapper_pin",
+      "status": "pass",
+      "summary": "wrapper manifest pins canonical Mathlib at the selected Lean release"
+    },
+    {
+      "details": {
+        "lakefile_revision": "b18311e49b4ec92d7ab13f1930ecbaa8a76850e8",
+        "manifest_input_revision": "b18311e49b4ec92d7ab13f1930ecbaa8a76850e8",
+        "manifest_revision": "b18311e49b4ec92d7ab13f1930ecbaa8a76850e8",
+        "metadata_revision": "b18311e49b4ec92d7ab13f1930ecbaa8a76850e8"
+      },
+      "evidence": "static",
+      "id": "substantive.immutable_pin",
+      "status": "pass",
+      "summary": "Lake, manifest, and metadata agree on one immutable substantive revision"
+    },
+    {
+      "details": {
+        "expected": "Dengnifer/MIPStarRE-QPBT",
+        "lakefile": "Dengnifer/MIPStarRE-QPBT",
+        "manifest": "Dengnifer/MIPStarRE-QPBT",
+        "metadata": "Dengnifer/MIPStarRE-QPBT"
+      },
+      "evidence": "static",
+      "id": "substantive.canonical_repository",
+      "status": "pass",
+      "summary": "all substantive references use the canonical repository"
+    },
+    {
+      "details": {
+        "candidates": [
+          "LICENSE"
+        ],
+        "metadata": "Apache-2.0",
+        "recognized": "Apache-2.0"
+      },
+      "evidence": "static",
+      "id": "license.root",
+      "status": "pass",
+      "summary": "exactly one root license is recognized as Apache-2.0 and matches metadata"
+    },
+    {
+      "details": {
+        "bytes": 472,
+        "limit": 1048576
+      },
+      "evidence": "static",
+      "id": "comparator.size",
+      "status": "pass",
+      "summary": "Comparator configuration is 472 bytes (limit 1048576)"
+    },
+    {
+      "details": {
+        "actual_keys": [
+          "challenge_module",
+          "definition_names",
+          "enable_nanoda",
+          "permitted_axioms",
+          "solution_module",
+          "theorem_names"
+        ],
+        "definition_names": [
+          "MIPStarRE.QPBT.fixedFieldModel"
+        ],
+        "enable_nanoda": true,
+        "note": "Palomar's official verifier injects protected NanoDa and con-ron commands; this field is compatibility data, not kernel evidence.",
+        "parse_error": null,
+        "permitted_axioms": [
+          "propext",
+          "Quot.sound",
+          "Classical.choice"
+        ],
+        "required_keys": [
+          "challenge_module",
+          "permitted_axioms",
+          "solution_module",
+          "theorem_names"
+        ],
+        "theorem_names": [
+          "MIPStarRE.QPBT.Palomar.exists_spcc_value_one",
+          "MIPStarRE.QPBT.Palomar.exists_ld_soundness",
+          "MIPStarRE.QPBT.Palomar.pauli_soundness",
+          "MIPStarRE.QPBT.Palomar.pauli_soundness_qubit"
+        ]
+      },
+      "evidence": "static",
+      "id": "comparator.configuration",
+      "status": "pass",
+      "summary": "Comparator config names the exact theorem and definition frontiers and three standard axioms"
+    },
+    {
+      "details": {
+        "challenge": "Challenge.lean",
+        "solution": "Solution.lean"
+      },
+      "evidence": "static",
+      "id": "comparator.modules",
+      "status": "pass",
+      "summary": "Challenge and Solution select distinct regular source files"
+    },
+    {
+      "details": {
+        "byte_limit": 102400,
+        "bytes": 52141,
+        "line_limit": 1000,
+        "lines": 994
+      },
+      "evidence": "static",
+      "id": "challenge.size",
+      "status": "pass",
+      "summary": "Challenge is 994 lines and 52141 bytes"
+    },
+    {
+      "details": {
+        "local_closure_bytes": 52141,
+        "local_closure_files": 1,
+        "local_closure_lines": 994,
+        "local_dependencies": [],
+        "note": "This static check proves only direct name-prefix and local-file facts. It does not resolve module origins or inspect transitive imports.",
+        "trusted_imports": [
+          "Mathlib"
+        ],
+        "unknown_imports": []
+      },
+      "evidence": "static",
+      "id": "challenge.static_import_boundary",
+      "status": "pass",
+      "summary": "Challenge import spellings use only profile-approved roots"
+    },
+    {
+      "details": {
+        "canonical_repository": "Dengnifer/MIPStarRE-QPBT",
+        "main_commit": "e43735b8bb96117d1a3def67b9dbc8618bd353de",
+        "main_ref": "refs/remotes/github/main",
+        "remote": "github",
+        "remote_url": "git@github.com:Dengnifer/MIPStarRE-QPBT.git",
+        "revision": "b18311e49b4ec92d7ab13f1930ecbaa8a76850e8"
+      },
+      "evidence": "static",
+      "id": "substantive.pin_on_main",
+      "status": "pass",
+      "summary": "the substantive pin is an ancestor of the observed canonical main"
+    },
+    {
+      "details": {
+        "byte_limit": 524288000,
+        "bytes": 506531131,
+        "excluded_symlink_count": 0,
+        "measurement": "git ls-tree regular blobs plus git cat-file --batch-check sizes",
+        "regular_files": 6334,
+        "revision": "b18311e49b4ec92d7ab13f1930ecbaa8a76850e8"
+      },
+      "evidence": "static",
+      "id": "source.substantive_size_cap",
+      "status": "pass",
+      "summary": "pinned substantive source is within the 500 MiB cap"
+    },
+    {
+      "details": {
+        "files_checked": 755,
+        "lean_symlink_count": 0,
+        "lean_symlinks": [],
+        "maximum_lines": 1000,
+        "missing_module_count": 0,
+        "missing_module_examples": [],
+        "note": "Only .lean symlinks are rejected by the source scan; all symlink blobs are excluded from the size cap, matching the official checkout measurement.",
+        "submodule_count": 0,
+        "submodules": [],
+        "symlink_count": 0,
+        "symlinks": [],
+        "too_long_count": 0,
+        "too_long_examples": [],
+        "tracked_lfs_count": 0,
+        "tracked_lfs_paths": []
+      },
+      "evidence": "static",
+      "id": "source.substantive_requirements",
+      "status": "pass",
+      "summary": "pinned substantive source meets Lean and preservation requirements"
+    },
+    {
+      "details": {
+        "substantive_mathlib": "065356127b1dc0016f66b7283ce0ce2c4055aa55",
+        "substantive_toolchain": "leanprover/lean4:v4.35.0-rc2",
+        "wrapper_mathlib": "065356127b1dc0016f66b7283ce0ce2c4055aa55",
+        "wrapper_toolchain": "leanprover/lean4:v4.35.0-rc2"
+      },
+      "evidence": "static",
+      "id": "mathlib.substantive_match",
+      "status": "pass",
+      "summary": "wrapper and substantive repository use the same Lean and Mathlib revisions"
+    },
+    {
+      "details": {
+        "errors": [],
+        "note": "This validates supplied JSON content only. The existing companion-review lane must authenticate artifact origin, workflow revision, run, attempt, and job.",
+        "report_sha256": "014408c2723d0a6873156ca134b55f327b87d35edf844c29276d48703ffe6c9f",
+        "source_commit": "8e4c3ccb5666806d5e365e163a01081accf44e57",
+        "workflow_url": "https://github.com/Dengnifer/QPBT-comparator/actions/runs/37016956556"
+      },
+      "evidence": "report-content",
+      "id": "proof.report_content",
+      "status": "pass",
+      "summary": "supplied report content matches the final-head declaration, axiom, protected-config, and kernel contract"
+    },
+    {
+      "details": {
+        "errors": [],
+        "note": "This validates supplied JSON content only. The existing companion-review lane must authenticate artifact origin, workflow revision, run, attempt, and job.",
+        "repository_url": "https://github.com/Dengnifer/QPBT-comparator"
+      },
+      "evidence": "report-content",
+      "id": "repository.public_source",
+      "status": "pass",
+      "summary": "supplied report content records the selected canonical GitHub source"
+    },
+    {
+      "details": {
+        "errors": [],
+        "note": "This validates supplied JSON content only. The existing companion-review lane must authenticate artifact origin, workflow revision, run, attempt, and job.",
+        "repositories": [
+          "leanprover-community/mathlib4"
+        ]
+      },
+      "evidence": "report-content",
+      "id": "challenge.actual_import_origin",
+      "status": "pass",
+      "summary": "supplied report content records a resolved Mathlib-only transitive Challenge"
+    }
+  ],
+  "diagnostics": [
+    {
+      "details": {
+        "substantive_examples": [
+          {
+            "line": 236,
+            "path": "MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Successor.lean"
+          },
+          {
+            "line": 275,
+            "path": "MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Successor.lean"
+          },
+          {
+            "line": 25,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 52,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 57,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 84,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 99,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 100,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 103,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 135,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 149,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 151,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 156,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 166,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 174,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 196,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 230,
+            "path": "MIPStarRE/LDT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 359,
+            "path": "MIPStarRE/LDT/Test/Classical.lean"
+          },
+          {
+            "line": 62,
+            "path": "MIPStarRE/QPBT/Combining/Apply.lean"
+          },
+          {
+            "line": 657,
+            "path": "MIPStarRE/QPBT/Combining/ErrorBounds.lean"
+          },
+          {
+            "line": 29,
+            "path": "MIPStarRE/QPBT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 34,
+            "path": "MIPStarRE/QPBT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 35,
+            "path": "MIPStarRE/QPBT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 112,
+            "path": "MIPStarRE/QPBT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 219,
+            "path": "MIPStarRE/QPBT/Test/AxiomAudit.lean"
+          },
+          {
+            "line": 18,
+            "path": "MIPStarRE/QPBT/Test/QubitForm.lean"
+          },
+          {
+            "line": 462,
+            "path": "MIPStarRE/QPBT/Test/QubitForm.lean"
+          },
+          {
+            "line": 48,
+            "path": "scripts/Checkdecls.lean"
+          },
+          {
+            "line": 46,
+            "path": "scripts/comparator/expected/qpbt/Challenge.lean"
+          },
+          {
+            "line": 138,
+            "path": "scripts/comparator/expected/qpbt/Challenge.lean"
+          },
+          {
+            "line": 172,
+            "path": "scripts/comparator/expected/qpbt/Challenge.lean"
+          },
+          {
+            "line": 199,
+            "path": "scripts/comparator/expected/qpbt/Challenge.lean"
+          },
+          {
+            "line": 211,
+            "path": "scripts/comparator/expected/qpbt/Challenge.lean"
+          },
+          {
+            "line": 227,
+            "path": "scripts/comparator/expected/qpbt/Challenge.lean"
+          },
+          {
+            "line": 18,
+            "path": "scripts/comparator/extract_closure.lean"
+          },
+          {
+            "line": 153,
+            "path": "scripts/comparator/extract_closure.lean"
+          }
+        ],
+        "substantive_matches_at_least": 36,
+        "wrapper_examples": [
+          {
+            "line": 840,
+            "path": "Challenge.lean"
+          },
+          {
+            "line": 905,
+            "path": "Challenge.lean"
+          },
+          {
+            "line": 931,
+            "path": "Challenge.lean"
+          },
+          {
+            "line": 960,
+            "path": "Challenge.lean"
+          },
+          {
+            "line": 990,
+            "path": "Challenge.lean"
+          }
+        ],
+        "wrapper_matches_at_least": 5
+      },
+      "evidence": "diagnostic",
+      "id": "proof.lexical_source_scan",
+      "status": "unknown",
+      "summary": "lexical scans are recorded but cannot certify proof completion or axiom closure"
+    }
+  ],
+  "evidence_model": {
+    "diagnostic": "non-certifying observations reported separately from requirements and excluded from overall status",
+    "report-content": "structural and exact-head checks on supplied report JSON; artifact provenance is authenticated separately by the companion-review lane",
+    "schema": "validation against a byte-pinned public schema",
+    "static": "non-executing source/configuration inspection"
+  },
+  "inputs": {
+    "substantive": {
+      "lean_files": 755,
+      "lean_sources_sha256": "fb3650b081de4e3a770bce180ee674384b467f5b2516a4ed1701d36ef6ea54af",
+      "regular_files": 6334,
+      "repository": "Dengnifer/MIPStarRE-QPBT",
+      "revision": "b18311e49b4ec92d7ab13f1930ecbaa8a76850e8",
+      "source_bytes": 506531131,
+      "special_files": {
+        "LICENSE": {
+          "bytes": 11358,
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        "lake-manifest.json": {
+          "bytes": 3151,
+          "sha256": "35c72606e22ce70e9a8b93ace68ab945f6d2165a303862844556f38a426ce67a"
+        },
+        "lakefile.toml": {
+          "bytes": 459,
+          "sha256": "b8944c73f8c992c81959cdec71c9ca813411e813f0dba086e326ddf53e50ce74"
+        },
+        "lean-toolchain": {
+          "bytes": 29,
+          "sha256": "8dc8d6f560141069d9073e370611716ef77ada0da8ffa37e2149f44b2e63ac7a"
+        }
+      },
+      "tree": "fb2ed0b02280d14b34671dc98833252d03aa38ec"
+    },
+    "upstream": {
+      "browser_policy": {
+        "path": "tools/palomar/upstream/browser-preflight-policy.json",
+        "revision": "65f0154ed776cd26c224254aa57b379137f28b0d",
+        "sha256": "d3d0003b7a043695c5cb06c117253e248406e0723bbfe2cac50afb703fa97046",
+        "url": "https://raw.githubusercontent.com/PalomarRegistry/PalomarSubmission/65f0154ed776cd26c224254aa57b379137f28b0d/browser-preflight-policy.json"
+      },
+      "formalization_schema": {
+        "path": "tools/palomar/upstream/formalization-v0.4.schema.json",
+        "revision": "99c678e569c7c4c0772db297c5ddd5e4c9b6322e",
+        "sha256": "25ff6b25ca4511635aff4443cf20480c15e59dddf19591c730950b442ea54fce",
+        "url": "https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/99c678e569c7c4c0772db297c5ddd5e4c9b6322e/schema/v0.4.schema.json"
+      },
+      "toolchains": {
+        "path": "tools/palomar/upstream/toolchains.json",
+        "revision": "65f0154ed776cd26c224254aa57b379137f28b0d",
+        "sha256": "fd40347e4b586e7c42233b35f11efb006d25033b9a7ded9565719edf7aa98354",
+        "url": "https://raw.githubusercontent.com/PalomarRegistry/PalomarSubmission/65f0154ed776cd26c224254aa57b379137f28b0d/toolchains.json"
+      }
+    },
+    "wrapper": {
+      "files": [
+        {
+          "bytes": 593,
+          "kind": "file",
+          "path": ".github/workflows/comparator.yml",
+          "sha256": "32d5635161531c3f3f50815d85a1fff607ef73ef4c6dfc11b5361a262e4e0a8c"
+        },
+        {
+          "bytes": 55,
+          "kind": "file",
+          "path": ".gitignore",
+          "sha256": "a1975237be0dc38d61ec40d58f16ff844ef9d2de802a5b04f3ccbff786a58864"
+        },
+        {
+          "bytes": 52141,
+          "kind": "file",
+          "path": "Challenge.lean",
+          "sha256": "74f16feefedf98b442a143836d8a720e39748561ebdd32e8e8041b55b2621bc3"
+        },
+        {
+          "bytes": 11358,
+          "kind": "file",
+          "path": "LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "bytes": 120,
+          "kind": "file",
+          "path": "QPBTComparator.lean",
+          "sha256": "eb5e35250bfaee7e8ca6a98f36bd9628a801f9c7816eea61c2e54336f12dac8c"
+        },
+        {
+          "bytes": 4505,
+          "kind": "file",
+          "path": "README.md",
+          "sha256": "f5a08e949f56bc55b3d825369bbfa081afaab093aa310b5f79b0ef841d7251df"
+        },
+        {
+          "bytes": 489,
+          "kind": "file",
+          "path": "Solution.lean",
+          "sha256": "e0cec225aa8797ce5c862eabcae8e3de8f481a68f8128b1f0b626f685f409b97"
+        },
+        {
+          "bytes": 472,
+          "kind": "file",
+          "path": "comparator.json",
+          "sha256": "9c0cf72a4a09d8b7c4deefb1f9b7fa4e1ffd8d10cbf2e90e774aed70dd59a746"
+        },
+        {
+          "bytes": 4227,
+          "kind": "file",
+          "path": "formalization.yaml",
+          "sha256": "38e1db3e4b9e8bc2f9b176201814b534fce4828445e720c2e2aa240d749d28f4"
+        },
+        {
+          "bytes": 3902,
+          "kind": "file",
+          "path": "lake-manifest.json",
+          "sha256": "2616da1af0f4d2b924d9580ce488a7affea4a0401e76413063b03994e1783e55"
+        },
+        {
+          "bytes": 455,
+          "kind": "file",
+          "path": "lakefile.toml",
+          "sha256": "e189ee88470df03a3226efdae17971d98cc5769d02cf703c77574e78bee8780d"
+        },
+        {
+          "bytes": 29,
+          "kind": "file",
+          "path": "lean-toolchain",
+          "sha256": "8dc8d6f560141069d9073e370611716ef77ada0da8ffa37e2149f44b2e63ac7a"
+        },
+        {
+          "bytes": 2222,
+          "kind": "file",
+          "path": "palomar-check.json",
+          "sha256": "a7383b35c37dbefab8f996ab3d3856002531602931a877b789a095985f89977e"
+        },
+        {
+          "bytes": 5930,
+          "kind": "file",
+          "path": "tools/palomar/README.md",
+          "sha256": "7274a956b6421339438da57da22b93cd8f1f9a2367f4825635ee01c7e2f288f8"
+        },
+        {
+          "bytes": 72348,
+          "kind": "file",
+          "path": "tools/palomar/check.py",
+          "sha256": "992fffdf2b5593ed401ddd002f60c089bb59b54bf2205fe08d5012d03f019d78"
+        },
+        {
+          "bytes": 23801,
+          "kind": "file",
+          "path": "tools/palomar/tests/test_check.py",
+          "sha256": "a2469ef69a9da6df8c983dc38bd518eda71d9e79ea237c8f776a1ffbba0f7d30"
+        },
+        {
+          "bytes": 1686,
+          "kind": "file",
+          "path": "tools/palomar/upstream/browser-preflight-policy.json",
+          "sha256": "d3d0003b7a043695c5cb06c117253e248406e0723bbfe2cac50afb703fa97046"
+        },
+        {
+          "bytes": 12694,
+          "kind": "file",
+          "path": "tools/palomar/upstream/formalization-v0.4.schema.json",
+          "sha256": "25ff6b25ca4511635aff4443cf20480c15e59dddf19591c730950b442ea54fce"
+        },
+        {
+          "bytes": 54,
+          "kind": "file",
+          "path": "tools/palomar/upstream/toolchains.json",
+          "sha256": "fd40347e4b586e7c42233b35f11efb006d25033b9a7ded9565719edf7aa98354"
+        }
+      ],
+      "sha256": "334e93bb862b89c03d5bff4ddb488327de55d8d4dd9f7ba8f3bd0487e2d78a33"
+    }
+  },
+  "overall": "pass",
+  "schema_version": 1
+}
