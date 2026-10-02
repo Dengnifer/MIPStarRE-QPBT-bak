@@ -1,0 +1,31 @@
+# Trusted route publication and long docs run — 2026-10-02
+
+The previousgoalturn madeprogress: moduleintegratione21adf04 completed, archive
+parents1c830188 passed, andread-onlydocanalysisidentified theincompletecorephase.
+
+Orc-745-20261002-11 completedexit0 in1700seconds. Actual745authorcost10659seconds.
+Thetrustrepaircommittedandpublishedas083dfeed98932b78eb67c5e9489603a24003a1ad:
+27companionfocusedcases,87workflowtests,52relatedreview/dispatchtests andnormal
+926-testhook(9skipped)passed. F1nowvalidatescommittedprimaryinstructions/pinned
+promptrefs andpassivetelemetryboundaries; F2removescompanioncarry-forward soevery
+companionheadreceivesafreshreview. Primarycarry-forward behaviorisunchanged.
+Noapprovalisclaimed; freshcanonicalCIisqueuedas /tmp/palomar-745-trust-ci.log.
+
+Afterthatnormalhookcompleted, MAINstartedtheunchangedfullAPI-doctargetinone
+1800swindowat08:56:40Z. Runner/tmp/palomar-756-docbuild-long-check.sh checks exact
+clean68b5c46a andusestheexistingmkdirlease; verboseonlychangesdiagnostics.
+Log:~/.cache/mipstarre-dev/logs/docbuild-issue756-main-20261002T085640Z-170091.log.
+At08:59:39Z a scopedwalkofALLthreads'childrenidentifiedactualdoc-gen4PID170255,
+with20333CPUticksandcwdinside756/docbuild. The earliermain-thread-onlychildprobe
+missedthisworker-threadchild; itmustnotbeusedtoinferaschedulerdeadlock. Thelong
+runisactivelyanalyzingcoreLean; no docscompletionisclaimedyet. CI755willtakeits
+normalbuildleaseafterthisrunandbeforeitsPythonfixtures,avoidingoverlap.
+
+777'snewbatchphaseisactiveonimmutableprimary4ee7763f. Itsmergepreimage79d502cc86e9...
+passedguardsandpreserved2144archivepayloads/fivemanifests exactly. Exactly13new
+eligiblerawcaptures total40524027bytes. Theexistinghelperissingle-running with
+all5prior-manifestarguments andmustvalidate6-batchunion beforeanysuccessclaim.
+Admission#27comment5948543503:900s,prior8928/ceiling9828. No bytes aredropped.
+
+Normalfinalsourcepublication/review/merges,officialcompanionCIandownerhandoffremain
+pending. Thegoalremainsactive andthekeeperstopmarkerhasnotbeencreated.
