@@ -1,0 +1,37 @@
+# Trust repair and API-doc validation — 2026-10-02
+
+The precedinggoalturn madeprogress: archive99c2e5ac andcompactf424ffefwerecommitted
+andverified; all755filespassedmodule/lineconstraints; fullconversionbuild, axioms,
+andall3extractor driftsweregreen. Thegoalremainsincomplete.
+
+Conversionauthororc-753-20261002-04 finishedexit0 in2130seconds, committingclean
+72cb0b137068466347864ee8de4c022170378bb8. Total753author9330seconds, excluding
+packet/scoutcosts. Normal912-testhook passed. Actual51modifiedLeanfiles include
+24publicdatahelpersand27privateproofwrappers; final709convertedmathfileinventory
+is660normalizedbyte-identicalplus49documentedexceptions. TheexactPalomarartifact
+isunchangedacb66991...,989lines51979bytes; sourcefaithfulness assessment remains
+boundtothosebytes. No sourcepublication/approval/mergeisclaimed.
+
+Review755attempt7 completed414seconds, verdictCHANGES_REQUESTED5389660071.
+Itfoundtwo realblockers: dirty/off-trusted-refprimaryinstructionfiles cancontrol
+thereviewer; andcompanioncarry-forward authenticatesone row then copies another
+row's body byonlya headsubstring. Priorreviewtotal4096seconds,sixactualadverse
+verdictsandone900secondtimeout. MAINadmits1800Solseconds (745author8959→ceiling10759)
+to enforcecommittedtrustedinstructions andDISABLEcompanioncarry-forward entirely.
+Primarycarry-forward remainsoutofscope. Alloldrecordsandnormalgatesremain; no
+adjudication/force/reset. Comment5948220202; brief/tmp/palomar-745-trust-boundary-repair.md.
+
+A753localintegrationtrancheisactive for1800seconds (9330→ceiling11130), merging
+immutablecompletedcompact/port-repairstackf424ffefinto72cb0b13. No parentapproval
+orpublicationisclaimed; allmodule/extractorfixes andnewportrepairs mustsurvive.
+Comment5948235662; brief/tmp/palomar-753-port-repair-integration.md.
+
+PR778canonicalCIisfullygreenat68b5c46a. TheactualfullAPI-doccommandremainsrequired
+beforefourthreview. MAINhasbegunmodel-freevalidation through theordinaryexisting
+mkdirlease atthisexactcleanhead. Eachattemptisboundedto240s (plus10skillgrace) so
+itslockhold staysbelowtheunchanged300s normaltest-fixture wait. Incremental build
+productsarepreservedandonlyaneventualexit0ofthecompleteMIPStarRE:docscommandwill
+countaspass. No fixturetimeout/skip/buildgateisaltered. Everypasswritesactual
+outcome/time/logtelemetry; partialpasseswillnotbereportedassuccess. Currentrunner:
+/tmp/palomar-756-docbuild-long-check.sh, log/tmp/palomar-756-docbuild-main-pass1.log.
+MAINwill inspect each result before authorizinganotherpass; no automaticspinloop.
