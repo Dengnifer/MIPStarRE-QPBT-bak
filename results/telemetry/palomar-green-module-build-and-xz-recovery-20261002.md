@@ -41,3 +41,27 @@ MAINcommittedthe verifieddata normallyat99c2e5ac8257b5d9a0377d58ab99bff5205e3aa8
 Cleanregularfiletree493,808,124bytes, headroom30,479,876against524,288,000. This is
 localpreparation, not finalpin orPRapproval; futureparentrefreshandcapturesmustbe
 remeasured. PreparedPRbodyupdatedwithactualmixedformatreceiptandpendinggates.
+
+## Compact port-repair preparation complete
+
+Orc-774-20261002-06 finishedexit0 in728actualseconds (itsprose cites699at aninterim
+check). Actual774authorcost is8,821seconds. Cleanlocalmerge
+f424ffefbcbc620055303bc503429aa05f87c04a preserves68b5c46a'ssource/docbuildrepairs
+andbothtelemetryhistories. Bothmergeguards,normalhooks,focusedLeanchecks,targeted
+compact/five-rootaxiomaudit,allthreecomparator drifts andstandaloneChallengepass.
+Challenge remainsacb66991...,989lines51979bytes,fiveintendedholes. PR775remains
+publishedatb01bcd29;approvedmainrefresh/publication/fullCI/reviewarestillpending.
+
+753also reportsactualall-configdriftandfreshstandaloneChallengepassafter itsmodule
+metadatarepairs; exactPalomarhashisunchangedacb66991.... LDT/QPBTmetadata provenance
+changes weregeneratedanddocumented. Its normalcommit hook isstillrunning, so no
+cleannewhead/approvalisclaimed. This preserves applicabilityof thehash-boundAstra
+faithfulnessassessment, subjecttofinalindependentgate checks.
+
+Anew#777localparent-preparationtrancheisactive for1,200Solseconds,actualprior7926/
+ceiling9126. Itmergesimmutablepublished68b5c46a and2730d6b8 into99c2e5ac without
+claimingtheirapproval, keepsallarchivebytesunchanged, andpreparesprivate4.35cache.
+No newcapturebatch,publication orfullbuild isauthorizedinthatphase. Brief:
+/tmp/palomar-777-final-parent-preparation.md. Currentthreeworkers:753finalization,
+755review7,777parentpreparation. FullAPI-docvalidationmustwaitfor currentnormal
+Pythonhook/CIwindowsbeforetakingalonggloballease; its preparedscriptisnotstarted.
