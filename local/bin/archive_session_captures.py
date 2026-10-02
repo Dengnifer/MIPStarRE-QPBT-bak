@@ -14,6 +14,7 @@ import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +26,7 @@ SCHEMA_VERSION = 1
 GZIP_LEVEL = 9
 GZIP_MTIME = 0
 MAX_COMPRESSION_WORKERS = 8
+PATH_DIAGNOSTIC_LIMIT = 5
 MANIFEST_FIELDS = {
     "archive_bytes",
     "archive_path",
@@ -44,6 +46,15 @@ MANIFEST_FIELDS = {
 
 class ArchiveError(Exception):
     """A recoverable archive validation failure."""
+
+
+@dataclass(frozen=True)
+class VerifiedManifest:
+    """One independently verified archive batch and its covered paths."""
+
+    path: Path
+    rows: tuple[dict[str, Any], ...]
+    summary: dict[str, Any]
 
 
 def git(repo: Path, *args: str) -> bytes:
@@ -108,6 +119,25 @@ def git_blobs(repo: Path, entries: list[dict[str, Any]]) -> Iterator[bytes]:
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def path_summary(paths: set[str]) -> str:
+    """Render a bounded count-and-sample diagnostic for a path set."""
+    ordered = sorted(paths)
+    if not ordered:
+        return "0"
+    examples = ", ".join(ordered[:PATH_DIAGNOSTIC_LIMIT])
+    remainder = len(ordered) - PATH_DIAGNOSTIC_LIMIT
+    suffix = f", ... (+{remainder} more)" if remainder > 0 else ""
+    return f"{len(ordered)} [{examples}{suffix}]"
+
+
+def display_path(repo: Path, path: Path) -> str:
+    """Prefer a repository-relative path in summaries and diagnostics."""
+    try:
+        return str(path.relative_to(repo))
+    except ValueError:
+        return str(path)
 
 
 def deterministic_gzip(data: bytes) -> bytes:
@@ -194,18 +224,21 @@ def read_manifest(path: Path) -> list[dict[str, Any]]:
         try:
             row = json.loads(raw)
         except (UnicodeDecodeError, json.JSONDecodeError) as error:
-            raise ArchiveError(f"malformed manifest line {line_number}: {error}") from error
+            raise ArchiveError(
+                f"malformed manifest {path} line {line_number}: {error}"
+            ) from error
         if not isinstance(row, dict):
-            raise ArchiveError(f"manifest line {line_number} is not an object")
+            raise ArchiveError(f"manifest {path} line {line_number} is not an object")
         if set(row) != MANIFEST_FIELDS:
             missing = sorted(MANIFEST_FIELDS - set(row))
             extra = sorted(set(row) - MANIFEST_FIELDS)
             raise ArchiveError(
-                f"manifest line {line_number} has wrong fields; missing={missing}, extra={extra}"
+                f"manifest {path} line {line_number} has wrong fields; "
+                f"missing={missing}, extra={extra}"
             )
         rows.append(row)
     if not rows:
-        raise ArchiveError("archive manifest is empty")
+        raise ArchiveError(f"archive manifest is empty: {path}")
     return rows
 
 
@@ -220,37 +253,49 @@ def validate_row_shape(row: dict[str, Any], line_number: int) -> None:
         raise ArchiveError(f"manifest line {line_number} has invalid source size")
     if not isinstance(row["archive_bytes"], int) or row["archive_bytes"] < 0:
         raise ArchiveError(f"manifest line {line_number} has invalid archive size")
+    for key in ("source_blob", "source_commit", "source_mode", "source_path", "archive_path"):
+        if not isinstance(row[key], str) or not row[key]:
+            raise ArchiveError(f"manifest line {line_number} has invalid {key}")
     if row["archive_path"] != row["source_path"] + ".gz":
         raise ArchiveError(f"manifest line {line_number} has a noncanonical archive path")
     for key in ("source_sha256", "archive_sha256"):
         value = row[key]
-        if not isinstance(value, str) or len(value) != 64:
+        if (
+            not isinstance(value, str)
+            or len(value) != 64
+            or any(character not in "0123456789abcdef" for character in value)
+        ):
             raise ArchiveError(f"manifest line {line_number} has invalid {key}")
 
 
-def verify_manifest(repo: Path, manifest: Path) -> dict[str, Any]:
-    """Verify every archive against its immutable source commit and blob."""
+def verify_manifest_batch(repo: Path, manifest: Path) -> VerifiedManifest:
+    """Verify one batch against every raw capture at its immutable source commit."""
     rows = read_manifest(manifest)
+    for line_number, row in enumerate(rows, 1):
+        validate_row_shape(row, line_number)
+
     commits = {row["source_commit"] for row in rows}
     if len(commits) != 1:
-        raise ArchiveError("manifest must bind one immutable source commit")
+        raise ArchiveError(f"manifest must bind one immutable source commit: {manifest}")
     source_commit = next(iter(commits))
     expected_entries = source_entries(repo, source_commit)
     expected = {entry["source_path"]: entry for entry in expected_entries}
 
     paths = [row["source_path"] for row in rows]
     if len(paths) != len(set(paths)):
-        raise ArchiveError("manifest contains duplicate source paths")
+        raise ArchiveError(f"manifest contains duplicate source paths: {manifest}")
     if paths != sorted(paths):
-        raise ArchiveError("manifest source paths are not sorted")
+        raise ArchiveError(f"manifest source paths are not sorted: {manifest}")
     if set(paths) != set(expected):
-        missing = sorted(set(expected) - set(paths))
-        extra = sorted(set(paths) - set(expected))
-        raise ArchiveError(f"manifest coverage mismatch; missing={missing}, extra={extra}")
+        missing = set(expected) - set(paths)
+        extra = set(paths) - set(expected)
+        raise ArchiveError(
+            f"manifest coverage mismatch for {display_path(repo, manifest)}; "
+            f"missing={path_summary(missing)}, extra={path_summary(extra)}"
+        )
 
     ordered_entries = []
     for line_number, row in enumerate(rows, 1):
-        validate_row_shape(row, line_number)
         entry = expected[row["source_path"]]
         for key in ("source_blob", "source_bytes", "source_mode"):
             if row[key] != entry[key]:
@@ -261,7 +306,6 @@ def verify_manifest(repo: Path, manifest: Path) -> dict[str, Any]:
 
     total_source = 0
     total_archive = 0
-    archive_paths = set()
     for row, raw in zip(rows, git_blobs(repo, ordered_entries)):
         if len(raw) != row["source_bytes"] or sha256(raw) != row["source_sha256"]:
             raise ArchiveError(f"source binding failed for {row['source_path']}")
@@ -285,28 +329,93 @@ def verify_manifest(repo: Path, manifest: Path) -> dict[str, Any]:
         if (repo / row["source_path"]).exists():
             raise ArchiveError(f"raw historical capture remains in the tree: {row['source_path']}")
 
-        archive_paths.add(row["archive_path"])
         total_source += len(raw)
         total_archive += len(archived)
 
-    actual_archives = {
+    return VerifiedManifest(
+        path=manifest,
+        rows=tuple(rows),
+        summary={
+            "archive_bytes": total_archive,
+            "files": len(rows),
+            "manifest_sha256": sha256(manifest.read_bytes()),
+            "saved_bytes": total_source - total_archive,
+            "source_bytes": total_source,
+            "source_commit": source_commit,
+        },
+    )
+
+
+def actual_archive_paths(repo: Path) -> set[str]:
+    """Return every gzip-shaped path, including non-regular orphan entries."""
+    return {
         str(path.relative_to(repo))
         for path in (repo / CAPTURE_DIRECTORY).rglob("*.jsonl.gz")
-        if path.is_file() and not path.is_symlink()
     }
-    if actual_archives != archive_paths:
-        missing = sorted(archive_paths - actual_archives)
-        extra = sorted(actual_archives - archive_paths)
-        raise ArchiveError(f"archive coverage mismatch; missing={missing}, extra={extra}")
+
+
+def verify_archive_union(repo: Path, expected_archives: set[str]) -> None:
+    """Require the supplied manifests to cover the complete checked-out archive union."""
+    actual_archives = actual_archive_paths(repo)
+    if actual_archives != expected_archives:
+        missing = expected_archives - actual_archives
+        extra = actual_archives - expected_archives
+        raise ArchiveError(
+            "archive coverage mismatch across supplied manifests; "
+            f"missing={path_summary(missing)}, extra={path_summary(extra)}"
+        )
+
+
+def verify_manifests(repo: Path, manifests: list[Path]) -> dict[str, Any]:
+    """Verify independent batches and complete, collision-free global coverage."""
+    if not manifests:
+        raise ArchiveError("at least one archive manifest is required")
+
+    normalized = [path.resolve() for path in manifests]
+    if len(normalized) != len(set(normalized)):
+        raise ArchiveError("the same archive manifest was supplied more than once")
+
+    verified: list[VerifiedManifest] = []
+    archive_owners: dict[str, Path] = {}
+    for manifest in manifests:
+        batch = verify_manifest_batch(repo, manifest)
+        for row in batch.rows:
+            archive_path = row["archive_path"]
+            owner = archive_owners.get(archive_path)
+            if owner is not None:
+                raise ArchiveError(
+                    "archive path collision across supplied manifests; "
+                    f"path={archive_path}, first={display_path(repo, owner)}, "
+                    f"second={display_path(repo, manifest)}"
+                )
+            archive_owners[archive_path] = manifest
+        verified.append(batch)
+
+    verify_archive_union(repo, set(archive_owners))
+    if len(verified) == 1:
+        return verified[0].summary
 
     return {
-        "archive_bytes": total_archive,
-        "files": len(rows),
-        "manifest_sha256": sha256(manifest.read_bytes()),
-        "saved_bytes": total_source - total_archive,
-        "source_bytes": total_source,
-        "source_commit": source_commit,
+        "archive_bytes": sum(batch.summary["archive_bytes"] for batch in verified),
+        "batches": [
+            {
+                "manifest": display_path(repo, batch.path),
+                **batch.summary,
+            }
+            for batch in verified
+        ],
+        "files": sum(batch.summary["files"] for batch in verified),
+        "manifests": len(verified),
+        "saved_bytes": sum(batch.summary["saved_bytes"] for batch in verified),
+        "source_bytes": sum(batch.summary["source_bytes"] for batch in verified),
     }
+
+
+def verify_manifest(
+    repo: Path, manifest: Path, prior_manifests: list[Path] | None = None
+) -> dict[str, Any]:
+    """Verify the selected batch together with any explicitly supplied prior batches."""
+    return verify_manifests(repo, [*(prior_manifests or []), manifest])
 
 
 def stage_archive(
@@ -339,7 +448,20 @@ def stage_archive(
     }
 
 
-def create_archives(repo: Path, source_ref: str, manifest: Path) -> dict[str, Any]:
+def create_archives(
+    repo: Path,
+    source_ref: str,
+    manifest: Path,
+    prior_manifests: list[Path] | None = None,
+) -> dict[str, Any]:
+    prior_manifests = prior_manifests or []
+    if manifest.resolve() in {path.resolve() for path in prior_manifests}:
+        raise ArchiveError("the new manifest is also listed as a prior manifest")
+    if prior_manifests:
+        verify_manifests(repo, prior_manifests)
+    else:
+        verify_archive_union(repo, set())
+
     source_commit = resolve_commit(repo, source_ref)
     if resolve_commit(repo, "HEAD") != source_commit:
         raise ArchiveError("archive creation requires --source-ref to equal HEAD")
@@ -385,7 +507,7 @@ def create_archives(repo: Path, source_ref: str, manifest: Path) -> dict[str, An
             raise ArchiveError(f"source capture disappeared before archival: {source}")
         source.unlink()
 
-    return verify_manifest(repo, manifest)
+    return verify_manifest(repo, manifest, prior_manifests)
 
 
 def parser() -> argparse.ArgumentParser:
@@ -404,6 +526,13 @@ def parser() -> argparse.ArgumentParser:
         default=MANIFEST_DEFAULT,
         help=f"manifest path relative to the repository (default: {MANIFEST_DEFAULT})",
     )
+    result.add_argument(
+        "--prior-manifest",
+        type=Path,
+        action="append",
+        default=[],
+        help="prior batch manifest relative to the repository; repeat for multiple batches",
+    )
     commands = result.add_subparsers(dest="command", required=True)
     create = commands.add_parser("create", help="archive every tracked historical capture")
     create.add_argument("--source-ref", default="HEAD", help="immutable preimage ref")
@@ -417,11 +546,16 @@ def main(argv: list[str] | None = None) -> int:
     manifest = args.manifest
     if not manifest.is_absolute():
         manifest = repo / manifest
+    prior_manifests = []
+    for prior_manifest in args.prior_manifest:
+        if not prior_manifest.is_absolute():
+            prior_manifest = repo / prior_manifest
+        prior_manifests.append(prior_manifest)
     try:
         if args.command == "create":
-            summary = create_archives(repo, args.source_ref, manifest)
+            summary = create_archives(repo, args.source_ref, manifest, prior_manifests)
         else:
-            summary = verify_manifest(repo, manifest)
+            summary = verify_manifest(repo, manifest, prior_manifests)
     except (ArchiveError, OSError, subprocess.SubprocessError) as error:
         print(f"archive_session_captures.py: error: {error}", file=sys.stderr)
         return 1

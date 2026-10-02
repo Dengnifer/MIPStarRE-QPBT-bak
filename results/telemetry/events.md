@@ -10135,3 +10135,12 @@ merge gate, account, sandbox privilege or provider setting is being waived or
 changed. The failed preflight used no model allocation; the1800s repair budget
 and all prior754 costs remain unchanged.
 - Issue #777 Palomar source-cap preparation found 2,101 committed raw per-session JSONL captures totaling 2,024,852,261 bytes, while the official verifier caps the full checked-out substantive source at 524,288,000 bytes. MAIN authorized deterministic lossless gzip representation with immutable Git-blob and SHA-256 bindings. Preserve live raw writers, top-level registries, last-message prose, reviews, and runtime copies; verify every decoded archive byte against its source blob and reject damaged compressed input.
+- Issue #777 second archive batch exposed a single-manifest verifier assumption:
+  creation installed 10 valid archives from
+  `f1d489516967e9a694935a8706051bc5bc56e8a8`, removed their raw working
+  copies, then reported all 2,101 previously verified archives as unexpected
+  extras. The repair makes prior manifests explicit, verifies each immutable
+  batch independently, checks exact collision-free union coverage with bounded
+  diagnostics, and validates the prior union before creation mutates a new
+  batch. Lesson: a selectable manifest is not cumulative coverage unless prior
+  batches are part of the verification contract.

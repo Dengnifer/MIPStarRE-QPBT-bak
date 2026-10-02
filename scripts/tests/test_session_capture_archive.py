@@ -13,6 +13,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCHIVER = ROOT / "local/bin/archive_session_captures.py"
+DEFAULT_MANIFEST = Path("results/telemetry/session-capture-archive-manifest.jsonl")
 sys.path.insert(0, str(ROOT / "local/bin"))
 import telemetry
 
@@ -59,13 +60,44 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         )
         self.source_commit = git(self.repo, "rev-parse", "HEAD")
 
-    def run_archiver(self, command: str) -> subprocess.CompletedProcess[str]:
+    def run_archiver(
+        self,
+        command: str,
+        *,
+        manifest: Path = DEFAULT_MANIFEST,
+        prior_manifests: tuple[Path, ...] = (),
+    ) -> subprocess.CompletedProcess[str]:
+        arguments = [
+            sys.executable,
+            str(ARCHIVER),
+            "--repo-root",
+            str(self.repo),
+            "--manifest",
+            str(manifest),
+        ]
+        for prior_manifest in prior_manifests:
+            arguments.extend(("--prior-manifest", str(prior_manifest)))
+        arguments.append(command)
         return subprocess.run(
-            [sys.executable, str(ARCHIVER), "--repo-root", str(self.repo), command],
+            arguments,
             check=False,
             capture_output=True,
             text=True,
         )
+
+    def commit(self, message: str) -> str:
+        git(self.repo, "add", "-A")
+        git(
+            self.repo,
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "-qm",
+            message,
+        )
+        return git(self.repo, "rev-parse", "HEAD")
 
     def test_create_is_deterministic_and_recovers_every_git_blob(self) -> None:
         created = self.run_archiver("create")
@@ -74,7 +106,7 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         self.assertEqual(summary["files"], len(self.payloads))
         self.assertEqual(summary["source_commit"], self.source_commit)
 
-        manifest = self.repo / "results/telemetry/session-capture-archive-manifest.jsonl"
+        manifest = self.repo / DEFAULT_MANIFEST
         rows = [json.loads(line) for line in manifest.read_text().splitlines()]
         paths = [row["source_path"] for row in rows]
         self.assertEqual(paths, sorted(paths))
@@ -90,6 +122,76 @@ class SessionCaptureArchiveTests(unittest.TestCase):
         verified = self.run_archiver("verify")
         self.assertEqual(verified.returncode, 0, verified.stderr)
         self.assertEqual(json.loads(verified.stdout), summary)
+
+    def test_two_successive_batches_require_and_verify_the_prior_manifest(self) -> None:
+        first = self.run_archiver("create")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        self.commit("archive first batch")
+
+        later_payload = b'{"type":"turn.completed","batch":2}\n'
+        later_source = self.repo / "results/telemetry/sessions/later.jsonl"
+        later_source.write_bytes(later_payload)
+        second_source_commit = self.commit("add second batch")
+        later_manifest = Path("results/telemetry/session-capture-archives-later.jsonl")
+
+        missing_prior = self.run_archiver("create", manifest=later_manifest)
+        self.assertNotEqual(missing_prior.returncode, 0)
+        self.assertIn("archive coverage mismatch across supplied manifests", missing_prior.stderr)
+        self.assertTrue(later_source.is_file())
+        self.assertFalse((self.repo / later_manifest).exists())
+        self.assertFalse(later_source.with_name(later_source.name + ".gz").exists())
+
+        created = self.run_archiver(
+            "create",
+            manifest=later_manifest,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertEqual(created.returncode, 0, created.stderr)
+        summary = json.loads(created.stdout)
+        self.assertEqual(summary["manifests"], 2)
+        self.assertEqual(summary["files"], len(self.payloads) + 1)
+        self.assertEqual(
+            [batch["source_commit"] for batch in summary["batches"]],
+            [self.source_commit, second_source_commit],
+        )
+        self.assertFalse(later_source.exists())
+        later_archive = self.repo / f"{later_source.relative_to(self.repo)}.gz"
+        self.assertEqual(gzip.decompress(later_archive.read_bytes()), later_payload)
+
+        verified = self.run_archiver(
+            "verify",
+            manifest=later_manifest,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        self.assertEqual(json.loads(verified.stdout), summary)
+
+    def test_verify_rejects_archive_collision_across_manifests(self) -> None:
+        created = self.run_archiver("create")
+        self.assertEqual(created.returncode, 0, created.stderr)
+        duplicate_manifest = Path("results/telemetry/session-capture-archive-copy.jsonl")
+        (self.repo / duplicate_manifest).write_bytes((self.repo / DEFAULT_MANIFEST).read_bytes())
+
+        verified = self.run_archiver(
+            "verify",
+            manifest=duplicate_manifest,
+            prior_manifests=(DEFAULT_MANIFEST,),
+        )
+        self.assertNotEqual(verified.returncode, 0)
+        self.assertIn("archive path collision across supplied manifests", verified.stderr)
+
+    def test_verify_rejects_unmanifested_archive_with_bounded_diagnostic(self) -> None:
+        created = self.run_archiver("create")
+        self.assertEqual(created.returncode, 0, created.stderr)
+        captures = self.repo / "results/telemetry/sessions"
+        for index in range(7):
+            (captures / f"orphan-{index}.jsonl.gz").write_bytes(gzip.compress(b"orphan"))
+
+        verified = self.run_archiver("verify")
+        self.assertNotEqual(verified.returncode, 0)
+        self.assertIn("extra=7 [", verified.stderr)
+        self.assertIn("... (+2 more)", verified.stderr)
+        self.assertNotIn("orphan-6.jsonl.gz", verified.stderr)
 
     def test_verify_rejects_truncated_archive(self) -> None:
         created = self.run_archiver("create")

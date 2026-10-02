@@ -1895,3 +1895,23 @@ last-message prose, reviews and runtime raw copies remain unchanged.
 source cap without losing one byte of session evidence or changing live
 accounting. Historical records remain reproducibly recoverable and corrupt or
 partial archives fail closed.
+
+## 2026-10-02 - Verify cumulative session archive batches (#777)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Issue #777 second
+archive batch". The first later-batch creation installed its ten archives but
+failed post-install verification because the selected manifest did not account
+for the 2,101 archives already bound by the initial manifest.
+
+**Change:** `local/protocols/sessions.md` now requires later archive operations
+to list every prior batch explicitly with repeatable `--prior-manifest` options.
+The archive utility verifies each manifest's complete raw-capture preimage and
+immutable Git bindings independently, rejects archive-path collisions, and
+requires the supplied manifests' union to equal every checked-out `.jsonl.gz`
+path. Creation verifies the prior union before removing any new raw capture.
+Coverage diagnostics report counts and at most five example paths.
+
+**Expected effect:** independently attributable archive batches can coexist
+without weakening source, archive or decoded-byte checks. Missing manifests,
+orphan archives, collisions and tampering fail closed, while the original
+single-batch command remains valid.

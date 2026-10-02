@@ -395,15 +395,37 @@ python3 local/bin/telemetry.py event --text "…symptom → diagnosis → fix �
 **The event stream is permanent archival evidence.** A live dispatch writes
 `results/telemetry/sessions/<name>.jsonl`; `dispatch.sh` does not compress or
 rename it. Historical raw captures may later be represented as deterministic
-`<name>.jsonl.gz` files in the committed substantive checkout only when
-`results/telemetry/session-capture-archive-manifest.jsonl` binds every original
-path to its immutable source commit, Git blob, mode, SHA-256 and byte count,
-and binds the archive's SHA-256, byte count and fixed gzip parameters. Run
-`python3 local/bin/archive_session_captures.py verify` to check complete
+`<name>.jsonl.gz` files in the committed substantive checkout only when an
+archive manifest binds every original path to its immutable source commit, Git
+blob, mode, SHA-256 and byte count, and binds the archive's SHA-256, byte count
+and fixed gzip parameters. The initial batch uses
+`results/telemetry/session-capture-archive-manifest.jsonl`. Run
+`python3 local/bin/archive_session_captures.py verify` to check its complete
 coverage, canonical encoding and byte-for-byte decompression against every
-original Git blob. A missing, malformed or truncated archive is a failure, not
-an empty session. The private runtime raw copy is never modified by this
-packaging step.
+original Git blob.
+
+A later commit may add a distinct batch of raw captures while prior archives
+remain. Give that batch a distinct manifest and explicitly supply every prior
+batch, repeating `--prior-manifest` when necessary:
+
+```bash
+python3 local/bin/archive_session_captures.py \
+  --manifest results/telemetry/session-capture-archives-later.jsonl \
+  --prior-manifest results/telemetry/session-capture-archive-manifest.jsonl \
+  create --source-ref HEAD
+python3 local/bin/archive_session_captures.py \
+  --manifest results/telemetry/session-capture-archives-later.jsonl \
+  --prior-manifest results/telemetry/session-capture-archive-manifest.jsonl \
+  verify
+```
+
+The tool verifies each supplied manifest independently against all raw captures
+at that manifest's source commit. It then requires their collision-free union
+to cover every checked-out `.jsonl.gz` archive. Omitting a prior manifest,
+supplying colliding archive paths or leaving an unmanifested archive fails
+before a new batch is created. A missing, malformed or truncated archive is a
+failure, not an empty session. The private runtime raw copy is never modified
+by this packaging step.
 
 The `<name>.last.md` files and top-level `sessions.jsonl` registry remain
 readable, committed and uncompressed. Existing registry rows may retain their
