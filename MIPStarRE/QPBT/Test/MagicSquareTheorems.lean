@@ -781,25 +781,11 @@ theorem exists_ms_rigidity_of_symmetric_consistent :
         S.IsConsistent →
         1 - ε ≤ S.toStrategy.value →
         ∃ w : MsRigidityWitness S.toStrategy,
-          @norm _
-              (@PiLp.instNorm 2
-                (((Fin 2 → ZMod 2) × w.ιA'') × ((Fin 2 → ZMod 2) × w.ιB''))
-                (fun _ => ℂ)
-                (@instFintypeProd _ _
-                  (@instFintypeProd _ _ inferInstance w.ιA''Fintype)
-                  (@instFintypeProd _ _ inferInstance w.ιB''Fintype))
-                (fun _ => Complex.instNorm))
-              (@isometryTensor S.toStrategy.ιA S.toStrategy.ιB
-                  ((Fin 2 → ZMod 2) × w.ιA'') ((Fin 2 → ZMod 2) × w.ιB'')
-                  S.toStrategy.ιAFintype S.toStrategy.ιADecidableEq
-                  S.toStrategy.ιBFintype S.toStrategy.ιBDecidableEq
-                  (@instFintypeProd _ _ inferInstance w.ιA''Fintype)
-                  (@instDecidableEqProd _ _ inferInstance w.ιA''DecidableEq)
-                  (@instFintypeProd _ _ inferInstance w.ιB''Fintype)
-                  (@instDecidableEqProd _ _ inferInstance w.ιB''DecidableEq)
-                  w.φA w.φB S.toStrategy.ψ -
-                @idealMsState w.ιA'' w.ιB'' w.ιA''Fintype w.ιA''DecidableEq
-                  w.ιB''Fintype w.ιB''DecidableEq w.aux) ≤
+          letI : Fintype w.ιA'' := w.ιA''Fintype
+          letI : Fintype w.ιB'' := w.ιB''Fintype
+          letI : DecidableEq w.ιA'' := w.ιA''DecidableEq
+          letI : DecidableEq w.ιB'' := w.ιB''DecidableEq
+          ‖isometryTensor w.φA w.φB S.toStrategy.ψ - idealMsState w.aux‖ ≤
               C * Real.sqrt ε ∧
           msOperatorDistanceA S.toStrategy w 0 .X ≤ C * Real.sqrt ε ∧
           msOperatorDistanceA S.toStrategy w 4 .Z ≤ C * Real.sqrt ε ∧
