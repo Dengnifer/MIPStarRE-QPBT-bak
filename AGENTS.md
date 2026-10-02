@@ -773,9 +773,12 @@ agent must know:
   runs machine-wide (the scripts take the lock for you).
 - **Lifecycle.** GitHub issue → branch `issue-<number>-slug` + worktree →
   agent sessions → `local/bin/ci.sh` → `local/bin/review.sh` → optional
-  `local/bin/autofix.sh` → `local/bin/pr_merge.py`. CI and review evidence are
-  exact-head commit statuses (`local-ci/*`, `local-review/summary`); merges go
-  through GitHub with an exact-SHA guard. Details: `local/README.md`,
+  `local/bin/autofix.sh` → `local/bin/pr_merge.py`. Primary-library reviews
+  require complete green exact-head `local-ci/*` evidence. The sole companion
+  route, for `Dengnifer/QPBT-comparator`, instead requires its pinned official
+  Palomar full-CI evidence on the exact head; reviewer instructions still come
+  from primary main. Both routes publish `local-review/summary`; merges use an
+  exact-SHA guard. Details: `local/README.md`, `local/protocols/review.md`, and
   `local/protocols/issues-prs.md`.
 - **Sessions.** Worker Codex sessions use `local/bin/dispatch.sh` (roles: orc,
   prover, reviewer, simplifier, blueprint, splitter, scout; `mathfix` is

@@ -739,15 +739,18 @@ class CompanionReviewRoutingTests(LayerTestCase):
 
     def successful_check(self, *, check_id: int = 41, run_id: int = 31,
                          job_id: int | None = None,
-                         conclusion: str = "success",
-                         completed_at: str = "2026-10-02T00:00:00Z") -> dict:
+                         status: str = "completed",
+                         conclusion: str | None = "success",
+                         started_at: str | None = "2026-10-01T22:00:00Z",
+                         completed_at: str | None = "2026-10-02T00:00:00Z") -> dict:
         job_id = check_id if job_id is None else job_id
         return {
             "id": check_id,
             "name": self.CHECK_NAME,
             "head_sha": self.companion_head,
-            "status": "completed",
+            "status": status,
             "conclusion": conclusion,
+            "started_at": started_at,
             "completed_at": completed_at,
             "details_url": (
                 f"https://github.com/{self.COMPANION}/actions/runs/{run_id}/job/{job_id}"),
@@ -779,7 +782,7 @@ class CompanionReviewRoutingTests(LayerTestCase):
                 "head_branch": self.COMPANION_BRANCH,
                 "head_sha": self.companion_head,
                 "run_attempt": 1,
-                "status": "completed",
+                "status": check["status"],
                 "conclusion": check["conclusion"],
             }
             run.update(run_overrides.get(run_id, {}))
@@ -791,8 +794,10 @@ class CompanionReviewRoutingTests(LayerTestCase):
                 "run_attempt": attempt,
                 "name": check["name"],
                 "head_sha": self.companion_head,
-                "status": "completed",
+                "status": check["status"],
                 "conclusion": check["conclusion"],
+                "started_at": check["started_at"],
+                "completed_at": check["completed_at"],
                 "check_run_url": (
                     f"https://api.github.com/repos/{self.COMPANION}/check-runs/"
                     f"{check['id']}"),
@@ -966,7 +971,10 @@ print(f"last_message: {last}")
 
     def test_companion_route_ignores_same_named_decoy_workflow(self) -> None:
         official = self.successful_check(check_id=41, run_id=31)
-        decoy = self.successful_check(check_id=99, run_id=99)
+        decoy = self.successful_check(
+            check_id=99, run_id=99,
+            started_at="2026-10-02T00:30:00Z",
+            completed_at="2026-10-02T01:00:00Z")
         self.arm_companion(
             [official, decoy],
             run_paths={99: ".github/workflows/decoy.yml"},
@@ -1062,18 +1070,81 @@ print(f"last_message: {last}")
         self.assertIn("companion reviews require a clean exact-head tree", result.stderr)
         self.assertFalse(any("check-runs" in call["rel"] for call in self.gh.calls()))
 
-    def test_companion_route_blocks_missing_failed_and_stale_ci(self) -> None:
-        older_success = self.successful_check(
-            check_id=40, run_id=30, completed_at="2026-10-01T23:00:00Z")
-        newer_failure = self.successful_check(
-            check_id=41, run_id=31, conclusion="failure",
-            completed_at="2026-10-02T00:00:00Z")
+    def test_companion_route_blocks_missing_and_failed_ci(self) -> None:
+        failed = self.successful_check(conclusion="failure")
         for label, checks, expected in (
             ("missing", [], "no GitHub Actions 'comparator / verify' check"),
-            ("failed", [newer_failure], "official Palomar evidence failed"),
-            ("stale", [older_success, newer_failure],
-             "official Palomar evidence failed"),
+            ("failed", [failed], "official Palomar evidence failed"),
         ):
+            with self.subTest(label=label):
+                self.arm_companion(checks)
+                result, _ = self.run_companion(label)
+                self.assertEqual(result.returncode, 3, result.stderr)
+                self.assertIn(expected, result.stderr)
+
+    def test_companion_route_later_lower_id_failure_blocks_older_green(self) -> None:
+        older_success = self.successful_check(
+            check_id=90, run_id=90,
+            started_at="2026-10-01T22:00:00Z",
+            completed_at="2026-10-01T23:00:00Z")
+        newer_failure = self.successful_check(
+            check_id=10, run_id=10, conclusion="failure",
+            started_at="2026-10-01T23:30:00Z",
+            completed_at="2026-10-02T00:00:00Z")
+        self.arm_companion([older_success, newer_failure])
+        result, _ = self.run_companion("later-lower-id-failure")
+        self.assertEqual(result.returncode, 3, result.stderr)
+        self.assertIn("official Palomar evidence failed", result.stderr)
+        self.assertIn("workflow run conclusion", result.stderr)
+
+    def test_companion_route_later_lower_id_success_is_selected(self) -> None:
+        older_failure = self.successful_check(
+            check_id=90, run_id=90, conclusion="failure",
+            started_at="2026-10-01T22:00:00Z",
+            completed_at="2026-10-01T23:00:00Z")
+        newer_success = self.successful_check(
+            check_id=10, run_id=10,
+            started_at="2026-10-01T23:30:00Z",
+            completed_at="2026-10-02T00:00:00Z")
+        self.arm_companion([older_failure, newer_success])
+        result, cache = self.run_companion("later-lower-id-success")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        task = (cache / "reviews" / "dengnifer-qpbt-comparator" / "pr7" /
+                self.companion_head / "code-task.md").read_text(encoding="utf-8")
+        self.assertIn("official Palomar workflow run 10 attempt 1", task)
+        self.assertNotIn("official Palomar workflow run 90 attempt 1", task)
+
+    def test_companion_route_blocks_unfinished_official_evidence(self) -> None:
+        older_success = self.successful_check(
+            check_id=90, run_id=90,
+            started_at="2026-10-01T22:00:00Z",
+            completed_at="2026-10-01T23:00:00Z")
+        newer_pending = self.successful_check(
+            check_id=10, run_id=10, status="in_progress", conclusion=None,
+            started_at="2026-10-02T00:00:00Z", completed_at=None)
+        self.arm_companion([older_success, newer_pending])
+        result, _ = self.run_companion("unfinished-official")
+        self.assertEqual(result.returncode, 3, result.stderr)
+        self.assertIn("unfinished and has unknown completion order", result.stderr)
+        self.assertIn("10 (in_progress", result.stderr)
+
+    def test_companion_route_rejects_unknown_and_ambiguous_freshness(self) -> None:
+        missing = self.successful_check(completed_at=None)
+        malformed = self.successful_check(completed_at="not-a-timestamp")
+        pending_unknown = self.successful_check(
+            status="in_progress", conclusion=None, started_at=None,
+            completed_at=None)
+        tied_success = self.successful_check(check_id=40, run_id=40)
+        tied_failure = self.successful_check(
+            check_id=41, run_id=41, conclusion="failure")
+        cases = (
+            ("missing-completion", [missing], "missing completed_at"),
+            ("malformed-completion", [malformed], "malformed completed_at"),
+            ("missing-pending-start", [pending_unknown], "missing started_at"),
+            ("tied-completion", [tied_success, tied_failure],
+             "freshness is ambiguous"),
+        )
+        for label, checks, expected in cases:
             with self.subTest(label=label):
                 self.arm_companion(checks)
                 result, _ = self.run_companion(label)

@@ -711,31 +711,42 @@ PY
 }
 
 require_companion_ci() {
-  local contract_result candidates candidate check_id run_id job_id check_status
-  local check_conclusion run_meta attempt jobs_result run_recheck official_seen=0
+  local contract_result candidates_result candidate_runs selection_result
+  local selected check_id run_id job_id check_status check_conclusion attempt
+  local check_completed_at jobs_result run_recheck
   if ! contract_result="$(validate_companion_ci_contract)"; then
     gate_block "$contract_result"
   fi
   if ! ghc check-runs "$HEAD_SHA" >"$RUN_ROOT/check-runs.json"; then
     gate_block "official Palomar check runs are unreadable for $HEAD_SHA"
   fi
-  if ! candidates="$(python3 - "$RUN_ROOT/check-runs.json" "$HEAD_SHA" \
-    "$TARGET_REPO" "$COMPANION_CHECK_NAME" <<'PY'
-import json, sys
+  if ! candidates_result="$(python3 - "$RUN_ROOT/check-runs.json" \
+    "$RUN_ROOT/companion-check-candidates.json" "$HEAD_SHA" "$TARGET_REPO" \
+    "$COMPANION_CHECK_NAME" <<'PY'
+import json
 import re
+import sys
 from urllib.parse import urlparse
 
-path, head, repo, check_name = sys.argv[1:5]
+path, destination, head, repo, check_name = sys.argv[1:6]
 try:
     rows = json.load(open(path, encoding="utf-8"))
 except (OSError, json.JSONDecodeError) as exc:
     print(f"official Palomar check evidence is unreadable: {exc}")
     raise SystemExit(1)
+if not isinstance(rows, list):
+    print("official Palomar check evidence must be a JSON list")
+    raise SystemExit(1)
 
 matches = []
 for row in rows:
+    if not isinstance(row, dict):
+        print("official Palomar check evidence contains a non-object row")
+        raise SystemExit(1)
+    app = row.get("app")
     if (row.get("name") != check_name
-            or (row.get("app") or {}).get("slug") != "github-actions"
+            or not isinstance(app, dict)
+            or app.get("slug") != "github-actions"
             or row.get("head_sha") != head):
         continue
     details = urlparse(row.get("details_url") or "")
@@ -747,55 +758,200 @@ for row in rows:
         check_id = int(row.get("id"))
     except (TypeError, ValueError):
         continue
-    matches.append((check_id, int(match.group(1)), int(match.group(2)),
-                    row.get("status") or "", row.get("conclusion") or ""))
+    matches.append({
+        "check_id": check_id,
+        "run_id": int(match.group(1)),
+        "job_id": int(match.group(2)),
+        "status": row.get("status"),
+        "conclusion": row.get("conclusion"),
+        "started_at": row.get("started_at"),
+        "completed_at": row.get("completed_at"),
+    })
 if not matches:
     print(f"no GitHub Actions {check_name!r} check is bound to exact head {head}")
     raise SystemExit(1)
-for match in sorted(matches, reverse=True):
-    print("\t".join(str(value) for value in match))
+with open(destination, "w", encoding="utf-8") as handle:
+    json.dump(matches, handle, indent=2)
+    handle.write("\n")
+print(f"found {len(matches)} exact-head GitHub Actions check candidate(s)")
 PY
 )"; then
-    gate_block "$candidates"
+    gate_block "$candidates_result"
   fi
 
-  while IFS=$'\t' read -r check_id run_id job_id check_status check_conclusion; do
-    [ -n "$check_id" ] || continue
+  if ! candidate_runs="$(python3 - "$RUN_ROOT/companion-check-candidates.json" <<'PY'
+import json
+import sys
+
+rows = json.load(open(sys.argv[1], encoding="utf-8"))
+seen = set()
+for row in rows:
+    run_id = row["run_id"]
+    if run_id in seen:
+        continue
+    seen.add(run_id)
+    print(run_id)
+PY
+)"; then
+    gate_block "official Palomar check candidates could not be enumerated"
+  fi
+  while IFS= read -r run_id; do
+    [ -n "$run_id" ] || continue
     ghc actions-run "$run_id" >"$RUN_ROOT/actions-run-$run_id.json" ||
       gate_block "GitHub Actions run $run_id is unreadable"
-    run_meta="$(python3 - "$RUN_ROOT/actions-run-$run_id.json" "$run_id" \
-      "$HEAD_SHA" "$COMPANION_WORKFLOW_PATH" "$BRANCH" <<'PY'
-import json, sys
-path, run_id, head, workflow, branch = sys.argv[1:6]
-row = json.load(open(path, encoding="utf-8"))
-if str(row.get("id")) != run_id or row.get("head_sha") != head:
+  done <<<"$candidate_runs"
+
+  selected="$RUN_ROOT/selected-companion-check.json"
+  if ! selection_result="$(python3 - \
+    "$RUN_ROOT/companion-check-candidates.json" "$RUN_ROOT" "$selected" \
+    "$HEAD_SHA" "$COMPANION_WORKFLOW_PATH" "$BRANCH" <<'PY'
+from datetime import datetime, timezone
+import json
+from pathlib import Path
+import re
+import sys
+
+(candidates_path, run_root, destination, head, workflow, branch) = sys.argv[1:7]
+
+
+def fail(message):
+    print(message)
     raise SystemExit(1)
+
+
+def timestamp(value, field, check_id):
+    if not isinstance(value, str) or not value:
+        fail(f"official Palomar check {check_id} has missing {field}; "
+             "freshness is unknown")
+    if not re.fullmatch(
+            r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+            r"(?:\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})", value):
+        fail(f"official Palomar check {check_id} has malformed {field} {value!r}")
+    text = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        fail(f"official Palomar check {check_id} has malformed {field} {value!r}")
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        fail(f"official Palomar check {check_id} has timezone-free {field} {value!r}")
+    return parsed.astimezone(timezone.utc)
+
+
+try:
+    candidates = json.load(open(candidates_path, encoding="utf-8"))
+except (OSError, json.JSONDecodeError) as exc:
+    fail(f"official Palomar check candidates are unreadable: {exc}")
+
+seen = {}
+deduplicated = []
+for candidate in candidates:
+    check_id = candidate["check_id"]
+    previous = seen.get(check_id)
+    if previous is not None:
+        if previous != candidate:
+            fail(f"check id {check_id} has conflicting exact-head metadata")
+        continue
+    seen[check_id] = candidate
+    deduplicated.append(candidate)
+
+official = []
 workflow_paths = {workflow, f"{workflow}@{branch}"}
-if row.get("path") not in workflow_paths:
-    print("skip")
-    raise SystemExit(0)
-if row.get("event") != "push" or row.get("head_branch") != branch:
-    raise SystemExit(1)
-attempt = row.get("run_attempt")
-if not isinstance(attempt, int) or attempt < 1:
-    raise SystemExit(1)
-print(attempt)
+for candidate in deduplicated:
+    check_id = candidate["check_id"]
+    run_id = candidate["run_id"]
+    run_path = Path(run_root) / f"actions-run-{run_id}.json"
+    try:
+        run = json.load(open(run_path, encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        fail(f"GitHub Actions run {run_id} metadata is unreadable: {exc}")
+    if not isinstance(run, dict):
+        fail(f"GitHub Actions run {run_id} metadata is not an object")
+    if str(run.get("id")) != str(run_id) or run.get("head_sha") != head:
+        fail(f"Actions run {run_id} has malformed exact-head metadata")
+    if run.get("path") not in workflow_paths:
+        continue
+    if run.get("event") != "push" or run.get("head_branch") != branch:
+        fail(f"Actions run {run_id} has malformed exact-head metadata")
+    attempt = run.get("run_attempt")
+    if isinstance(attempt, bool) or not isinstance(attempt, int) or attempt < 1:
+        fail(f"Actions run {run_id} has malformed current-attempt metadata")
+
+    status = candidate.get("status")
+    conclusion = candidate.get("conclusion")
+    if not isinstance(status, str) or not status:
+        fail(f"official Palomar check {check_id} has malformed status metadata")
+    if conclusion is not None and not isinstance(conclusion, str):
+        fail(f"official Palomar check {check_id} has malformed conclusion metadata")
+    started = timestamp(candidate.get("started_at"), "started_at", check_id)
+    completed_value = candidate.get("completed_at")
+    record = dict(candidate, run_attempt=attempt)
+    if status == "completed":
+        completed = timestamp(completed_value, "completed_at", check_id)
+        if completed < started:
+            fail(f"official Palomar check {check_id} completed before it started")
+        record["freshness"] = completed.isoformat()
+        record["_freshness_time"] = completed
+        official.append(record)
+        continue
+    if completed_value is not None:
+        fail(f"unfinished official Palomar check {check_id} has completed_at metadata")
+    if conclusion is not None:
+        fail(f"unfinished official Palomar check {check_id} has a conclusion")
+    record["freshness"] = None
+    official.append(record)
+
+if not official:
+    fail(f"no Palomar check belongs to {workflow}")
+
+# Check and run IDs bind API objects but carry no documented time ordering.
+# An unfinished official check has no completed_at order at all, so it blocks
+# instead of being assigned an empty timestamp that would make it look old.
+unfinished = [row for row in official if row["status"] != "completed"]
+if unfinished:
+    summary = ", ".join(
+        f"{row['check_id']} ({row['status']}, started {row['started_at']})"
+        for row in unfinished)
+    fail("official Palomar check evidence is unfinished and has unknown completion "
+         f"order: {summary}")
+
+latest_time = max(row["_freshness_time"] for row in official)
+latest = [row for row in official if row["_freshness_time"] == latest_time]
+latest_freshness = latest[0]["freshness"]
+if len(latest) != 1:
+    ids = ", ".join(str(row["check_id"]) for row in latest)
+    fail("official Palomar freshness is ambiguous: checks "
+         f"{ids} share completed_at {latest_freshness}")
+
+latest[0].pop("_freshness_time")
+with open(destination, "w", encoding="utf-8") as handle:
+    json.dump(latest[0], handle, indent=2)
+    handle.write("\n")
+print(f"selected official check {latest[0]['check_id']} completed at {latest_freshness}")
 PY
-)" || gate_block "Actions run $run_id has malformed exact-head metadata"
-    [ "$run_meta" != skip ] || continue
-    official_seen=1
-    attempt="$run_meta"
-    ghc actions-run-jobs "$run_id" "$attempt" \
-      >"$RUN_ROOT/actions-run-$run_id-attempt-$attempt-jobs.json" ||
-      gate_block "current attempt $attempt jobs are unreadable for Actions run $run_id"
-    if ! jobs_result="$(python3 - \
-      "$RUN_ROOT/actions-run-$run_id.json" \
-      "$RUN_ROOT/actions-run-$run_id-attempt-$attempt-jobs.json" \
-      "$TARGET_REPO" "$HEAD_SHA" "$run_id" "$attempt" "$job_id" "$check_id" \
-      "$check_status" "$check_conclusion" "$COMPANION_CHECK_NAME" <<'PY'
+)"; then
+    gate_block "$selection_result"
+  fi
+
+  check_id="$(json_get "$selected" check_id)"
+  run_id="$(json_get "$selected" run_id)"
+  job_id="$(json_get "$selected" job_id)"
+  check_status="$(json_get "$selected" status)"
+  check_conclusion="$(json_get "$selected" conclusion)"
+  attempt="$(json_get "$selected" run_attempt)"
+  check_completed_at="$(json_get "$selected" completed_at)"
+
+  ghc actions-run-jobs "$run_id" "$attempt" \
+    >"$RUN_ROOT/actions-run-$run_id-attempt-$attempt-jobs.json" ||
+    gate_block "current attempt $attempt jobs are unreadable for Actions run $run_id"
+  if ! jobs_result="$(python3 - \
+    "$RUN_ROOT/actions-run-$run_id.json" \
+    "$RUN_ROOT/actions-run-$run_id-attempt-$attempt-jobs.json" \
+    "$TARGET_REPO" "$HEAD_SHA" "$run_id" "$attempt" "$job_id" "$check_id" \
+    "$check_status" "$check_conclusion" "$COMPANION_CHECK_NAME" \
+    "$check_completed_at" <<'PY'
 import json, sys
 (run_path, jobs_path, repo, head, run_id, attempt, job_id, check_id,
- check_status, check_conclusion, check_name) = sys.argv[1:12]
+ check_status, check_conclusion, check_name, completed_at) = sys.argv[1:13]
 run = json.load(open(run_path, encoding="utf-8"))
 jobs = json.load(open(jobs_path, encoding="utf-8"))
 job = next((row for row in jobs if str(row.get("id")) == job_id), None)
@@ -821,15 +977,15 @@ if failed:
     print("official Palomar evidence failed: " + ", ".join(failed))
     raise SystemExit(1)
 print(f"official Palomar workflow run {run_id} attempt {attempt} job {job_id} "
-      f"check {check_id} succeeded at {head}")
+      f"check {check_id} succeeded at {head}, completed {completed_at}")
 PY
 )"; then
-      gate_block "$jobs_result"
-    fi
-    ghc actions-run "$run_id" >"$RUN_ROOT/actions-run-$run_id-recheck.json" ||
-      gate_block "Actions run $run_id became unreadable during evidence binding"
-    if ! run_recheck="$(python3 - "$RUN_ROOT/actions-run-$run_id.json" \
-      "$RUN_ROOT/actions-run-$run_id-recheck.json" <<'PY'
+    gate_block "$jobs_result"
+  fi
+  ghc actions-run "$run_id" >"$RUN_ROOT/actions-run-$run_id-recheck.json" ||
+    gate_block "Actions run $run_id became unreadable during evidence binding"
+  if ! run_recheck="$(python3 - "$RUN_ROOT/actions-run-$run_id.json" \
+    "$RUN_ROOT/actions-run-$run_id-recheck.json" <<'PY'
 import json, sys
 before = json.load(open(sys.argv[1], encoding="utf-8"))
 after = json.load(open(sys.argv[2], encoding="utf-8"))
@@ -843,14 +999,9 @@ if any(before.get(key) != after.get(key) for key in keys):
 print("stable")
 PY
 )"; then
-      gate_block "$run_recheck"
-    fi
-    CI_TRIGGER="$jobs_result; $contract_result"
-    return
-  done <<<"$candidates"
-  [ "$official_seen" -eq 1 ] ||
-    gate_block "no Palomar check belongs to $COMPANION_WORKFLOW_PATH"
-  gate_block "no current official Palomar workflow job passed exact binding"
+    gate_block "$run_recheck"
+  fi
+  CI_TRIGGER="$jobs_result; $contract_result"
 }
 
 require_ci_gate() {

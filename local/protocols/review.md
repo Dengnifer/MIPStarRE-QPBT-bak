@@ -107,6 +107,12 @@ nothing, so a subset cannot green-light review.  On the companion route, rung
 Actions run and job, skips same-named checks from other workflows, and accepts
 only the newest official workflow evidence whose exact-head run, current
 attempt, push branch, job id, check-run URL, status and conclusion all agree.
+Check and run IDs bind those objects but do not order them. Completed official
+checks are ordered only by parsed, timezone-aware `completed_at`; malformed or
+missing timestamps and equal latest completion times block as unknown or
+ambiguous freshness. An unfinished official check has no completion order and
+also blocks, even when an older completed check is green. Its `started_at` must
+still be valid; it is never replaced by an empty timestamp that would sort old.
 The run path may be the bare canonical `.github/workflows/comparator.yml` or
 GitHub's ref-qualified form with exactly that path and the validated push branch;
 another path or ref is skipped as nonofficial evidence.

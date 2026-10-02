@@ -2092,3 +2092,53 @@ Palomar headroom without removing evidence, changing source bindings, widening
 the four-file native scope or altering live append-only telemetry. Unsupported
 formats, parameters, paths, damaged streams, omissions, orphans and collisions
 continue to fail closed.
+
+## 2026-10-02 - Order companion checks by validated completion time (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Companion check
+freshness used undocumented ID order", and independent review 5388674269. Its
+F1 showed that reverse numeric check-ID order could accept an older success when
+a lower-ID official failure completed later on the same SHA.
+
+**Change:** `review.sh` keeps check and run IDs only for object binding. It
+classifies the exact official workflow before freshness selection, validates
+timezone-aware `started_at` and `completed_at`, and orders completed official
+checks only by `completed_at`. A nonofficial workflow remains ignorable. An
+unfinished official check, missing or malformed temporal metadata, conflicting
+duplicate check ID, or tie for latest official completion now blocks because
+the newest evidence is unknown or ambiguous. The selected check still must bind
+to the workflow run's current attempt, job and check URL, report successful run,
+job and check results, and survive the existing run and publication rechecks.
+Focused fixtures invert ID and completion order in both directions and retain
+pending, stale-attempt, foreign-workflow and prior authenticity cases.
+
+**Expected effect:** a newer official pending or failed comparator run cannot
+fall through to an older green check merely because its numeric ID is lower.
+The companion route remains narrow and fail-closed without adding a new CI
+service or trust path.
+
+**Outcome:** the focused companion-routing class passes 20 tests, the complete
+GitHub-workflow module passes 80, and the related review/native modules pass 16.
+Shell/Python syntax, whitespace, changed-line length, installed-hook and normal
+pre-commit checks pass. No full build, live companion review, canonical CI,
+independent review, companion mutation or merge ran in the author phase.
+
+## 2026-10-02 - Synchronize companion-review architecture summaries (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02,
+"Companion-review architecture summaries lagged the route." The sixth PR755
+review attempt timed out without a final verdict; its preserved commentary was
+an observation, not a published finding. MAIN independently confirmed the
+documentation drift against `local/protocols/review.md`.
+
+**Change:** `AGENTS.md`, `local/DESIGN.md` and `local/README.md` now distinguish
+the normal primary-library review chain from the sole explicit
+`Dengnifer/QPBT-comparator` source route. The summaries state that primary PRs
+use complete exact-head local CI, while the companion route uses its pinned
+official Palomar full-CI evidence on the exact head and retains trusted
+primary-main reviewer instructions. The detailed validation contract remains
+centralized in `local/protocols/review.md`; no script or gate semantics changed.
+
+**Expected effect:** operators see the implemented companion exception without
+mistaking arbitrary repositories, branch-supplied verification or an
+unpublished timeout commentary for admissible review evidence.
