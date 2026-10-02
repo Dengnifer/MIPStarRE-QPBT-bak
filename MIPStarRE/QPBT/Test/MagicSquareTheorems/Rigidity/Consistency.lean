@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.CellRelations
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.CellRelations
 
 /-!
 # Cross-player agreement of the Magic Square variable measurements
@@ -53,6 +55,8 @@ paper `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:144-174` and
 `258-271`.  The variable indices are zero-based, so the paper's first and fifth
 variables are the cells `0` and `4`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

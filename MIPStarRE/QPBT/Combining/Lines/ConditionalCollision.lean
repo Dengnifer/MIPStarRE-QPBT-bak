@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Combining.Lines.FiberCollision
-import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingDistribution
-import MIPStarRE.QPBT.Combining.Lines.ProductWeightedCollision
-import MIPStarRE.QPBT.Games.RestrictedAverage
-import MIPStarRE.QPBT.Observables.WinImplications.Setup
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.FiberCollision
+public import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingDistribution
+public import MIPStarRE.QPBT.Combining.Lines.ProductWeightedCollision
+public import MIPStarRE.QPBT.Games.RestrictedAverage
+public import MIPStarRE.QPBT.Observables.WinImplications.Setup
 
 /-!
 # Conditional collision bound for nondegenerate line pasting
@@ -17,6 +19,8 @@ The collision estimate supports `lem:qld-xz-lines` at
 instantiates the hypothesis of `lem:pasting` at
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:504-525`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

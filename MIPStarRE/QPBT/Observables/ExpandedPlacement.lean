@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Observables.ExpandedDefs
-import MIPStarRE.QPBT.Observables.WinImplications
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
+module
+
+public import MIPStarRE.QPBT.Observables.ExpandedDefs
+public import MIPStarRE.QPBT.Observables.WinImplications
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
 
 /-!
 # Placing operators on the expanded state
@@ -21,6 +23,8 @@ in `blueprint/src/chapter/ch14_qpbt_observables.tex:1002-1031` and
 `blueprint/src/chapter/ch14_qpbt_observables.tex:1139-1178`.  Their paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:420-505`.
 -/
+
+@[expose] public section
 
 -- The unshuffled six-register index type of `eq:def-psihat` is a fourfold
 -- iterated product; instance search for its `Fintype` and `DecidableEq`

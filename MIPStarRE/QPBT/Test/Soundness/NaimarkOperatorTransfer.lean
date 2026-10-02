@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.Soundness.NaimarkReduction
-import MIPStarRE.QPBT.Test.Soundness.RangeProjection
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.NaimarkReduction
+public import MIPStarRE.QPBT.Test.Soundness.RangeProjection
 
 /-!
 # Pauli operator transfer through Naimark compression
@@ -20,6 +22,8 @@ The projective reduction and the final isometry passage are at
 The omitted range-projection calculation is documented in
 `docs/paper-gaps/qpbt_extraction-transfer.tex` and issue #604.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

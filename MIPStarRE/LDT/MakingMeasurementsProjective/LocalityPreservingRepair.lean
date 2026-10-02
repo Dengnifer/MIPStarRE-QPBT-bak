@@ -1,13 +1,15 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.Statements
-import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.Conversion
-import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
-import MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
-import MIPStarRE.LDT.Preliminaries.CauchySchwarz
-import MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPStarRE.LDT.Preliminaries.DistanceBounds
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Statements
+public import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.Conversion
+public import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
+public import MIPStarRE.LDT.Preliminaries.CauchySchwarz
+public import MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPStarRE.LDT.Preliminaries.DistanceBounds
 
 /-!
 # Section 5 — Locality-preserving projectivization repair
@@ -43,6 +45,8 @@ terms of a separate repair-input assumption, and provides the unconditional
 repair step used by the orthonormalization theorem.
 -/
 
+@[expose] public section
+
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
 namespace MIPStarRE.LDT.MakingMeasurementsProjective
@@ -52,7 +56,7 @@ open MIPStarRE.LDT
 noncomputable section
 
 /-- The diagonal block of a bipartite operator at a fixed right index. -/
-private def diagBlock {ιA ιB : Type*}
+def diagBlock {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]
     (M : MIPStarRE.Quantum.Op (ιA × ιB)) (b : ιB) :
     MIPStarRE.Quantum.Op ιA :=
@@ -60,7 +64,7 @@ private def diagBlock {ιA ιB : Type*}
 
 /-- The normalized left marginal of a bipartite density, obtained by
 averaging its diagonal right blocks. -/
-private def leftMarginalDensity {ιA ιB : Type*}
+def leftMarginalDensity {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ρ : MIPStarRE.Quantum.Op (ιA × ιB)) : MIPStarRE.Quantum.Op ιA :=
   ((((Fintype.card ιB : Error) : Error)⁻¹ : Error) : ℂ) •
@@ -88,7 +92,8 @@ def leftMarginalState {ιA ιB : Type*}
     [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]
     (ψ : QuantumState (ιA × ιB)) : QuantumState ιA where
   density := leftMarginalDensity ψ.density
-  density_psd := leftMarginalDensity_nonneg ψ.density_psd
+  density_psd := by
+    exact leftMarginalDensity_nonneg ψ.density_psd
 
 /-- Left tensor placement is block diagonal with the same block at every
 right index. -/

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.Interchange
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.Interchange
 
 /-!
 # Transport of the winning implications to the interchanged tensor factor
@@ -20,6 +22,8 @@ the second assertion of `lem:qld-win-implications-obs` in
 `blueprint/src/chapter/ch14_qpbt_observables.tex:701-703`.  Their paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:227,309-362`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

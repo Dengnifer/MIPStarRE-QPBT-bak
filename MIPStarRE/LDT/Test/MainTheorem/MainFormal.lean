@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.MainTheorem.SourceScalars
-import MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final
+module
+
+public import MIPStarRE.LDT.Test.MainTheorem.SourceScalars
+public import MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final
 
 /-!
 # Main-formal soundness theorem
@@ -23,6 +25,8 @@ the nonzero sampling condition `0 < k`.  These are documented in
 * Blueprint: `blueprint/src/chapter/ch02_test.tex`,
   `\label{thm:main-formal}`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

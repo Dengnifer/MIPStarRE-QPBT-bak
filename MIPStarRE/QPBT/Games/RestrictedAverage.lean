@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.DistributionAux
+module
+
+public import MIPStarRE.QPBT.Games.DistributionAux
 
 /-!
 # Averages over restricted finite distributions
@@ -11,6 +13,8 @@ the corresponding average after conditioning on a positive-mass event.
 The estimate supports the proof-only conditioning step in `lem:qld-xz-lines`,
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-963`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

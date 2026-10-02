@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Palomar.PauliGame
-import MIPStarRE.QPBT.Palomar.LowDegreeGameBridge
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Palomar.PauliGame
+public import MIPStarRE.QPBT.Palomar.LowDegreeGameBridge
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # Exact bridge for the compact Pauli basis game
@@ -14,6 +16,8 @@ PMF, and every branch of the Boolean verifier.
 
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1491`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

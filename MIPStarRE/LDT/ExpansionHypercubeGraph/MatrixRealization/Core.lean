@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier
+module
+
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier
 
 /-!
 # Section 7 — Matrix realization
@@ -12,6 +14,8 @@ introduced in `Defs`.
 - `blueprint/src/chapter/ch05_expansion.tex`
 - `references/ldt-paper/expansion.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.ExpansionHypercubeGraph
 

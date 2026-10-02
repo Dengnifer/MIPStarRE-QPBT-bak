@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Test.Soundness
-import MIPStarRE.QPBT.Test.Soundness.ScalarAbsorption
-import MIPStarRE.QPBT.Test.Completeness
+module
+
+public import MIPStarRE.QPBT.Test.Soundness
+public import MIPStarRE.QPBT.Test.Soundness.ScalarAbsorption
+public import MIPStarRE.QPBT.Test.Completeness
 
 /-!
 # Non-vacuity of the Pauli basis test soundness theorem
@@ -62,6 +64,8 @@ Supports blueprint `thm:pauli` and `lem:pauli-completeness`; paper origin
 and `:1229-1421`.  This module is formalization-only bookkeeping: it states no
 new mathematics of the source and introduces no hypothesis.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder Topology
 

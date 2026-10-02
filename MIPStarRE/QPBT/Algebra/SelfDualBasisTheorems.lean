@@ -1,10 +1,14 @@
-import MIPStarRE.QPBT.Algebra.SelfDualBasis
+module
+
+public import MIPStarRE.QPBT.Algebra.SelfDualBasis
 
 /-! # Trace and coordinate identities for self-dual bases
 
 Blueprint `lem:downsize_field` and `lem:one`; paper
 `references/qpbt-paper/04_preliminaries.tex:505-550,730-767`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

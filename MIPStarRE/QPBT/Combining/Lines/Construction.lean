@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.Lines.Conditioning
-import MIPStarRE.QPBT.Combining.ErrorBounds
-import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.Conditioning
+public import MIPStarRE.QPBT.Combining.ErrorBounds
+public import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
 
 /-!
 # Construction of consistent combined lines
@@ -15,6 +17,8 @@ blueprint `lem:qld-xz-lines`. The source and completed-answer distinctions remai
 as documented in
 `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

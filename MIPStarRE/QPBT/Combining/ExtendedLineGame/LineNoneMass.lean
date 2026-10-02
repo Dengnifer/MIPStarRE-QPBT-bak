@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.EvaluatedLineComparison
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.EvaluatedLineComparison
 
 /-!
 # Failed completed line-evaluation mass
@@ -20,6 +22,8 @@ bound.
 - Blueprint `lem:qld-4-7`.
 - Issue #332.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

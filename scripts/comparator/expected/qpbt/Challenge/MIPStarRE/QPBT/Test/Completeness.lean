@@ -1,7 +1,9 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Algebra.PauliTheorems
-import Challenge.MIPStarRE.QPBT.Observables.WinImplications.Setup
-import Challenge.MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Algebra.PauliTheorems
+public import Challenge.MIPStarRE.QPBT.Observables.WinImplications.Setup
+public import Challenge.MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Test/Completeness.lean`.
 
@@ -11,13 +13,15 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Test/Completeness.lean:30-290
 noncomputable section
 open MIPStarRE.LDT
 
--- source: MIPStarRE/QPBT/Test/Completeness.lean:41-54  (MIPStarRE.QPBT.map_uniformDistribution_congr)
+-- source: MIPStarRE/QPBT/Test/Completeness.lean:45-58  (MIPStarRE.QPBT.map_uniformDistribution_congr)
 /-- Formalization-only auxiliary: the push-forward of a uniform distribution
 does not depend on the finiteness and decidability data used to form it. -/
 theorem map_uniformDistribution_congr {α γ : Type*}
@@ -33,7 +37,7 @@ theorem map_uniformDistribution_congr {α γ : Type*}
   subst hd
   rfl
 
--- source: MIPStarRE/QPBT/Test/Completeness.lean:56-71  (MIPStarRE.QPBT.bind_map_uniformDistribution_congr)
+-- source: MIPStarRE/QPBT/Test/Completeness.lean:60-75  (MIPStarRE.QPBT.bind_map_uniformDistribution_congr)
 /-- Formalization-only auxiliary: a uniformly seeded typed bind does not depend
 on the finiteness and decidability data used to form it. -/
 theorem bind_map_uniformDistribution_congr {α β γ : Type*}
@@ -51,7 +55,7 @@ theorem bind_map_uniformDistribution_congr {α β γ : Type*}
   subst hd
   rfl
 
--- source: MIPStarRE/QPBT/Test/Completeness.lean:75-118  (MIPStarRE.QPBT.pauliQuestionDistribution_eq_typedCL)
+-- source: MIPStarRE/QPBT/Test/Completeness.lean:79-122  (MIPStarRE.QPBT.pauliQuestionDistribution_eq_typedCL)
 /-- `lem:pauli-question-typed-equality`: the Pauli question sampler equals the
 distribution that `def:typed-cl-distributions` (`ch12_qpbt_games.tex`) produces
 from the family `pauliCL` on the Pauli type graph. Both laws draw an ordered
@@ -97,7 +101,7 @@ theorem pauliQuestionDistribution_eq_typedCL (P : AdmissibleParams) :
     Distribution.map_map]
   exact bind_map_uniformDistribution_congr _ _ _ _ _ _ _ _ _ _
 
--- source: MIPStarRE/QPBT/Test/Completeness.lean:137-146  (MIPStarRE.QPBT.pauliQuestionDistribution_symm)
+-- source: MIPStarRE/QPBT/Test/Completeness.lean:141-150  (MIPStarRE.QPBT.pauliQuestionDistribution_symm)
 /-- Symmetry of the Pauli question distribution in the symmetric game appearing
 in `lem:pauli-completeness`. It follows from the identification of the sampler
 with the typed conditionally linear distribution of a single family, whose edge
@@ -109,7 +113,7 @@ theorem pauliQuestionDistribution_symm (P : AdmissibleParams)
   rw [pauliQuestionDistribution_eq_typedCL P]
   exact typedCLDistribution_symm _ _ _ (x, y)
 
--- source: MIPStarRE/QPBT/Test/Completeness.lean:148-175  (MIPStarRE.QPBT.pauliWinPredicate_symm)
+-- source: MIPStarRE/QPBT/Test/Completeness.lean:152-179  (MIPStarRE.QPBT.pauliWinPredicate_symm)
 /-- Symmetry of the Pauli decision predicate in the symmetric game appearing in
 `lem:pauli-completeness`. -/
 theorem pauliWinPredicate_symm (P : AdmissibleParams)
@@ -139,7 +143,7 @@ theorem pauliWinPredicate_symm (P : AdmissibleParams)
           (try exact Bool.noConfusion hvB) <;>
           rfl
 
--- source: MIPStarRE/QPBT/Test/Completeness.lean:177-186  (MIPStarRE.QPBT.pauliBasisTestSymm)
+-- source: MIPStarRE/QPBT/Test/Completeness.lean:181-190  (MIPStarRE.QPBT.pauliBasisTestSymm)
 /-- The symmetric presentation of the Pauli basis test. The field and basis
 are those fixed by `P.model`; no additional model is quantified. -/
 noncomputable def pauliBasisTestSymm (P : AdmissibleParams) : SymmetricGame where

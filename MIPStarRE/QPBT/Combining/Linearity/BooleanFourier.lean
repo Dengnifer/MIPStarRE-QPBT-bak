@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Preliminaries.FiniteFields
-import MIPStarRE.QPBT.Combining.Linearity.Defs
+module
+
+public import MIPStarRE.LDT.Preliminaries.FiniteFields
+public import MIPStarRE.QPBT.Combining.Linearity.Defs
 
 /-!
 # Boolean Fourier analysis for the quantum linearity theorem
@@ -19,6 +21,8 @@ calculation is in the same source at lines 900--912.  The QPBT paper invokes
 this theorem in
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:711-725`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

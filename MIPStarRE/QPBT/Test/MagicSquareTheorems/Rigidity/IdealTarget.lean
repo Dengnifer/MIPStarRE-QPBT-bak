@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.Pauli
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
+module
+
+public import MIPStarRE.QPBT.Algebra.Pauli
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
 
 /-!
 # The ideal target of the Magic Square rigidity theorem
@@ -26,6 +28,8 @@ rigidity theorem is blueprint
 `thm:ms-rigidity`, paper
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-652`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

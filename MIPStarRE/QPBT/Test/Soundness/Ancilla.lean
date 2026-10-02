@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Soundness.RangeProjection
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.RangeProjection
 
 /-!
 # Ancilla isometries for Pauli soundness
@@ -15,6 +17,8 @@ Formalization support for blueprint `thm:pauli`, specifically the isometry at
 The registers are ordered as `AA'A''`, with the first two factors grouped.
 These constructions do not assume or construct a global polynomial measurement.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

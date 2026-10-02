@@ -1,9 +1,11 @@
-import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
-import MIPStarRE.QPBT.Observables.WinImplications.Interchange
-import MIPStarRE.QPBT.Observables.Defs
-import MIPStarRE.QPBT.Combining.ActualErrorBounds
-import MIPStarRE.QPBT.Test.Soundness.NaimarkAssembly
-import MIPStarRE.QPBT.Test.Soundness.EpsReduction
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
+public import MIPStarRE.QPBT.Observables.WinImplications.Interchange
+public import MIPStarRE.QPBT.Observables.Defs
+public import MIPStarRE.QPBT.Combining.ActualErrorBounds
+public import MIPStarRE.QPBT.Test.Soundness.NaimarkAssembly
+public import MIPStarRE.QPBT.Test.Soundness.EpsReduction
 
 /-!
 # Transfer from completed to raw Pauli effects
@@ -22,6 +24,8 @@ Paper `thm:pauli`,
 and its proof at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1862-1876`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

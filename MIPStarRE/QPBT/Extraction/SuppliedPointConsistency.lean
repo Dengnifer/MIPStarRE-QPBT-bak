@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.Consistency
-import MIPStarRE.QPBT.Extraction.PointConsistencyPrime
-import MIPStarRE.QPBT.Extraction.NonencodingSupport
+module
+
+public import MIPStarRE.QPBT.Extraction.Consistency
+public import MIPStarRE.QPBT.Extraction.PointConsistencyPrime
+public import MIPStarRE.QPBT.Extraction.NonencodingSupport
 
 /-!
 # Supplied-witness point consistency for extraction
@@ -14,6 +16,8 @@ collision bounds.
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1463-1492`.
 * `docs/paper-gaps/qpbt_decoding-identity.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

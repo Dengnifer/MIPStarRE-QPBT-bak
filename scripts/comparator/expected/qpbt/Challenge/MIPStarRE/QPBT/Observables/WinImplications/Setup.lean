@@ -1,7 +1,9 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
-import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
-import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
+public import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
+public import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Observables/WinImplications/Setup.lean`.
 
@@ -11,6 +13,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Observables/WinImplications/Setup.lean:26-114
@@ -19,7 +23,7 @@ open scoped Matrix ComplexOrder
 open MIPStarRE.LDT
 open MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/Observables/WinImplications/Setup.lean:52-57  (MIPStarRE.QPBT.pauliQuestionPairDecidableEq)
+-- source: MIPStarRE/QPBT/Observables/WinImplications/Setup.lean:56-61  (MIPStarRE.QPBT.pauliQuestionPairDecidableEq)
 /-- Equality of Pauli question pairs is decidable. This is used in the
 consistency defect from item 1 of blueprint
 `lem:qld-win-implications`. -/

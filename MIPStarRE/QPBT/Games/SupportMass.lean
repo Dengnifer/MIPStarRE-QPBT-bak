@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-! # Marginal mass outside the support of a reference measurement
 
@@ -24,6 +26,8 @@ non-encoding marginal-mass bound or global-pair witness existence.
 - `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:232-248`,
   the bipartite consistency defect.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder
 

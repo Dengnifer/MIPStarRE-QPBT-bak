@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.ExactLinearity
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.ExactLinearity
 
 /-!
 # The joint recovery estimate in the point and combining variables
@@ -42,6 +44,8 @@ the tuple `b`, and the average of that bound over the point.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:617-680`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

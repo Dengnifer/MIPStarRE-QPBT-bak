@@ -1,9 +1,11 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics
-import MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPStarRE.Quantum.FiniteHilbert
-import MIPStarRE.Quantum.ProjectorONB
-import Mathlib.Analysis.Matrix.Spectrum
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics
+public import MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPStarRE.Quantum.FiniteHilbert
+public import MIPStarRE.Quantum.ProjectorONB
+public import Mathlib.Analysis.Matrix.Spectrum
 
 /-!
 # Section 5 — Q/X/XHat/P rank reduction
@@ -11,6 +13,8 @@ import Mathlib.Analysis.Matrix.Spectrum
 Sigma-space projectors and rank-reduction lemmas for the paper's `Q/X/XHat/P`
 intermediate layer.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
@@ -130,7 +134,7 @@ private noncomputable def sigmaFinCarrierEquiv {Outcome : Type*} [Fintype Outcom
 
 /-- The canonical block projective measurement on the lifted sigma carrier
 indexed by `Fin n`. -/
-private noncomputable def finSigmaProjMeas (n : ℕ) (m : Fin n → ℕ) :
+noncomputable def finSigmaProjMeas (n : ℕ) (m : Fin n → ℕ) :
     ProjMeas (Fin n) (ULift.{uι} (Σ i : Fin n, Fin (m i))) where
   outcome := fun i =>
     Matrix.diagonal fun x : ULift.{uι} (Σ i : Fin n, Fin (m i)) => if x.down.1 = i then 1 else 0

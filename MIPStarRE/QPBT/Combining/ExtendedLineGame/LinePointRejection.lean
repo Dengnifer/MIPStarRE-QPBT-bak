@@ -1,4 +1,5 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
+module
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
 
 /-!
 # Line/point rejection for the extended direct game
@@ -16,7 +17,7 @@ bound or construct the supplied witness.
 - Blueprint `lem:qld-4-7`.
 - Issues #302, #305, #307, and #309.
 -/
-
+@[expose] public section
 open scoped BigOperators MatrixOrder ComplexOrder
 
 -- The six-register products use the same instance-search budget as StateTransport.
@@ -36,7 +37,7 @@ variable {setting : ProjectiveSetting P epsilon}
 variable {points : CombinedPointsWitness setting deltaQ}
 
 /-- The unique coordinate of the one-coordinate extended direct low-degree game. -/
-private def onlyCoordinate : Fin P.extendedDirectLd.k :=
+def onlyCoordinate : Fin P.extendedDirectLd.k :=
   ⟨0, by change 0 < 1; decide⟩
 
 /-- Read an axis-line answer by completed evaluation at the sampled point.
@@ -994,7 +995,6 @@ theorem point_aline_rejection_eq_completedLinePointDefect
       (reversed_axis_completed_defect_eq_read_defect lines).symm
 
 end ExtendedLineGame
-
 end
 
 end MIPStarRE.QPBT

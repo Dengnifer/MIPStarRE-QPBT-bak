@@ -1,10 +1,12 @@
-import MIPStarRE.QPBT.Extraction.EncodingSupport
-import MIPStarRE.QPBT.Extraction.PolynomialCollision
-import MIPStarRE.QPBT.Observables.IdealPointConsistency
-import MIPStarRE.QPBT.Games.SupportMass
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorConsistency
-import MIPStarRE.QPBT.Combining.Lines.PairStateConsistencyTransport
-import MIPStarRE.QPBT.Extraction.Observables
+module
+
+public import MIPStarRE.QPBT.Extraction.EncodingSupport
+public import MIPStarRE.QPBT.Extraction.PolynomialCollision
+public import MIPStarRE.QPBT.Observables.IdealPointConsistency
+public import MIPStarRE.QPBT.Games.SupportMass
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorConsistency
+public import MIPStarRE.QPBT.Combining.Lines.PairStateConsistencyTransport
+public import MIPStarRE.QPBT.Extraction.Observables
 
 /-!
 # Consistency with encoding-supported reference measurements
@@ -22,6 +24,8 @@ mass outside the encoding image by evaluated reference inconsistency.
   with the ideal Pauli point projectors.
 - These are auxiliary estimates for a supplied witness, not its construction.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 open scoped Classical

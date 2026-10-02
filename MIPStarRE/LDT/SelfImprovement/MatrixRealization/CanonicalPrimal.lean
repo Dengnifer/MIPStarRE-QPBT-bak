@@ -1,5 +1,7 @@
-import MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal
-import MIPStarRE.LDT.SelfImprovement.MatrixRealization.Base
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal
+public import MIPStarRE.LDT.SelfImprovement.MatrixRealization.Base
 
 /-!
 # Section 9 — Canonical matrix SDP primal block form
@@ -12,6 +14,8 @@ from feasible canonical primal matrices.
 
 - `references/ldt-paper/self_improvement.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.SelfImprovement
 

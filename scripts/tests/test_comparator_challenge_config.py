@@ -106,8 +106,8 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
         self.assertEqual(
             ldt.expected, "scripts/comparator/expected/Challenge.lean.expected"
         )
-        self.assertEqual(ldt.header, "scripts/comparator/challenge_header.lean")
-        self.assertEqual(ldt.footer, "scripts/comparator/challenge_footer.lean")
+        self.assertEqual(ldt.header, "scripts/comparator/challenge_header.lean.in")
+        self.assertEqual(ldt.footer, "scripts/comparator/challenge_footer.lean.in")
         self.assertEqual(
             sorted(ldt.extras),
             [
@@ -265,7 +265,10 @@ class ChallengeConfigLoadingTests(unittest.TestCase):
                 challenge.extractor_env(),
                 {challenge_config.TARGETS_ENV: "A.one,A.two"},
             )
-            self.assertEqual(challenge.import_block(), "import A\nimport B\n")
+        self.assertEqual(
+            challenge.import_block(),
+            "meta import all A\nmeta import all B\n",
+        )
 
     def test_definition_names_are_optional_and_reach_the_extractor(self) -> None:
         with tempfile.TemporaryDirectory() as td:
@@ -761,12 +764,17 @@ class ExtractorRenderingTests(unittest.TestCase):
             challenge = challenge_config.load_challenge(
                 write_config(Path(td), "sample", imports=["A.B", "C"])
             )
-            template = "import Old.Module\n\n/-! doc -/\nimport-looking text\n"
+            template = (
+                "module\n\nmeta import all Old.Module\n\n"
+                "/-! doc -/\nimport-looking text\n"
+            )
 
             rendered = check_challenge_drift.render_extractor(challenge, template)
 
             self.assertEqual(
-                rendered, "import A.B\nimport C\n\n/-! doc -/\nimport-looking text\n"
+                rendered,
+                "module\n\nmeta import all A.B\nmeta import all C\n\n"
+                "/-! doc -/\nimport-looking text\n",
             )
 
     def test_checked_in_extractor_keeps_its_default_target(self) -> None:
@@ -774,7 +782,13 @@ class ExtractorRenderingTests(unittest.TestCase):
 
         self.assertIn("MIPSTARRE_COMPARATOR_TARGETS", source)
         self.assertIn("`MIPStarRE.LDT.Test.mainFormal", source)
-        self.assertTrue(source.startswith("import "))
+        self.assertTrue(
+            source.startswith(
+                "module\n\nmeta import all "
+                "MIPStarRE.LDT.Test.MainTheorem.MainFormal\n"
+            )
+        )
+        self.assertIn("\nmeta section\n", source)
 
     def test_template_without_an_import_block_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as td:

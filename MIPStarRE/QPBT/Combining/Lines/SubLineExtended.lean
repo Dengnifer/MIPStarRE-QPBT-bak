@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLineBlocks
-import MIPStarRE.QPBT.Combining.Witnesses
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLineBlocks
+public import MIPStarRE.QPBT.Combining.Witnesses
 
 /-!
 # Coordinate blocks of an extended point and of an extended direct sample
@@ -23,6 +25,8 @@ blueprint `lem:qld-sublines`, whose source is
 The coordinate blocks are those of `def:combine-map`, blueprint lines
 445--480, paper lines 970--989.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

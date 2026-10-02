@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.LineDefs
+module
+
+public import MIPStarRE.QPBT.Observables.LineDefs
 
 /-!
 # Zero-direction mass for axis lines
@@ -11,6 +13,8 @@ no mass at zero direction.
 The sampler is `def:line-point-dist`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:274-287`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

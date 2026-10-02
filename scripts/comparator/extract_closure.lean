@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Test.MainTheorem.MainFormal
+module
+
+meta import all MIPStarRE.LDT.Test.MainTheorem.MainFormal
 
 /-!
 # Comparator closure extractor
@@ -24,9 +26,11 @@ The challenge is selected by `scripts/comparator/challenges/<name>.json`:
 * its optional `definition_names` reach this file through
   `MIPSTARRE_COMPARATOR_DEFINITIONS`.  Missing or empty means that every
   reachable value is traversed, preserving the historical behaviour.
-* its `imports` replace the `import` block above.  `check_challenge_drift.py`
-  renders a copy of this file with that block substituted, because a Lean
-  module header cannot be computed at elaboration time.
+* its `imports` replace the private meta import block above.
+  `check_challenge_drift.py` renders a copy of this file with that block
+  substituted, because a Lean module header cannot be computed at elaboration
+  time.  `meta import all` retains private/generated declaration metadata and
+  executable values needed by the environment traversal.
 
 Output: one TSV row per declaration — name, module path, start line, end line
 (`NORANGE` for compiler-generated declarations without a source range), and an
@@ -36,6 +40,8 @@ deterministic; the dependency ordering (module import rank, then line number)
 happens downstream in the assembler.  See README.md in this directory for the
 full regeneration pipeline.
 -/
+
+meta section
 
 open Lean
 
@@ -53,6 +59,9 @@ def generatedTails : List String :=
    "mk.inj", "mk.injEq", "mk.noConfusion", "mk.sizeOf_spec"]
 
 def canon (env : Environment) (closure : NameSet) (n : Name) : Name :=
+  let n := match privateToUserName? n with
+    | some userName => if closure.contains userName then userName else n
+    | none => n
   let s := n.toString
   let s := (s.splitOn "._proof_").head!
   let s := (s.splitOn ".match_").head!

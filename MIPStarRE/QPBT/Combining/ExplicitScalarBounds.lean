@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Combining.ErrorBounds
-import MIPStarRE.QPBT.Combining.PassingError
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
-import MIPStarRE.QPBT.ExplicitConstants
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.Heterogeneous
+module
+
+public import MIPStarRE.QPBT.Combining.ErrorBounds
+public import MIPStarRE.QPBT.Combining.PassingError
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
+public import MIPStarRE.QPBT.ExplicitConstants
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.Heterogeneous
 
 /-!
 # Explicit scalar bounds for the QPBT baseline
@@ -17,6 +19,8 @@ auxiliaries for the source lemmas `lem:qld-xz-lines`, `lem:qld-4-13`, and
 Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-963,
 1134-1404`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

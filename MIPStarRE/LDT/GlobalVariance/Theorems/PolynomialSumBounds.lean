@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -23,6 +25,8 @@ identity `∑_f B^ℓ_f = B^ℓ.total` and the polynomial submeasurement normali
 `references/ldt-paper/expansion.tex`, lines 282-289 (proof of `lem:generalize-b`)
 and lines 317-321 (`eq:equivalent-local-variance`).
 -/
+
+@[expose] public section
 
 /-- Polynomial-sum analogue of
 `generalizeBLineCollisionTensorMass_sum_le_one`.
@@ -300,5 +304,7 @@ lemma generalizeBDeviationAtPolynomial_polysum_le_error
         Finset.sum_congr rfl fun g _ => heq g
     _ ≤ generalizeBError params :=
         generalizeBCollisionResidual_polysum_le_error params strategy G
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Points.WitnessMarginals
-import MIPStarRE.QPBT.Combining.PointsDataProcessing
+module
+
+public import MIPStarRE.QPBT.Combining.Points.WitnessMarginals
+public import MIPStarRE.QPBT.Combining.PointsDataProcessing
 
 /-!
 # Combining the point measurements
@@ -17,6 +19,8 @@ The construction is `lem:qld-4-10` in
 The coarse-graining is `lem:qld-4-12` in the same blueprint, with paper source
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:993-1011`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.ExpandedPlacement
+module
+
+public import MIPStarRE.QPBT.Observables.ExpandedPlacement
 
 /-!
 # Approximate commutation of the expanded point projections
@@ -18,6 +20,8 @@ The declarations prove item 2 of `lem:qld-comm-cons` in
 `blueprint/src/chapter/ch14_qpbt_observables.tex:1139-1178`, whose paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:466-505`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

@@ -1,6 +1,8 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.State
-import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.State
+public import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Test/SoundnessDefs.lean`.
 
@@ -10,6 +12,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Test/SoundnessDefs.lean:28-229
@@ -17,7 +21,7 @@ noncomputable section
 open MIPStarRE.LDT
 open MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:30-38  (MIPStarRE.QPBT.deltaQld)
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:34-42  (MIPStarRE.QPBT.deltaQld)
 /-- The Pauli-test error scale.  The argument order is `(a, b, ε, m, d, q)`;
 the powers are real `rpow`s and the asymptotic constants are absorbed into `a`,
 as specified by blueprint `thm:pauli`,
@@ -28,7 +32,7 @@ noncomputable def deltaQld (a b ε : ℝ) (m d q : ℕ) : ℝ :=
     (Real.rpow ε b + Real.rpow (q : ℝ) (-b) +
       Real.rpow 2 (-(b * ((m * d : ℕ) : ℝ))))
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:80-95  (MIPStarRE.QPBT.idealState)
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:84-99  (MIPStarRE.QPBT.idealState)
 /-- The ideal auxiliary state `aux ⊗ EPR_q^{⊗M}` in the shuffled register
 ordering.  The EPR factor is the concrete `eprState` from blueprint
 `def:EPR`; paper
@@ -46,7 +50,7 @@ noncomputable def idealState (P : AdmissibleParams)
         ((EuclideanSpace.equiv (PauliRegister P × PauliRegister P) ℂ)
           (eprState (PauliRegister P)) (p.1.2, p.2.2)))
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:97-110  (MIPStarRE.QPBT.pauliProjOnA'')
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:101-114  (MIPStarRE.QPBT.pauliProjOnA'')
 /-- The A-side ideal Pauli projector, with identities on the auxiliary and
 B-side registers.  This is a concrete matrix form of the operator comparison
 in blueprint `thm:pauli`; paper
@@ -62,7 +66,7 @@ noncomputable def pauliProjOnA'' (P : AdmissibleParams)
       pauliProj W u p.1.2 q.1.2
     else 0
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:112-124  (MIPStarRE.QPBT.pauliProjOnB'')
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:116-128  (MIPStarRE.QPBT.pauliProjOnB'')
 /-- The symmetric B-side ideal Pauli projector from blueprint
 `thm:pauli`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1426-1447`.
@@ -77,7 +81,7 @@ noncomputable def pauliProjOnB'' (P : AdmissibleParams)
       pauliProj W u p.2.2 q.2.2
     else 0
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:126-140  (MIPStarRE.QPBT.liftedAEffect)
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:130-144  (MIPStarRE.QPBT.liftedAEffect)
 /-- Lift a conjugated A-side effect to the full ideal register in blueprint
 `thm:pauli`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1426-1447`.
@@ -94,7 +98,7 @@ noncomputable def liftedAEffect {P : AdmissibleParams} {G : Game}
       (conjIsometry φA M) p.1 q.1
     else 0
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:142-156  (MIPStarRE.QPBT.liftedBEffect)
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:146-160  (MIPStarRE.QPBT.liftedBEffect)
 /-- Lift a conjugated B-side effect to the full ideal register in blueprint
 `thm:pauli`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1426-1447`.
@@ -111,7 +115,7 @@ noncomputable def liftedBEffect {P : AdmissibleParams} {G : Game}
       (conjIsometry φB M) p.2 q.2
     else 0
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:158-177  (MIPStarRE.QPBT.PauliSoundnessWitness)
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:162-181  (MIPStarRE.QPBT.PauliSoundnessWitness)
 /-- A finite witness packaging the auxiliary dimensions, isometries, and state
 from `thm:pauli`.  This structure is a Lean-only encoding of the existential
 data in the paper theorem; it introduces no extra hypothesis.  Blueprint
@@ -137,7 +141,7 @@ structure PauliSoundnessWitness (P : AdmissibleParams)
 attribute [instance] PauliSoundnessWitness.ιAFintype PauliSoundnessWitness.ιBFintype
   PauliSoundnessWitness.ιADecidableEq PauliSoundnessWitness.ιBDecidableEq
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:205-216  (MIPStarRE.QPBT.rawPauliOperatorDistanceA)
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:209-220  (MIPStarRE.QPBT.rawPauliOperatorDistanceA)
 /-- Alice's source-facing Pauli operator distance. The strategy effect is the
 raw effect of the prescribed answer `.pauliOutcome u`, exactly as in
 `thm:pauli`, paper
@@ -151,7 +155,7 @@ noncomputable def rawPauliOperatorDistanceA
         ((S.A (pauliQuestion P W)).effect (.pauliOutcome u)) -
       pauliProjOnA'' P W u) (idealState P w.aux)‖ ^ 2
 
--- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:218-228  (MIPStarRE.QPBT.rawPauliOperatorDistanceB)
+-- source: MIPStarRE/QPBT/Test/SoundnessDefs.lean:222-232  (MIPStarRE.QPBT.rawPauliOperatorDistanceB)
 /-- Bob's source-facing Pauli operator distance, using the raw prescribed
 answer effect from `thm:pauli`, paper
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1438-1443`.

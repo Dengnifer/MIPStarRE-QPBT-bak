@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.LinePointRejection
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.LinePointRejection
 
 /-!
 # Mixed line/point rejection bounds for the extended direct game
@@ -15,6 +17,8 @@ they do not establish a complete passing-value bound or construct a witness.
 - Blueprint `lem:qld-4-7`.
 - Issues #302, #305, #307, #309, and #311.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

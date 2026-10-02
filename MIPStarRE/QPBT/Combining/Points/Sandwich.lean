@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Points.Commutation
+module
+
+public import MIPStarRE.QPBT.Combining.Points.Commutation
 
 /-!
 # The sandwich POVM of the expanded point measurements
@@ -29,6 +31,8 @@ Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:731-748`
 `blueprint/src/chapter/ch15_qpbt_combining.tex:803-960` (`lem:qld-4-10`); the
 route is explained in `docs/paper-gaps/qpbt_combined-points-field-valued.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

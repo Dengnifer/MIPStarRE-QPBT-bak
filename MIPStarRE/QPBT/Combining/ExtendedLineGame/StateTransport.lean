@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame
-import MIPStarRE.QPBT.Observables.ExpandedPlacement
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame
+public import MIPStarRE.QPBT.Observables.ExpandedPlacement
 
 /-!
 # Correlations on the two-player expanded state
@@ -23,6 +25,8 @@ existence of its input measurements. Parent issue #119 remains open.
 - Blueprint `def:expanded-state`, `def:symmetric-equivalents`, and `lem:qld-4-7`.
 - Issue #302.
 -/
+
+@[expose] public section
 
 -- The six-register products require the same instance-search size as ExpandedPlacement.
 set_option synthInstance.maxSize 400

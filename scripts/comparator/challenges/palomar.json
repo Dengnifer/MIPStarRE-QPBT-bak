@@ -15,8 +15,8 @@
   "definition_names": [
     "MIPStarRE.QPBT.fixedFieldModel"
   ],
-  "header": "scripts/comparator/challenge_palomar_header.lean",
-  "footer": "scripts/comparator/challenge_palomar_footer.lean",
+  "header": "scripts/comparator/challenge_palomar_header.lean.in",
+  "footer": "scripts/comparator/challenge_palomar_footer.lean.in",
   "expected": "scripts/comparator/expected/palomar/Challenge.lean.expected",
   "require_expected": true,
   "split": false,

@@ -1,6 +1,8 @@
-import MIPStarRE.LDT.GlobalVariance.Defs.Families
-import MIPStarRE.LDT.MainInductionStep.Defs
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Defs.Families
+public import MIPStarRE.LDT.MainInductionStep.Defs
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
 
 /-!
 # Section 9 — Definitions
@@ -13,6 +15,8 @@ constructions and error terms.
 
 - `references/ldt-paper/self_improvement.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.SelfImprovement
 
@@ -289,7 +293,8 @@ noncomputable def sandwichedPolynomialSubMeasAt (params : Parameters)
       exact IsSelfAdjoint.conjugate_nonneg (T.outcome_pos h)
         (SubMeas.outcome_hermitian (strategy.pointMeasurement u).toSubMeas (h u))
     sum_eq_total := rfl
-    total_le_one := sandwichedPolynomialOutcomeOperatorAt_sum_le_one params strategy T u }
+    total_le_one := by
+      exact sandwichedPolynomialOutcomeOperatorAt_sum_le_one params strategy T u }
 
 /-- The average of the total pointwise sandwiched operators is bounded by the identity. -/
 private theorem averagedSandwichedPolynomialSubMeas_total_le_one (params : Parameters)
@@ -334,7 +339,8 @@ noncomputable def averagedSandwichedPolynomialSubMeas (params : Parameters)
       (fun u => sandwichedPolynomialOutcomeOperatorAt params strategy T u h)
       (fun u => (sandwichedPolynomialSubMeasAt params strategy T u).outcome_pos h)
     sum_eq_total := rfl
-    total_le_one := averagedSandwichedPolynomialSubMeas_total_le_one params strategy T }
+    total_le_one := by
+      exact averagedSandwichedPolynomialSubMeas_total_le_one params strategy T }
 
 /-- The variance error entering `lem:add-in-u`. -/
 noncomputable def selfImprovementVarianceError (params : Parameters)

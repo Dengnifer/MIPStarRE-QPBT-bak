@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.LineMeasurement.BipartiteTransport
+module
+
+public import MIPStarRE.QPBT.Observables.LineMeasurement.BipartiteTransport
 
 /-!
 # Consistency of expanded evaluation classes with expanded points
@@ -17,6 +19,8 @@ Item 3 of `lem:qld-comm-line-cons`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:540-545`,
 blueprint `eq:qld-comm-line-pt-cons2`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

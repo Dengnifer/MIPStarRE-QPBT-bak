@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.CodewordConsistency
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.CodewordConsistency
 
 /-! # The pinched reduction of the pasting estimate
 
@@ -12,6 +14,8 @@ second marginal comparison plus the pinched defect.
 proof of the adopted statement in
 `docs/paper-gaps/qpbt_pasting-product-error.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

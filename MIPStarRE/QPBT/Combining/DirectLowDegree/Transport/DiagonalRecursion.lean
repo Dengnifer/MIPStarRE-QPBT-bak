@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.BranchComparison
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.BranchComparison
 
 /-!
 # Diagonal branches of the coordinate strategies of the direct low-degree game
@@ -28,6 +30,8 @@ rejection.
   `lem:ld-dline-level`, `lem:ld-question-typed-cl`, `lem:alnf`, and `lem:dlnf`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

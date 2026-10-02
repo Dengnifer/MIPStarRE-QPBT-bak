@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Strategy
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Strategy
 
 /-!
 # The questions measured by the combined strategy
@@ -34,6 +36,8 @@ after rebasing along the image direction, which is
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:473-508`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

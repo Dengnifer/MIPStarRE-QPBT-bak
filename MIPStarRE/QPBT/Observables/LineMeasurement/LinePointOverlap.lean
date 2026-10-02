@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Observables.LineMeasurement.SelfConsistency
-import MIPStarRE.QPBT.Observables.LineMeasurement.Evaluation
+module
+
+public import MIPStarRE.QPBT.Observables.LineMeasurement.SelfConsistency
+public import MIPStarRE.QPBT.Observables.LineMeasurement.Evaluation
 
 /-!
 # Overlap of expanded line and expanded point measurements
@@ -25,6 +27,8 @@ Items 2 and 3 of `lem:qld-comm-line-cons`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:534-545`,
 blueprint `eq:qld-comm-line-pt-cons`, `eq:qld-comm-line-pt-cons2`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

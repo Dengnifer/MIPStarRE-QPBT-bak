@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.Sandwich.Quantitative
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.SchmidtMirror
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Quantitative
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.SchmidtMirror
 
 /-! # Consistency and commutation of the pasting codeword families
 
@@ -15,6 +17,8 @@ proof of `lem:pasting` recorded in
 Blueprint `blueprint/src/chapter/ch12_qpbt_games.tex:960-1050`; paper
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:504-525`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

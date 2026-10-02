@@ -1,6 +1,8 @@
-import MIPStarRE.Quantum.FiniteMatrix.Order
-import MIPStarRE.Quantum.FiniteMatrix.TracePairing
-import MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix.Order
+public import MIPStarRE.Quantum.FiniteMatrix.TracePairing
+public import MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical
 
 /-!
 # Section 9 -- Canonical SDP strong-duality preliminaries
@@ -13,6 +15,8 @@ argument for the canonical matrix SDP.
 
 - `references/ldt-paper/self_improvement.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.SelfImprovement
 

@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Bounds
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.NativeSeparated
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Fractional
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Comparisons
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Bounds
+public import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.NativeSeparated
+public import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Fractional
+public import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.Comparisons
 
 /-!
 # Final quantitative scalar bounds for Pauli soundness

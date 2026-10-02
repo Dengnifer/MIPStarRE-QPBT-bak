@@ -43,6 +43,9 @@ around the assembled body, the checked-in expected copy, and the per-challenge
 elaboration-context tables (`extras`, `module_preludes`).  The schema, with the
 meaning of every key, is documented at the top of `challenge_config.py`; unknown
 keys are rejected, so a typo fails loudly rather than silently dropping context.
+Headers and footers use the `.lean.in` suffix because they are byte-preserved
+source fragments, not independently runnable Lean files.  The split assembler
+adds the module header and visibility commands around those fragments.
 
 ### Registered definition frontiers
 
@@ -174,7 +177,7 @@ questions.  Regeneration checks that the fixture agrees with the current
 library.  `ComparatorChallengeDriftTests.test_ldt_expected_matches_baseline`
 also hashes `expected/Challenge.lean.expected` and requires the preserved LDT
 digest
-`d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2`.
+`3430abaf0e82e3527a8f64719f5da2740f3a84d4169a3391be8af6650179c434`.
 Consequently, a QPBT-only change cannot silently update both the library and the
 generated LDT fixture.
 
@@ -184,7 +187,9 @@ line comments. The LDT challenge declarations and target statement were
 unchanged. The Lean/Mathlib v4.35.0-rc2 port changed the pilot digest only
 because compatibility edits shifted the generated source line for
 `Polynomial.toFun`; the LDT declaration and target statement again remained
-unchanged.
+unchanged. Completing the library-wide module conversion changed this digest
+only through generated source-line comments and one compiler-private provenance
+comment. The extracted declaration text and target statement remain unchanged.
 
 For an intentional future LDT change, first regenerate from fresh built
 metadata, audit the exact fixture diff, and verify it in LDT-comparator.  Then
@@ -205,12 +210,12 @@ temporary directory; the same steps run by hand, shown here for the QPBT
 challenge, reproduce the same file:
 
 ```sh
-# 1. render the extractor with this challenge's own import block.  A Lean module
-#    header cannot be computed at elaboration time, so the checked-in
-#    extract_closure.lean carries the LDT import block and every consumer
-#    substitutes the challenge's `imports` into a copy of it; run unrendered on
-#    a QPBT target it fails with "target not found", because no LDT module
-#    imports QPBT.
+# 1. render the extractor with direct `import all` coverage of the repository
+#    modules. A module-system `import all` does not propagate through public
+#    re-exports, so the normal drift runner adds every `MIPStarRE` module while
+#    retaining the challenge's configured roots. The abbreviated command below
+#    shows only the configured QPBT roots and is suitable for source inspection;
+#    use the drift runner for authoritative closure generation.
 python3 - <<'PY' > extract_closure_qpbt.lean
 import sys
 sys.path.insert(0, "scripts/comparator")
@@ -225,7 +230,7 @@ PY
 #    targets reach the extractor in MIPSTARRE_COMPARATOR_TARGETS; with that
 #    variable unset it closes the LDT main theorem:
 MIPSTARRE_COMPARATOR_TARGETS="MIPStarRE.QPBT.pauli_soundness,MIPStarRE.QPBT.pauli_soundness_qubit,MIPStarRE.QPBT.exists_spcc_value_one,MIPStarRE.QPBT.exists_ld_soundness" \
-  lake env lean extract_closure_qpbt.lean > closure.tsv
+  lake env lean -DElab.inServer=true extract_closure_qpbt.lean > closure.tsv
 awk -F'\t' 'NF==4 || NF==5' closure.tsv > closure.clean.tsv
 
 # 3. assemble the challenge body (topological order, namespace handling)
@@ -264,14 +269,14 @@ generation and deliberately does not duplicate mutable acceptance status.
   the source is marked `"noncomputable": true`, because the definitions inside
   such a section carry no `noncomputable` keyword of their own.
 - The target statements in each footer mirror the theorems in the library:
-  `challenge_footer.lean` mirrors
+  `challenge_footer.lean.in` mirrors
   `MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean`, and
-  `challenge_qpbt_footer.lean` mirrors
+  `challenge_qpbt_footer.lean.in` mirrors
   `MIPStarRE/QPBT/Test/Completeness.lean`,
   `MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean`,
   `MIPStarRE/QPBT/Test/Soundness.lean`, and
   `MIPStarRE/QPBT/Test/QubitForm.lean`.  The compact
-  `challenge_palomar_footer.lean` mirrors the aliases in
+  `challenge_palomar_footer.lean.in` mirrors the aliases in
   `MIPStarRE/QPBT/Palomar/PauliCompleteness.lean`,
   `MIPStarRE/QPBT/Palomar/LowDegreeSoundness.lean`, and
   `MIPStarRE/QPBT/Palomar/PauliSoundness.lean`.  If a library statement changes,
@@ -280,6 +285,13 @@ generation and deliberately does not duplicate mutable acceptance status.
 - Declarations without a source range (compiler-generated congruence lemmas
   and `autoParam` helpers) are emitted as explanatory comments; they
   regenerate identically during elaboration of the challenge file.
+- The extractor runs with `-DElab.inServer=true`. Module-system command-line
+  imports otherwise omit declaration-range tables for transitive modules;
+  server metadata restores those ranges, while `import all` separately keeps
+  private and compiler-generated declarations available to closure traversal.
+- The drift runner renders a direct `import all` for every `MIPStarRE` module.
+  The modifier is not transitive through public re-exports, and closure
+  traversal needs the private proof bodies of all reachable declarations.
 - `extract_closure.lean` is an executable tracked Lean source.  The final
   dynamic source inventory in module-conversion packet #753 must include it and
   give it the module header required by that packet; it is not exempt merely
@@ -307,8 +319,12 @@ python3 scripts/comparator/assemble_challenge.py <closure.tsv> \
 `<out>/Challenge.lean` imports the parts under `<out>/Challenge/<library
 path>.lean` and carries the header and the `sorry`-ed target statements; each
 part imports Mathlib plus the mirrors of the library modules its source module
-imports.  The layout is what makes Lean generate the same auxiliary
-declarations, under the same names, as the library — see the "environment
-alignment" section of `docs/comparator.md`.  The checked-in copy is a
-directory, and `check_challenge_drift.py --challenge <name> [--update]`
-compares or rewrites the whole tree.
+imports.  Every generated file is a runnable module: imports are public and the
+generated declarations are in an exposed public section.  Keeping the golden
+tree as real `.lean` output lets drift checks compare exactly what the companion
+repository compiles, rather than maintaining a second filename mapping.  The
+layout is what makes Lean generate the same auxiliary declarations, under the
+same names, as the library — see the "environment alignment" section of
+`docs/comparator.md`.  The checked-in copy is a directory, and
+`check_challenge_drift.py --challenge <name> [--update]` compares or rewrites
+the whole tree.

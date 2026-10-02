@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.PauliTheorems
-import MIPStarRE.QPBT.Test.Soundness
+module
+
+public import MIPStarRE.QPBT.Algebra.PauliTheorems
+public import MIPStarRE.QPBT.Test.Soundness
 
 /-!
 # Qubit form of Pauli basis test soundness
@@ -25,6 +27,8 @@ The conversion is blueprint
 statement is blueprint `cor:pauli-binary`,
 from `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1450-1491`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

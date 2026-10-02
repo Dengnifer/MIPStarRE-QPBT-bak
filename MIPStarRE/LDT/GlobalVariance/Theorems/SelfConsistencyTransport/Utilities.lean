@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -24,6 +26,8 @@ Support lemmas for the good-strategy self-consistency transport
   marginals of the hypercube-edge sampling distribution are uniform
   (`expansion.tex:300–302`).
 -/
+
+@[expose] public section
 
 lemma ev_adjoint_sub_swap
     {κ : Type*} [Fintype κ] [DecidableEq κ]
@@ -325,5 +329,7 @@ lemma cabApproxDelta_sum_from_sdd
                 _ = ev ψ (((X - Y)ᴴ) * (X - Y)) := by
                     rw [hleft s g, hright s g]
     _ ≤ η := hcab
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

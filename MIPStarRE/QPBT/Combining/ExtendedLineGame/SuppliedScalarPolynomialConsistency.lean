@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.NativePointConsistency
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.SuppliedDirectSoundness
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.NativePointConsistency
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.SuppliedDirectSoundness
 
 /-!
 # Supplied scalar polynomial consistency
@@ -20,6 +22,8 @@ polynomial measurements projective, or complete paper `lem:qld-4-7`.
 - Issues #364, #527, and #598
 - Original proof commit `c39d7f25`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.ZeroDirectionMass
-import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.ZeroDirectionMass
+public import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
 
 /-! # Discarded zero-direction mass
 
@@ -7,6 +9,8 @@ import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
 
 Paper `lem:qld-xz-lines`, lines 950--963.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 open MIPStarRE.LDT

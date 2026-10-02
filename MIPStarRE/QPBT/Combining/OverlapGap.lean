@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.Support
-import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Support
+public import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct
 
 /-!
 # Replacing one factor of a measurement-weighted overlap
@@ -18,6 +20,8 @@ The estimate is `lem:overlap-gap-distance` in
 step at paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1147-1166`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

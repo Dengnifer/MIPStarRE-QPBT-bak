@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Defs
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Combining.Defs
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # Restricting and completing global polynomial-pair measurements
@@ -20,6 +22,8 @@ These algebraic constructions do not establish the concentration estimate
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1375-1404`,
   `eq:qld-sgg-completeness` and the final completion paragraph.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

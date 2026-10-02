@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.ScalarPolynomial
-import MIPStarRE.QPBT.Combining.PolynomialImageBounds
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.ScalarPolynomial
+public import MIPStarRE.QPBT.Combining.PolynomialImageBounds
 
 /-!
 # Scalar-nonlinear mass of the actual rounded measurements
@@ -15,6 +17,8 @@ player spaces is required. Projectivity retains the actual outcome masses.
 This is only scalar-linearity concentration; the variable-separation estimates
 and retained overlaps are separate results.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

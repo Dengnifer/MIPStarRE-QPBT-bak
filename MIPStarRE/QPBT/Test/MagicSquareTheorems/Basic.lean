@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.QPBT.Test.MagicSquare
+module
+
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.QPBT.Test.MagicSquare
 
 /-!
 # Basic Magic Square symmetry facts
@@ -14,6 +16,8 @@ The game is blueprint
 `def:ms-game`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:512-610`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

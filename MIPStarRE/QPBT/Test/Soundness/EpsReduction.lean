@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.SoundnessDefs
-import MIPStarRE.QPBT.Combining.DirectLowDegree.RejectionBounds
+module
+
+public import MIPStarRE.QPBT.Test.SoundnessDefs
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.RejectionBounds
 
 /-!
 # Extending Pauli soundness bounds from `ε ≤ 1` to the full error domain
@@ -34,6 +36,8 @@ source states the theorem for every `ε ≥ 0` and argues the substantive case
 `ε ≤ 1`; the reduction recorded here is the bookkeeping that the source leaves
 implicit.  It adds no hypothesis to `thm:pauli` and changes no constant.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

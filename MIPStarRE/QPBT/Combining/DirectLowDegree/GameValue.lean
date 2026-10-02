@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
-import MIPStarRE.LDT.Basic.DistributionAvg
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
+public import MIPStarRE.LDT.Basic.DistributionAvg
 
 /-!
 # Rejection probabilities for the directly indexed low-degree game
@@ -17,6 +19,8 @@ and its verifier is specified in the same file at lines 320-392.  The three
 equal outer weights of the low individual degree test and its uniform role
 choices are specified in `references/ldt-paper/test_definition.tex:10-67`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

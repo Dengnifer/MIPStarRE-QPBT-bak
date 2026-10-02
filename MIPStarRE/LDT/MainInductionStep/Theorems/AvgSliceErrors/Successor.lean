@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core
-import MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSlice
+module
+
+public import MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core
+public import MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSlice
 
 /-!
 # Section 6 — Averaged Slice Error Bounds: Successor Outputs
@@ -7,6 +9,8 @@ import MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.AnswerSl
 This module packages recursive answer-valued slice measurements and the final
 self-improvement-to-main-induction error comparisons.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

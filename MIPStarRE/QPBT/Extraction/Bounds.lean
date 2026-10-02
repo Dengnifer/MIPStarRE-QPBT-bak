@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.Observables
-import MIPStarRE.QPBT.Extraction.EPRState
-import MIPStarRE.QPBT.Combining.Points.Closeness
+module
+
+public import MIPStarRE.QPBT.Extraction.Observables
+public import MIPStarRE.QPBT.Extraction.EPRState
+public import MIPStarRE.QPBT.Combining.Points.Closeness
 
 /-!
 # Uniform bounds for the extraction witness
@@ -15,6 +17,8 @@ These bounds justify the large-error case of extraction.
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1666-1860`.
 * `docs/paper-gaps/qpbt_extraction-transfer.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

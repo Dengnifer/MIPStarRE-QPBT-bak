@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
 
 /-!
 # Swap-isometry extraction for Magic Square rigidity
@@ -26,6 +28,8 @@ The concrete binary Pauli projectors and EPR vector are those of
 `references/qpbt-paper/04_preliminaries.tex:1097-1262`.  The cited robust
 self-test is Coladangelo--Stark, arXiv:1709.09267v2, Theorem 6.9.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

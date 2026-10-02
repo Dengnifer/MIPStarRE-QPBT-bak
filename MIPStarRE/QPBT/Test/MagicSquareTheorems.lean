@@ -1,19 +1,21 @@
-import MIPStarRE.QPBT.Algebra.Pauli
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Basic
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Relations
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Dilation
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Swap
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Consistency
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.SecondPair
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.IdealTarget
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Constants
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitSwap
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Assembly
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Marginals
+module
+
+public import MIPStarRE.QPBT.Algebra.Pauli
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Basic
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Relations
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Dilation
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Anticommutation
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Swap
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Consistency
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.SecondPair
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.IdealTarget
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Constants
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitSwap
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Assembly
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Marginals
 
 /-!
 # Magic Square rigidity
@@ -42,6 +44,8 @@ The source statement is blueprint
 The variable indices below are zero-based: indices 0 and 4 represent the
 paper's first and fifth variables, respectively.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

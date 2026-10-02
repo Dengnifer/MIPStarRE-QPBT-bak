@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Extraction.Consistency
-import MIPStarRE.QPBT.Extraction.PointConsistencyPrime
+module
+
+public import MIPStarRE.QPBT.Extraction.Consistency
+public import MIPStarRE.QPBT.Extraction.PointConsistencyPrime
 
 /-!
 # Measurements on extraction blocks
@@ -13,6 +15,8 @@ of original-player consistency through the two adjoined EPR states.
 These are finite-dimensional placement lemmas supporting blueprint
 `lem:qld-construct-the-paulis` and `lem:qld-unitary`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder Classical
 

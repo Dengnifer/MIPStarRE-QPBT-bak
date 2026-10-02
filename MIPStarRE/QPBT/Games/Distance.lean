@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.Defs
+module
+
+public import MIPStarRE.QPBT.Games.Defs
 
 /-!
 # Quantitative state and operator distances
@@ -12,6 +14,8 @@ estimates to later proof stages.
 These are blueprint `def:state-distance` and `def:povm-distance`; the paper origin is
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:219-271`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

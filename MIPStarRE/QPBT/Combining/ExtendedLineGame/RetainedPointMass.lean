@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.PairMeasurement
-import MIPStarRE.QPBT.Combining.RetainedPointBounds
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.PairMeasurement
+public import MIPStarRE.QPBT.Combining.RetainedPointBounds
 
 /-!
 # Retained point mismatch on the faithful combining image
@@ -13,6 +15,8 @@ Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1360-1404`,
 `eq:qld-s-good-and-bad` through `eq:qld-sgg-mhat-sandwich`;
 blueprint `lem:qld-4-7`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder
 

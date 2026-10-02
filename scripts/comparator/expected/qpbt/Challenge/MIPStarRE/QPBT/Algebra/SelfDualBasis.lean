@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Algebra/SelfDualBasis.lean`.
 
@@ -9,9 +11,11 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
--- source: MIPStarRE/QPBT/Algebra/SelfDualBasis.lean:47-54  (MIPStarRE.QPBT.chiOfBasis)
+-- source: MIPStarRE/QPBT/Algebra/SelfDualBasis.lean:51-58  (MIPStarRE.QPBT.chiOfBasis)
 /-- Matrix coordinate expansion for an arbitrary basis. This is the `chi_q`
 construction of blueprint `def:subfields-kappa`,
 paper `04_preliminaries.tex:462-475`; it is used in item 3 of blueprint
@@ -21,7 +25,7 @@ noncomputable def chiOfBasis {F K ρ κ σ : Type*} [Field F] [Field K]
     Matrix (ρ × κ) (σ × κ) F :=
   fun p r => b.equivFun (M p.1 r.1 * b r.2) p.2
 
--- source: MIPStarRE/QPBT/Algebra/SelfDualBasis.lean:56-62  (MIPStarRE.QPBT.basisCoordVec)
+-- source: MIPStarRE/QPBT/Algebra/SelfDualBasis.lean:60-66  (MIPStarRE.QPBT.basisCoordVec)
 /-- Coordinates of a vector, block-indexed by its vector and basis indices.
 This is the vector `kappa_q(v)` of blueprint
 `def:subfields-kappa`, paper `04_preliminaries.tex:462-475`; it is used

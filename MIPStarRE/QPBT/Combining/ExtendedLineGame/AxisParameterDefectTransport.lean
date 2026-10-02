@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterEvaluatedLineBound
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineCoefficientBound
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterEvaluatedLineBound
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineCoefficientBound
 
 /-!
 # Transport of the axis parameter-evaluation defect
@@ -22,6 +24,8 @@ theorem.
 - Blueprint `lem:qld-4-7`.
 - Issue #351.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

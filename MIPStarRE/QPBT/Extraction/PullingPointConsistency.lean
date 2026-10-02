@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Extraction.PointConsistencyPrime
-import MIPStarRE.QPBT.Extraction.PullingMeasurement
+module
+
+public import MIPStarRE.QPBT.Extraction.PointConsistencyPrime
+public import MIPStarRE.QPBT.Extraction.PullingMeasurement
 
 /-!
 # Point overlaps for the difference-polynomial measurement
@@ -19,6 +21,8 @@ The resulting point overlaps are the ones supplied by the global witness.
   identities do not construct the global witness. This module was
   originally filed under issue #520, now closed.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder Classical
 

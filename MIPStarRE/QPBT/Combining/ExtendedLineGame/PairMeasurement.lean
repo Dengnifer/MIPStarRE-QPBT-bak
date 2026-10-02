@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.WrongVariableMass
-import MIPStarRE.QPBT.Combining.PairCompletion
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.WrongVariableMass
+public import MIPStarRE.QPBT.Combining.PairCompletion
 
 /-!
 # Transport of the polynomial-pair completion
@@ -13,6 +15,8 @@ Every original outcome is retained, including those outside the combining image.
 Paper `eq:qld-sgg-completeness` and the completion paragraph of `lem:qld-4-7`,
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1375-1404`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder
 
@@ -37,9 +41,9 @@ def directPolynomialEquiv (P : AdmissibleParams) :
     DirectPolyTuple P.extendedDirectLd ≃
       Preliminaries.polyFunc (2 * P.m + 2) (PauliScalar P) P.d where
   toFun g := ⟨MvPolynomial.map (extendedDirectScalarEquiv P).toRingHom (g (0 : Fin 1)).1,
-    map_mem_polyFunc _ _⟩
+    by exact map_mem_polyFunc _ _⟩
   invFun p := fun _ => ⟨MvPolynomial.map (extendedDirectScalarEquiv P).symm.toRingHom p.1,
-    map_mem_polyFunc _ _⟩
+    by exact map_mem_polyFunc _ _⟩
   left_inv g := by
     funext i
     have hi : i = (0 : Fin 1) := @Subsingleton.elim (Fin 1) _ i 0

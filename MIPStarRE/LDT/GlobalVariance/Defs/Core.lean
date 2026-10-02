@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.ParametersFiniteAnswers
-import MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
+module
+
+public import MIPStarRE.LDT.Basic.ParametersFiniteAnswers
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
 
 /-!
 # Section 8 global variance: core definitions
@@ -12,6 +14,8 @@ questions) underlying the Section 8 global-variance construction.
 - `references/ldt-paper/expansion.tex`
 - `blueprint/src/chapter/ch06_variance.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.GlobalVariance
 

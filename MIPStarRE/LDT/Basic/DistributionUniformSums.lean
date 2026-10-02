@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.Distribution
-import MIPStarRE.LDT.Basic.PMFUniformAverages
+module
+
+public import MIPStarRE.LDT.Basic.Distribution
+public import MIPStarRE.LDT.Basic.PMFUniformAverages
 
 /-!
 # Module-valued uniform finite sums for project distributions
@@ -31,6 +33,8 @@ functions.
 These are formalization-internal finite probability lemmas for the low
 individual degree test development.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

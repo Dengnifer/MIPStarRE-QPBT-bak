@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.PinchedReduction
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.PinchedReduction
 
 /-! # Moving a second codeword effect across the tensor factors
 
@@ -14,6 +16,8 @@ the summed cross distance of that family.
 proof of the adopted statement in
 `docs/paper-gaps/qpbt_pasting-product-error.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

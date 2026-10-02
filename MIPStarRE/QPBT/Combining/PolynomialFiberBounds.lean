@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.PolynomialImageBounds
-import MIPStarRE.QPBT.Combining.PointsDataProcessing
+module
+
+public import MIPStarRE.QPBT.Combining.PolynomialImageBounds
+public import MIPStarRE.QPBT.Combining.PointsDataProcessing
 
 /-!
 # Common exceptional fibers for polynomial coefficients
@@ -15,6 +17,8 @@ block being averaged.
 Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1341-1358`,
 especially `eq:qld-g-2`; support for blueprint `lem:qld-4-7`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,10 +1,12 @@
-import MIPStarRE.QPBT.Combining.Lines.PointComparison
-import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
-import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
-import MIPStarRE.QPBT.Games.Sandwich
-import MIPStarRE.QPBT.Combining.Lines.ConditionalCollision
-import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingMass
-import MIPStarRE.QPBT.Combining.Lines.DiscardedMass
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.PointComparison
+public import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
+public import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
+public import MIPStarRE.QPBT.Games.Sandwich
+public import MIPStarRE.QPBT.Combining.Lines.ConditionalCollision
+public import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingMass
+public import MIPStarRE.QPBT.Combining.Lines.DiscardedMass
 
 /-!
 # Conditioning the line-pasting distribution
@@ -19,6 +21,8 @@ blueprint `lem:qld-xz-lines`. The source and completed-answer distinctions remai
 as documented in
 `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

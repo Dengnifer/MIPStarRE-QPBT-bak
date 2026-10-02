@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # Commuting and anticommuting Pauli tuples
@@ -13,6 +15,8 @@ The definitions and probability bounds formalize blueprint
 `def:anticommuting-tuple` and `fact:omega-anticomm-prob`, with paper origin
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:64-95`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

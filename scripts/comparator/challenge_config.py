@@ -20,8 +20,8 @@ Schema (unknown top-level keys are rejected so typos fail loudly):
   "imports": ["MIPStarRE.…"],          // required, non-empty
   "targets": ["MIPStarRE.…"],          // required, non-empty; closure roots
   "definition_names": ["MIPStarRE.…"], // optional; values become Challenge holes
-  "header": "scripts/…/header.lean",   // optional, null to omit
-  "footer": "scripts/…/footer.lean",   // optional, null to omit
+  "header": "scripts/…/header.lean.in", // optional, null to omit
+  "footer": "scripts/…/footer.lean.in", // optional, null to omit
   "expected": "scripts/…/Challenge.lean.expected",   // required
   "require_expected": true,            // optional, default true
   "split": false,                      // optional, default false
@@ -140,8 +140,8 @@ class ChallengeConfig:
     module_preludes: dict[str, tuple[Prelude, ...]]
 
     def import_block(self) -> str:
-        """The extractor's module header for this challenge."""
-        return "".join(f"import {module}\n" for module in self.imports)
+        """The extractor's private meta imports for this challenge."""
+        return "".join(f"meta import all {module}\n" for module in self.imports)
 
     def extractor_env(self) -> dict[str, str]:
         """Environment overrides telling the extractor which frontiers to close."""

@@ -13,8 +13,8 @@
     "MIPStarRE.QPBT.exists_spcc_value_one",
     "MIPStarRE.QPBT.exists_ld_soundness"
   ],
-  "header": "scripts/comparator/challenge_qpbt_header.lean",
-  "footer": "scripts/comparator/challenge_qpbt_footer.lean",
+  "header": "scripts/comparator/challenge_qpbt_header.lean.in",
+  "footer": "scripts/comparator/challenge_qpbt_footer.lean.in",
   "expected": "scripts/comparator/expected/qpbt",
   "require_expected": true,
   "split": true,

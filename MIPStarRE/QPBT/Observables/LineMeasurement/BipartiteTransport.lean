@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.LineMeasurement.LinePointOverlap
+module
+
+public import MIPStarRE.QPBT.Observables.LineMeasurement.LinePointOverlap
 
 /-!
 # Bipartite estimates and transport for the expanded line measurements
@@ -24,6 +26,8 @@ blueprint `eq:qld-comm-line-pt-cons` and `eq:qld-comm-line-pt-cons2`, and
 the generic estimates `fact:agreement` and `fact:add-a-proj2` of
 `blueprint/src/chapter/ch12_qpbt_games.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

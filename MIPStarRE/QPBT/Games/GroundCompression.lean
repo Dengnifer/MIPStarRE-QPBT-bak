@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.StrategyClasses
+module
+
+public import MIPStarRE.QPBT.Games.StrategyClasses
 
 /-! # Ground-coordinate compression of finite measurements
 
@@ -22,6 +24,8 @@ argument. No statement of `lem:qld-4-7` is formalized here.
 * `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:232-248`,
   `def:consistency`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

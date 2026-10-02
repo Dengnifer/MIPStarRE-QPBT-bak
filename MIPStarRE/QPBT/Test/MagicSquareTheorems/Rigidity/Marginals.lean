@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Assembly
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Assembly
 
 /-!
 # Transporting the first logical pair through the two-qubit controlled swap
@@ -30,6 +32,8 @@ paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-6
 the cited robust self-test is Coladangelo--Stark, arXiv:1709.09267v2,
 Theorem 6.9, `references/cs-paper/self-testing.tex:660-730`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

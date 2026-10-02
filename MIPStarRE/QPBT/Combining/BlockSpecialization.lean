@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.ExactLinearity
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.ExactLinearity
 
 /-!
 # Uniform bounds for specialization in a block of variables
@@ -21,6 +23,8 @@ of the induced function, permits the argument for arbitrary degrees, including
   `blueprint/src/chapter/ch15_qpbt_combining.tex`.
 * Issue #283.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

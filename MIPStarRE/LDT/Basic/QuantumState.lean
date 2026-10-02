@@ -1,11 +1,15 @@
-import MIPStarRE.LDT.Basic.ParametersBase
-import MIPStarRE.Quantum.FiniteMatrix
+module
+
+public import MIPStarRE.LDT.Basic.ParametersBase
+public import MIPStarRE.Quantum.FiniteMatrix
 
 /-!
 # Quantum states and tensor placement for the low individual degree test
 
 Core quantum-state definitions together with tensor-placement operators.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
@@ -69,7 +73,7 @@ structure PureState (ι : Type*) [Fintype ι] [DecidableEq ι] [Nonempty ι] whe
 namespace PureState
 
 /-- The coordinate-basis vector has unit self-dot product. -/
-private theorem basis_unit {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+theorem basis_unit {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
     (i : ι) :
     star (fun j => if j = i then (1 : ℂ) else 0) ⬝ᵥ
         (fun j => if j = i then (1 : ℂ) else 0) = 1 := by

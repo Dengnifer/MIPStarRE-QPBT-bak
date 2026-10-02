@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
+module
+
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms
 
 /-!
 # Section 7 hypercube graph: trace-form foundations
@@ -16,6 +18,8 @@ families.
   `lem:global-rewrite`
 - `blueprint/src/chapter/ch05_expansion.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.ExpansionHypercubeGraph
 

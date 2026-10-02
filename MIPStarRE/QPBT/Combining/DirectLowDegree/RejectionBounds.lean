@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
 
 /-! # Probability bounds for the directly indexed low-degree game
 
@@ -11,6 +13,8 @@ support: they do not bound any individual game branch or prove a passing-value t
 - `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:178-186`
 - Parent issue #119 and arithmetic issue #333
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

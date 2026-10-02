@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.MoveLemmas.Basic
+module
+
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.MoveLemmas.Basic
 
 /-!
 # Section 12 pasting: from-H-to-G head-tail stage reindexing
@@ -6,6 +8,8 @@ import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.MoveLemmas.Basic
 The head-tail reindexing lemmas for the adjacent-stage source expression in the
 paper's `from H to G` chain.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

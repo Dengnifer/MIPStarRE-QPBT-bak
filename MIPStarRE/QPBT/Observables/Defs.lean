@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.QPBT.Games.DistanceTheorems.Support
-import MIPStarRE.QPBT.Games.Sandwich.Support
-import MIPStarRE.QPBT.Observables.LineDefs
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Support
+public import MIPStarRE.QPBT.Games.Sandwich.Support
+public import MIPStarRE.QPBT.Observables.LineDefs
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # Typed strategy measurements and point observables
@@ -23,6 +25,8 @@ and answer forms come from blueprint `def:pauli-question-distribution` and
 `def:pauli-win-predicate`, with paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1225`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

@@ -1,8 +1,10 @@
-import Mathlib.Data.Fintype.EquivFin
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.AlmostProjective
+module
+
+public import Mathlib.Data.Fintype.EquivFin
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.AlmostProjective
 
 /-!
 # Section 5 — Q/X/XHat/P identities and approximations
@@ -10,6 +12,8 @@ import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.AlmostProjective
 Late-stage algebraic identities and approximation lemmas for the paper's
 `Q/X/XHat/P` intermediate layer.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

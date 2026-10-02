@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.PauliBasisTest
-import MIPStarRE.QPBT.State
+module
+
+public import MIPStarRE.QPBT.Test.PauliBasisTest
+public import MIPStarRE.QPBT.State
 
 /-!
 # Pauli basis test soundness interface
@@ -17,6 +19,8 @@ The interface supports blueprint
 The distance functionals use blueprint `def:state-distance` and
 `def:povm-distance`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

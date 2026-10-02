@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.CondLinearTheorems
-import MIPStarRE.QPBT.Games.DistributionAux
+module
+
+public import MIPStarRE.QPBT.Games.CondLinearTheorems
+public import MIPStarRE.QPBT.Games.DistributionAux
 
 /-! # Typed conditionally linear distributions
 
@@ -13,6 +15,8 @@ These are blueprint `def:typed-cl-functions` and `def:typed-cl-distributions`,
 with paper origin
 `references/qpbt-paper/07_types.tex:57-94`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

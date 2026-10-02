@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.LineMeasurement.Projector
+module
+
+public import MIPStarRE.QPBT.Observables.LineMeasurement.Projector
 
 /-!
 # Expanded line measurements
@@ -17,6 +19,8 @@ The declarations formalize `def:expanded-line-measurement`, whose paper
 source is
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:552-556`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Simultaneous
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Simultaneous
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # Polynomial consistency from point comparisons
@@ -17,6 +19,8 @@ Projectivity is not required, so the estimate applies after ground compression.
 * `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` and issue #513.
 * `audits/2026-09-12_issue-513_composition-compatibility.md`, obligation 2.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

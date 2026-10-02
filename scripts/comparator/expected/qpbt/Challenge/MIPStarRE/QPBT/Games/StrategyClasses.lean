@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Games.Consistency
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Games.Consistency
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/StrategyClasses.lean`.
 
@@ -9,6 +11,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/StrategyClasses.lean:1-155
@@ -16,14 +20,14 @@ section
 open scoped Matrix MatrixOrder ComplexOrder
 open MIPStarRE.LDT MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:25-29  (MIPStarRE.QPBT.Strategy.IsProjective)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:26-30  (MIPStarRE.QPBT.Strategy.IsProjective)
 /-- Projectivity from blueprint
 `def:projective-strategy-general`, paper `06_nonlocal_games_and_mipstar.tex:68-72`. -/
 def Strategy.IsProjective {G : Game} (S : Strategy G) : Prop :=
   (∀ x, MIPStarRE.QPBT.Measurement.IsProjective (S.A x)) ∧
     ∀ y, MIPStarRE.QPBT.Measurement.IsProjective (S.B y)
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:31-46  (MIPStarRE.QPBT.SymmetricGame)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:32-47  (MIPStarRE.QPBT.SymmetricGame)
 /-- Symmetric games from blueprint
 `def:symmetric-game`, paper `06_nonlocal_games_and_mipstar.tex:74-92`.
 The question and answer alphabets are each represented by a single shared type,
@@ -46,7 +50,7 @@ attribute [instance] SymmetricGame.questionFintype
   SymmetricGame.answerFintype SymmetricGame.questionDecidableEq
   SymmetricGame.answerDecidableEq
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:51-61  (MIPStarRE.QPBT.SymmetricGame.toGame)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:52-62  (MIPStarRE.QPBT.SymmetricGame.toGame)
 /-- Regard a symmetric game as a game with equal question and answer types;
 blueprint
 `def:symmetric-game`, paper `06_nonlocal_games_and_mipstar.tex:74-92`. -/
@@ -59,7 +63,7 @@ def SymmetricGame.toGame (G : SymmetricGame) : Game where
   μ_prob := G.μ_prob
   decide := G.decide
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:63-74  (MIPStarRE.QPBT.SymmetricStrategy)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:64-75  (MIPStarRE.QPBT.SymmetricStrategy)
 /-- Symmetric strategies from blueprint
 `def:symmetric-game`, paper `06_nonlocal_games_and_mipstar.tex:74-92`.
 The two local spaces and measurement families are identified, as in the source
@@ -77,7 +81,7 @@ structure SymmetricStrategy (G : SymmetricGame) where
 attribute [instance] SymmetricStrategy.ιFintype
   SymmetricStrategy.ιDecidableEq
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:78-88  (MIPStarRE.QPBT.SymmetricStrategy.toStrategy)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:79-89  (MIPStarRE.QPBT.SymmetricStrategy.toStrategy)
 /-- Regard a symmetric strategy as a strategy using the same local space and
 measurement family for both players; blueprint
 `def:symmetric-game`, paper `06_nonlocal_games_and_mipstar.tex:74-92`. -/
@@ -90,7 +94,7 @@ def SymmetricStrategy.toStrategy {G : SymmetricGame} (S : SymmetricStrategy G) :
   A := S.M
   B := S.M
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:90-99  (MIPStarRE.QPBT.IsCommutingOn)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:91-100  (MIPStarRE.QPBT.IsCommutingOn)
 /-- Common-space commutation from blueprint
 `def:comm-strategy`, paper `06_nonlocal_games_and_mipstar.tex:132-142`. -/
 def IsCommutingOn {X Y α β ι : Type*}
@@ -102,7 +106,7 @@ def IsCommutingOn {X Y α β ι : Type*}
     (B : Y → MIPStarRE.Quantum.Measurement β ι) : Prop :=
   ∀ x y, 0 < μ.weight (x, y) → ∀ a b, Commute ((A x).effect a) ((B y).effect b)
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:110-117  (MIPStarRE.QPBT.Measurement.IsConsistentOn)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:111-118  (MIPStarRE.QPBT.Measurement.IsConsistentOn)
 /-- Measurement consistency from blueprint
 `def:consistent-measurement`, paper `06_nonlocal_games_and_mipstar.tex:144-160`. -/
 def Measurement.IsConsistentOn {α ι : Type*}
@@ -112,14 +116,14 @@ def Measurement.IsConsistentOn {α ι : Type*}
   ∀ a, (heteroKron (M.effect a) 1).mulVec ψ =
     (heteroKron 1 (M.effect a)).mulVec ψ
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:131-135  (MIPStarRE.QPBT.SymmetricStrategy.IsConsistent)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:132-136  (MIPStarRE.QPBT.SymmetricStrategy.IsConsistent)
 /-- Symmetric strategy consistency from blueprint
 `def:consistent-strategy`, paper `06_nonlocal_games_and_mipstar.tex:162-174`. -/
 def SymmetricStrategy.IsConsistent {G : SymmetricGame}
     (S : SymmetricStrategy G) : Prop :=
   ∀ x, MIPStarRE.QPBT.Measurement.IsConsistentOn (S.M x) S.ψ
 
--- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:149-154  (MIPStarRE.QPBT.SymmetricStrategy.IsSPCC)
+-- source: MIPStarRE/QPBT/Games/StrategyClasses.lean:150-155  (MIPStarRE.QPBT.SymmetricStrategy.IsSPCC)
 /-- The SPCC predicate blueprint `def:spcc`,
 paper `06_nonlocal_games_and_mipstar.tex:176-180`. -/
 def SymmetricStrategy.IsSPCC {G : SymmetricGame}

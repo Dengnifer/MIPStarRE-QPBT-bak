@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.SoundnessDefs
+module
+
+public import MIPStarRE.QPBT.Test.SoundnessDefs
 
 /-!
 # Square roots of the Pauli soundness error
@@ -12,6 +14,8 @@ Blueprint `rem:pauli-robustness-form`; the source states the squared bound at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1868-1876`,
 whereas `thm:pauli` bounds the unsquared norm.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

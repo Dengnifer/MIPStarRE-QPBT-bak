@@ -1,6 +1,8 @@
-import Mathlib
-import MIPStarRE.QPBT.Algebra.RowEchelon
-import MIPStarRE.QPBT.Algebra.Subspaces
+module
+
+public import Mathlib
+public import MIPStarRE.QPBT.Algebra.RowEchelon
+public import MIPStarRE.QPBT.Algebra.Subspaces
 
 /-!
 # Lines and canonical representatives
@@ -21,6 +23,8 @@ of the QPBT headline theorems, which must elaborate in the same environment as
 the Mathlib-only `ChallengeQPBT.lean`.  Keep the full `import Mathlib`; do not
 narrow it.  See `docs/comparator.md`, "Environment alignment".
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,12 +1,14 @@
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.QPBT.Games.TypedCondLinear
-import MIPStarRE.QPBT.Test.Completeness.Commutation
-import MIPStarRE.QPBT.Test.Completeness.HonestStrategy
-import MIPStarRE.QPBT.Test.Completeness.HonestStrategy.MeasurementFamily
-import MIPStarRE.QPBT.Test.Completeness.Rejection
-import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
-import MIPStarRE.QPBT.Test.MagicSquareTheorems
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.QPBT.Games.TypedCondLinear
+public import MIPStarRE.QPBT.Test.Completeness.Commutation
+public import MIPStarRE.QPBT.Test.Completeness.HonestStrategy
+public import MIPStarRE.QPBT.Test.Completeness.HonestStrategy.MeasurementFamily
+public import MIPStarRE.QPBT.Test.Completeness.Rejection
+public import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # Completeness of the Pauli basis test
@@ -20,6 +22,8 @@ The source statement is blueprint
 `lem:pauli-completeness`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1229-1421`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

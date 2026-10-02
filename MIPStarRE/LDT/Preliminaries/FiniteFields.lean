@@ -1,7 +1,9 @@
-import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
-import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
-import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import MIPStarRE.LDT.Basic.ParametersBase
+module
+
+public import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
+public import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
+public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import MIPStarRE.LDT.Basic.ParametersBase
 
 /-!
 # Finite fields and Fourier orthogonality
@@ -22,6 +24,8 @@ from `references/ldt-paper/preliminaries.tex` (lines 15–83).
 
 * `references/ldt-paper/preliminaries.tex`, lines 15–83
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

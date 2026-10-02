@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -17,6 +19,8 @@ the middle two `2ε` moves of the local-variance transport chain in
 `lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and
 309--310).
 -/
+
+@[expose] public section
 
 /-- The `ε` consistency interface for the point-line event at the base point of
 an axis-parallel test sample.
@@ -410,5 +414,7 @@ lemma axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion
             (weightedPointConditionedRightOperatorAtPolynomial params strategy G g qu.2)
     _ ≤ 2 * eps := axisParallelPointLineConsistency_weighted_leftToRightLineQuestion
       params strategy eps delta gamma hgood G g
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

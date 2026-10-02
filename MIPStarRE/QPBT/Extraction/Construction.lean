@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.Apply
-import MIPStarRE.QPBT.Extraction.ObservableConsistency
-import MIPStarRE.QPBT.Extraction.SuppliedPointConsistency
+module
+
+public import MIPStarRE.QPBT.Combining.Apply
+public import MIPStarRE.QPBT.Extraction.ObservableConsistency
+public import MIPStarRE.QPBT.Extraction.SuppliedPointConsistency
 
 /-!
 # Construction of consistent pulled-apart Pauli measurements
@@ -18,6 +20,8 @@ separately and are composed here with the source construction.
 - `docs/paper-gaps/qpbt_extraction-transfer.tex`, issue #123, for the
   global-witness composition.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

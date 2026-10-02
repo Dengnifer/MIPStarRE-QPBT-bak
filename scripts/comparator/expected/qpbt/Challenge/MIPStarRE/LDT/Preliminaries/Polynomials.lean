@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-! Challenge mirror of `MIPStarRE/LDT/Preliminaries/Polynomials.lean`.
 
@@ -8,9 +10,11 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.LDT.Preliminaries
 
--- source: MIPStarRE/LDT/Preliminaries/Polynomials.lean:25-29  (MIPStarRE.LDT.Preliminaries.polyFunc)
+-- source: MIPStarRE/LDT/Preliminaries/Polynomials.lean:29-33  (MIPStarRE.LDT.Preliminaries.polyFunc)
 /-- `\polyfunc{m}{q}{d}` from the paper's definition of low-individual-degree
 polynomials. This is Mathlib's `MvPolynomial.restrictDegree` submodule. -/
 noncomputable abbrev polyFunc (m : ℕ) (K : Type*) [CommSemiring K] (d : ℕ) :

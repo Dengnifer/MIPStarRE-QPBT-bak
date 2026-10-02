@@ -1,34 +1,36 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.ParametersBase
-import Challenge.MIPStarRE.LDT.Preliminaries.Polynomials
-import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
-import Challenge.MIPStarRE.QPBT.Algebra.Subspaces
-import Challenge.MIPStarRE.Quantum.FiniteMatrix.Basic
-import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
-import Challenge.MIPStarRE.QPBT.Algebra.LowDegreeCode
-import Challenge.MIPStarRE.QPBT.State
-import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
-import Challenge.MIPStarRE.QPBT.Algebra.Lines
-import Challenge.MIPStarRE.QPBT.Algebra.Pauli
-import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasis
-import Challenge.MIPStarRE.Quantum.Measurement
-import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
-import Challenge.MIPStarRE.LDT.Basic.Distribution
-import Challenge.MIPStarRE.QPBT.Algebra.PauliTheorems
-import Challenge.MIPStarRE.QPBT.Games.Defs
-import Challenge.MIPStarRE.QPBT.Games.DistributionAux
-import Challenge.MIPStarRE.QPBT.Games.CondLinear
-import Challenge.MIPStarRE.QPBT.Games.Consistency
-import Challenge.MIPStarRE.QPBT.Test.LowDegreeGame
-import Challenge.MIPStarRE.QPBT.Test.MagicSquare
-import Challenge.MIPStarRE.QPBT.Games.TypedCondLinear
-import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
-import Challenge.MIPStarRE.QPBT.Test.SoundnessDefs
-import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
-import Challenge.MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
-import Challenge.MIPStarRE.QPBT.Observables.WinImplications.Setup
-import Challenge.MIPStarRE.QPBT.Test.Completeness
-import Challenge.MIPStarRE.QPBT.Test.QubitForm
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.ParametersBase
+public import Challenge.MIPStarRE.LDT.Preliminaries.Polynomials
+public import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
+public import Challenge.MIPStarRE.QPBT.Algebra.Subspaces
+public import Challenge.MIPStarRE.Quantum.FiniteMatrix.Basic
+public import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
+public import Challenge.MIPStarRE.QPBT.Algebra.LowDegreeCode
+public import Challenge.MIPStarRE.QPBT.State
+public import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+public import Challenge.MIPStarRE.QPBT.Algebra.Lines
+public import Challenge.MIPStarRE.QPBT.Algebra.Pauli
+public import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasis
+public import Challenge.MIPStarRE.Quantum.Measurement
+public import Challenge.MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
+public import Challenge.MIPStarRE.LDT.Basic.Distribution
+public import Challenge.MIPStarRE.QPBT.Algebra.PauliTheorems
+public import Challenge.MIPStarRE.QPBT.Games.Defs
+public import Challenge.MIPStarRE.QPBT.Games.DistributionAux
+public import Challenge.MIPStarRE.QPBT.Games.CondLinear
+public import Challenge.MIPStarRE.QPBT.Games.Consistency
+public import Challenge.MIPStarRE.QPBT.Test.LowDegreeGame
+public import Challenge.MIPStarRE.QPBT.Test.MagicSquare
+public import Challenge.MIPStarRE.QPBT.Games.TypedCondLinear
+public import Challenge.MIPStarRE.QPBT.Test.PauliBasisTest
+public import Challenge.MIPStarRE.QPBT.Test.SoundnessDefs
+public import Challenge.MIPStarRE.QPBT.Games.StrategyClasses
+public import Challenge.MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+public import Challenge.MIPStarRE.QPBT.Observables.WinImplications.Setup
+public import Challenge.MIPStarRE.QPBT.Test.Completeness
+public import Challenge.MIPStarRE.QPBT.Test.QubitForm
 
 /-!
 # Challenge: headline theorems of the quantum Pauli basis test
@@ -69,48 +71,56 @@ for how to run the verification.
 -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 -- Compiler-generated declarations in the closure (no source
 -- range); they regenerate identically during elaboration:
 --   MIPStarRE.QPBT.MsType.ctorIdx  (from MIPStarRE/QPBT/Test/MagicSquare.lean)
---   MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_3  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
---   MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_4  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
---   MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_6  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
---   MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_3  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
+--   _private.MIPStarRE.QPBT.Games.DistributionAux.0.MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_3  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
 --   MIPStarRE.QPBT.PauliType.ctorElimType  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
 --   MIPStarRE.QPBT.PauliAnswer.ctorIdx  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
 --   MIPStarRE.QPBT.prefixRank.eq_1  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.PauliKind.ofNat_ctorIdx  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
 --   MIPStarRE.QPBT.PauliType.proxyTypeEquiv  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
+--   _private.MIPStarRE.QPBT.Games.DistributionAux.0.MIPStarRE.QPBT.Distribution.map_map._simp_1_1  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
 --   MIPStarRE.QPBT.LdType.ofNat_ctorIdx  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
---   MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_5  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
---   MIPStarRE.QPBT.exists_self_dual_normal_basis_gal._simp_1_2  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
+--   _private.MIPStarRE.QPBT.Algebra.FieldBasis.0.MIPStarRE.QPBT.exists_fixed_field_model  (from [anonymous].lean)
+--   _private.MIPStarRE.QPBT.Algebra.FieldBasis.0.MIPStarRE.QPBT.exists_self_dual_normal_basis_gal  (from [anonymous].lean)
+--   _private.MIPStarRE.QPBT.Algebra.FieldBasis.0.MIPStarRE.QPBT.exists_selfDualNormalBasis  (from [anonymous].lean)
+--   _private.MIPStarRE.QPBT.Games.DistributionAux.0.MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_4  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
+--   _private.MIPStarRE.QPBT.Algebra.Subspaces.0.MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement  (from [anonymous].lean)
 --   MIPStarRE.QPBT.instInhabitedMsType.default  (from MIPStarRE/QPBT/Test/MagicSquare.lean)
---   MIPStarRE.QPBT.trace_group_algebra_pairing._simp_1_2  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
+--   _private.MIPStarRE.QPBT.Algebra.Subspaces.0.MIPStarRE.QPBT.coordinate_eq_zero_of_prefixRank_eq  (from [anonymous].lean)
+--   _private.MIPStarRE.QPBT.Algebra.FieldBasis.0.MIPStarRE.QPBT.exists_self_dual_normal_basis_gal._simp_1_2  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
 --   MIPStarRE.QPBT.PauliKind.ofNat  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
+--   _private.MIPStarRE.QPBT.Algebra.Subspaces.0.MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_4  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.MsAnswer.ctorIdx  (from MIPStarRE/QPBT/Test/MagicSquare.lean)
---   MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_1  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
---   MIPStarRE.QPBT.normal_basis_trace_dual_apply._simp_1_3  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
+--   _private.MIPStarRE.QPBT.Games.DistributionAux.0.MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_1  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
+--   _private.MIPStarRE.QPBT.Test.MagicSquare.0.MIPStarRE.QPBT.msConstraintVars  (from [anonymous].lean)
+--   _private.MIPStarRE.QPBT.Algebra.FieldBasis.0.MIPStarRE.QPBT.trace_group_algebra_pairing._simp_1_2  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
 --   MIPStarRE.LDT.Distribution.mk.congr_simp  (from MIPStarRE/LDT/Basic/Distribution.lean)
 --   MIPStarRE.QPBT.PauliType.ctorIdx  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
+--   _private.MIPStarRE.QPBT.Games.DistributionAux.0.MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_2  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
 --   MIPStarRE.QPBT.PauliType.point.inj  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
---   MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_4  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
---   MIPStarRE.QPBT.Distribution.map_map._simp_1_1  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
 --   MIPStarRE.QPBT.PauliAnswer.ctorElimType  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
---   MIPStarRE.QPBT.normal_basis_trace_dual_apply._simp_1_2  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
 --   MIPStarRE.QPBT.PauliType.point.injEq  (from MIPStarRE/QPBT/Test/PauliBasisTest.lean)
 --   MIPStarRE.QPBT.LdAnswer.ctorIdx  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
---   MIPStarRE.QPBT.registerSubmodule_eq_spanSubset._simp_1_2  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
+--   _private.MIPStarRE.QPBT.Algebra.Subspaces.0.MIPStarRE.QPBT.registerSubmodule_eq_spanSubset._simp_1_2  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.instInhabitedLdType.default  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
+--   _private.MIPStarRE.QPBT.Algebra.Subspaces.0.MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_5  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.LdType.ofNat  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
 --   MIPStarRE.QPBT.LdAnswer.ctorElimType  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
+--   _private.MIPStarRE.QPBT.Algebra.Subspaces.0.MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_6  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.MsType.proxyTypeEquiv  (from MIPStarRE/QPBT/Test/MagicSquare.lean)
 --   MIPStarRE.QPBT.registerSubmodule.eq_1  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 --   MIPStarRE.QPBT.clDistribution.eq_1  (from MIPStarRE/QPBT/Games/CondLinearTheorems.lean)
 --   MIPStarRE.QPBT.instInhabitedPauliKind.default  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
 --   MIPStarRE.QPBT.canonicalComplement.eq_1  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
+--   _private.MIPStarRE.QPBT.Algebra.FieldBasis.0.MIPStarRE.QPBT.normal_basis_trace_dual_apply._simp_1_2  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
 --   MIPStarRE.QPBT.PauliKind.ctorIdx  (from MIPStarRE/QPBT/Algebra/Pauli.lean)
+--   _private.MIPStarRE.QPBT.Algebra.FieldBasis.0.MIPStarRE.QPBT.normal_basis_trace_dual_apply._simp_1_3  (from MIPStarRE/QPBT/Algebra/FieldBasis.lean)
 --   MIPStarRE.QPBT.LdType.ctorIdx  (from MIPStarRE/QPBT/Test/LowDegreeGame.lean)
---   MIPStarRE.QPBT.bind_uniformOnFinset_map._simp_1_2  (from MIPStarRE/QPBT/Games/DistributionAux.lean)
+--   _private.MIPStarRE.QPBT.Algebra.Subspaces.0.MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement._simp_1_3  (from MIPStarRE/QPBT/Algebra/Subspaces.lean)
 
 namespace MIPStarRE.QPBT
 

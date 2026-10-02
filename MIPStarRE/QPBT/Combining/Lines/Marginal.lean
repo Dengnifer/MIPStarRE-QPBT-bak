@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
 
 /-!
 # Marginal of the combined line measurement
@@ -10,6 +12,8 @@ This module records the exact X marginal of the X-Z-X sandwich measurement.
 The construction is the paired-line measurement in `lem:qld-xz-lines`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:942-963`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

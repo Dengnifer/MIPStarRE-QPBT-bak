@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.StrategyClasses
+module
+
+public import MIPStarRE.QPBT.Games.StrategyClasses
 
 /-!
 # The approximate form of the symmetrization lemma
@@ -28,6 +30,8 @@ is also refuted on the current Lean domain by
 `not_forall_printedSymmetricProjectiveAttainmentClaim`. The analysis is in
 `docs/paper-gaps/qpbt_symmetrization-attainment.tex` and issue `#524`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

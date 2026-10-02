@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Points.Consistency
-import MIPStarRE.QPBT.Games.DistanceTheorems
+module
+
+public import MIPStarRE.QPBT.Combining.Points.Consistency
+public import MIPStarRE.QPBT.Games.DistanceTheorems
 
 /-!
 # Orthonormalization of the sandwich POVM
@@ -37,6 +39,8 @@ Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:786-790`
 `blueprint/src/chapter/ch14_qpbt_observables.tex:395-464` (`lem:ortho`); the
 route is explained in `docs/paper-gaps/qpbt_combined-points-field-valued.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

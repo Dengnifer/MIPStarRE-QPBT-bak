@@ -1,6 +1,8 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.Distribution
-import Challenge.MIPStarRE.Quantum.Measurement
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.Distribution
+public import Challenge.MIPStarRE.Quantum.Measurement
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/Defs.lean`.
 
@@ -10,6 +12,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/Defs.lean
@@ -17,7 +21,7 @@ section
 open MIPStarRE.LDT
 open MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/Games/Defs.lean:26-47  (MIPStarRE.QPBT.Game)
+-- source: MIPStarRE/QPBT/Games/Defs.lean:30-51  (MIPStarRE.QPBT.Game)
 /--
 A finite two-player one-round game with a probability distribution on question
 pairs and a Boolean decision predicate.  This is blueprint
@@ -46,7 +50,7 @@ attribute [instance] Game.questionAFintype Game.questionBFintype
   Game.answerAFintype Game.answerBFintype Game.questionADecidableEq
   Game.questionBDecidableEq Game.answerADecidableEq Game.answerBDecidableEq
 
--- source: MIPStarRE/QPBT/Games/Defs.lean:76-81  (MIPStarRE.QPBT.Measurement.IsProjective)
+-- source: MIPStarRE/QPBT/Games/Defs.lean:80-85  (MIPStarRE.QPBT.Measurement.IsProjective)
 /-- Projectivity of every effect in a POVM (blueprint
 `def:povm-conventions`; paper origin
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:68-72`). -/
@@ -54,7 +58,7 @@ def Measurement.IsProjective {α d : Type*} [Fintype α] [Fintype d] [DecidableE
     (M : Measurement α d) : Prop :=
   ∀ a, IsProj (M.effect a)
 
--- source: MIPStarRE/QPBT/Games/Defs.lean:83-98  (MIPStarRE.QPBT.Strategy)
+-- source: MIPStarRE/QPBT/Games/Defs.lean:87-102  (MIPStarRE.QPBT.Strategy)
 /--
 The tensor-product strategy of blueprint
 `def:tensor-product-strategy` (paper origin
@@ -76,7 +80,7 @@ structure Strategy (G : Game) where
 attribute [instance] Strategy.ιAFintype Strategy.ιBFintype
   Strategy.ιADecidableEq Strategy.ιBDecidableEq
 
--- source: MIPStarRE/QPBT/Games/Defs.lean:103-109  (MIPStarRE.QPBT.heteroKron)
+-- source: MIPStarRE/QPBT/Games/Defs.lean:107-113  (MIPStarRE.QPBT.heteroKron)
 /-- The rectangular tensor placement used in strategy probabilities.  This is
 the finite-matrix realization of blueprint
 `def:tensor-product-strategy`; paper origin
@@ -85,7 +89,7 @@ the finite-matrix realization of blueprint
 def heteroKron {ιA ιB : Type*} (A : Op ιA) (B : Op ιB) : Op (ιA × ιB) :=
   Matrix.kronecker A B
 
--- source: MIPStarRE/QPBT/Games/Defs.lean:207-212  (MIPStarRE.QPBT.applyOperatorToState)
+-- source: MIPStarRE/QPBT/Games/Defs.lean:211-216  (MIPStarRE.QPBT.applyOperatorToState)
 /-- Apply a finite matrix to a Euclidean-space state.  This is the Hilbert-space
 action underlying `def:tensor-product-value`, paper
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:219-271`. -/
@@ -93,7 +97,7 @@ noncomputable def applyOperatorToState {ι : Type*} [Fintype ι] [DecidableEq ι
     (M : Op ι) (ψ : EuclideanSpace ℂ ι) : EuclideanSpace ℂ ι :=
   Matrix.toEuclideanLin M ψ
 
--- source: MIPStarRE/QPBT/Games/Defs.lean:214-222  (MIPStarRE.QPBT.outcomeWeight)
+-- source: MIPStarRE/QPBT/Games/Defs.lean:218-226  (MIPStarRE.QPBT.outcomeWeight)
 /-- The Born weight of an answer pair for a strategy.  Lean-only support for
 blueprint `def:tensor-product-value`, paper
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:40-48`. -/
@@ -104,7 +108,7 @@ noncomputable def outcomeWeight {G : Game} (S : Strategy G)
   let acted := applyOperatorToState M S.ψ
   (inner ℂ S.ψ acted).re
 
--- source: MIPStarRE/QPBT/Games/Defs.lean:483-492  (MIPStarRE.QPBT.Strategy.value)
+-- source: MIPStarRE/QPBT/Games/Defs.lean:487-496  (MIPStarRE.QPBT.Strategy.value)
 /--
 The tensor-product value, expressed as the distribution average of the Born
 probabilities.  This is blueprint

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.ScalarNonlinearMass
-import MIPStarRE.QPBT.Combining.PolynomialFiberBounds
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.ScalarNonlinearMass
+public import MIPStarRE.QPBT.Combining.PolynomialFiberBounds
 
 /-!
 # Wrong-variable mass of rounded polynomial outcomes
@@ -15,6 +17,8 @@ Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1328-1368`,
 mass bounds. This supports blueprint `lem:qld-4-7`; it does not establish
 the subsequent retained overlaps or global polynomial-pair witness.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

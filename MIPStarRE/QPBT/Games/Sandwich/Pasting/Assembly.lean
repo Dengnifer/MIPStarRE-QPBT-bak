@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.CrossMove
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.CrossMove
 
 /-! # Ordered product masses and the assembly of the pasting estimate
 
@@ -15,6 +17,8 @@ theorem.  The proof of the adopted statement is recorded in
 Blueprint `ch12_qpbt_games.tex:960-990`, paper origin
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:504-525`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

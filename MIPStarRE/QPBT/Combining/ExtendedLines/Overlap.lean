@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.ExtendedLines.Measurement
-import MIPStarRE.QPBT.Combining.SubLineXDeficit
-import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLines.Measurement
+public import MIPStarRE.QPBT.Combining.SubLineXDeficit
+public import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
 
 /-!
 # Consistency of the extended-line measurements
@@ -17,6 +19,8 @@ See `docs/paper-gaps/qpbt_combined-lines-error-term.tex` and
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` for the remaining
 comparison with the printed source theorem.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

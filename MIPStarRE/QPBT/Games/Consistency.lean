@@ -1,7 +1,9 @@
-import MIPStarRE.LDT.Basic.DistributionAvg
-import MIPStarRE.QPBT.Games.Distance
-import MIPStarRE.QPBT.Games.DistributionAux
-import MIPStarRE.QPBT.State
+module
+
+public import MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPStarRE.QPBT.Games.Distance
+public import MIPStarRE.QPBT.Games.DistributionAux
+public import MIPStarRE.QPBT.State
 
 /-! # State-dependent consistency and strategy closeness
 
@@ -9,6 +11,8 @@ The definitions are the finite-dimensional forms of blueprint
 `def:consistency` and `def:strategy-distance`,
 from `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:219-288`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

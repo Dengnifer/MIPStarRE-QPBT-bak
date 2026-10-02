@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.NativeSeparated
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars.NativeSeparated
 
 /-!
 # Fractional-dimensional quantitative Pauli soundness scalars
@@ -16,6 +18,8 @@ fractional dimension factor `m^(20481/262144) d^(1/64)`.
 * Blueprint `def:pauli-final-fractional-error`
 * Blueprint `thm:pauli-final-fractional-scalar-support`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

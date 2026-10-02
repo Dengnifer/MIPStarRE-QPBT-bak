@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Soundness.RawOperatorTransfer
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.RawOperatorTransfer
 
 /-!
 # Componentwise Pauli soundness bounds
@@ -15,6 +17,8 @@ Paper `thm:pauli`,
 and the extraction and final transfer argument in
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1666-1876`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

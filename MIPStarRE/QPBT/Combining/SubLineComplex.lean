@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Combining.ComplexOverlapGap
-import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
-import MIPStarRE.QPBT.Combining.OrderedPoints
-import MIPStarRE.QPBT.Combining.UniformLinePoint
-import MIPStarRE.QPBT.Combining.ZEvalDeficit
+module
+
+public import MIPStarRE.QPBT.Combining.ComplexOverlapGap
+public import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
+public import MIPStarRE.QPBT.Combining.OrderedPoints
+public import MIPStarRE.QPBT.Combining.UniformLinePoint
+public import MIPStarRE.QPBT.Combining.ZEvalDeficit
 
 /-!
 # Complex overlaps for the directly indexed subline law
@@ -19,6 +21,8 @@ Paper `claim:17-1` and `claim:17-3`,
 the X-Z-X construction is at lines 942--949. See issue #689 and
 `docs/paper-gaps/qpbt_subline-claims-line-marginal.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,9 +1,11 @@
-import MIPStarRE.LDT.Preliminaries.PolynomialAgreement
-import MIPStarRE.LDT.Test.MainTheorem.MainFormal
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Defect
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PassConversion
-import MIPStarRE.QPBT.Combining.QuantitativeScalars
+module
+
+public import MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+public import MIPStarRE.LDT.Test.MainTheorem.MainFormal
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Defect
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PassConversion
+public import MIPStarRE.QPBT.Combining.QuantitativeScalars
 
 /-!
 # Simultaneous polynomial measurements for the direct low-degree game
@@ -54,6 +56,8 @@ status are recorded in `docs/paper-gaps/qpbt_ld-simultaneous-sandwich.tex`.
 * `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 * `docs/paper-gaps/qpbt_ld-simultaneous-sandwich.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

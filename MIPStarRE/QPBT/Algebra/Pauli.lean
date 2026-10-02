@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Algebra.FieldBasis
-import MIPStarRE.Quantum.FiniteMatrix.Basic
-import MIPStarRE.LDT.Preliminaries.FiniteFields
+module
+
+public import MIPStarRE.QPBT.Algebra.FieldBasis
+public import MIPStarRE.Quantum.FiniteMatrix.Basic
+public import MIPStarRE.LDT.Preliminaries.FiniteFields
 
 /-!
 # Generalized Pauli operators and EPR states
@@ -16,6 +18,8 @@ The source-facing nodes are blueprint `def:lin-reg`, `def:EPR`,
 `def:generalized-pauli`, and `lem:pauli-observable-expansion`.  The paper origin is
 `references/qpbt-paper/04_preliminaries.tex:908-1161`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

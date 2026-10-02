@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PointAgreement
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedError
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PointAgreement
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedError
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # Quantum soundness of the seed-indexed low-degree game
@@ -17,6 +19,8 @@ Schwartz--Zippel, with the square-root loss absorbed into `deltaLd`.
 * `references/neexp-paper/05_quantum_preliminaries.tex:1409-1503`
 * Blueprint `lem:ld-soundness`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

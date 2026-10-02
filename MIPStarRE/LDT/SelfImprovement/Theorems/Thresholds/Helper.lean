@@ -1,6 +1,8 @@
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import MIPStarRE.LDT.Basic.SqrtBounds
-import MIPStarRE.LDT.SelfImprovement.Defs
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MIPStarRE.LDT.Basic.SqrtBounds
+public import MIPStarRE.LDT.SelfImprovement.Defs
 
 /-!
 # Section 9 — helper-stage numerical threshold absorptions
@@ -27,6 +29,8 @@ The final-stage comparisons with `selfImprovementError` are collected in
 Blueprint mirrors: `eq:explicit-bound-for-A-consistency`,
 `item:self-improvement-self`, and `item:self-improvement-boundedness`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.SelfImprovement
 

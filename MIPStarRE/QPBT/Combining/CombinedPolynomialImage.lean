@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Defs
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Coefficients
+module
+
+public import MIPStarRE.QPBT.Combining.Defs
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Coefficients
 
 /-!
 # The separated image of the polynomial combining map
@@ -24,6 +26,8 @@ results, not the quantitative assertion about the mass of the separated image.
 * Blueprint `def:combine-map` and the proof of `lem:qld-4-7`.
 * Issue #284.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

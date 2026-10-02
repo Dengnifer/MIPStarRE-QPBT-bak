@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Test.StrategyRole.Core
+module
+
+public import MIPStarRE.LDT.Test.StrategyRole.Core
 
 /-!
 # Two-Space Projective Strategies: Direct-Sum State Blocks
@@ -6,6 +8,8 @@ import MIPStarRE.LDT.Test.StrategyRole.Core
 This module contains the role-register direct-sum carriers and block-state
 construction used to symmetrize a heterogeneous projective strategy.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
@@ -602,7 +606,7 @@ theorem localDirectSumBlock_finset_sum {α ιA ιB : Type*} (s : Finset α)
       rw [Finset.sum_insert ha, Finset.sum_insert ha, Finset.sum_insert ha, ih]
       rw [localDirectSumBlock_add]
 
-private def roleBlockFamily {ιA ιB : Type*}
+def roleBlockFamily {ιA ιB : Type*}
     (A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)) :
     Role → MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)
   | Role.A => A

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Extraction.PauliTransport
+module
+
+public import MIPStarRE.QPBT.Extraction.PauliTransport
 
 /-!
 # Pauli comparison for the concrete extraction maps
@@ -11,6 +13,8 @@ operators occurring in the extraction witness, for both players.
 Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1827-1858`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder Classical
 

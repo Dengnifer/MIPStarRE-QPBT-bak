@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Completeness.HonestStrategy.MeasurementFamily
+module
+
+public import MIPStarRE.QPBT.Test.Completeness.HonestStrategy.MeasurementFamily
 
 /-!
 # Commutation of the honest Pauli measurements
@@ -16,6 +18,8 @@ This is the commutation obligation in the proof of `lem:pauli-completeness`,
 blueprint `lem:pauli-completeness`, paper
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1364-1382`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

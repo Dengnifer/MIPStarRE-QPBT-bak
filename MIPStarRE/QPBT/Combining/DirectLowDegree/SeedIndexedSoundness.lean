@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PointAgreement
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.PointAgreement
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # Seed-indexed low-degree soundness for one simultaneous coordinate
@@ -42,6 +44,8 @@ the polynomials themselves.
 * `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 * `docs/paper-gaps/qpbt_ld-simultaneous-sandwich.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

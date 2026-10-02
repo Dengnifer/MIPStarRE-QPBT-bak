@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.ProjectiveRounding
-import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.ProjectiveRounding
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
 
 /-!
 # Projective rounding through outcome postprocessing
@@ -25,6 +27,8 @@ construct the global polynomial-pair measurement.
 - Issue #278
 - `audits/2026-09-06_rounding_transport.md`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

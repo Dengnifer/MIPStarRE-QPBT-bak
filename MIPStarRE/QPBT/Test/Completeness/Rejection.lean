@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Completeness.Commutation
+module
+
+public import MIPStarRE.QPBT.Test.Completeness.Commutation
 
 /-!
 # Rejection of wrong answers by the honest Pauli measurements
@@ -15,6 +17,8 @@ the normalisation of the Born weights this yields the value-one assertion of
 Blueprint `lem:pauli-completeness`, paper
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1383-1421`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLineBranch
-import MIPStarRE.QPBT.Combining.Lines.SubLineSeed
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLineBranch
+public import MIPStarRE.QPBT.Combining.Lines.SubLineSeed
 
 /-!
 # The sampling procedure of the sub-line lemma
@@ -27,6 +29,8 @@ blueprint `lem:qld-sublines`, whose source is
 The restricted laws are `def:ith-restricted-line`, blueprint lines
 1209--1228, paper lines 1038--1048.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

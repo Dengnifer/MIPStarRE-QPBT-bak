@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Extraction.OverlapTransfer
-import MIPStarRE.QPBT.Extraction.EncodingSupport
-import MIPStarRE.QPBT.Extraction.Defs
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
+module
+
+public import MIPStarRE.QPBT.Extraction.OverlapTransfer
+public import MIPStarRE.QPBT.Extraction.EncodingSupport
+public import MIPStarRE.QPBT.Extraction.Defs
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Transfer
 
 /-!
 # Total Pauli comparison on a normalized ideal state
@@ -16,6 +18,8 @@ swap and auxiliary-state construction.
 Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1827-1858`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

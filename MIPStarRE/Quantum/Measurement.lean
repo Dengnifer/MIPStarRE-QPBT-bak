@@ -1,4 +1,6 @@
-import MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
 
 /-!
 # Matrix-valued measurements for the MIP*=RE project
@@ -20,6 +22,8 @@ This file builds the project's finite-dimensional measurement layer on top of
 the normalized-trace and positive-operator facts in `MIPStarRE.Quantum.FiniteMatrix`
 for the quantum formalization in `references/ldt-paper/`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -32,10 +32,15 @@ from assemble_challenge import assemble, assemble_split
 SCRIPT_DIR = Path(__file__).resolve().parent
 EXTRACTOR = SCRIPT_DIR / "extract_closure.lean"
 ASSEMBLER = SCRIPT_DIR / "assemble_challenge.py"
+LEAN_SERVER_METADATA_OPTION = "-DElab.inServer=true"
 
 # A Lean module header cannot be computed at elaboration time, so the extractor
-# is rendered per challenge with its own import block substituted.
-IMPORT_BLOCK = re.compile(r"\A(?:[ \t]*\n)*(?:import[ \t]+\S+[^\n]*\n)+")
+# is rendered per challenge with its own private meta import block substituted.
+# Keep the literal `module` command: only the configured imports vary.
+IMPORT_BLOCK = re.compile(
+    r"\A(?P<module>[ \t]*module[ \t]*\n(?:[ \t]*\n)*)"
+    r"(?:(?:meta[ \t]+)?import(?:[ \t]+all)?[ \t]+\S+[^\n]*\n)+"
+)
 
 
 def run(
@@ -103,15 +108,31 @@ def tree_diff(expected: dict[str, bytes], candidate: dict[str, bytes]) -> str:
     return "".join(out)
 
 
-def render_extractor(challenge: ChallengeConfig, template: str) -> str:
+def repository_modules(root: Path) -> tuple[str, ...]:
+    """Every repository library module, in deterministic path order."""
+    return tuple(
+        str(path.relative_to(root).with_suffix("")).replace(os.sep, ".")
+        for path in sorted((root / "MIPStarRE").rglob("*.lean"))
+    )
+
+
+def render_extractor(
+    challenge: ChallengeConfig,
+    template: str,
+    imports: Sequence[str] | None = None,
+) -> str:
     """The extractor source with this challenge's import block substituted."""
+    modules = tuple(dict.fromkeys(imports or challenge.imports))
+    import_block = "".join(f"meta import all {module}\n" for module in modules)
     body, substitutions = IMPORT_BLOCK.subn(
-        lambda _: challenge.import_block(), template, count=1
+        lambda match: match.group("module") + import_block,
+        template,
+        count=1,
     )
     if substitutions != 1:
         raise ChallengeConfigError(
-            f"{EXTRACTOR} does not start with an import block; cannot render "
-            f"challenge {challenge.name!r}"
+            f"{EXTRACTOR} does not start with a module import block; cannot "
+            f"render challenge {challenge.name!r}"
         )
     return body
 
@@ -135,14 +156,27 @@ def closure_tsv(root: Path, workdir: Path, challenge: ChallengeConfig) -> Path:
     raw_tsv = workdir / "closure.tsv"
     clean_tsv = workdir / "closure.clean.tsv"
     extractor = workdir / "extract_closure.lean"
+    imports = tuple(dict.fromkeys((*challenge.imports, *repository_modules(root))))
     extractor.write_text(
-        render_extractor(challenge, EXTRACTOR.read_text(encoding="utf-8")),
+        render_extractor(
+            challenge,
+            EXTRACTOR.read_text(encoding="utf-8"),
+            imports,
+        ),
         encoding="utf-8",
     )
 
     env = dict(os.environ)
     env.update(challenge.extractor_env())
-    run(["lake", "env", "lean", str(extractor)], cwd=root, stdout=raw_tsv, env=env)
+    # Module-system command-line imports load only exported range tables for
+    # transitive modules. Server metadata retains those declaration ranges,
+    # while `import all` in the rendered extractor still exposes private names.
+    run(
+        ["lake", "env", "lean", LEAN_SERVER_METADATA_OPTION, str(extractor)],
+        cwd=root,
+        stdout=raw_tsv,
+        env=env,
+    )
     clean_closure_rows(raw_tsv, clean_tsv)
     return clean_tsv
 
