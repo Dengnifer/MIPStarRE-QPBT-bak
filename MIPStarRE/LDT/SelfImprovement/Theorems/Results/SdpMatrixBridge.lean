@@ -90,8 +90,8 @@ theorem matrixSdpDualSlackOperator_ofPointRealization (params : Parameters)
     matrixSdpDualSlackOperator params
         (matrixSdpPointRealizationOfStrategy params strategy) Z g =
       sdpDualSlackOperator params strategy Z g := by
-  rw [matrixSdpDualSlackOperator, sdpDualSlackOperator,
-    matrixAveragedPointOperator_ofPointRealization]
+  unfold matrixSdpDualSlackOperator sdpDualSlackOperator
+  rw [matrixAveragedPointOperator_ofPointRealization]
   rfl
 
 /-- Canonical primal-dual data with complementary slackness and zero slack

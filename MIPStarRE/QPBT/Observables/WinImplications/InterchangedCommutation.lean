@@ -268,7 +268,16 @@ theorem msVarBitObsA_anticommutator_swapped_le {P : AdmissibleParams} {ε : ℝ}
         obsOf (S.msVarBitMeas .alice 4 ω) *
           obsOf (S.msVarBitMeas .alice 0 ω)))
     S.toStrategy.ψ
-  rw [reindexOp_prodComm_heteroKron] at htrans
+  have hswap : reindexOp (Equiv.prodComm S.toStrategy.ιA S.toStrategy.ιB)
+      (heteroKron (ιA := S.toStrategy.ιB) (ιB := S.toStrategy.ιA) 1
+        (obsOf (S.msVarBitMeas .alice 0 ω) * obsOf (S.msVarBitMeas .alice 4 ω) +
+          obsOf (S.msVarBitMeas .alice 4 ω) * obsOf (S.msVarBitMeas .alice 0 ω))) =
+    heteroKron
+      (obsOf (S.msVarBitMeas .alice 0 ω) * obsOf (S.msVarBitMeas .alice 4 ω) +
+        obsOf (S.msVarBitMeas .alice 4 ω) * obsOf (S.msVarBitMeas .alice 0 ω))
+      (1 : Op S.toStrategy.ιB) := by
+    exact reindexOp_prodComm_heteroKron _ _
+  rw [hswap] at htrans
   exact le_of_eq_of_le (congrArg (fun t : ℝ => t ^ 2) htrans)
     (msVarBitObsA_anticommutator_le S ω)
 

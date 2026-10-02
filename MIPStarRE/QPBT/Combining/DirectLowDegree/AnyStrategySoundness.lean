@@ -43,7 +43,7 @@ noncomputable section
 
 /-- Dilate every direct-game question measurement and pad the bipartite state
 at the two distinguished `none` coordinates. -/
-private def directLdNaimarkStrategy (D : DirectLdParams)
+@[reducible] private def directLdNaimarkStrategy (D : DirectLdParams)
     (S : Strategy (directLdGame D)) : Strategy (directLdGame D) :=
   paddedStrategy S (none : Option (DirectLdAnswer D))
     (none : Option (DirectLdAnswer D))
@@ -79,7 +79,6 @@ private theorem directLdNaimarkStrategy_pointA_compress (D : DirectLdParams)
       (directLdPointValuesOrZero D)).compressAt none = _
   rw [MIPStarRE.Quantum.Measurement.compressAt_postprocess,
     Measurement.compressAt_dilatedMeasurement]
-  rfl
 
 /-- Compressing Bob's dilated point measurement after point-answer
 postprocessing recovers the original postprocessed point measurement. -/
@@ -92,7 +91,6 @@ private theorem directLdNaimarkStrategy_pointB_compress (D : DirectLdParams)
       (directLdPointValuesOrZero D)).compressAt none = _
   rw [MIPStarRE.Quantum.Measurement.compressAt_postprocess,
     Measurement.compressAt_dilatedMeasurement]
-  rfl
 
 /-- Compress concrete polynomial measurements for the dilated strategy back to
 the original player spaces while preserving all three consistency bounds. -/
@@ -194,12 +192,7 @@ private theorem directLdNaimarkStrategy_compress_soundness
               rw [directLdNaimarkStrategy_pointA_compress]
             · intro u outcome
               dsimp only [GB0]
-              congr 1
-              ext i j
-              simp only [MIPStarRE.Quantum.Measurement.compressAt_effect,
-                MIPStarRE.Quantum.Measurement.postprocess_effect,
-                Matrix.submatrix_apply, Matrix.sum_apply]
-              rfl
+              rw [MIPStarRE.Quantum.Measurement.compressAt_postprocess]
       _ = consistencyDefect (uniformDistribution (Fin D.m → DirectScalarQ D))
           (fun u outcome => heteroKron
             ((((directLdNaimarkStrategy D S).A
@@ -253,12 +246,7 @@ private theorem directLdNaimarkStrategy_compress_soundness
             apply consistencyDefect_congr
             · intro u outcome
               dsimp only [GA0]
-              congr 1
-              ext i j
-              simp only [MIPStarRE.Quantum.Measurement.compressAt_effect,
-                MIPStarRE.Quantum.Measurement.postprocess_effect,
-                Matrix.submatrix_apply, Matrix.sum_apply]
-              rfl
+              rw [MIPStarRE.Quantum.Measurement.compressAt_postprocess]
             · intro u outcome
               rw [directLdNaimarkStrategy_pointB_compress]
       _ = consistencyDefect (uniformDistribution (Fin D.m → DirectScalarQ D))

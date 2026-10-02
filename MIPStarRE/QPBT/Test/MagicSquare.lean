@@ -130,7 +130,7 @@ def msWinPredicate :
 `def:ms-game`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:512-610`.
 -/
-noncomputable def msGame : Game where
+@[reducible] noncomputable def msGame : Game where
   QuestionA := MsType
   QuestionB := MsType
   AnswerA := MsAnswer

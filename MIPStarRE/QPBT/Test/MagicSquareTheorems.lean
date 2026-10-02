@@ -781,6 +781,10 @@ theorem exists_ms_rigidity_of_symmetric_consistent :
         S.IsConsistent →
         1 - ε ≤ S.toStrategy.value →
         ∃ w : MsRigidityWitness S.toStrategy,
+          letI : Fintype w.ιA'' := w.ιA''Fintype
+          letI : Fintype w.ιB'' := w.ιB''Fintype
+          letI : DecidableEq w.ιA'' := w.ιA''DecidableEq
+          letI : DecidableEq w.ιB'' := w.ιB''DecidableEq
           ‖isometryTensor w.φA w.φB S.toStrategy.ψ - idealMsState w.aux‖ ≤
               C * Real.sqrt ε ∧
           msOperatorDistanceA S.toStrategy w 0 .X ≤ C * Real.sqrt ε ∧

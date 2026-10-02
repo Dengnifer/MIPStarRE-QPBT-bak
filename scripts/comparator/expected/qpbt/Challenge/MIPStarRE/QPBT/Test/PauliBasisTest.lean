@@ -50,24 +50,25 @@ theorem AdmissibleParams.one_le_m (P : AdmissibleParams) : 1 ≤ P.m := by
   exact Nat.one_le_iff_ne_zero.mpr
     (ne_zero_of_dvd_ne_zero (Nat.ne_of_gt hqpos) P.hdvd)
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:59-66  (MIPStarRE.QPBT.AdmissibleParams.model)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:59-67  (MIPStarRE.QPBT.AdmissibleParams.model)
 /-- The fixed scalar model of an admissible parameter tuple.  It is a
 compatibility view of the global `fixedFieldModel` selector, not an independently
 quantified field representation.  This is the field representation of
 `def:admissible`, blueprint `ch13_qpbt_test.tex`; paper
 origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:958-961`.
 -/
-noncomputable def AdmissibleParams.model (P : AdmissibleParams) : FixedFieldModel P.q :=
+@[reducible] noncomputable def AdmissibleParams.model
+    (P : AdmissibleParams) : FixedFieldModel P.q :=
   fixedFieldModel P.q P.hq
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:68-83  (MIPStarRE.QPBT.AdmissibleParams.toLdParams)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:69-84  (MIPStarRE.QPBT.AdmissibleParams.toLdParams)
 /-- The low-degree parameter tuple determined by an admissible Pauli-test
 tuple.  It is not an additional hypothesis of `thm:pauli`.  The low-degree
 parameters are those of `def:ld-game`, blueprint
 `blueprint/src/chapter/ch13_qpbt_test.tex`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:958-961`.
 -/
-def AdmissibleParams.toLdParams (P : AdmissibleParams) : LdParams where
+@[reducible] def AdmissibleParams.toLdParams (P : AdmissibleParams) : LdParams where
   q := P.q
   m := P.m
   d := P.d
@@ -78,7 +79,7 @@ def AdmissibleParams.toLdParams (P : AdmissibleParams) : LdParams where
   hq := P.hq
   hdvd := P.hdvd
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:85-91  (MIPStarRE.QPBT.PauliScalar)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:86-92  (MIPStarRE.QPBT.PauliScalar)
 /-- The scalar carrier associated with an admissible parameter tuple.  It is
 the globally fixed field carrier selected by `AdmissibleParams.model` in
 blueprint
@@ -87,7 +88,7 @@ blueprint
 -/
 abbrev PauliScalar (P : AdmissibleParams) := P.model.K
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:93-105  (MIPStarRE.QPBT.PauliType.ctorElim)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:94-106  (MIPStarRE.QPBT.PauliType.ctorElim)
 /-- The six families of Pauli-test questions.  This is part of
 blueprint `def:pauli-question-distribution`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -102,7 +103,7 @@ inductive PauliType where
   | ms (t : MsType)
   deriving DecidableEq, Repr, Inhabited, Fintype
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:107-113  (MIPStarRE.QPBT.PauliIndex)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:108-114  (MIPStarRE.QPBT.PauliIndex)
 /-- The register blocks used by the Pauli question space.  These are the
 coordinates displayed in blueprint
 `def:pauli-question-distribution`, paper origin
@@ -111,28 +112,28 @@ coordinates displayed in blueprint
 abbrev PauliIndex (P : AdmissibleParams) :=
   (((((Fin P.m ⊕ Fin P.m) ⊕ Unit) ⊕ Fin P.m) ⊕ Unit) ⊕ Unit)
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:115-119  (MIPStarRE.QPBT.PauliSpace)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:116-120  (MIPStarRE.QPBT.PauliSpace)
 /-- The ambient Pauli question coefficient space (blueprint
 `def:pauli-question-distribution`; paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`).
 -/
 abbrev PauliSpace (P : AdmissibleParams) := PauliIndex P → PauliScalar P
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:121-125  (MIPStarRE.QPBT.PauliRegister)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:122-126  (MIPStarRE.QPBT.PauliRegister)
 /-- The coefficient register indexed by the Boolean cube in
 blueprint `def:generalized-pauli`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:908-945`.
 -/
 abbrev PauliRegister (P : AdmissibleParams) := Cube P.m → PauliScalar P
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:129-133  (MIPStarRE.QPBT.pauliXBlock)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:130-134  (MIPStarRE.QPBT.pauliXBlock)
 /-- The `V_X` block of an ambient Pauli vector (blueprint
 `def:pauli-question-distribution`; paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`). -/
 def pauliXBlock {P : AdmissibleParams} (z : PauliSpace P) : Fin P.m → PauliScalar P :=
   fun i => z (.inl (.inl (.inl (.inl (.inl i)))))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:135-140  (MIPStarRE.QPBT.pauliZBlock)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:136-141  (MIPStarRE.QPBT.pauliZBlock)
 /-- The `V_Z` block of an ambient Pauli vector in blueprint
 `def:pauli-question-distribution`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -140,7 +141,7 @@ def pauliXBlock {P : AdmissibleParams} (z : PauliSpace P) : Fin P.m → PauliSca
 def pauliZBlock {P : AdmissibleParams} (z : PauliSpace P) : Fin P.m → PauliScalar P :=
   fun i => z (.inl (.inl (.inl (.inl (.inr i)))))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:142-147  (MIPStarRE.QPBT.pauliScalarBlock)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:143-148  (MIPStarRE.QPBT.pauliScalarBlock)
 /-- The scalar block `V_I` of an ambient Pauli vector in
 blueprint `def:pauli-question-distribution`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -148,7 +149,7 @@ paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.te
 def pauliScalarBlock {P : AdmissibleParams} (z : PauliSpace P) : PauliScalar P :=
   z (.inl (.inl (.inl (.inr ()))))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:149-154  (MIPStarRE.QPBT.pauliDirectionBlock)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:150-155  (MIPStarRE.QPBT.pauliDirectionBlock)
 /-- The direction block `V_V` of an ambient Pauli vector in
 blueprint `def:pauli-question-distribution`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -156,7 +157,7 @@ paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.te
 def pauliDirectionBlock {P : AdmissibleParams} (z : PauliSpace P) : Fin P.m → PauliScalar P :=
   fun i => z (.inl (.inl (.inr i)))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:156-161  (MIPStarRE.QPBT.pauliRXBlock)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:157-162  (MIPStarRE.QPBT.pauliRXBlock)
 /-- The `r_X` scalar block in the Pauli question content from
 blueprint `def:pauli-question-distribution`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -164,7 +165,7 @@ paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.te
 def pauliRXBlock {P : AdmissibleParams} (z : PauliSpace P) : PauliScalar P :=
   z (.inl (.inr ()))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:163-168  (MIPStarRE.QPBT.pauliRZBlock)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:164-169  (MIPStarRE.QPBT.pauliRZBlock)
 /-- The `r_Z` scalar block in the Pauli question content from
 blueprint `def:pauli-question-distribution`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -172,7 +173,7 @@ paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.te
 def pauliRZBlock {P : AdmissibleParams} (z : PauliSpace P) : PauliScalar P :=
   z (.inr ())
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:170-178  (MIPStarRE.QPBT.pauliPointBlock)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:171-179  (MIPStarRE.QPBT.pauliPointBlock)
 /-- Select the basis-dependent point block from a Pauli question content in
 blueprint `def:pauli-question-distribution`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -183,7 +184,7 @@ def pauliPointBlock {P : AdmissibleParams} (W : PauliKind) (z : PauliSpace P) :
   | .X => pauliXBlock z
   | .Z => pauliZBlock z
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:180-190  (MIPStarRE.QPBT.pauliToLd)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:181-191  (MIPStarRE.QPBT.pauliToLd)
 /-- Read the low-degree register selected by a basis from an ambient Pauli
 vector.  This is restriction to the basis-selected registers of
 `def:pauli-question-distribution`, blueprint `ch13_qpbt_test.tex`, paper origin
@@ -196,7 +197,7 @@ def pauliToLd (P : AdmissibleParams) (W : PauliKind) (z : PauliSpace P) :
   | .inl (.inr _) => pauliScalarBlock z
   | .inr j => pauliDirectionBlock z j
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:192-212  (MIPStarRE.QPBT.embedLd)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:193-213  (MIPStarRE.QPBT.embedLd)
 /-- Embed a low-degree vector into the basis-selected Pauli blocks, clearing the
 other basis and the two `r` registers.  This is extension into the
 basis-selected registers of `def:pauli-question-distribution`, blueprint
@@ -219,7 +220,7 @@ def embedLd (P : AdmissibleParams) (W : PauliKind)
   | .inl (.inr _) => 0
   | .inr _ => 0
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:214-225  (MIPStarRE.QPBT.pauliSharedProjection)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:215-226  (MIPStarRE.QPBT.pauliSharedProjection)
 /-- The type-4 projection retaining `V_X`, `V_Z`, `V_{R_X}`, and `V_{R_Z}` from
 blueprint `def:pauli-question-distribution`, paper
 origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`.
@@ -233,7 +234,7 @@ def pauliSharedProjection {P : AdmissibleParams} (z : PauliSpace P) : PauliSpace
   | .inl (.inr _) => z (.inl (.inr ()))
   | .inr _ => z (.inr ())
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:243-260  (MIPStarRE.QPBT.pauliCL)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:244-261  (MIPStarRE.QPBT.pauliCL)
 /-- The conditionally linear map attached to each Pauli question type.  The
 point and line maps are the corresponding
 low-degree maps embedded in the selected basis block; Pair, Magic Square, and
@@ -253,7 +254,7 @@ noncomputable def pauliCL (P : AdmissibleParams) (t : PauliType) :
   | .pair => pauliSharedProjection
   | .ms _ => pauliSharedProjection
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:402-428  (MIPStarRE.QPBT.pauliEdges)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:403-429  (MIPStarRE.QPBT.pauliEdges)
 /-- A finite edge set for the typed Pauli question graph.  The self-loops and
 the displayed type-incidence families are the graph used by the sampler in
 blueprint `def:pauli-question-distribution`, paper origin
@@ -282,14 +283,14 @@ def pauliEdges : Finset (Sym2 PauliType) :=
         Sym2.mk (.ms xy.1) (.ms xy.2))
   loops ∪ lineEdges ∪ basisEdges ∪ pairEdges ∪ msEdges'
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:430-434  (MIPStarRE.QPBT.PauliQuestion)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:431-435  (MIPStarRE.QPBT.PauliQuestion)
 /-- A Pauli question is a type together with a full ambient coefficient vector
 (blueprint `def:pauli-question-distribution`; paper
 origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1120`).
 -/
 abbrev PauliQuestion (P : AdmissibleParams) := PauliType × PauliSpace P
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:436-441  (MIPStarRE.QPBT.pauliQuestion)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:437-442  (MIPStarRE.QPBT.pauliQuestion)
 /-- The Pauli question carrying no additional coefficient data, as in
 blueprint `def:pauli-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1006-1008`.
@@ -297,7 +298,7 @@ Its ambient coefficient vector is zero. -/
 def pauliQuestion (P : AdmissibleParams) (W : PauliKind) : PauliQuestion P :=
   (.pauli W, 0)
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:443-450  (MIPStarRE.QPBT.PauliEdge)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:444-451  (MIPStarRE.QPBT.PauliEdge)
 /-- The ordered-edge subtype used by the Pauli question sampler.  This is
 the finite carrier underlying `graphDistribution pauliEdges`, used to state
 `def:pauli-question-distribution`, blueprint
@@ -307,7 +308,7 @@ the finite carrier underlying `graphDistribution pauliEdges`, used to state
 abbrev PauliEdge :=
   {e : PauliType × PauliType // Sym2.mk e.1 e.2 ∈ pauliEdges}
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:452-459  (MIPStarRE.QPBT.pauliEdge_nonempty)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:453-460  (MIPStarRE.QPBT.pauliEdge_nonempty)
 /-- The Pauli graph has a loop, so its ordered-edge subtype is nonempty.  This
 is a finite-carrier fact used only to instantiate the uniform source sampler
 for `def:pauli-question-distribution`; the graph itself is the source-facing
@@ -317,7 +318,7 @@ theorem pauliEdge_nonempty : Nonempty PauliEdge := by
   refine ⟨⟨(.point .X, .point .X), ?_⟩⟩
   simp [pauliEdges]
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:471-485  (MIPStarRE.QPBT.pauliQuestionDistribution)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:472-486  (MIPStarRE.QPBT.pauliQuestionDistribution)
 /-- The Pauli question distribution from blueprint
 `def:pauli-question-distribution`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1070-1120`.
@@ -334,7 +335,7 @@ noncomputable def pauliQuestionDistribution (P : AdmissibleParams) :
           ((s.1.1.1, pauliCL P s.1.1.1 s.2),
             (s.1.1.2, pauliCL P s.1.1.2 s.2)))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:487-499  (MIPStarRE.QPBT.PauliAnswer)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:488-500  (MIPStarRE.QPBT.PauliAnswer)
 /-- The finite answer alphabet for the Pauli basis test.  Its constructors are
 the seven answer forms in blueprint `def:pauli-win-predicate`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1225`.
@@ -349,7 +350,7 @@ inductive PauliAnswer (P : AdmissibleParams) where
   | pauliOutcome (a : PauliRegister P)
   deriving DecidableEq
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:501-506  (MIPStarRE.QPBT.pauliAnswerOrZero)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:502-507  (MIPStarRE.QPBT.pauliAnswerOrZero)
 /-- A formalization-only total relabeling from the global Pauli-test answer
 alphabet to a Pauli register. It folds wrong-form answers into zero so that a
 Pauli question yields a complete `PauliRegister`-indexed measurement. -/
@@ -357,7 +358,7 @@ def pauliAnswerOrZero {P : AdmissibleParams} : PauliAnswer P → PauliRegister P
   | .pauliOutcome u => u
   | _ => 0
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:508-518  (MIPStarRE.QPBT.PauliAnswerCode)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:509-519  (MIPStarRE.QPBT.PauliAnswerCode)
 /-- A finite sum code used only to construct the `Fintype` instance for the
 answer alphabet in blueprint
 `def:pauli-win-predicate`, paper origin
@@ -370,7 +371,7 @@ abbrev PauliAnswerCode (P : AdmissibleParams) :=
         ((ZMod 2 × ZMod 2) ⊕
           (ZMod 2 ⊕ ((Fin 3 → ZMod 2) ⊕ PauliRegister P)))))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:520-565  (MIPStarRE.QPBT.pauliAnswerEquiv)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:521-566  (MIPStarRE.QPBT.pauliAnswerEquiv)
 /-- The constructor-preserving finite-code equivalence for `PauliAnswer`.  It
 is the finite encoding used to state `def:pauli-win-predicate`, blueprint
 `ch13_qpbt_test.tex`, paper origin
@@ -418,11 +419,11 @@ noncomputable def pauliAnswerEquiv (P : AdmissibleParams) :
                         | inl a => rfl
                         | inr a => rfl
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:567-568  (MIPStarRE.QPBT.instFintypePauliAnswer)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:568-569  (MIPStarRE.QPBT.instFintypePauliAnswer)
 noncomputable instance (P : AdmissibleParams) : Fintype (PauliAnswer P) :=
   Fintype.ofEquiv (PauliAnswerCode P) (pauliAnswerEquiv P).symm
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:573-583  (MIPStarRE.QPBT.gammaValue)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:574-584  (MIPStarRE.QPBT.gammaValue)
 /-- The phase bit `γ(u_X,u_Z,r_X,r_Z)` from `eq:gamma-value`.  It uses the
 fixed trace selected by `P.model`, as required by the paper's fixed
 self-dual-normal representation.  Blueprint
@@ -435,7 +436,7 @@ noncomputable def gammaValue (P : AdmissibleParams)
   fixedBinTrace P.model
     (dotProduct (rX • indicatorVec uX) (rZ • indicatorVec uZ))
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:585-592  (MIPStarRE.QPBT.pauliPairGamma)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:586-593  (MIPStarRE.QPBT.pauliPairGamma)
 /-- The commutation bit attached to a full Pauli ambient question, from
 `eq:gamma-value` in blueprint
 `def:pauli-win-predicate`, paper origin
@@ -445,7 +446,7 @@ noncomputable def pauliPairGamma (P : AdmissibleParams) (z : PauliSpace P) : ZMo
   gammaValue P (pauliXBlock z) (pauliZBlock z)
     (pauliRXBlock z) (pauliRZBlock z)
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:594-609  (MIPStarRE.QPBT.validPauliAnswer)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:595-610  (MIPStarRE.QPBT.validPauliAnswer)
 /-- The answer constructor prescribed by each Pauli question type; this is the
 well-formedness part of blueprint
 `def:pauli-win-predicate`, paper origin
@@ -463,7 +464,7 @@ def validPauliAnswer {P : AdmissibleParams} (t : PauliType) (a : PauliAnswer P) 
   | .ms (.var _), .bit _ => true
   | _, _ => false
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:611-623  (MIPStarRE.QPBT.pauliAlinePointCondition)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:612-624  (MIPStarRE.QPBT.pauliAlinePointCondition)
 /-- The axis-line versus point relation used by blueprint
 `def:pauli-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1225`.
@@ -478,7 +479,7 @@ def pauliAlinePointCondition (P : AdmissibleParams) (W : PauliKind)
           (chiIndex P.toLdParams (pauliScalarBlock line)) →
       evalCoefficient f t = a
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:625-635  (MIPStarRE.QPBT.pauliDlinePointCondition)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:626-636  (MIPStarRE.QPBT.pauliDlinePointCondition)
 /-- The diagonal-line versus point relation used by blueprint
 `def:pauli-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1225`.
@@ -491,7 +492,7 @@ def pauliDlinePointCondition (P : AdmissibleParams) (W : PauliKind)
         t • pauliDirectionBlock line →
       evalCoefficient f t = a
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:637-643  (MIPStarRE.QPBT.pauliPointPauliCondition)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:638-644  (MIPStarRE.QPBT.pauliPointPauliCondition)
 /-- The raw Pauli-versus-point consistency relation from blueprint
 `def:pauli-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1225`.
@@ -500,7 +501,7 @@ def pauliPointPauliCondition (P : AdmissibleParams) (W : PauliKind)
     (point : PauliSpace P) (h : PauliRegister P) (a : PauliScalar P) : Prop :=
   lowDegreeEnc h (pauliPointBlock W point) = a
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:645-654  (MIPStarRE.QPBT.pauliPairCondition)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:646-655  (MIPStarRE.QPBT.pauliPairCondition)
 /-- The Pair/W consistency relation, including the one-sided gamma gate, from
 blueprint `def:pauli-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1225`.
@@ -512,7 +513,7 @@ def pauliPairCondition (P : AdmissibleParams) (W : PauliKind)
     | .X => bits.1 = β
     | .Z => bits.2 = β)
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:656-666  (MIPStarRE.QPBT.pauliPointPairCondition)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:657-667  (MIPStarRE.QPBT.pauliPointPairCondition)
 /-- The point/Pair/W trace consistency relation from blueprint
 `def:pauli-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1225`.
@@ -525,7 +526,7 @@ def pauliPointPairCondition (P : AdmissibleParams) (W : PauliKind)
       | .X => pauliRXBlock z
       | .Z => pauliRZBlock z)) = β
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:668-680  (MIPStarRE.QPBT.pauliPointVariableCondition)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:669-681  (MIPStarRE.QPBT.pauliPointVariableCondition)
 /-- The Point/Variable consistency clause of `def:pauli-win-predicate`.
 The check is gated by `gamma = 0` and only uses Variable 1 in the X basis or
 Variable 5 in the Z basis.  Blueprint
@@ -540,7 +541,7 @@ def pauliPointVariableCondition (P : AdmissibleParams) (W : PauliKind)
     (j = ⟨4, by decide⟩ ∧ W = .Z ∧
         fixedBinTrace P.model (a * pauliRZBlock z) = β)
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:682-730  (MIPStarRE.QPBT.pauliWinPredicate)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:683-731  (MIPStarRE.QPBT.pauliWinPredicate)
 /-- The Pauli win predicate, with constructor-shape rejection.  This is
 blueprint `def:pauli-win-predicate`,
 paper origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1225`.
@@ -591,14 +592,14 @@ noncomputable def pauliWinPredicate (P : AdmissibleParams) :
         | _, _, _, _ => true
     else false
 
--- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:732-749  (MIPStarRE.QPBT.pauliBasisTest)
+-- source: MIPStarRE/QPBT/Test/PauliBasisTest.lean:733-750  (MIPStarRE.QPBT.pauliBasisTest)
 /-- The Pauli basis test determined by the question distribution
 `pauliQuestionDistribution` and the win predicate `pauliWinPredicate`.  These
 are `def:pauli-question-distribution` and `def:pauli-win-predicate` in
 `blueprint/src/chapter/ch13_qpbt_test.tex`, with paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1225`.
 -/
-noncomputable def pauliBasisTest (P : AdmissibleParams) : Game where
+@[reducible] noncomputable def pauliBasisTest (P : AdmissibleParams) : Game where
   QuestionA := PauliQuestion P
   QuestionB := PauliQuestion P
   AnswerA := PauliAnswer P

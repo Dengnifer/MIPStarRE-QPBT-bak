@@ -61,7 +61,7 @@ theorem combiningLinearForm_totalDegree_le_one {K : Type*} [CommSemiring K]
 /-- The coefficient of the variable `α_r` in a linear form is `c r`. -/
 theorem combiningLinearForm_coeff {K : Type*} [CommSemiring K] {k : ℕ}
     (c : Fin k → K) (r : Fin k) :
-    MvPolynomial.coeff (Finsupp.single r 1) (combiningLinearForm c) = c r := by
+    (combiningLinearForm c).coeff (Finsupp.single r 1) = c r := by
   classical
   rw [combiningLinearForm, MvPolynomial.coeff_sum, Finset.sum_eq_single r]
   · simp [MvPolynomial.coeff_C_mul, MvPolynomial.coeff_X]

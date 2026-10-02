@@ -124,7 +124,10 @@ trace. -/
 theorem fixedCharacter_neg (x : PauliScalar P) :
     phaseSign (fixedBinTrace P.model (-x)) =
       phaseSign (fixedBinTrace P.model x) := by
-  rw [fixedBinTrace, map_neg, ZMod.neg_eq_self_mod_two]
+  rw [fixedBinTrace, map_neg]
+  have phaseSign_neg (value : ZMod 2) : phaseSign (-value) = phaseSign value := by
+    exact congrArg phaseSign (ZMod.neg_eq_self_mod_two value)
+  exact phaseSign_neg _
 
 /-- Fourier cancellation for the fixed trace character: the character sums to
 the field size at `0` and to zero elsewhere.  This is `lem:cancellation` for

@@ -1870,3 +1870,21 @@ override is still never self-granted.
 **Expected effect:** the guard still stops runaway scaffolding, at five times the old ceiling. The per-episode
 discipline in `local/personas/main.md` (stop at the limit, commit what stands, record, rescope) is unchanged, and
 review still checks the PR's cumulative workflow diff.
+
+## 2026-10-02 — Pin the Palomar toolchain release (#756)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02, "Palomar preparation",
+records the official Palomar `toolchains.json` requirement for Lean
+`v4.35.0-rc2`, the matching Mathlib tag, and the owner-section-9 decision to
+perform the in-project upgrade in issue #756.
+
+**Change:** update the current toolchain version in `AGENTS.md` from Lean and
+Mathlib `v4.31.0` to `v4.35.0-rc2`. The repository pins, current root and
+artifact documentation, Claude-specific version note, and tested module-pattern
+note move to the same exact release. This is version documentation for the
+authorized dependency upgrade; no proof-integrity rule, CI gate, cache rule, or
+formalization policy changes.
+
+**Expected effect:** agents and artifact users see the exact release selected by
+the repository, while historical reports and prior comparator-run records keep
+their original version provenance.

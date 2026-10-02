@@ -41,7 +41,10 @@ theorem lineRepMap_apply_self {K : Type*} [Field K] {m : ℕ}
 inductive LineKind where
   | axis
   | diagonal
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
+
+instance LineKind.instFintype : Fintype LineKind :=
+  ⟨{.axis, .diagonal}, by intro x; cases x <;> simp⟩
 
 /-- A seed-bearing line description for blueprint
 `def:line-point-dist`, paper

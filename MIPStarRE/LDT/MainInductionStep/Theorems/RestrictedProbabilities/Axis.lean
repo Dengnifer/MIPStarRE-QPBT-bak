@@ -63,7 +63,6 @@ private lemma restrictedAxisSampleError_eq
       cases a
       rfl
     rw [hreadout]
-    rfl
   change
     qBipartiteConsDefect strategy.state
       ((strategy.pointMeasurement (appendPoint params u x)).toSubMeas)

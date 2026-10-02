@@ -41,14 +41,9 @@ theorem matrixSdpCanonicalConstraintOperator_trace_eq
     (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) :
     Matrix.trace (matrixSdpCanonicalConstraintOperator params model X) =
       Matrix.trace X := by
-  classical
-  unfold Matrix.trace matrixSdpCanonicalConstraintOperator matrixSdpCanonicalDiagonalBlock
-  simp only [Matrix.diag_apply, Matrix.sum_apply]
-  change (∑ i : model.space.carrier,
-      ∑ b : MatrixSdpCanonicalBlockIndex params, X (b, i) (b, i)) =
-    ∑ x : MatrixSdpCanonicalBlockIndex params × model.space.carrier, X x x
-  rw [Fintype.sum_prod_type]
-  rw [Finset.sum_comm]
+  rw [matrixSdpCanonical_trace_eq_sum_diagonalBlock params model X]
+  unfold matrixSdpCanonicalConstraintOperator
+  rw [Matrix.trace_sum]
 
 /-- A PSD canonical primal variable is norm-controlled by the real trace of its
 constraint image. -/

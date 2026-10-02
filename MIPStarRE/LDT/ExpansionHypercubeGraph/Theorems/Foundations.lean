@@ -309,7 +309,6 @@ lemma globalVarianceTraceForm_eq_orthogonalClosedForm (params : Parameters)
                   simp [model, abstractMatrixModel, matrixExpectation, ev]
                   rfl
                 · simp only [Matrix.one_apply, huv, ↓reduceIte, zero_mul, Complex.zero_re]
-                  exact (if_neg huv).symm
         _ = ∑ u, ev ψ ((decomp.orthogonalComponent u)ᴴ *
               decomp.orthogonalComponent u) := by
               simp

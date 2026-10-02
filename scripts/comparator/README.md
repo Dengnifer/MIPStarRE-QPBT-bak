@@ -81,13 +81,16 @@ questions.  Regeneration checks that the fixture agrees with the current
 library.  `ComparatorChallengeDriftTests.test_ldt_expected_matches_baseline`
 also hashes `expected/Challenge.lean.expected` and requires the preserved LDT
 digest
-`e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b`.
+`d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2`.
 Consequently, a QPBT-only change cannot silently update both the library and the
 generated LDT fixture.
 
 The module-conversion pilot changed the previous digest only because the
 `FiniteMatrix` module and public-section headers shifted two generated source
 line comments. The LDT challenge declarations and target statement were
+unchanged. The Lean/Mathlib v4.35.0-rc2 port changed the pilot digest only
+because compatibility edits shifted the generated source line for
+`Polynomial.toFun`; the LDT declaration and target statement again remained
 unchanged.
 
 For an intentional future LDT change, first regenerate from fresh built

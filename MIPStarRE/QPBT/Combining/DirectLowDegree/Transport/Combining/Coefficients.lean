@@ -191,14 +191,14 @@ theorem combinedCoefAlgHom_injective {K : Type*} [CommSemiring K] {m k : ℕ} :
 point variables. -/
 def combinedCoef {K : Type*} [CommSemiring K] {m k : ℕ}
     (p : MvPolynomial (Fin (m + k)) K) (μ : Fin k →₀ ℕ) : MvPolynomial (Fin m) K :=
-  MvPolynomial.coeff μ (combinedCoefAlgHom K m k p)
+  (combinedCoefAlgHom K m k p).coeff μ
 
 /-- The value at `u` of the coefficient of `μ` is the coefficient of `μ` in the
 restriction of `p` at `u`. -/
 theorem eval_combinedCoef {K : Type*} [CommSemiring K] {m k : ℕ}
     (p : MvPolynomial (Fin (m + k)) K) (u : Fin m → K) (μ : Fin k →₀ ℕ) :
     MvPolynomial.eval u (combinedCoef p μ) =
-      MvPolynomial.coeff μ (combinedRestrict p u) := by
+      (combinedRestrict p u).coeff μ := by
   have h : (MvPolynomial.mapAlgHom (MvPolynomial.aeval u)).comp (combinedCoefAlgHom K m k) =
       MvPolynomial.aeval (combinedRestrictSubstitution k u) := by
     apply MvPolynomial.algHom_ext
@@ -216,9 +216,9 @@ vectors is the sum of its monomials at those vectors. -/
 theorem eq_sum_monomial_single {B : Type*} [CommSemiring B] {k : ℕ}
     (q : MvPolynomial (Fin k) B)
     (h : ∀ μ : Fin k →₀ ℕ, (∀ r : Fin k, μ ≠ Finsupp.single r 1) →
-      MvPolynomial.coeff μ q = 0) :
+      q.coeff μ = 0) :
     q = ∑ r : Fin k, MvPolynomial.monomial (Finsupp.single r 1)
-      (MvPolynomial.coeff (Finsupp.single r 1) q) := by
+      (q.coeff (Finsupp.single r 1)) := by
   classical
   have hsub : q.support ⊆ Finset.image (fun r : Fin k => Finsupp.single r 1) Finset.univ := by
     intro μ hμ
@@ -298,7 +298,7 @@ theorem combinedCoef_eq_sum {K : Type*} [CommSemiring K] {m k : ℕ}
     (p : MvPolynomial (Fin (m + k)) K) (μ : Fin k →₀ ℕ) :
     combinedCoef p μ = ∑ s ∈ p.support,
       (if combinedCoefExp s = μ then
-        MvPolynomial.monomial (combinedPointExp s) (MvPolynomial.coeff s p) else 0) := by
+        MvPolynomial.monomial (combinedPointExp s) (p.coeff s) else 0) := by
   classical
   rw [combinedCoef]
   conv_lhs => rw [p.as_sum]
