@@ -161,3 +161,45 @@ full 20,151-job success at `68b5c46a` remains recorded in the earlier checkpoint
 and PR body. It was not rerun at the telemetry-only refreshed head, and no
 new-head full API-doc execution is claimed. The four theorem statements and
 all source blobs are unchanged from the previously approved source.
+
+## Supported toolchain merged; compact gates started
+
+PR778 merged normally as `fb1e10b6cf2a9fe3e0821ba977a0a8a7ca217def` after
+all seven merge gates passed on approved `283d4fa2`. Primary main fast-forwarded;
+the merged port worktree and branch were removed by the normal tool. The log
+is `/tmp/palomar-778-refreshed-merge.log`. The source package copies retained
+in the compact, module and archive worktrees remain available.
+
+The automatic warmer failed against its old shared package-store link, producing
+a partial snapshot at the correct 4.35 key. The failure was inability to write
+that old store's Git config when resolving the new Mathlib revision; it was not
+a Lean source failure. Logs are `cache-warmer-2026-10-02T105856Z.log` and
+`warm-20261002T105919Z-fb1e10b6cf2a.log` under the runtime logs directory.
+MAIN admitted a600s Sol preparation-only runtime packet on #743 in comment
+`5951066320`; its prior608s scout is separate. It may prepare private copies
+inside the owned hot-main checkout from frozen archive `c0e30660`, preserving
+old links and leaving the shared store/snapshots untouched. It must not start
+a build or forge completeness. MAIN will run the normal warmer after compact
+CI's Python fixtures finish. Log: `/tmp/palomar-743-private-warmer-cache.log`.
+
+Compact actor `orc-774-20261002-08` reached600s after publishing clean
+`97b043a90f2346c183f1085fbcfeeaf17a5f9486` and staging a necessary ancestry
+merge of the now-merged port `fb1e10b6`. Actual author cost is10,321s; usage is
+unknown, not zero. The new base had two best merge ancestors, so the ordinary
+freshness predicate rejected97b despite identical mathematical content. MAIN
+completed the worker-prepared merge normally as
+`0ce39f86f9595070f874c02abd34a03c793d528f`. Pending, pre-commit,
+reference-transaction and committed guards passed; every non-telemetry blob and
+mode equals published57f1. Checked publication completed normally, using the
+rewritten final-diff body `/tmp/pr775-final-body-0ce39f86.md`. Canonical CI is
+now running in `/tmp/palomar-775-final-ci.log`; no approval is claimed.
+
+Archive actor `orc-777-20261002-12` completed normally in1460s, giving #777
+cumulative author cost11,483s. Clean `c0e30660` preserves all2163 prior archive
+objects; seven manifests/2168 payloads recover2,156,974,446 raw bytes from
+453,237,371 archive bytes. Its exact tree is504,982,991bytes, leaving19,305,009.
+Receipt SHA25616624bfa83b20296f4b8b69b4f562f46f5e61d2e98c282f40b32fbf292ce9fb4;
+payload inventoryf488a7a538e39b87d49bfe717f61100b1770ffb24f4f22d7a16ceb371e3b1427.
+The worker also ran17 archival tests and944 script tests (9skipped), guards and
+the changed Lean check. Final module/current-main reconciliation, publication,
+canonical CI and independent review remain required.
