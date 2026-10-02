@@ -133,7 +133,7 @@ ANON_RULES=(
   'sirui-lu.com :: anonymized-upstream.example.invalid'
 )
 
-SOURCE_REPO='Dengnifer/MIPStarRE-QPBT'
+SOURCE_REPO='Dengnifer/MIPStarRE-QPBT-bak'
 
 # --------------------------------------------------------------------------
 

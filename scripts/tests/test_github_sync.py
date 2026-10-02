@@ -91,7 +91,7 @@ class GithubSyncTests(unittest.TestCase):
         self.assertEqual(self.git("rev-parse", "main"), self.remote_ref("main"))
 
     def test_missing_remote_uses_current_repository(self):
-        canonical = "git@github.com:Dengnifer/MIPStarRE-QPBT.git"
+        canonical = "git@github.com:Dengnifer/MIPStarRE-QPBT-bak.git"
         self.git("config", f"url.{self.remote}.insteadOf", canonical)
         self.git("remote", "remove", "github")
         result = self.sync("main")

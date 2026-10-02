@@ -104,7 +104,7 @@ class MakeArtifactTests(unittest.TestCase):
         write(self.repo / "lakefile.toml", 'name = "MIPStarRE"\n')
         write(self.repo / "lake-manifest.json", json.dumps(
             {"packages": [{"name": "mathlib", "rev": "deadbeefcafe"}]}))
-        write(self.repo / "README.md", "See https://github.com/Dengnifer/MIPStarRE-QPBT\n")
+        write(self.repo / "README.md", "See https://github.com/Dengnifer/MIPStarRE-QPBT-bak\n")
         write(self.repo / "docs" / "comparator.md", "trust model\n")
         # Third-party paper sources: they ship (owner decision, 2026-09-19).
         write(self.repo / "references" / "qpbt-paper" / "frontmatter.tex",
@@ -206,7 +206,7 @@ class MakeArtifactTests(unittest.TestCase):
         manifest = next(self.out.glob("*.MANIFEST.txt")).read_text(encoding="utf-8")
         self.assertIn("leanprover/lean4:v4.32.0", manifest)
         self.assertIn("deadbeefcafe", manifest)
-        self.assertIn("source repository : Dengnifer/MIPStarRE-QPBT", manifest)
+        self.assertIn("source repository : Dengnifer/MIPStarRE-QPBT-bak", manifest)
         self.assertIn("Lean files        : 3", manifest)
         # Foo.lean: import + theorem are code, the two doc-comment lines and the
         # blank lines are not; Bar.lean and MIPStarRE.lean are one line each.
@@ -470,7 +470,7 @@ class MakeArtifactTests(unittest.TestCase):
         pdf = self.repo / "docs" / "paper-gaps" / "note.pdf"
         pdf.parent.mkdir(parents=True, exist_ok=True)
         for identity in ("Ruixuan Deng", "Dengnifer/MIPStarRE-A",
-                         "Dengnifer/MIPStarRE-QPBT", "dengnifer.github.io"):
+                         "Dengnifer/MIPStarRE-QPBT-bak", "dengnifer.github.io"):
             with self.subTest(identity=identity):
                 pdf.write_bytes(minimal_pdf(identity))
                 self.commit("an identity baked into a binary")
