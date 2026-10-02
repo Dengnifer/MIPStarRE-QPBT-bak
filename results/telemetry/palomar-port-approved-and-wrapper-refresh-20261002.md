@@ -49,3 +49,10 @@ bootstrap exception is unchanged; no final gate is waived. Runtime log:
 
 No final companion publication, registry submission, keeper stop, or goal
 completion is claimed. The goal remains active.
+
+The snapshot publication receipt subsequently completed normally. Actor
+`orc-745-20261002-13` used 828s in the dispatch registry, giving cumulative
+#745 author cost 13,287s (the prose 811s/13,270s figures were interim).
+It confirmed remote PR #755 head and body at `a7cb947e`. Its raw receipt
+arrived after the first telemetry commit, causing the checked main push to
+refuse the now-dirty tree; this follow-up preserves the receipt before retry.
