@@ -83,3 +83,30 @@ independent verification may be admitted. The753longbuild release remains withhe
 through that normalPython test window. Nextslot goes to755review ifitsCIisgreen;
 otherwise actualmergedportmain enablescompact775refresh/publication. The prepared
 compact successor is /tmp/palomar-774-current-main-publication.md; it is notadmitted.
+
+## Conversion build window released
+
+At07:20Z the745normalhook had passed,778CI was fullygreen, and755CI blueprint-sync
+had completed successfully in345seconds. MAIN created the explicit releasefile
+for the753worker to run one justified fullbuild through the usual global lease.
+No lock or test timeout was changed. The worker reports all42changedfiles type-check
+and all755trackedLeanfiles usemodule; two local1,000-line excesses are under repair.
+
+## Source cap exceeded; bounded lossless XZ decision
+
+Archive777's fifth batch is committed at834d796218ba797282199c40f225fac664bf4d05.
+Its exactregularfiletree is525,050,834bytes, exceeding524,288,000by762,834. This is
+not submission-ready. Allprior2,127archive/manifestobjects stayedunchanged during
+thatphase. The finalpost-commitunioncheck is stillactive atdecisiontime.
+
+MAIN tested in-memory standard-library LZMA/XZ preset6 withouteditinganypayload:
+reviewer-pr731-20260929-01 raw518381,gzip136960,XZ98720(0.218s);
+prover-695-20260922-01 raw2092341,gzip464687,XZ285076(0.959s);
+reviewer-pr21-20260902-01 raw31666973,gzip7756053,XZ1784756(12.630s).
+Given23–72% ofgzip size, MAIN chooses a compatiblelossless XZ representation for
+only20largestcapturepayloads, retainingoriginalrawGitpreimages, fullhashverification,
+oldschema support andallmathematicalsource. This avoids repeatedly shaving tiny
+amounts ofremainingnativeevidence. Plannedbudget1,800Solseconds aftercurrent777
+terminal; actualcumulativecostmustbeboundatadmission. Preparedbrief:
+/tmp/palomar-777-xz-headroom.md. Thedecision isinternal underbriefing§9; ordinary
+hooks/wholefinalCI/independentapproval remainmandatory, no gatewaiver.
