@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
-import MIPStarRE.QPBT.Combining.Points.Placement
-import MIPStarRE.QPBT.Extraction.Observables
-import MIPStarRE.QPBT.Extraction.NonencodingSupport
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
+public import MIPStarRE.QPBT.Combining.Points.Placement
+public import MIPStarRE.QPBT.Extraction.Observables
+public import MIPStarRE.QPBT.Extraction.NonencodingSupport
 
 /-!
 # Consistency of the pulled-apart Pauli measurements
@@ -23,6 +25,8 @@ The non-encoding support obligation contributes to blueprint
 `lem:qld-construct-the-paulis`, from paper lines 1458-1608; see
 `docs/paper-gaps/qpbt_decoding-identity.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

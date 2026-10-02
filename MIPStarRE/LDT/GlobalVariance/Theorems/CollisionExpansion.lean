@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -16,6 +18,8 @@ This module contains the `generalizeB` theorem wrappers, finite reparametrizatio
 and distribution bookkeeping, and the Schwartz-Zippel collision expansion that
 bounds the line-collision residual.
 -/
+
+@[expose] public section
 
 private lemma generalizeB_of_pointwise
     (params : Parameters)
@@ -543,5 +547,7 @@ lemma generalizeBFromSchwartzZippel
   refine generalizeB_of_pointwise params strategy G strategy.state ?_
   intro g
   exact generalizeBPointwiseSchwartzZippel params strategy G g
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

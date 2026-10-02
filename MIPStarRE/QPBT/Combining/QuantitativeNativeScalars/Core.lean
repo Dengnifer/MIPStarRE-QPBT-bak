@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.QuantitativeScalarBase
+module
+
+public import MIPStarRE.QPBT.Combining.QuantitativeScalarBase
 
 /-!
 # Separated native scalar bounds for QPBT
@@ -15,6 +17,8 @@ exponential tail separately.
   `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1404`
 * Blueprint `thm:qld-native-small-regime-global-pair`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

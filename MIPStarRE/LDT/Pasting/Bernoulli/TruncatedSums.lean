@@ -1,10 +1,14 @@
-import MIPStarRE.LDT.Pasting.Defs.Tuples
+module
+
+public import MIPStarRE.LDT.Pasting.Defs.Tuples
 
 /-!
 # Section 12 pasting: Bernoulli truncated sums
 
 Truncated type sums and their one-step recurrence.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

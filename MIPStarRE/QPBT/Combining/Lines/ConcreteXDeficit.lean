@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.Marginal
-import MIPStarRE.QPBT.Combining.SubLineZDeficit
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.Marginal
+public import MIPStarRE.QPBT.Combining.SubLineZDeficit
 
 /-!
 # Concrete X-overlap deficit on sub-line samples
@@ -15,6 +17,8 @@ restricted line-point components.
 This is the deficit estimate in the proof of `lem:claim-17-2`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1168-1201`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.CondLinear
+module
+
+public import MIPStarRE.QPBT.Games.CondLinear
 
 /-!
 # Coordinate direct sums of conditionally linear representations
@@ -18,6 +20,8 @@ formalization support nodes `lem:cl-supported-vanishing`,
 `ch12_qpbt_games.tex`.  The paper origin is
 `references/qpbt-paper/05_conditionally_linear_functions.tex:150-379`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

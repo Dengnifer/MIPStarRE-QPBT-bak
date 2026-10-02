@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.DistributionAvg
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Basic
+module
+
+public import MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Basic
 
 /-!
 # Magic Square value-to-parity relations
@@ -24,6 +26,8 @@ and blueprint `def:ms-game`.  These relations are the
 probabilistic input to the rigidity result cited at paper lines 612-652 from
 Coladangelo--Stark, Theorem 6.9.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Error
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.SimultaneousGeneral
-import MIPStarRE.QPBT.ExplicitConstants
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Error
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.SimultaneousGeneral
+public import MIPStarRE.QPBT.ExplicitConstants
 
 /-!
 # Soundness for the directly indexed low-degree game
@@ -32,6 +34,8 @@ state is at most one, so the conclusion carries no information there.
 The obligation supports the Chapter 15 combining argument at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1288`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Basic.DistributionAvg
+module
+
+public import MIPStarRE.LDT.Basic.DistributionAvg
 
 /-! # Operations on finite distributions
 
@@ -7,6 +9,8 @@ normalized restrictions, and push-forwards.  Uniform laws are preserved by
 bijections and balanced maps, their product projections are uniform, and
 dependent uniform sampling agrees with push-forward from a product.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

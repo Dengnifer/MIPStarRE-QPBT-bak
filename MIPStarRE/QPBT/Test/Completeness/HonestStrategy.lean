@@ -1,9 +1,11 @@
-import MIPStarRE.QPBT.Algebra.PauliTheorems
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
-import MIPStarRE.QPBT.Observables.ExpandedCommutation
-import MIPStarRE.QPBT.Observables.LineMeasurement.Restriction
-import MIPStarRE.QPBT.Test.MagicSquareTheorems
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Algebra.PauliTheorems
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+public import MIPStarRE.QPBT.Observables.ExpandedCommutation
+public import MIPStarRE.QPBT.Observables.LineMeasurement.Restriction
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # The honest Pauli basis measurements of the completeness proof
@@ -31,6 +33,8 @@ The construction is the strategy displayed in the proof of
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1237-1360`;
 blueprint `lem:pauli-completeness`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

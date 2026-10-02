@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.RoundedPolynomialEstimates
-import Mathlib.Algebra.MvPolynomial.Equiv
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.RoundedPolynomialEstimates
+public import Mathlib.Algebra.MvPolynomial.Equiv
 
 /-!
 # Scalar and base coefficients of the rounded polynomial outcomes
@@ -18,6 +20,8 @@ the coefficient expansion preceding `eq:qld-g-prime-bound`.
 The partial coefficient argument and separated image are at lines 1341--1368,
 `eq:qld-g-2` and `eq:qld-g-non-separable`; blueprint `lem:qld-4-7`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

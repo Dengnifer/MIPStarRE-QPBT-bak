@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Games.DistributionAux
-import MIPStarRE.QPBT.Test.LowDegreeGame
-import MIPStarRE.LDT.Preliminaries.Polynomials
+module
+
+public import MIPStarRE.QPBT.Games.DistributionAux
+public import MIPStarRE.QPBT.Test.LowDegreeGame
+public import MIPStarRE.LDT.Preliminaries.Polynomials
 
 /-!
 # Lines, bounded line polynomials, and line-point distributions
@@ -19,6 +21,8 @@ The line and bounded-polynomial definitions are blueprint
 line-point sampler is `def:line-point-dist` in blueprint chapter 13, from
 `08_classical_and_quantum_low_degree_tests.tex:274-287`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -10,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -23,10 +24,32 @@ EXTRACTOR = COMPARATOR / "extract_closure.lean"
 LDT_EXPECTED = COMPARATOR / "expected" / "Challenge.lean.expected"
 PALOMAR_EXPECTED = COMPARATOR / "expected" / "palomar" / "Challenge.lean.expected"
 LDT_BASELINE_SHA256 = (
-    "d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2"
+    "3430abaf0e82e3527a8f64719f5da2740f3a84d4169a3391be8af6650179c434"
 )
 PALOMAR_BASELINE_SHA256 = (
     "acb66991fbdbc80a9c5d0a7e522f572ba604e6c88b2907f9c43a477438ebe6f8"
+)
+TEMPLATE_BASELINE_SHA256 = {
+    "challenge_header.lean.in":
+        "5031f9a950a17981dfd41f38950c364f2f7fa575f305d966c511e6544f614fe6",
+    "challenge_footer.lean.in":
+        "c9d93c31cf4cebc5973fc85b9a79c497f5991dbc1f767abfffefe44246592ff8",
+    "challenge_qpbt_header.lean.in":
+        "c09e1e2ff263da5c547c0cad2e616d05ec83db6b8e2e8d9e2259ed2d3b060ec9",
+    "challenge_qpbt_footer.lean.in":
+        "c5660a0d8c8145ded79d6a9490d7dbec269d045f9de3b19b712353a2797853da",
+    "challenge_palomar_header.lean.in":
+        "a209d7bf1dd1af406ae4d7c8eb0d11f4a4f3cc1c3682c2843f94574905fadf17",
+    "challenge_palomar_footer.lean.in":
+        "aa55e89fd5fa8c35c01853874ebffccefa6e9b02b7aa0820fad019285f45abd6",
+}
+ARCHIVED_NATIVE_HARNESS = (
+    REPO_ROOT
+    / "results/telemetry/native-audits/pr549-01a0a525"
+    / "PR549NativeChecks.lean.txt"
+)
+ARCHIVED_NATIVE_HARNESS_SHA256 = (
+    "99f9a14cc19aabc368a0be88420f24953967dfef70c0cf616439b255b7b7898c"
 )
 
 # the drift checker imports its sibling `challenge_config`, which a script run
@@ -43,6 +66,31 @@ _spec.loader.exec_module(check_challenge_drift)
 
 
 class ComparatorChallengeDriftTests(unittest.TestCase):
+    def test_challenge_templates_are_byte_preserved_fragments(self) -> None:
+        configured_parts = {
+            part
+            for challenge in challenge_config.load_challenges()
+            for part in (challenge.header, challenge.footer)
+            if part is not None
+        }
+        expected_parts = {
+            f"scripts/comparator/{name}" for name in TEMPLATE_BASELINE_SHA256
+        }
+        self.assertEqual(configured_parts, expected_parts)
+        for name, expected_hash in TEMPLATE_BASELINE_SHA256.items():
+            with self.subTest(template=name):
+                path = COMPARATOR / name
+                self.assertEqual(
+                    hashlib.sha256(path.read_bytes()).hexdigest(),
+                    expected_hash,
+                )
+
+    def test_archived_native_harness_is_byte_preserved_text(self) -> None:
+        self.assertEqual(
+            hashlib.sha256(ARCHIVED_NATIVE_HARNESS.read_bytes()).hexdigest(),
+            ARCHIVED_NATIVE_HARNESS_SHA256,
+        )
+
     def test_clean_closure_rows_keeps_supported_tsv_rows(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -71,6 +119,29 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
                 "Generated\tMIPStarRE/Bar.lean\tNORANGE\tNORANGE\n",
             )
 
+    def test_closure_extraction_loads_transitive_server_metadata(self) -> None:
+        challenge = challenge_config.load_challenges(["ldt"])[0]
+        with tempfile.TemporaryDirectory() as td:
+            workdir = Path(td)
+
+            def fake_run(cmd, *, cwd, stdout=None, env=None):
+                self.assertEqual(cwd, REPO_ROOT)
+                self.assertIsNotNone(stdout)
+                assert stdout is not None
+                stdout.write_text(
+                    "Decl\tMIPStarRE/Foo.lean\t1\t2\n", encoding="utf-8"
+                )
+                return ""
+
+            with patch.object(check_challenge_drift, "run", side_effect=fake_run) as run:
+                check_challenge_drift.closure_tsv(REPO_ROOT, workdir, challenge)
+
+            command = run.call_args.args[0]
+            self.assertEqual(
+                command[:4],
+                ["lake", "env", "lean", "-DElab.inServer=true"],
+            )
+
     def test_pr_ci_runs_drift_guard_after_lean_build_for_comparator_changes(self) -> None:
         workflow = PR_CI.read_text(encoding="utf-8")
         self.assertIn("comparator: ${{ steps.filter.outputs.comparator }}", workflow)
@@ -93,7 +164,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
             "python3 scripts/comparator/check_challenge_drift.py --root . --update",
             readme,
         )
-        self.assertIn("challenge_footer.lean", readme)
+        self.assertIn("challenge_footer.lean.in", readme)
         self.assertIn("MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean", readme)
         self.assertIn("--challenge", readme)
         self.assertIn("challenges/qpbt.json", readme)
@@ -102,7 +173,7 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
             "refuses a challenge whose configured header or footer file is not",
             readme,
         )
-        self.assertIn("challenge_qpbt_footer.lean", readme)
+        self.assertIn("challenge_qpbt_footer.lean.in", readme)
         self.assertIn("MIPStarRE/QPBT/Test/Completeness.lean", readme)
         self.assertIn("MIPStarRE/QPBT/Test/LowDegreeGameTheorems.lean", readme)
         self.assertIn("MIPStarRE/QPBT/Test/Soundness.lean", readme)
@@ -233,23 +304,28 @@ class ComparatorChallengeDriftTests(unittest.TestCase):
         expected = REPO_ROOT / qpbt.expected
         parts = sorted(expected.rglob("Challenge/**/*.lean"))
         self.assertTrue(parts)
-        allowed_prefixes = ("import Mathlib", "import Challenge")
+        allowed_prefixes = ("Mathlib", "Challenge")
         for part in [expected / "Challenge.lean", *parts]:
             with self.subTest(module=part.name):
+                text = part.read_text(encoding="utf-8")
+                lines = text.splitlines()
+                self.assertEqual(lines[0], "module")
                 imports = []
-                for line in part.read_text(encoding="utf-8").splitlines():
+                for line in lines[1:]:
                     # imports are only legal in the leading block of a module
-                    if line.startswith("import "):
-                        imports.append(line)
+                    match = re.fullmatch(r"public import\s+(.+)", line)
+                    if match:
+                        imports.append(match.group(1))
                     elif line.strip():
                         break
                 self.assertTrue(imports, f"{part} has no imports")
-                for line in imports:
+                for imported in imports:
                     self.assertTrue(
-                        line.startswith(allowed_prefixes),
+                        imported.startswith(allowed_prefixes),
                         f"{part}: challenge modules may only import Mathlib and "
-                        f"other challenge modules, found {line!r}",
+                        f"other challenge modules, found {imported!r}",
                     )
+                self.assertIn("@[expose] public section", text)
 
     def test_palomar_challenge_is_monolithic_bounded_and_mathlib_only(self) -> None:
         palomar = challenge_config.load_challenges(["palomar"])[0]

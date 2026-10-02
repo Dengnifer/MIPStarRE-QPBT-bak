@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.LowDegreeCode
-import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
+module
+
+public import MIPStarRE.QPBT.Algebra.LowDegreeCode
+public import MIPStarRE.QPBT.Observables.WinImplications.LowDegree
 
 /-!
 # Restriction of low-degree encodings to canonical lines
@@ -22,6 +24,8 @@ line projector in the proof of `lem:qld-comm-line-cons`, paper
 evaluation identities are recorded in blueprint
 `lem:low-degree-encoding-line-restriction`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

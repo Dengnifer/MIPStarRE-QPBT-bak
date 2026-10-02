@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.Distribution
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.Distribution
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/DistributionAux.lean`.
 
@@ -9,13 +11,15 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/DistributionAux.lean
 section
 open MIPStarRE.LDT
 
--- source: MIPStarRE/QPBT/Games/DistributionAux.lean:98-112  (MIPStarRE.QPBT.Distribution.bind)
+-- source: MIPStarRE/QPBT/Games/DistributionAux.lean:102-116  (MIPStarRE.QPBT.Distribution.bind)
 /-- The dependent bind of finite distributions used for typed question
 distributions, blueprint `def:typed-cl-distributions`, paper
 `07_types.tex:84-94`. -/
@@ -32,7 +36,7 @@ noncomputable def Distribution.bind {α β : Type*} [DecidableEq β]
       exact hb (Finset.mem_biUnion.mpr ⟨a, ha, h⟩)
     simp [ν a |>.outsideSupport b hnot]
 
--- source: MIPStarRE/QPBT/Games/DistributionAux.lean:199-213  (MIPStarRE.QPBT.Distribution.ext_of_support_of_weight)
+-- source: MIPStarRE/QPBT/Games/DistributionAux.lean:203-217  (MIPStarRE.QPBT.Distribution.ext_of_support_of_weight)
 /-- Formalization-only lemma: two finite distributions coincide as soon as
 their supports and weight functions coincide.  This is the support statement
 `lem:distribution-ext-support` in blueprint chapter 13. -/
@@ -49,7 +53,7 @@ theorem Distribution.ext_of_support_of_weight {α : Type*} {μ ν : Distribution
       subst hw
       rfl
 
--- source: MIPStarRE/QPBT/Games/DistributionAux.lean:215-245  (MIPStarRE.QPBT.Distribution.map_map)
+-- source: MIPStarRE/QPBT/Games/DistributionAux.lean:219-249  (MIPStarRE.QPBT.Distribution.map_map)
 /-- Formalization-only lemma: successive push-forwards of a finite distribution
 compose.  This is `lem:distribution-map-comp` in blueprint chapter 13. -/
 theorem Distribution.map_map {α β γ : Type*}
@@ -82,7 +86,7 @@ theorem Distribution.map_map {α β γ : Type*}
     · rintro ⟨⟨ha1, -⟩, hae⟩
       exact ⟨ha1, hae⟩
 
--- source: MIPStarRE/QPBT/Games/DistributionAux.lean:247-253  (MIPStarRE.QPBT.uniformDistribution_weight_apply)
+-- source: MIPStarRE/QPBT/Games/DistributionAux.lean:251-257  (MIPStarRE.QPBT.uniformDistribution_weight_apply)
 /-- Formalization-only lemma: every point of a nonempty finite type carries the
 reciprocal of the type's cardinality as its uniform weight.  This is
 `lem:uniform-distribution-weight` in blueprint chapter 13. -/
@@ -91,7 +95,7 @@ theorem uniformDistribution_weight_apply (α : Type*)
     (uniformDistribution α).weight a = 1 / (Fintype.card α : Error) := by
   simp [uniformDistribution]
 
--- source: MIPStarRE/QPBT/Games/DistributionAux.lean:255-267  (MIPStarRE.QPBT.uniformDistribution_map_weight)
+-- source: MIPStarRE/QPBT/Games/DistributionAux.lean:259-271  (MIPStarRE.QPBT.uniformDistribution_map_weight)
 /-- Formalization-only lemma: a push-forward of a uniform law assigns to a point
 the cardinality of its fibre divided by the cardinality of the source.  This is
 `lem:uniform-map-fibre-weight` in blueprint chapter 13. -/
@@ -106,7 +110,7 @@ theorem uniformDistribution_map_weight {α γ : Type*}
   rw [Finset.sum_congr rfl fun x _ => uniformDistribution_weight_apply α x,
     Finset.sum_const, nsmul_eq_mul]
 
--- source: MIPStarRE/QPBT/Games/DistributionAux.lean:357-415  (MIPStarRE.QPBT.bind_uniformOnFinset_map)
+-- source: MIPStarRE/QPBT/Games/DistributionAux.lean:361-419  (MIPStarRE.QPBT.bind_uniformOnFinset_map)
 /-- Formalization-only lemma: binding the uniform law on a finite subset to a
 family of uniformly seeded push-forwards is the push-forward of the uniform law
 on the product of an indexing type for that subset with the seed space.  This is

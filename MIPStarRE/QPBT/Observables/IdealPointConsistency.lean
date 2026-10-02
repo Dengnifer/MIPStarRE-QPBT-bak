@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Observables.ExpandedDefs
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
+module
+
+public import MIPStarRE.QPBT.Observables.ExpandedDefs
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
 
 /-!
 # Perfect consistency of ideal point measurements
@@ -26,6 +28,8 @@ latter module also supplies the actual measurement
 These are auxiliary identities for the expanded-state construction, not the
 approximate consistency theorem for the original strategy.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

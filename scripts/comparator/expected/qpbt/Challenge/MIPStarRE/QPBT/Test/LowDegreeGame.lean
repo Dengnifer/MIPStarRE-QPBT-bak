@@ -1,9 +1,11 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
-import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
-import Challenge.MIPStarRE.QPBT.Algebra.Lines
-import Challenge.MIPStarRE.QPBT.Games.CondLinear
-import Challenge.MIPStarRE.QPBT.Games.Defs
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Algebra.Coefficients
+public import Challenge.MIPStarRE.QPBT.Algebra.FieldBasis
+public import Challenge.MIPStarRE.QPBT.Algebra.Lines
+public import Challenge.MIPStarRE.QPBT.Games.CondLinear
+public import Challenge.MIPStarRE.QPBT.Games.Defs
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Test/LowDegreeGame.lean`.
 
@@ -13,13 +15,15 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Test/LowDegreeGame.lean:31-768
 noncomputable section
 open MIPStarRE.LDT
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:33-49  (MIPStarRE.QPBT.LdParams)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:37-53  (MIPStarRE.QPBT.LdParams)
 /-- Numerical parameters for the low-degree game.  The ambient coefficient
 space uses the once-and-for-all model `fixedFieldModel P.q P.hq`, rather than a
 model supplied by each parameter record.  This is the Lean carrier for
@@ -38,7 +42,7 @@ structure LdParams where
   hq : IsAdmissibleSize q
   hdvd : m ∣ q
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:56-62  (MIPStarRE.QPBT.LdParams.model)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:60-66  (MIPStarRE.QPBT.LdParams.model)
 /-- The fixed scalar model of a low-degree parameter tuple.  It is a
 compatibility view of the global `fixedFieldModel` selector, not an
 independently quantified field representation.  Blueprint `def:ld-game`; paper origin
@@ -47,7 +51,7 @@ independently quantified field representation.  Blueprint `def:ld-game`; paper o
 @[reducible] noncomputable def LdParams.model (P : LdParams) : FixedFieldModel P.q :=
   fixedFieldModel P.q P.hq
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:64-69  (MIPStarRE.QPBT.ScalarQ)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:68-73  (MIPStarRE.QPBT.ScalarQ)
 /-- The scalar carrier selected by an `LdParams` record; this is the fixed
 field carrier in `def:ld-game`, selected globally by `LdParams.model`.
 Blueprint `def:ld-game`, paper origin
@@ -55,7 +59,7 @@ Blueprint `def:ld-game`, paper origin
 -/
 abbrev ScalarQ (P : LdParams) := (P.model).K
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:71-79  (MIPStarRE.QPBT.LdType)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:75-83  (MIPStarRE.QPBT.LdType)
 /-- The three low-degree question types of blueprint
 `def:ld-game`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
@@ -66,46 +70,46 @@ inductive LdType where
   | dline
   deriving DecidableEq, Repr, Inhabited
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:80-81  (MIPStarRE.QPBT.LdType.instFintype)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:84-85  (MIPStarRE.QPBT.LdType.instFintype)
 instance LdType.instFintype : Fintype LdType :=
   ⟨{.point, .aline, .dline}, by intro x; cases x <;> simp⟩
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:82-86  (MIPStarRE.QPBT.LdIndex)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:86-90  (MIPStarRE.QPBT.LdIndex)
 /-- The register index used by the low-degree game (blueprint
 `def:ld-game`; paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`).
 -/
 abbrev LdIndex (P : LdParams) := (Fin P.m ⊕ Unit) ⊕ Fin P.m
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:88-92  (MIPStarRE.QPBT.LdSpace)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:92-96  (MIPStarRE.QPBT.LdSpace)
 /-- The full ambient low-degree coefficient space (blueprint
 `def:ld-game`; paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`).
 -/
 abbrev LdSpace (P : LdParams) := LdIndex P → ScalarQ P
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:94-98  (MIPStarRE.QPBT.LdSpace.point)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:98-102  (MIPStarRE.QPBT.LdSpace.point)
 /-- The point coordinates of an ambient low-degree vector in
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
 -/
 def LdSpace.point {P : LdParams} (z : LdSpace P) : Fin P.m → ScalarQ P :=
   fun i => z (.inl (.inl i))
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:100-104  (MIPStarRE.QPBT.LdSpace.seed)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:104-108  (MIPStarRE.QPBT.LdSpace.seed)
 /-- The shared scalar coordinate of an ambient low-degree vector in
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
 -/
 def LdSpace.seed {P : LdParams} (z : LdSpace P) : ScalarQ P :=
   z (.inl (.inr ()) )
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:106-110  (MIPStarRE.QPBT.LdSpace.direction)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:110-114  (MIPStarRE.QPBT.LdSpace.direction)
 /-- The direction coordinates of an ambient low-degree vector in
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
 -/
 def LdSpace.direction {P : LdParams} (z : LdSpace P) : Fin P.m → ScalarQ P :=
   fun i => z (.inr i)
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:112-120  (MIPStarRE.QPBT.chiIndex)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:116-124  (MIPStarRE.QPBT.chiIndex)
 /-- The zero-based coordinate index corresponding to the paper's map `χ`:
 `chiIndex P s` represents `χ(s) - 1` in the fixed field representation.  This
 is `eq:chi-func` in blueprint `def:ld-question-distribution`, paper origin
@@ -116,7 +120,7 @@ noncomputable def chiIndex (P : LdParams) (s : ScalarQ P) : Fin P.m := by
     exact Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one P.hm)⟩
   exact Fin.ofNat P.m ((binaryRepresentation P.model s).val / (P.q / P.m))
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:199-207  (MIPStarRE.QPBT.prefixProjection)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:203-211  (MIPStarRE.QPBT.prefixProjection)
 /-- The projection used in the diagonal-line map zeroes coordinates before the
 chosen index and retains the suffix of the direction vector.  This is the
 prefix restriction in blueprint
@@ -127,7 +131,7 @@ def prefixProjection {P : LdParams} (i : Fin P.m) (v : Fin P.m → ScalarQ P) :
     Fin P.m → ScalarQ P :=
   fun j => if j.val < i.val then 0 else v j
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:221-230  (MIPStarRE.QPBT.ldPointCL)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:225-234  (MIPStarRE.QPBT.ldPointCL)
 /-- The point CL map, retaining the point block and clearing the auxiliary
 blocks.  It is the map `L_point` of blueprint
 `def:ld-question-distribution`, paper origin
@@ -139,7 +143,7 @@ def ldPointCL (P : LdParams) (z : LdSpace P) : LdSpace P :=
   | .inl (.inr _) => 0
   | .inr _ => 0
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:232-243  (MIPStarRE.QPBT.ldALineCL)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:236-247  (MIPStarRE.QPBT.ldALineCL)
 /-- The affine-line CL map.  The direction block is put through the canonical
 line representative map from `def:line-representative`, while the point block
 is retained (blueprint `def:ld-question-distribution`; paper
@@ -153,7 +157,7 @@ noncomputable def ldALineCL (P : LdParams) (z : LdSpace P) : LdSpace P :=
   | .inl (.inr _) => z (.inl (.inr ()))
   | .inr _ => 0
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:245-259  (MIPStarRE.QPBT.ldDLineCL)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:249-263  (MIPStarRE.QPBT.ldDLineCL)
 /-- The diagonal-line CL map applies the canonical line representative map to
 the point block and stores the prefix-projected direction in the direction
 block.  This is the `L_DLine` clause of
@@ -170,7 +174,7 @@ noncomputable def ldDLineCL (P : LdParams) (z : LdSpace P) : LdSpace P :=
   | .inl (.inr _) => z (.inl (.inr ()))
   | .inr j => direction j
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:261-269  (MIPStarRE.QPBT.ldCL)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:265-273  (MIPStarRE.QPBT.ldCL)
 /-- The conditionally linear map attached to each low-degree question type.
 This is the typed construction in blueprint
 `def:ld-question-distribution`, paper origin
@@ -181,14 +185,14 @@ noncomputable def ldCL (P : LdParams) : LdType → LdSpace P → LdSpace P
   | .aline => ldALineCL P
   | .dline => ldDLineCL P
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:621-625  (MIPStarRE.QPBT.LdQuestion)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:625-629  (MIPStarRE.QPBT.LdQuestion)
 /-- The question alphabet for the low-degree game (blueprint
 `def:ld-game`; paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`).
 -/
 abbrev LdQuestion (P : LdParams) := LdType × LdSpace P
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:627-636  (MIPStarRE.QPBT.ldQuestionDistribution)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:631-640  (MIPStarRE.QPBT.ldQuestionDistribution)
 /-- The typed CL question distribution.  This is the inlined construction in
 blueprint `def:ld-question-distribution`; paper
 origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
@@ -200,7 +204,7 @@ noncomputable def ldQuestionDistribution (P : LdParams) :
     (fun s =>
       ((s.1.1, ldCL P s.1.1 s.2), (s.1.2, ldCL P s.1.2 s.2)))
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:638-648  (MIPStarRE.QPBT.LdAnswer)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:642-652  (MIPStarRE.QPBT.LdAnswer)
 /-- The coefficient-tuple answer alphabet of the low-degree game.  Polynomial
 answers are representatives with exactly the coefficient lengths printed in
 the paper, as required by `def:ld-win-predicate` (blueprint
@@ -213,7 +217,7 @@ inductive LdAnswer (P : LdParams) where
   | dlinePolys (a : Fin P.k → Fin (P.m * P.d + 1) → ScalarQ P)
   deriving DecidableEq
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:650-658  (MIPStarRE.QPBT.LdAnswerCode)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:654-662  (MIPStarRE.QPBT.LdAnswerCode)
 /-- A finite sum code used only to provide the answer alphabet's `Fintype`
 instance; the public constructors are those of blueprint
 `def:ld-win-predicate`, paper origin
@@ -224,7 +228,7 @@ abbrev LdAnswerCode (P : LdParams) :=
     ((Fin P.k → Fin (P.d + 1) → ScalarQ P) ⊕
       (Fin P.k → Fin (P.m * P.d + 1) → ScalarQ P))
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:660-684  (MIPStarRE.QPBT.ldAnswerEquiv)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:664-688  (MIPStarRE.QPBT.ldAnswerEquiv)
 /-- The canonical code equivalence for `LdAnswer`, sending point, axis-line,
 and diagonal-line answers to the three summands (Lean-only finite-carrier
 support for blueprint
@@ -251,11 +255,11 @@ noncomputable def ldAnswerEquiv (P : LdParams) :
         | inl a => rfl
         | inr a => rfl
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:689-690  (MIPStarRE.QPBT.instFintypeLdAnswer)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:693-694  (MIPStarRE.QPBT.instFintypeLdAnswer)
 noncomputable instance (P : LdParams) : Fintype (LdAnswer P) :=
   Fintype.ofEquiv (LdAnswerCode P) (ldAnswerEquiv P).symm
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:692-702  (MIPStarRE.QPBT.validLdAnswer)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:696-706  (MIPStarRE.QPBT.validLdAnswer)
 /-- Check that an answer has the constructor prescribed by its question type;
 Lean encoding of the rejection clause in blueprint
 `def:ld-win-predicate`, paper origin
@@ -268,7 +272,7 @@ def validLdAnswer {P : LdParams} (t : LdType) (a : LdAnswer P) : Bool :=
   | .dline, .dlinePolys _ => true
   | _, _ => false
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:704-715  (MIPStarRE.QPBT.alinePointCondition)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:708-719  (MIPStarRE.QPBT.alinePointCondition)
 /-- The axis-parallel line/point relation in blueprint
 `def:ld-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
@@ -282,7 +286,7 @@ def alinePointCondition (P : LdParams) (line point : LdSpace P)
     point.point = line.point + t • coordinateDirection (chiIndex P line.seed) →
       ∀ j : Fin P.k, evalCoefficient (f j) t = a j
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:717-726  (MIPStarRE.QPBT.dlinePointCondition)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:721-730  (MIPStarRE.QPBT.dlinePointCondition)
 /-- The diagonal line/point relation in blueprint
 `def:ld-win-predicate`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
@@ -294,7 +298,7 @@ def dlinePointCondition (P : LdParams) (line point : LdSpace P)
     point.point = line.point + t • line.direction →
       ∀ j : Fin P.k, evalCoefficient (f j) t = a j
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:728-751  (MIPStarRE.QPBT.ldWinPredicate)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:732-755  (MIPStarRE.QPBT.ldWinPredicate)
 /-- The low-degree consistency predicate, rejecting answers of the wrong
 constructor shape.  This is blueprint
 `def:ld-win-predicate`, paper origin
@@ -320,7 +324,7 @@ noncomputable def ldWinPredicate (P : LdParams) :
         | _, _, _, _ => true
       else false
 
--- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:753-767  (MIPStarRE.QPBT.ldGame)
+-- source: MIPStarRE/QPBT/Test/LowDegreeGame.lean:757-771  (MIPStarRE.QPBT.ldGame)
 /-- The low-degree game determined by its question distribution and win
 predicate. This is blueprint
 `def:ld-game`, paper origin

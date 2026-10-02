@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkOneMeas
-import MIPStarRE.QPBT.Combining.Linearity.BLR
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkOneMeas
+public import MIPStarRE.QPBT.Combining.Linearity.BLR
 
 /-!
 # Naimark rounding of the Fourier-square POVM
@@ -55,6 +57,8 @@ Naimark construction reused here is `oneMeasNaimark` in
 associated dilation data defined in
 `MIPStarRE/LDT/MakingMeasurementsProjective/Defs.lean`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

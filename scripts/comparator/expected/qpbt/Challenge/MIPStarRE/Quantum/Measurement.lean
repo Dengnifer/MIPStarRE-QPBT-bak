@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
 
 /-! Challenge mirror of `MIPStarRE/Quantum/Measurement.lean`.
 
@@ -9,9 +11,11 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.Quantum
 
--- source: MIPStarRE/Quantum/Measurement.lean:30-40  (MIPStarRE.Quantum.Submeasurement)
+-- source: MIPStarRE/Quantum/Measurement.lean:34-44  (MIPStarRE.Quantum.Submeasurement)
 /--
 A submeasurement on a finite answer type `α` is a family of PSD matrices
 `M : α → Op d` with `∑ a, M a ≤ 1`.
@@ -24,7 +28,7 @@ structure Submeasurement (α : Type*) [Fintype α] (d : Type*) [Fintype d] [Deci
   /-- The effects sum to at most the identity. -/
   sum_le_one : ∑ a, effect a ≤ 1
 
--- source: MIPStarRE/Quantum/Measurement.lean:42-48  (MIPStarRE.Quantum.Measurement)
+-- source: MIPStarRE/Quantum/Measurement.lean:46-52  (MIPStarRE.Quantum.Measurement)
 /--
 A measurement is a submeasurement whose effects sum exactly to the identity.
 -/
@@ -39,7 +43,7 @@ section
 variable {d : Type*} [Fintype d] [DecidableEq d]
 variable {α β : Type*} [Fintype α] [Fintype β]
 
--- source: MIPStarRE/Quantum/Measurement.lean:63-76  (MIPStarRE.Quantum.Submeasurement.postprocess)
+-- source: MIPStarRE/Quantum/Measurement.lean:67-80  (MIPStarRE.Quantum.Submeasurement.postprocess)
 /--
 Data processing: relabel the answer set by `f : α → β`, summing the effects over
 fibers.
@@ -63,7 +67,7 @@ section
 variable {d : Type*} [Fintype d] [DecidableEq d]
 variable {α β : Type*} [Fintype α] [Fintype β]
 
--- source: MIPStarRE/Quantum/Measurement.lean:121-136  (MIPStarRE.Quantum.Measurement.postprocess)
+-- source: MIPStarRE/Quantum/Measurement.lean:125-140  (MIPStarRE.Quantum.Measurement.postprocess)
 /--
 Postprocess a complete measurement by relabeling outcomes.
 

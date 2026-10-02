@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.DiagonalRecursion
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.DiagonalRecursion
 
 /-!
 # Pass conversion for the directly indexed low-degree game
@@ -28,6 +30,8 @@ value at least `1 - ε` has coordinate strategies of LDT failure at most
 - `MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean:300-311`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Pasting.Statements
-import MIPStarRE.LDT.Pasting.Bernoulli.Weights
+module
+
+public import MIPStarRE.LDT.Pasting.Statements
+public import MIPStarRE.LDT.Pasting.Bernoulli.Weights
 
 /-!
 # Section 12 pasting: operator averages and projective submeasurement lemmas
@@ -7,6 +9,8 @@ import MIPStarRE.LDT.Pasting.Bernoulli.Weights
 Averages over uniform distributions, tensor placement identities, and
 projective submeasurement algebraic lemmas for the `fromHToG` reduction.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

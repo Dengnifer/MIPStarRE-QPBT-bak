@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.StrategyBiProj.Measurements
-import MIPStarRE.LDT.Test.StrategyFailures
+module
+
+public import MIPStarRE.LDT.Test.StrategyBiProj.Measurements
+public import MIPStarRE.LDT.Test.StrategyFailures
 
 /-!
 # Role-Register Averaging: Branch Equalities
@@ -7,6 +9,8 @@ import MIPStarRE.LDT.Test.StrategyFailures
 This module proves the role-register branch equalities for heterogeneous
 projective strategies.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

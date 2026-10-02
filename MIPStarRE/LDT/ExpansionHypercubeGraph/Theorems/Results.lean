@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix
+module
+
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix
 
 /-!
 # Section 7 hypercube graph: local-to-global variance theorems
@@ -16,6 +18,8 @@ formalization.
   `lem:local-rewrite`, `lem:global-rewrite`, and `lem:local-to-global`
 - `blueprint/src/chapter/ch05_expansion.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.ExpansionHypercubeGraph
 

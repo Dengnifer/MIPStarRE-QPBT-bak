@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Defect
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Defect
 
 /-!
 # Correlated-ancilla consistency compression
@@ -12,6 +14,8 @@ seed-fiber consistency-defect compression results.
 - `references/ldt-paper/test_definition.tex:180-202`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

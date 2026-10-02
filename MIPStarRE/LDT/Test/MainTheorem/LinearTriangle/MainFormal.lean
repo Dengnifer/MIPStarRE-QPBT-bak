@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.MainTheorem.LinearTriangle.Scalars
-import MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.LinearTriangle
+module
+
+public import MIPStarRE.LDT.Test.MainTheorem.LinearTriangle.Scalars
+public import MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.LinearTriangle
 
 /-!
 # Improved main-formal bound from complete-measurement triangles
@@ -21,6 +23,8 @@ error function are unchanged.
 * `references/ldt-paper/preliminaries.tex`,
   `prop:simeq-triangle-inequality` at lines 649-684.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

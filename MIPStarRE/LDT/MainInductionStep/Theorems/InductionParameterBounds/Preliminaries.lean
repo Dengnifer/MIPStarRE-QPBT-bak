@@ -1,6 +1,8 @@
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import MIPStarRE.LDT.MainInductionStep.Statements
-import MIPStarRE.LDT.Test.StrategyFailures
+module
+
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import MIPStarRE.LDT.MainInductionStep.Statements
+public import MIPStarRE.LDT.Test.StrategyFailures
 
 /-!
 # Section 6 — Induction Parameter Bound Preliminaries
@@ -14,6 +16,8 @@ by the small-parameter estimates, and the bound `d/q ≤ 1`.
 - `blueprint/src/chapter/ch10_induction.tex`
 - `references/ldt-paper/inductive_step.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

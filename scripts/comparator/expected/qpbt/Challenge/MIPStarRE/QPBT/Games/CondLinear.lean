@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.LDT.Basic.Distribution
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.LDT.Basic.Distribution
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/CondLinear.lean`.
 
@@ -9,6 +11,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/CondLinear.lean
@@ -16,7 +20,7 @@ section
 open MIPStarRE.LDT
 variable {K ι : Type*} [Field K] [Fintype ι] [DecidableEq ι]
 
--- source: MIPStarRE/QPBT/Games/CondLinear.lean:297-306  (MIPStarRE.QPBT.clDistribution)
+-- source: MIPStarRE/QPBT/Games/CondLinear.lean:301-310  (MIPStarRE.QPBT.clDistribution)
 /--
 The distribution obtained by applying two conditionally linear maps to a common
 uniform seed.  This is blueprint
@@ -28,7 +32,7 @@ noncomputable def clDistribution [Fintype K] [DecidableEq K]
     Distribution ((ι → K) × (ι → K)) :=
   (uniformDistribution (ι → K)).map (fun z => (L z, R z))
 
--- source: MIPStarRE/QPBT/Games/CondLinear.lean:372-383  (MIPStarRE.QPBT.graphDistribution)
+-- source: MIPStarRE/QPBT/Games/CondLinear.lean:376-387  (MIPStarRE.QPBT.graphDistribution)
 /--
 The graph distribution is uniform on ordered pairs `(a, b)` whose unordered
 pair belongs to `E`, including self-loops.  This is blueprint
@@ -42,7 +46,7 @@ noncomputable def graphDistribution {T : Type*} [Fintype T] [DecidableEq T]
   Distribution.uniformOnFinset
     (Finset.univ.filter fun ab : T × T => Sym2.mk ab.1 ab.2 ∈ E)
 
--- source: MIPStarRE/QPBT/Games/CondLinear.lean:398-408  (MIPStarRE.QPBT.graphDistribution_symm)
+-- source: MIPStarRE/QPBT/Games/CondLinear.lean:402-412  (MIPStarRE.QPBT.graphDistribution_symm)
 /-- The graph distribution is symmetric in its two arguments: it is uniform on
 the ordered pairs whose unordered pair is an edge, and that condition does not
 depend on the order of the pair.  This is not a named statement of the source

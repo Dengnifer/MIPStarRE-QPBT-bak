@@ -1,15 +1,17 @@
-import MIPStarRE.QPBT.Combining.ErrorBounds
-import MIPStarRE.QPBT.Combining.OrderedPoints
-import MIPStarRE.QPBT.Combining.OverlapGap
-import MIPStarRE.QPBT.Combining.ComplexOverlapGap
-import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
-import MIPStarRE.QPBT.Combining.Lines.ConcreteXDeficit
-import MIPStarRE.QPBT.Combining.Lines.Construction
-import MIPStarRE.QPBT.Combining.SubLineZDeficit
-import MIPStarRE.QPBT.Combining.SubLineComplex
-import MIPStarRE.QPBT.Combining.UniformLinePoint
-import MIPStarRE.QPBT.Combining.Witnesses
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+module
+
+public import MIPStarRE.QPBT.Combining.ErrorBounds
+public import MIPStarRE.QPBT.Combining.OrderedPoints
+public import MIPStarRE.QPBT.Combining.OverlapGap
+public import MIPStarRE.QPBT.Combining.ComplexOverlapGap
+public import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
+public import MIPStarRE.QPBT.Combining.Lines.ConcreteXDeficit
+public import MIPStarRE.QPBT.Combining.Lines.Construction
+public import MIPStarRE.QPBT.Combining.SubLineZDeficit
+public import MIPStarRE.QPBT.Combining.SubLineComplex
+public import MIPStarRE.QPBT.Combining.UniformLinePoint
+public import MIPStarRE.QPBT.Combining.Witnesses
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
 
 /-!
 # Scalar claims for combining the Pauli bases
@@ -29,6 +31,8 @@ The source comparisons are blueprint `lem:claim-17-1`, `lem:claim-17-2`, and
 `lem:claim-17-3`, with paper origin
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1140-1239`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

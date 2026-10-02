@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -23,6 +25,8 @@ polynomial sum, with no polynomial-cardinality loss.  These are the steps 2 and
 5 sum-level inputs to `eq:equivalent-local-variance`
 (`references/ldt-paper/expansion.tex:317--321`).
 -/
+
+@[expose] public section
 
 private noncomputable def axisParallelPointAnswerMeasurement
     (params : Parameters) [FieldModel params.q]
@@ -324,5 +328,7 @@ lemma axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum
     _ ≤ 2 * eps :=
         axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum
           params strategy eps delta gamma hgood G
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

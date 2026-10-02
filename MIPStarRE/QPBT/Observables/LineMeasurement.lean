@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.LineMeasurement.LinePointConsistency
+module
+
+public import MIPStarRE.QPBT.Observables.LineMeasurement.LinePointConsistency
 
 /-!
 # Expanded line measurements
@@ -52,6 +54,8 @@ The declarations formalize `def:expanded-line-measurement` and
 Their paper source is
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:523-678`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

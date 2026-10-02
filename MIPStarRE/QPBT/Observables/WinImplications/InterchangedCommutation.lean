@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Observables.WinImplications.FactorTransport
-import MIPStarRE.QPBT.Observables.WinImplications.TwistedCommutation
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.FactorTransport
+public import MIPStarRE.QPBT.Observables.WinImplications.TwistedCommutation
 
 /-!
 # The factor-interchanged phase-signed commutation relation
@@ -17,6 +19,8 @@ The declarations formalize the trailing clause of
 `blueprint/src/chapter/ch14_qpbt_observables.tex:761-794`, whose paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:309-362`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.SumForm
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.SumForm
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -18,6 +20,8 @@ This module contains the high-level theorem reductions for
 expansions, and transport estimates from the preceding modules into the final
 statement records used by downstream consumers.
 -/
+
+@[expose] public section
 
 
 /-! ## Strategy-state reductions -/
@@ -279,5 +283,7 @@ lemma globalVarianceOfPoints
       params strategy eps delta gamma hgood G ?_
   intro g
   exact localVarianceTransportChainBound params strategy eps delta gamma hgood G g
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

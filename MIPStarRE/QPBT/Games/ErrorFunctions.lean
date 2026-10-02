@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Basic.ParametersBase
+module
+
+public import MIPStarRE.LDT.Basic.ParametersBase
 
 /-! # Polynomial error predicates
 
@@ -12,6 +14,8 @@ functions. The one-parameter form includes the explicit square-root witnesses
 in paper chapter 14; the two-parameter form is used by `lem:pasting` in paper
 chapter 6.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

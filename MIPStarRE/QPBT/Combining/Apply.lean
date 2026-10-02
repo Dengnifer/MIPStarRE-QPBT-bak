@@ -1,13 +1,15 @@
-import MIPStarRE.QPBT.Combining.Points
-import MIPStarRE.QPBT.Combining.PairCompletion
-import MIPStarRE.QPBT.Combining.ExtendedLines.Estimates
-import MIPStarRE.QPBT.Combining.ActualErrorBounds
-import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.PairPointConsistency
-import MIPStarRE.QPBT.Combining.PointErrorObstruction
-import MIPStarRE.QPBT.Combining.ErrorObstruction
-import MIPStarRE.QPBT.Combining.Lines.SubLineJoint
-import MIPStarRE.QPBT.Test.SoundnessDefs
+module
+
+public import MIPStarRE.QPBT.Combining.Points
+public import MIPStarRE.QPBT.Combining.PairCompletion
+public import MIPStarRE.QPBT.Combining.ExtendedLines.Estimates
+public import MIPStarRE.QPBT.Combining.ActualErrorBounds
+public import MIPStarRE.QPBT.Combining.ExplicitScalarBounds
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.PairPointConsistency
+public import MIPStarRE.QPBT.Combining.PointErrorObstruction
+public import MIPStarRE.QPBT.Combining.ErrorObstruction
+public import MIPStarRE.QPBT.Combining.Lines.SubLineJoint
+public import MIPStarRE.QPBT.Test.SoundnessDefs
 
 /-!
 # Applying the classical low-degree test
@@ -35,6 +37,8 @@ The global-pair declaration formalizes `lem:qld-4-7` in the same blueprint, with
 paper source
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1274`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

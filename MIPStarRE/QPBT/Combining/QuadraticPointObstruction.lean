@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.PointErrorObstruction
-import MIPStarRE.QPBT.Test.Completeness.Commutation
+module
+
+public import MIPStarRE.QPBT.Combining.PointErrorObstruction
+public import MIPStarRE.QPBT.Test.Completeness.Commutation
 
 /-!
 # An obstruction to discarding the combined point error
@@ -23,6 +25,8 @@ assertion in `Apply.lean`.
   error of its constructed points; the unrestricted auxiliary does not.
 * Blueprint `lem:qld-4-13-established` and `rem:qld-4-13-source-defects`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

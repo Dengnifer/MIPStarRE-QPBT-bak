@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Test.Soundness.Ancilla
-import MIPStarRE.QPBT.Combining.RootErrorBounds
-import MIPStarRE.QPBT.Extraction.Unitary
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.Ancilla
+public import MIPStarRE.QPBT.Combining.RootErrorBounds
+public import MIPStarRE.QPBT.Extraction.Unitary
 
 /-!
 # State transfer from supplied extraction data
@@ -19,6 +21,8 @@ The companion `OperatorTransfer` module completes both operator comparisons.
 The source-facing obligations are tracked by issues #529 and #586 and
 `docs/paper-gaps/qpbt_extraction-transfer.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

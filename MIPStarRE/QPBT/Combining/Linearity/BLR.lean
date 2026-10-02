@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.DistributionAvg
-import MIPStarRE.QPBT.Combining.Linearity.BooleanFourier
+module
+
+public import MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPStarRE.QPBT.Combining.Linearity.BooleanFourier
 
 /-!
 # The operator-valued BLR bound
@@ -41,6 +43,8 @@ the error constant is analyzed in
 bound is `2 * δ` for the squared state-dependent operator distance
 `stateDepDistSq`, equivalently `δ` for the squared binary-observable distance.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

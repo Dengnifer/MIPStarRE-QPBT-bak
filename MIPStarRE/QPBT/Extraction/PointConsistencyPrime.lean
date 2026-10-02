@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Extraction.PointConsistency
+module
+
+public import MIPStarRE.QPBT.Extraction.PointConsistency
 
 /-!
 # Point consistency with Alice's pulled-apart measurement
@@ -14,6 +16,8 @@ by the mass of the non-encoding outcomes.
 * `docs/paper-gaps/qpbt_decoding-identity.tex` records the necessary restriction
   on the decoder identity.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

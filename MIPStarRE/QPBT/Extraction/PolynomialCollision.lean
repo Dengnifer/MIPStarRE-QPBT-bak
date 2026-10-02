@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.DistributionAvg
-import MIPStarRE.QPBT.Algebra.Decoding
+module
+
+public import MIPStarRE.LDT.Basic.DistributionAvg
+public import MIPStarRE.QPBT.Algebra.Decoding
 
 /-!
 # Real polynomial collision bounds
@@ -19,6 +21,8 @@ specializes it to the polynomial outcomes of the Pauli basis test.
   substitution requires the blueprint's nonencoding-mass estimate.
 * `docs/paper-gaps/qpbt_decoding-identity.tex`, for that substitution's scope.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

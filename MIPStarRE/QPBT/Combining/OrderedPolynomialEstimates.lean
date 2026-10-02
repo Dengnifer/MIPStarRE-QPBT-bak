@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Points
+module
+
+public import MIPStarRE.QPBT.Combining.Points
 
 /-!
 # Ordered products selected by a global projective measurement
@@ -13,6 +15,8 @@ All bounds are on the actual expanded state and retain the complete outcome sum.
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1283-1300`.
 These are auxiliary estimates for issue #513, not the global-pair constructor.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

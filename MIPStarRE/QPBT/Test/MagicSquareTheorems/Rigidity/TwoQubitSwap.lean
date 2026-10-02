@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Swap
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Swap
 
 /-!
 # The two-qubit controlled-swap isometry
@@ -33,6 +35,8 @@ the cited robust self-test is Coladangelo--Stark, arXiv:1709.09267v2,
 Theorem 6.9, `references/cs-paper/self-testing.tex:660-730`.  The one-qubit
 construction is `binarySwapIsometry` in `Rigidity/Swap.lean`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Restriction
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Restriction
 
 /-!
 # The coefficients of a polynomial in the combining variables
@@ -44,6 +46,8 @@ the combining variables to the combining coordinates.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:575-600`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion
-import MIPStarRE.QPBT.Games.Sandwich.Quantitative
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion
+public import MIPStarRE.QPBT.Games.Sandwich.Quantitative
 
 /-! # State-dependent Schmidt mirrors
 
@@ -13,6 +15,8 @@ orthonormal completion, including zero Schmidt coefficients.
 `docs/paper-gaps/qpbt_pasting-product-error.tex`, issue #201. The Schmidt-mirror
 argument is a formalization auxiliary, not an additional paper hypothesis.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

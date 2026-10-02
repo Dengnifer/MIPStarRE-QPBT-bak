@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Extraction.ProjectionFromDistance
+module
+
+public import MIPStarRE.QPBT.Extraction.ProjectionFromDistance
 
 /-!
 # Normalized state extraction from a supplied global witness
@@ -13,6 +15,8 @@ Blueprint `lem:qld-unitary`, Item 1; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1715-1783`;
 `docs/paper-gaps/qpbt_extraction-transfer.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix Classical
 

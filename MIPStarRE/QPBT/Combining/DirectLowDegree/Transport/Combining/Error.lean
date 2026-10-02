@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Parameters
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Parameters
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
 
 /-!
 # The scalar error of the simultaneity reduction
@@ -35,6 +37,8 @@ terms of that error exceed the corresponding terms of `deltaLd`, and the bound
 * `blueprint/src/chapter/ch13_qpbt_test.tex:693-722`
 * `MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/Definitions.lean:28-36`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

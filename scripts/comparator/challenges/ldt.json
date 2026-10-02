@@ -3,8 +3,8 @@
   "description": "Low individual degree test main theorem (thm:main-formal).",
   "imports": ["MIPStarRE.LDT.Test.MainTheorem.MainFormal"],
   "targets": ["MIPStarRE.LDT.Test.mainFormal"],
-  "header": "scripts/comparator/challenge_header.lean",
-  "footer": "scripts/comparator/challenge_footer.lean",
+  "header": "scripts/comparator/challenge_header.lean.in",
+  "footer": "scripts/comparator/challenge_footer.lean.in",
   "expected": "scripts/comparator/expected/Challenge.lean.expected",
   "require_expected": true,
   "extras": {

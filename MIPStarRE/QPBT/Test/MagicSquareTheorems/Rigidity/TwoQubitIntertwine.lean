@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.JointState
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.JointState
 
 /-!
 # Intertwining the first logical pair with the ideal two-qubit Pauli basis
@@ -24,6 +26,8 @@ paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-6
 the generalized Pauli basis is blueprint
 `def:generalized-pauli`, paper `04_preliminaries.tex:908-1161`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

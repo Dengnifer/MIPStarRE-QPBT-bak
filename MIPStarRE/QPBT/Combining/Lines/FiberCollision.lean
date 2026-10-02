@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.Sandwich.Defs
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Defs
 
 /-!
 # Conditional collision bounds from fiber averages
@@ -14,6 +16,8 @@ The conditional collision hypothesis is from `lem:pasting`,
 the QPBT combining argument occurs at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-963`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Coefficients
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Coefficients
 
 /-!
 # Exact linearity in the combining variables
@@ -28,6 +30,8 @@ lemma bounds the probability of `c_μ(u) = 0` by `m d / q`.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:575-600`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

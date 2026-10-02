@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
-import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
+public import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 
 /-!
 # Uniform points of a line and the blocks of a coordinate direction
@@ -28,6 +30,8 @@ The canonical representative map is blueprint
 `def:line-representative`; the coordinate blocks are those of
 blueprint `def:combine-map`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

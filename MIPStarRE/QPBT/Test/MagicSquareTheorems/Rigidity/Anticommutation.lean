@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.CellRelations
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.CellRelations
 
 /-!
 # Approximate anticommutation in the Magic Square game
@@ -36,6 +38,8 @@ below is the Magic Square instance of the solution-group computation used there
 and constraint indices are zero-based, so the paper's first and fifth variables
 are the cells `0` and `4`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

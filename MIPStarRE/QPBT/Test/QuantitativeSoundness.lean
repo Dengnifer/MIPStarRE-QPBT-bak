@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Combining.Quantitative
-import MIPStarRE.QPBT.Test.Soundness
-import MIPStarRE.QPBT.Test.Soundness.ComponentBounds
-import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars
+module
+
+public import MIPStarRE.QPBT.Combining.Quantitative
+public import MIPStarRE.QPBT.Test.Soundness
+public import MIPStarRE.QPBT.Test.Soundness.ComponentBounds
+public import MIPStarRE.QPBT.Test.Soundness.QuantitativeScalars
 
 /-!
 # Quantitative Pauli basis test soundness
@@ -18,6 +20,8 @@ families, first at a degree-four structured error and then at the canonical
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1404`
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1666-1876`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

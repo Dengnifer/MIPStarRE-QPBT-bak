@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Observables.LineDefs
-import MIPStarRE.QPBT.Games.DistributionMarginals
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Observables.LineDefs
+public import MIPStarRE.QPBT.Games.DistributionMarginals
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # Geometry for the directly indexed low-degree game
@@ -15,6 +17,8 @@ The line-point distributions originate in
 The directly indexed repair is documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 
@@ -146,13 +150,13 @@ inductive DirectLineDesc (D : DirectLdParams) where
 /-! ## Finite direct-line carrier -/
 
 /-- A finite code for directly indexed lines, omitting only proof fields. -/
-private abbrev DirectLineDescCode (D : DirectLdParams) :=
+abbrev DirectLineDescCode (D : DirectLdParams) :=
   ((Fin D.m → DirectScalarQ D) × Fin D.m) ⊕
     ((Fin D.m → DirectScalarQ D) × Fin D.m ×
       (Fin D.m → DirectScalarQ D))
 
 /-- Encode a directly indexed line by its tag and mathematical data. -/
-private def directLineDescCode (D : DirectLdParams) :
+def directLineDescCode (D : DirectLdParams) :
     DirectLineDesc D → DirectLineDescCode D
   | .axis base index _ => .inl (base, index)
   | .diagonal base index direction _ _ => .inr (base, index, direction)
@@ -180,7 +184,8 @@ private theorem directLineDescCode_injective (D : DirectLdParams) :
 /-- Directly indexed line descriptions form a finite type. -/
 noncomputable instance directLineDescFintype (D : DirectLdParams) :
     Fintype (DirectLineDesc D) :=
-  Fintype.ofInjective (directLineDescCode D) (directLineDescCode_injective D)
+  Fintype.ofInjective (directLineDescCode D) (by
+    exact directLineDescCode_injective D)
 
 /-- The kind of a directly indexed line. -/
 def DirectLineDesc.kind {D : DirectLdParams} : DirectLineDesc D → LineKind

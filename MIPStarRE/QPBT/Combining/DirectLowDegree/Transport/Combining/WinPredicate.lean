@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.QuestionLaw
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.QuestionLaw
 
 /-!
 # Branch-wise acceptance transport for the combined strategy
@@ -37,6 +39,8 @@ All declarations below are formalization-only support for
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:526-568`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

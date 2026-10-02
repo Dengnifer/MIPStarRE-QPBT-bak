@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
+module
+
+public import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries
 
 /-!
 # Section 6 — Main-Induction Error Bounds
@@ -13,6 +15,8 @@ the bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, a
 - `blueprint/src/chapter/ch10_induction.tex`
 - `references/ldt-paper/inductive_step.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

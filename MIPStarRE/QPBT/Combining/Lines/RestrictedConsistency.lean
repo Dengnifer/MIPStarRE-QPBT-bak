@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.PointwiseDefect
-import MIPStarRE.QPBT.Games.RestrictedAverage
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.PointwiseDefect
+public import MIPStarRE.QPBT.Games.RestrictedAverage
 
 /-!
 # Consistency defect under finite conditioning
@@ -14,6 +16,8 @@ This formalization-only finite-conditioning estimate supports the argument in
 `lem:qld-xz-lines`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-963`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
 
 /-!
 # Transfer of rigidity bounds along the projective dilation
@@ -40,6 +42,8 @@ dilated strategy to the original one with explicit constants.
 blueprint `thm:ms-rigidity`,
 paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-652`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -17,6 +19,8 @@ local-variance transport chain in `lem:local-variance-of-points`
 (`expansion.tex`, lines 300--311).  These are the first and last `2δ`
 moves; the point-line `2ε` moves live in `PointLine.lean`.
 -/
+
+@[expose] public section
 
 /-! ## Good-strategy interfaces for the local-variance transport chain -/
 
@@ -369,5 +373,7 @@ lemma pointConditionedEventSelfConsistency_weighted_rightEdge_sum
         pointConditionedEventSelfConsistency_weighted_point_sum
           params strategy eps delta gamma hgood G
 
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

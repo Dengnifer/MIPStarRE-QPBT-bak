@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Basic.DistributionUniform
+module
+
+public import MIPStarRE.LDT.Basic.DistributionUniform
 
 /-!
 # Conditionally linear functions and graph distributions
@@ -21,6 +23,8 @@ The paper origins are
 `references/qpbt-paper/07_types.tex:65-82`,
 and `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1010`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

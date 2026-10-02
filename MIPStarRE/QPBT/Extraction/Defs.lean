@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.ExpandedDefs
+module
+
+public import MIPStarRE.QPBT.Observables.ExpandedDefs
 
 /-!
 # Extraction foundations
@@ -21,6 +23,8 @@ The register and state helpers support blueprint `def:tilde-m-measurement`,
 `def:v-swap-unitary`, and `lem:qld-unitary`, from paper lines 1429-1435 and
 1666-1713.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

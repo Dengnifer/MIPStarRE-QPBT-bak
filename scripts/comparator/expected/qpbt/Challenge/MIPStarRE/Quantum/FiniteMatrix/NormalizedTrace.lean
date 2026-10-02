@@ -1,5 +1,7 @@
-import Mathlib
-import Challenge.MIPStarRE.Quantum.FiniteMatrix.Basic
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.Quantum.FiniteMatrix.Basic
 
 /-! Challenge mirror of `MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean`.
 
@@ -9,6 +11,8 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.Quantum
 
 -- elaboration context of MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean

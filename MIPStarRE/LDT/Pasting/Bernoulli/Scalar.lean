@@ -1,12 +1,16 @@
-import Mathlib.Probability.Moments.SubGaussian
-import Mathlib.Probability.Distributions.Binomial
-import MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
+module
+
+public import Mathlib.Probability.Moments.SubGaussian
+public import Mathlib.Probability.Distributions.Binomial
+public import MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums
 
 /-!
 # Scalar Bernoulli polynomial helpers for pasting
 
 Purely scalar inequalities used by the matrix Chernoff comparison.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

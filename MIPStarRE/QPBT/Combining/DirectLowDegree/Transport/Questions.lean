@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Correspondence
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Correspondence
 
 /-!
 # Question and answer transport for the directly indexed low-degree game
@@ -28,6 +30,8 @@ value at the base point, following `rem:ld-win-zero-direction`.
 - `rem:ld-win-zero-direction`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

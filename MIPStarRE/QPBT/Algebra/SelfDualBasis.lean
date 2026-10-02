@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Algebra.FieldBasis
+module
+
+public import MIPStarRE.QPBT.Algebra.FieldBasis
 
 /-! # Binary coordinates for the fixed self-dual normal basis
 
@@ -11,6 +13,8 @@ The basis definitions and existence theorem live in the upstream
   `def:binary-representation`.
 - `references/qpbt-paper/04_preliminaries.tex:494-502,669-700`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

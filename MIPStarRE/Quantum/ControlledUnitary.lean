@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.Support
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Support
 
 /-!
 # Finite controlled unitaries
@@ -17,6 +19,8 @@ they do not construct the global measurement or establish the Pauli relations.
   the unitarity calculation in the proof of `lem:qld-unitary`.
 - Blueprint `def:v-swap-unitary` and `lem:v-swap-conjugation`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

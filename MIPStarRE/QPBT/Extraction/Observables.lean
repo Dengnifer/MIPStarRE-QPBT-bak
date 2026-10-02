@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Algebra.Decoding
-import MIPStarRE.QPBT.Combining.Witnesses
-import MIPStarRE.QPBT.Extraction.Defs
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Reflections
-import MIPStarRE.Quantum.ControlledUnitary
+module
+
+public import MIPStarRE.QPBT.Algebra.Decoding
+public import MIPStarRE.QPBT.Combining.Witnesses
+public import MIPStarRE.QPBT.Extraction.Defs
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Reflections
+public import MIPStarRE.Quantum.ControlledUnitary
 
 /-!
 # Pulled-apart Pauli observables
@@ -20,6 +22,8 @@ The product form and observable relations formalize blueprint
 The swap identities formalize blueprint `lem:v-swap-conjugation`, from paper
 lines 1687-1713.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

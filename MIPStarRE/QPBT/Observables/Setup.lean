@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.QPBT.State
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkFull
-import MIPStarRE.LDT.Preliminaries.Completion
-import MIPStarRE.LDT.Test.StrategyBiProj.DirectSum
+module
+
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.QPBT.State
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkFull
+public import MIPStarRE.LDT.Preliminaries.Completion
+public import MIPStarRE.LDT.Test.StrategyBiProj.DirectSum
 
 /-!
 # Projective strategy setup
@@ -16,6 +18,8 @@ The setup is blueprint `lem:projective-strategy-setup` and
 `def:projective-strategy-general`, with paper origin
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:155-172`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

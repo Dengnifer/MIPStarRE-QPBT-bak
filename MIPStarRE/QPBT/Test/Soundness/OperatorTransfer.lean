@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Soundness.StateTransfer
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.StateTransfer
 
 /-!
 # Operator transfer from supplied extraction data
@@ -15,6 +17,8 @@ This conditional construction uses supplied extraction data in a projective
 setting; it does not prove blueprint `thm:pauli`. The omitted range projection
 is documented in `docs/paper-gaps/qpbt_extraction-transfer.tex` (issue #529).
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

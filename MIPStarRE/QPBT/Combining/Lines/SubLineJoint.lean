@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLineMixture
-import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
-import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLineMixture
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
+public import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
 
 /-!
 # The joint projected law of the concrete sub-line distribution
@@ -21,6 +23,8 @@ does not supply the joint identity. See
 The direct carrier and law retain the scope distinction documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

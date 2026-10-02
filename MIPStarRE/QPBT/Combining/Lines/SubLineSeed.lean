@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
 
 /-!
 # The two independent blocks of a fresh diagonal direction pair
@@ -19,6 +21,8 @@ blueprint `lem:qld-sublines`, whose source is
 The coordinate-index event is that of `def:ith-restricted-line`, blueprint
 lines 1209--1228, paper lines 1038--1048.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

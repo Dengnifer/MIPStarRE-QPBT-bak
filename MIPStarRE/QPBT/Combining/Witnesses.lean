@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Combining.Defs
-import MIPStarRE.QPBT.Combining.DirectLowDegree
-import MIPStarRE.QPBT.Games.Consistency
-import MIPStarRE.QPBT.Observables.LineMeasurement
-import MIPStarRE.QPBT.Observables.WinImplications
+module
+
+public import MIPStarRE.QPBT.Combining.Defs
+public import MIPStarRE.QPBT.Combining.DirectLowDegree
+public import MIPStarRE.QPBT.Games.Consistency
+public import MIPStarRE.QPBT.Observables.LineMeasurement
+public import MIPStarRE.QPBT.Observables.WinImplications
 
 /-!
 # Witnesses for combining the Pauli bases
@@ -26,6 +28,8 @@ answer sum in the source statement.  The paper source is
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:689-709,
 882-894,1020-1069,1267-1274`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

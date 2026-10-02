@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point
-import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point
+public import MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine
 
 namespace MIPStarRE.LDT.GlobalVariance
 
@@ -18,6 +20,8 @@ This module assembles the six steps of `lem:local-variance-of-points`
 on the hypercube-edge distribution, producing the main transport estimate
 `localVarianceTransportChainBound`.
 -/
+
+@[expose] public section
 
 abbrev TransportQuestion (params : Parameters) [FieldModel params.q] :=
   (AxisParallelLine params × Fq params) × Fq params
@@ -499,5 +503,7 @@ lemma localVarianceTransportChainError_le_localVarianceOfPointsError
     positivity
   dsimp [localVarianceTransportChainError, localVarianceOfPointsError]
   linarith
+
+end
 
 end MIPStarRE.LDT.GlobalVariance

@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Algebra.Pauli
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Basic
-import MIPStarRE.Quantum.FiniteMatrix.Order
+module
+
+public import MIPStarRE.QPBT.Algebra.Pauli
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Basic
+public import MIPStarRE.Quantum.FiniteMatrix.Order
 
 /-!
 # Observables of the perfect Magic Square strategy
@@ -17,6 +19,8 @@ The source statement is blueprint
 `thm:ms-from-ac`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:654-722`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 
@@ -202,7 +206,8 @@ noncomputable def reflectionMeasurement
     (O : Op V) (hO : Oᴴ = O) (hO_sq : O * O = 1) :
     Measurement (ZMod 2) V :=
   Measurement.ofSumEqOne (reflectionEffect O)
-    (fun b => (reflectionEffect_isProj O hO hO_sq b).nonneg)
+    (fun b => by
+      exact (reflectionEffect_isProj O hO hO_sq b).nonneg)
     (by
       rw [sum_zmod_two]
       simp [reflectionEffect]

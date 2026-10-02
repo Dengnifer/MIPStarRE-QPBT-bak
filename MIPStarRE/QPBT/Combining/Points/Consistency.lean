@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Points.Sandwich
+module
+
+public import MIPStarRE.QPBT.Combining.Points.Sandwich
 
 /-!
 # Self-consistency of the sandwich POVM
@@ -37,6 +39,8 @@ blueprint `blueprint/src/chapter/ch15_qpbt_combining.tex:851-880`
 (`lem:qld-4-10`, first step); the identity route is explained in
 `docs/paper-gaps/qpbt_combined-points-field-valued.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

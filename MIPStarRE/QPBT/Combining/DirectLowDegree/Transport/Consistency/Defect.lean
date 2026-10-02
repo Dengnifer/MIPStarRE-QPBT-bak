@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.State
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.State
 
 /-!
 # Low-degree consistency defect transport
@@ -15,6 +17,8 @@ conclusion is global.
 - `references/ldt-paper/test_definition.tex:180-202`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

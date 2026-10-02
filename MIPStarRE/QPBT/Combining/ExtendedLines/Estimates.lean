@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLines.Overlap
-import MIPStarRE.QPBT.Combining.ErrorBounds
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLines.Overlap
+public import MIPStarRE.QPBT.Combining.ErrorBounds
 
 
 /-!
@@ -17,6 +19,8 @@ See `docs/paper-gaps/qpbt_combined-lines-error-term.tex` and
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` for the remaining
 comparison with the printed source theorem.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

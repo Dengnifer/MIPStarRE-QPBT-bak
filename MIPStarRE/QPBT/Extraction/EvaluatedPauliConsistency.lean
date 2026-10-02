@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.SuppliedPointConsistency
-import MIPStarRE.QPBT.Extraction.BlockMeasurement
-import MIPStarRE.QPBT.Extraction.PullingDefect
+module
+
+public import MIPStarRE.QPBT.Extraction.SuppliedPointConsistency
+public import MIPStarRE.QPBT.Extraction.BlockMeasurement
+public import MIPStarRE.QPBT.Extraction.PullingDefect
 
 /-!
 # Evaluated total-Pauli consistency before extraction
@@ -14,6 +16,8 @@ original six-register state, before conjugation by the swaps.
 Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1785-1810`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder Classical
 

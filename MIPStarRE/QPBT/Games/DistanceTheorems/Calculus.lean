@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
 
 /-!
 # Consistency and state-dependent distance inequalities
@@ -18,6 +20,8 @@ The source results run from blueprint `fact:agreement` through
 `lem:commutation-analysis`, with paper origin
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:295-461`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

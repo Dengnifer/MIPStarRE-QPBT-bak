@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Extraction.Defs
-import MIPStarRE.QPBT.Observables.ExpandedCommutation
+module
+
+public import MIPStarRE.QPBT.Extraction.Defs
+public import MIPStarRE.QPBT.Observables.ExpandedCommutation
 
 /-!
 # The EPR projection in Pauli extraction
@@ -13,6 +15,8 @@ the auxiliary state in `exists_extractionWitness_ofGlobalPairWitness`.
 Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1725-1742`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

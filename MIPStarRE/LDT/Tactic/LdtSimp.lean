@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Tactic.LdtSimpAttr
-import MIPStarRE.LDT.Test.Defs
+module
+
+public import MIPStarRE.LDT.Tactic.LdtSimpAttr
+public import MIPStarRE.LDT.Test.Defs
 
 /-!
 # Audited `ldt_simp` whitelist
@@ -25,6 +27,8 @@ Initial whitelist:
   They reduce products and adjoints of explicit tensor placements to local
   products or `opTensor` forms, matching the formulas used by existing proofs.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

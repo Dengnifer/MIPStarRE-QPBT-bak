@@ -1,6 +1,8 @@
-import MIPStarRE.Quantum
-import MIPStarRE.LDT
-import MIPStarRE.QPBT
+module
+
+public import MIPStarRE.Quantum
+public import MIPStarRE.LDT
+public import MIPStarRE.QPBT
 
 /-!
 # MIPStarRE

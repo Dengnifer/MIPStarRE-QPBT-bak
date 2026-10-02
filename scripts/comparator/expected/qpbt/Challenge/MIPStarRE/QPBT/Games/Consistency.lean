@@ -1,7 +1,9 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Games.Defs
-import Challenge.MIPStarRE.QPBT.Games.DistributionAux
-import Challenge.MIPStarRE.QPBT.State
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Games.Defs
+public import Challenge.MIPStarRE.QPBT.Games.DistributionAux
+public import Challenge.MIPStarRE.QPBT.State
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/Consistency.lean`.
 
@@ -11,13 +13,15 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/Consistency.lean
 section
 open MIPStarRE.LDT MIPStarRE.Quantum
 
--- source: MIPStarRE/QPBT/Games/Consistency.lean:19-30  (MIPStarRE.QPBT.consistencyDefect)
+-- source: MIPStarRE/QPBT/Games/Consistency.lean:23-34  (MIPStarRE.QPBT.consistencyDefect)
 /-- The off-diagonal defect in blueprint
 `def:consistency`, paper `06_nonlocal_games_and_mipstar.tex:232-248`. -/
 noncomputable def consistencyDefect {X α ι : Type*}

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Polynomial
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Polynomial
 
 /-!
 # The combined parameters of the simultaneity reduction
@@ -29,6 +31,8 @@ formulation of the source, which passes from degree `d` to degree `d + 1`.
 * `blueprint/src/chapter/ch13_qpbt_test.tex:240-250`
 * `docs/paper-gaps/qpbt_ld-simultaneous-sandwich.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

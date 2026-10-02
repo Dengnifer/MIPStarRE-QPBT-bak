@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.Averages
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.Averages
 
 /-!
 # Low-degree winning implications
@@ -12,6 +14,8 @@ of `lem:qld-win-implications`
 from `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:192-267`
 and blueprint `lem:qld-win-implications` and `lem:qld-win-implications-obs`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 
@@ -489,7 +493,7 @@ theorem dlineMismatch_le_rejection {P : AdmissibleParams} {ε : ℝ}
   exact hne (dlineLabels_eq_of_win P W z A B htrue)
 
 /-- Source-answer mismatch mass for the completed line and point readouts. -/
-private noncomputable def lowDegreeMismatchMass {P : AdmissibleParams} {ε : ℝ}
+noncomputable def lowDegreeMismatchMass {P : AdmissibleParams} {ε : ℝ}
     (S : ProjectiveSetting P ε) (W : PauliKind)
     (sample : LineDesc P.toLdParams × (Fin P.m → PauliScalar P)) : ℝ :=
   outcomeEventWeight S.toStrategy

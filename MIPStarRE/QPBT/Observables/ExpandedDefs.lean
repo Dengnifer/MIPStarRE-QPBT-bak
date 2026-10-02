@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.PauliTheorems
-import MIPStarRE.QPBT.Observables.Defs
+module
+
+public import MIPStarRE.QPBT.Algebra.PauliTheorems
+public import MIPStarRE.QPBT.Observables.Defs
 
 /-!
 # Expanded registers and point measurements
@@ -16,6 +18,8 @@ The constructions formalize blueprint `def:expanded-state`,
 `def:expanded-point-trace-projection`. Their paper source is
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:367-418`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 
@@ -435,8 +439,9 @@ blueprint `def:ancillary-point-measurement`. -/
 noncomputable def tauPointMeas (W : PauliKind)
     (u : Fin P.m → PauliScalar P) :
     Measurement (PauliScalar P) (PauliRegister P) :=
-  Measurement.ofSumEqOne (tauPointProj W u) (tauPointProj_nonneg W u)
-    (sum_tauPointProj_eq_one W u)
+  Measurement.ofSumEqOne (tauPointProj W u) (by
+    exact tauPointProj_nonneg W u) (by
+    exact sum_tauPointProj_eq_one W u)
 
 /-- The effects of the Pauli point measurement are the point projectors. -/
 @[simp] theorem tauPointMeas_effect (W : PauliKind)

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Linearity
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Linearity
 
 /-!
 # Restricting a polynomial in the combined variables to a point
@@ -32,6 +34,8 @@ which is the first half of `lem:ld-combining-exact-linearity`.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:575-600`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

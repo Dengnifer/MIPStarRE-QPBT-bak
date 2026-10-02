@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
-import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
-import MIPStarRE.LDT.Test.StrategyBiProj.Measurements
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Strategy
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.GameValue
+public import MIPStarRE.LDT.Test.StrategyBiProj.Measurements
 
 /-!
 # Branch comparison for the coordinate strategies of the direct low-degree game
@@ -26,6 +28,8 @@ branches are treated in `Transport.DiagonalRecursion`.
 - `MIPStarRE/LDT/Test/StrategyFailures.lean:18-130`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -1,12 +1,16 @@
-import MIPStarRE.Quantum.FiniteHilbert
-import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
-import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.RestrictSome
+module
+
+public import MIPStarRE.Quantum.FiniteHilbert
+public import MIPStarRE.LDT.MakingMeasurementsProjective.NaimarkCore
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.RestrictSome
 
 /-!
 # Section 5 — one-measurement Naimark
 
 Unitary-extension machinery and the one-measurement Naimark lemma.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

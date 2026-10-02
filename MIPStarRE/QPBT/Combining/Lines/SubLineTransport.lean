@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLinePrefix
 
 /-!
 # Uniformity under the identification of the two scalar fields
@@ -22,6 +24,8 @@ blueprint `lem:qld-sublines`, whose source is
 The coordinate blocks are those of `def:combine-map`, blueprint lines
 445--480, paper lines 970--989.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

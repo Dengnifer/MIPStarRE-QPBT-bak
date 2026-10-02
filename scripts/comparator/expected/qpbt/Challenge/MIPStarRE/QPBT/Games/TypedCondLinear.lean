@@ -1,6 +1,8 @@
-import Mathlib
-import Challenge.MIPStarRE.QPBT.Games.CondLinear
-import Challenge.MIPStarRE.QPBT.Games.DistributionAux
+module
+
+public import Mathlib
+public import Challenge.MIPStarRE.QPBT.Games.CondLinear
+public import Challenge.MIPStarRE.QPBT.Games.DistributionAux
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Games/TypedCondLinear.lean`.
 
@@ -10,13 +12,15 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Games/TypedCondLinear.lean
 section
 open MIPStarRE.LDT
 
--- source: MIPStarRE/QPBT/Games/TypedCondLinear.lean:31-43  (MIPStarRE.QPBT.typedCLDistribution)
+-- source: MIPStarRE/QPBT/Games/TypedCondLinear.lean:35-47  (MIPStarRE.QPBT.typedCLDistribution)
 /-- The typed CL distribution: sample a type pair from the graph distribution,
 then bind it to the CL distribution selected by those two types. This is
 blueprint `def:typed-cl-distributions`, paper
@@ -31,7 +35,7 @@ noncomputable def typedCLDistribution {K T ι : Type*}
     (clDistribution (L uv.1) (R uv.2)).map fun xy =>
       ((uv.1, xy.1), (uv.2, xy.2))
 
--- source: MIPStarRE/QPBT/Games/TypedCondLinear.lean:45-113  (MIPStarRE.QPBT.typedCLDistribution_symm)
+-- source: MIPStarRE/QPBT/Games/TypedCondLinear.lean:49-117  (MIPStarRE.QPBT.typedCLDistribution_symm)
 /-- A typed conditionally linear distribution built from a single family is
 symmetric under exchanging the two players: the edge law of
 `def:graph-distribution` is symmetric, and exchanging the two types exchanges

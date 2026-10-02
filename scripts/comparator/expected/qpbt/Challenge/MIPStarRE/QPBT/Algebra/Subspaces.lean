@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-! Challenge mirror of `MIPStarRE/QPBT/Algebra/Subspaces.lean`.
 
@@ -8,13 +10,15 @@ what makes Lean generate the same auxiliary declarations, under the
 same names, as the library does. -/
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
+@[expose] public section
+
 namespace MIPStarRE.QPBT
 
 -- elaboration context of MIPStarRE/QPBT/Algebra/Subspaces.lean
 section
 variable {K ι : Type*} [Field K] [Fintype ι] [DecidableEq ι]
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:31-38  (MIPStarRE.QPBT.registerSubmodule)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:35-42  (MIPStarRE.QPBT.registerSubmodule)
 /--
 `registerSubmodule K S` is the span of the standard coordinate vectors indexed
 by `S`.  It is the Lean encoding of blueprint `def:register-subspace`, whose
@@ -24,7 +28,7 @@ paper origin is
 def registerSubmodule (K : Type*) [Field K] (S : Finset ι) : Submodule K (ι → K) :=
   Submodule.span K {v | ∃ i, i ∈ S ∧ v = Pi.single i 1}
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:68-80  (MIPStarRE.QPBT.prefixMap)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:72-84  (MIPStarRE.QPBT.prefixMap)
 /-- Restrict a coordinate vector to the first `k` coordinates.  Lean-only rank
 infrastructure for blueprint
 `def:canonical-complement`, paper `references/qpbt-paper/04_preliminaries.tex:231-384`.
@@ -39,13 +43,13 @@ def prefixMap (k n : ℕ) (hk : k ≤ n) :
       intro c x
       rfl }
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:82-85  (MIPStarRE.QPBT.prefixRank)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:86-89  (MIPStarRE.QPBT.prefixRank)
 /-- The rank of a prefix restriction used by the pivot characterization. -/
 noncomputable def prefixRank {n : ℕ} (W : Submodule K (Fin n → K))
     (k : ℕ) (hk : k ≤ n) : ℕ :=
   Module.finrank K (W.map (prefixMap k n hk))
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:107-118  (MIPStarRE.QPBT.canonicalComplement)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:111-122  (MIPStarRE.QPBT.canonicalComplement)
 /--
 The non-pivot coordinate set of `W`, defined by the rank-increase
 characterization of pivots.  This is the basis-free encoding approved for
@@ -59,7 +63,7 @@ noncomputable def canonicalComplement {n : ℕ}
     prefixRank W (j.1 + 1) (Nat.succ_le_of_lt j.2) =
       prefixRank W j.1 j.2.le
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:120-127  (MIPStarRE.QPBT.registerSubmodule_eq_spanSubset)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:124-131  (MIPStarRE.QPBT.registerSubmodule_eq_spanSubset)
 /-- The register submodule is the standard coordinate span on its index set. -/
 lemma registerSubmodule_eq_spanSubset (S : Finset ι) :
     registerSubmodule K S = Pi.spanSubset K (S : Set ι) := by
@@ -69,7 +73,7 @@ lemma registerSubmodule_eq_spanSubset (S : Finset ι) :
   ext v
   simp [Pi.basisFun_apply, eq_comm]
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:129-141  (MIPStarRE.QPBT.prefixRank_mono_succ)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:133-145  (MIPStarRE.QPBT.prefixRank_mono_succ)
 /-- Prefix restriction rank is nondecreasing when one coordinate is added. -/
 lemma prefixRank_mono_succ {n : ℕ} (W : Submodule K (Fin n → K))
     (k : ℕ) (hk : k + 1 ≤ n) :
@@ -84,7 +88,7 @@ lemma prefixRank_mono_succ {n : ℕ} (W : Submodule K (Fin n → K))
   rw [prefixRank, prefixRank, ← hcomp, Submodule.map_comp]
   exact Submodule.finrank_map_le drop (W.map large)
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:143-182  (MIPStarRE.QPBT.coordinate_eq_zero_of_prefixRank_eq)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:147-186  (MIPStarRE.QPBT.coordinate_eq_zero_of_prefixRank_eq)
 /-- If a coordinate does not increase prefix rank, it vanishes after all earlier coordinates do. -/
 lemma coordinate_eq_zero_of_prefixRank_eq {n : ℕ}
     (W : Submodule K (Fin n → K)) (j : Fin n)
@@ -126,7 +130,7 @@ lemma coordinate_eq_zero_of_prefixRank_eq {n : ℕ}
   have hj := congrFun (LinearMap.mem_ker.mp hxlarge) (Fin.last j.1)
   simpa [x, large, prefixMap] using hj
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:184-200  (MIPStarRE.QPBT.card_strict_steps_le)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:188-204  (MIPStarRE.QPBT.card_strict_steps_le)
 /-- The number of strict steps in a nondecreasing natural-number sequence is at
 most its endpoint. -/
 lemma card_strict_steps_le {n : ℕ} (r : ℕ → ℕ)
@@ -145,7 +149,7 @@ lemma card_strict_steps_le {n : ℕ} (r : ℕ → ℕ)
         have := Nat.succ_le_of_lt (hih.trans_lt hstep)
         simpa [Finset.range_add_one, Finset.filter_insert, h'] using this
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:202-286  (MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:206-290  (MIPStarRE.QPBT.isCompl_registerSubmodule_canonicalComplement)
 /--
 The canonical coordinate complement spans a complement of `W`.  This is the
 proposition blueprint
@@ -232,7 +236,7 @@ theorem isCompl_registerSubmodule_canonicalComplement {n : ℕ}
     omega
   exact (Submodule.isCompl_iff_disjoint W T hdim).mpr hdisjoint
 
--- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:288-299  (MIPStarRE.QPBT.canonicalProjOfKernel)
+-- source: MIPStarRE/QPBT/Algebra/Subspaces.lean:292-303  (MIPStarRE.QPBT.canonicalProjOfKernel)
 /--
 The projector onto the canonical coordinate complement along `W`.  This is
 blueprint `def:cl-canonical`,

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Points.Commutation
-import MIPStarRE.QPBT.Extraction.Observables
+module
+
+public import MIPStarRE.QPBT.Combining.Points.Commutation
+public import MIPStarRE.QPBT.Extraction.Observables
 
 /-!
 # Finite-character estimates for extracted observables
@@ -17,6 +19,8 @@ They do not assert the preceding pulled-apart measurement comparison
 `eq:qld-pulling-cons`, whose extraction obligation is recorded under
 issue #123 in `docs/paper-gaps/qpbt_extraction-transfer.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.WinImplications.Approx
+module
+
+public import MIPStarRE.QPBT.Observables.WinImplications.Approx
 
 /-!
 # Self-consistency of the strategy point observables
@@ -13,6 +15,8 @@ The declarations support `lem:qld-win-implications-obs` in
 `blueprint/src/chapter/ch14_qpbt_observables.tex:761-794`, whose paper source
 is `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:294-308`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

@@ -68,6 +68,20 @@ Mathlib-only challenge modules. Regeneration may update source line numbers in
 provenance comments; it must not change challenge declarations or target
 statements.
 
+Comparator header and footer files are partial source templates and therefore
+use the `.lean.in` suffix. Their bytes are inserted unchanged; the assembler is
+responsible for adding module syntax. Split challenge goldens remain runnable
+`.lean` files rather than archival `.lean.expected` files: each begins with
+`module`, uses `public import`, and places declarations in an
+`@[expose] public section`. This keeps the checked fixture identical to the
+source compiled by the companion comparator repository.
+
+The closure extractor is compile-time environment inspection. It begins with a
+module header, renders each configured dependency as `meta import all`, and
+runs in a private `meta section`. The `all` level is required because closure
+construction inspects private and compiler-generated declarations as well as
+definition values; ordinary imports do not retain that complete environment.
+
 ## Mechanical Audit
 
 For the pilot, the following command removes only the module header, public
@@ -115,3 +129,26 @@ the module and visibility syntax. All estimates and bounds are unchanged.
    public names and representative `rfl` unfoldings.
 5. Regenerate comparator expectations, review the exact diff, and run the
    repository's normal PR CI once for the full build and axiom audits.
+
+## Complete conversion (2026-10-02)
+
+The complete conversion keeps all existing theorem hypotheses, conclusions,
+quantifiers, and numerical bounds. Of the 722 mathematical source files,
+665 are byte-identical to the compact-library base after removal of module
+headers, public imports, and exposed public sections. The remaining 57 were
+inspected individually: they export helper definitions used in exposed bodies,
+mark metaprograms as meta, balance visibility sections, or place existing proof
+terms inside `by exact` blocks so elaboration can use private proof data.
+No mathematical assumption or estimate changes.
+
+The historical PR549 native-check transcript is retained byte-for-byte as
+`.lean.txt`; it is an archived diagnostic, not a current build target. Comparator
+header/footer fragments similarly use `.lean.in`, while generated compilable
+mirrors use real module headers. Historical JSONL captures are stored as gzip
+or XZ archives to meet the source snapshot size limit. Each adopted archive was
+decompressed and compared byte-for-byte with the current raw capture before
+replacement. The telemetry reader accepts both representations.
+
+Validation: the full `lake build` and `lake build MIPStarRE.QPBT.Test.AxiomAudit`
+pass on Lean/Mathlib v4.35.0-rc2. All four original headlines, their compact
+aliases, and the fixed-field selector have only the three standard axioms.

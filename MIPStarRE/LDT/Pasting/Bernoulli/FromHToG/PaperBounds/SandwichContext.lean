@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove
+module
+
+public import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove
 
 /-!
 # Section 12 pasting: from-H-to-G S U S context-average bounds
@@ -6,6 +8,8 @@ import MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove
 Sandwich-sum identities and the `S U S` context-average bound used in the
 second half-sandwich and final move-right Cauchy--Schwarz steps.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
 
 /-!
 # Measurements of the perfect Magic Square strategy
@@ -18,6 +20,8 @@ The source statement is blueprint
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:654-722`.
 -/
 
+@[expose] public section
+
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 
 namespace MIPStarRE.QPBT
@@ -28,7 +32,7 @@ open MIPStarRE.Quantum
 noncomputable section
 
 /-- The joint measurement of two commuting binary projective measurements. -/
-private noncomputable def binaryJointMeasurement
+noncomputable def binaryJointMeasurement
     {V : Type*} [Fintype V] [DecidableEq V]
     (M N : Measurement (ZMod 2) V)
     (hM : MIPStarRE.QPBT.Measurement.IsProjective M)

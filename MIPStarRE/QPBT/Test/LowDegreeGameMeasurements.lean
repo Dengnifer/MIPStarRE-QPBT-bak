@@ -1,9 +1,11 @@
-import MIPStarRE.QPBT.Games.Consistency
-import MIPStarRE.QPBT.Games.DistributionMarginals
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.QPBT.Games.TypedCondLinear
-import MIPStarRE.QPBT.Observables.LineDefs
-import MIPStarRE.QPBT.Test.LowDegreeGame
+module
+
+public import MIPStarRE.QPBT.Games.Consistency
+public import MIPStarRE.QPBT.Games.DistributionMarginals
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.QPBT.Games.TypedCondLinear
+public import MIPStarRE.QPBT.Observables.LineDefs
+public import MIPStarRE.QPBT.Test.LowDegreeGame
 
 /-!
 # Low-degree sampling and polynomial measurements
@@ -21,6 +23,8 @@ The principal definition and theorem are blueprint `def:ld-meas` and
 The dimension-divisibility hypothesis is documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadLine
+module
+
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadLine
 
 /-!
 # Line interpolation: bad-mass comparison
@@ -12,6 +14,8 @@ defect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.
 - `references/ldt-paper/ld-pasting.tex`
 - `blueprint/src/chapter/ch09_pasting.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

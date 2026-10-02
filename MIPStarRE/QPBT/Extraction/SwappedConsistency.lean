@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Extraction.Bounds
-import MIPStarRE.QPBT.Extraction.ObservableConsistency
+module
+
+public import MIPStarRE.QPBT.Extraction.Bounds
+public import MIPStarRE.QPBT.Extraction.ObservableConsistency
 
 /-!
 # Observable consistency after the concrete swaps
@@ -13,6 +15,8 @@ to the EPR correlation argument, before projection and normalization.
 Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1701-1724`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

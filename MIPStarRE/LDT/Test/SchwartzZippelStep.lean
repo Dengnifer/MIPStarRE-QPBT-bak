@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.Defs
-import MIPStarRE.LDT.Preliminaries.PolynomialAgreement
+module
+
+public import MIPStarRE.LDT.Test.Defs
+public import MIPStarRE.LDT.Preliminaries.PolynomialAgreement
 
 /-!
 # `mainFormal` Step 5 — Schwartz--Zippel self-consistency handoff
@@ -11,6 +13,8 @@ consistency defect is proved here, and the genuinely Schwartz--Zippel part is
 provided by the shared tensor bound
 `Preliminaries.polynomialCollisionMass_le_mdq`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

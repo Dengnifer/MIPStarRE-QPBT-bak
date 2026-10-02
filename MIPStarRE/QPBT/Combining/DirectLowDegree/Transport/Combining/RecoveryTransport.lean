@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryDefect
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Value
-import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.RecoveryDefect
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Value
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
 
 /-!
 # The recovery of the polynomial-tuple measurements
@@ -40,6 +42,8 @@ post-processings of the measurements of the combined game.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:617-680`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

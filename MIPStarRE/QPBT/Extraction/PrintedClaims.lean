@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Extraction.Observables
+module
+
+public import MIPStarRE.QPBT.Extraction.Observables
 
 /-! # Unasserted printed claims in Pauli extraction
 
@@ -13,6 +15,8 @@ any construction. The corrected results remain in `Observables` and `Decoding`.
 * `docs/paper-gaps/qpbt_decoding-identity.tex`.
 * Issue #667, retention of printed claims under completion criterion C3.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

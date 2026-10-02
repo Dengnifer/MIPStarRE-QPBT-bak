@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Answers
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Answers
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # The combined strategy of the simultaneity reduction
@@ -59,6 +61,8 @@ its outcome, so the combined strategy is again projective; this is
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:420-472`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

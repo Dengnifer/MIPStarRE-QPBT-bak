@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.Soundness.RawOperatorTransferCore
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.RawOperatorTransferCore
 
 /-!
 # Final raw Pauli-effect soundness bounds
@@ -15,6 +17,8 @@ Paper `thm:pauli`,
 and its proof at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1862-1876`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

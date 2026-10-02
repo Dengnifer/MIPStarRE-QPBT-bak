@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ZEvalDeficit
-import MIPStarRE.QPBT.Combining.UniformLinePoint
+module
+
+public import MIPStarRE.QPBT.Combining.ZEvalDeficit
+public import MIPStarRE.QPBT.Combining.UniformLinePoint
 
 /-!
 # Sub-line averages of the Z-point overlap
@@ -26,6 +28,8 @@ The separate marginal identities encode the analogue of Property 2 of
 `lem:qld-sublines` for the directly indexed law; source-distribution transport
 remains separate.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.StrategyCore
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
+module
+
+public import MIPStarRE.LDT.Test.StrategyCore
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
 
 /-!
 # Question correspondence for the directly indexed low-degree game
@@ -14,6 +16,8 @@ degree counterparts.
 - `references/ldt-paper/test_definition.tex:98-151`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
@@ -86,7 +90,7 @@ noncomputable def directPointEquiv (D : DirectLdParams) :
 /-! ## Bounded coefficient vectors -/
 
 /-- Turn a coefficient vector into its polynomial of degree at most `n`. -/
-private noncomputable def coefficientPolynomial
+noncomputable def coefficientPolynomial
     {K : Type*} [Field K] (n : ℕ) (c : Fin (n + 1) → K) : Polynomial K :=
   ((Polynomial.degreeLTEquiv K (n + 1)).symm c).1
 
@@ -124,20 +128,21 @@ noncomputable def directAxisAnswerEquiv (D : DirectLdParams) :
   refine
     { toFun := fun c =>
         { poly := coefficientPolynomial D.d c
-          degreeBounded := coefficientPolynomial_degree_le D.d c }
+          degreeBounded := by
+            exact coefficientPolynomial_degree_le D.d c }
       invFun := fun f i => f.poly.coeff i
-      left_inv := ?_
-      right_inv := ?_ }
-  · intro c
-    funext i
-    exact coefficientPolynomial_coeff D.d c i
-  · intro f
-    apply AxisLinePolynomial.ext
-    apply linePolynomial_coeff_fin_injective D.toLDTParameters
-      (coefficientPolynomial_degree_le D.d fun i => f.poly.coeff i)
-      f.degreeBounded
-    intro i
-    exact coefficientPolynomial_coeff D.d (fun j => f.poly.coeff j) i
+      left_inv := by
+        intro c
+        funext i
+        exact coefficientPolynomial_coeff D.d c i
+      right_inv := by
+        intro f
+        apply AxisLinePolynomial.ext
+        apply linePolynomial_coeff_fin_injective D.toLDTParameters
+          (coefficientPolynomial_degree_le D.d fun i => f.poly.coeff i)
+          f.degreeBounded
+        intro i
+        exact coefficientPolynomial_coeff D.d (fun j => f.poly.coeff j) i }
 
 /-- Direct diagonal-line coefficients are equivalent to LDT bounded
 diagonal-line polynomials over the fixed field model. -/
@@ -148,20 +153,21 @@ noncomputable def directDiagonalAnswerEquiv (D : DirectLdParams) :
   refine
     { toFun := fun c =>
         { poly := coefficientPolynomial (D.m * D.d) c
-          degreeBounded := coefficientPolynomial_degree_le (D.m * D.d) c }
+          degreeBounded := by
+            exact coefficientPolynomial_degree_le (D.m * D.d) c }
       invFun := fun f i => f.poly.coeff i
-      left_inv := ?_
-      right_inv := ?_ }
-  · intro c
-    funext i
-    exact coefficientPolynomial_coeff (D.m * D.d) c i
-  · intro f
-    apply DiagonalLinePolynomial.ext
-    apply linePolynomial_coeff_fin_injective D.toLDTParameters
-      (coefficientPolynomial_degree_le (D.m * D.d) fun i => f.poly.coeff i)
-      f.degreeBounded
-    intro i
-    exact coefficientPolynomial_coeff (D.m * D.d) (fun j => f.poly.coeff j) i
+      left_inv := by
+        intro c
+        funext i
+        exact coefficientPolynomial_coeff (D.m * D.d) c i
+      right_inv := by
+        intro f
+        apply DiagonalLinePolynomial.ext
+        apply linePolynomial_coeff_fin_injective D.toLDTParameters
+          (coefficientPolynomial_degree_le (D.m * D.d) fun i => f.poly.coeff i)
+          f.degreeBounded
+        intro i
+        exact coefficientPolynomial_coeff (D.m * D.d) (fun j => f.poly.coeff j) i }
 
 /-- Coefficient evaluation agrees with evaluation of the corresponding LDT
 axis-line polynomial. -/

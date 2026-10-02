@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Witnesses
+module
+
+public import MIPStarRE.QPBT.Combining.Witnesses
 
 /-!
 # Unrestricted point errors in the extended-line obligation
@@ -16,6 +18,8 @@ unrestricted supplied-point domain; they do not construct extended-line witnesse
 - The coefficient collision estimate is reused from
   `directCoefficientCollision_avg_le`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

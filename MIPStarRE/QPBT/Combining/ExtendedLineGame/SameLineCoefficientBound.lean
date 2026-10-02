@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientConsistency
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineRejection
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.CoefficientConsistency
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.SameLineRejection
 
 /-!
 # Coefficient bounds for same-line rejection
@@ -17,6 +19,8 @@ uniform affine parameter. The losses are the direct univariate collision terms
 - Blueprint `lem:qld-4-7`.
 - Issue #328.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

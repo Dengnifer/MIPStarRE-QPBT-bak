@@ -1,13 +1,15 @@
-import MIPStarRE.QPBT.Test.SoundnessDefs
-import MIPStarRE.QPBT.Test.Soundness.RangeProjection
-import MIPStarRE.QPBT.Test.Soundness.Ancilla
-import MIPStarRE.QPBT.Test.Soundness.OperatorTransfer
-import MIPStarRE.QPBT.Test.Soundness.ProjectiveSetting
-import MIPStarRE.QPBT.Test.Soundness.NaimarkReduction
-import MIPStarRE.QPBT.Test.Soundness.NaimarkOperatorTransfer
-import MIPStarRE.QPBT.Test.Soundness.NaimarkAssembly
-import MIPStarRE.QPBT.Test.Soundness.EpsReduction
-import MIPStarRE.QPBT.Test.Soundness.RawOperatorTransfer
+module
+
+public import MIPStarRE.QPBT.Test.SoundnessDefs
+public import MIPStarRE.QPBT.Test.Soundness.RangeProjection
+public import MIPStarRE.QPBT.Test.Soundness.Ancilla
+public import MIPStarRE.QPBT.Test.Soundness.OperatorTransfer
+public import MIPStarRE.QPBT.Test.Soundness.ProjectiveSetting
+public import MIPStarRE.QPBT.Test.Soundness.NaimarkReduction
+public import MIPStarRE.QPBT.Test.Soundness.NaimarkOperatorTransfer
+public import MIPStarRE.QPBT.Test.Soundness.NaimarkAssembly
+public import MIPStarRE.QPBT.Test.Soundness.EpsReduction
+public import MIPStarRE.QPBT.Test.Soundness.RawOperatorTransfer
 
 /-!
 # Pauli basis test soundness
@@ -27,6 +29,8 @@ The main declaration is blueprint
 `thm:pauli`, with paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1426-1447`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

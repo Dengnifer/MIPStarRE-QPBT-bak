@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Preliminaries.ComparisonProjective
-import MIPStarRE.LDT.Test.StrategyPolynomialFamilies
+module
+
+public import MIPStarRE.LDT.Preliminaries.ComparisonProjective
+public import MIPStarRE.LDT.Test.StrategyPolynomialFamilies
 
 /-!
 # Projective consistency evaluation
@@ -8,6 +10,8 @@ This module contains the data-processing lemmas which turn polynomial-level
 projective consistency into pointwise consistency after evaluation at a sampled
 point.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

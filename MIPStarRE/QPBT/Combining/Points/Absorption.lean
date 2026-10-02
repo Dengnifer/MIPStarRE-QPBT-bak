@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Points.Closeness
-import MIPStarRE.QPBT.Combining.Witnesses
+module
+
+public import MIPStarRE.QPBT.Combining.Points.Closeness
+public import MIPStarRE.QPBT.Combining.Witnesses
 
 /-!
 # Absorption estimates for combined point measurements
@@ -14,6 +16,8 @@ bounds.
 
 Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:902-915`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,5 +1,9 @@
-import MIPStarRE.LDT.GlobalVariance.Defs.Core
-import MIPStarRE.LDT.Test.StrategyCore
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Defs.Core
+public import MIPStarRE.LDT.Test.StrategyCore
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.GlobalVariance
 

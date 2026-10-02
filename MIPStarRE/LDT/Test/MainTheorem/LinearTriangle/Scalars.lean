@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.SigmaZeta1
-import MIPStarRE.LDT.Test.MainTheorem.SourceScalars
+module
+
+public import MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.SigmaZeta1
+public import MIPStarRE.LDT.Test.MainTheorem.SourceScalars
 
 /-!
 # Scalar bounds for the complete-measurement linear triangle
@@ -15,6 +17,8 @@ construction.  The small-error argument is organized around the new uncapped err
 * `references/ldt-paper/preliminaries.tex`,
   `prop:simeq-triangle-inequality` at lines 649-684.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

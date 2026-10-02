@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.Assembly
-import MIPStarRE.QPBT.Games.ErrorFunctions
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.Assembly
+public import MIPStarRE.QPBT.Games.ErrorFunctions
 
 /-! # Pasting on independent local spaces
 
@@ -14,6 +16,8 @@ Paper `lem:pasting`,
 `lem:qld-xz-lines`, `14_analysis_of_the_pauli_basis_test.tex:882-963`.
 The common-space realization is a formalization-only auxiliary; see issue #495.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

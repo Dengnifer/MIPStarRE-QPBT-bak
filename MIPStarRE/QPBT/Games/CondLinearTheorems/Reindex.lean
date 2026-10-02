@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Games.CondLinear
+module
+
+public import MIPStarRE.QPBT.Games.CondLinear
 
 /-!
 # Reindexing of conditionally linear functions
@@ -17,6 +19,8 @@ The source definition is `def:cl-func` in
 `blueprint/src/chapter/ch12_qpbt_games.tex`, with paper origin
 `references/qpbt-paper/05_conditionally_linear_functions.tex:35-57`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

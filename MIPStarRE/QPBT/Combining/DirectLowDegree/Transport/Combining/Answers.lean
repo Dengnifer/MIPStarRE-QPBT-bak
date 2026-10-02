@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Defs
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Parameters
+module
+
+public import MIPStarRE.QPBT.Combining.Defs
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.Parameters
 
 /-!
 # Answer polynomials of the combined strategy
@@ -36,6 +38,8 @@ canonical parametrizations of the line.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:420-472`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

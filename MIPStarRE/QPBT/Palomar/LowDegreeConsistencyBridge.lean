@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Palomar.LowDegreeConsistency
-import MIPStarRE.QPBT.Palomar.LowDegreeGameStrategyBridge
-import MIPStarRE.QPBT.Test.LowDegreeGameTheorems
+module
+
+public import MIPStarRE.QPBT.Palomar.LowDegreeConsistency
+public import MIPStarRE.QPBT.Palomar.LowDegreeGameStrategyBridge
+public import MIPStarRE.QPBT.Test.LowDegreeGameTheorems
 
 /-!
 # Exact bridges for compact low-degree consistency
@@ -15,6 +17,8 @@ soundness theorem to compact parameters.
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:232-248` and
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:394-440`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

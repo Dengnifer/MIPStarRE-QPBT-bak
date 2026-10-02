@@ -1,4 +1,6 @@
-import MIPStarRE.Quantum.FiniteMatrix.Basic
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix.Basic
 
 /-!
 # Finite-dimensional state transformations
@@ -7,6 +9,8 @@ This file defines the tensor and reindexing operations used for strategy
 distance, Magic Square rigidity, and the qudit-to-qubit isomorphism. See
 blueprint chapters 11--13 and the declaration-level references below.
 -/
+
+@[expose] public section
 
 open scoped Matrix
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.CondLinear
-import MIPStarRE.QPBT.Games.Defs
+module
+
+public import MIPStarRE.QPBT.Games.CondLinear
+public import MIPStarRE.QPBT.Games.Defs
 
 /-!
 # The Magic Square game
@@ -15,6 +17,8 @@ This file formalizes blueprint
 `def:ms-game`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:512-610`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.LinePointRejection
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.LinePointRejection
 
 /-!
 # Same-line branch rejection for the extended direct game
@@ -16,6 +18,8 @@ line. These are exact transport identities, not numerical passing bounds.
 - Blueprint `lem:qld-4-7`.
 - Issue #317.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.PolynomialCollision
-import MIPStarRE.QPBT.Games.Sandwich.Support
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
+module
+
+public import MIPStarRE.QPBT.Extraction.PolynomialCollision
+public import MIPStarRE.QPBT.Games.Sandwich.Support
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
 
 /-!
 # Transfer of the complete Pauli overlap between states
@@ -16,6 +18,8 @@ encodings after the change of state.
 Blueprint `lem:qld-unitary`; paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1827-1858`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

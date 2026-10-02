@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
 
 /-!
 # Range projections in Pauli soundness
@@ -15,6 +17,8 @@ blueprint `thm:pauli`. The range projection is omitted at
 the corrected calculation is given in `docs/paper-gaps/qpbt_extraction-transfer.tex`.
 They do not construct the extraction data or prove Pauli soundness.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

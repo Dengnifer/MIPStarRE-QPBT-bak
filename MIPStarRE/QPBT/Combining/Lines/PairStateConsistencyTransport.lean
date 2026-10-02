@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
 
 /-!
 # Pair-state consistency transport
@@ -13,6 +15,8 @@ in `lem:qld-xz-lines`, from
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-963` and
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:504-525`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 
