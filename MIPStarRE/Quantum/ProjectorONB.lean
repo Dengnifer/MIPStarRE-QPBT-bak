@@ -326,7 +326,7 @@ end ProjectorRangeONB
 
 /-- The nonzero-eigenvalue index set of a projector has cardinality equal to its
 matrix rank. -/
-private noncomputable def IsProj.nonzeroEigenEquivFinRank (P : Op ι) (hP : IsProj P) :
+noncomputable def IsProj.nonzeroEigenEquivFinRank (P : Op ι) (hP : IsProj P) :
     {i : ι // hP.isSelfAdjoint.isHermitian.eigenvalues i ≠ 0} ≃ Fin P.rank :=
   Fintype.equivFinOfCardEq hP.isSelfAdjoint.isHermitian.rank_eq_card_non_zero_eigs.symm
 
