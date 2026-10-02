@@ -2013,3 +2013,23 @@ GitHub-workflow module passes 80, and the related review/native modules pass 16.
 Shell/Python syntax, whitespace, changed-line length, installed-hook and normal
 pre-commit checks pass. No full build, live companion review, canonical CI,
 independent review, companion mutation or merge ran in the author phase.
+
+## 2026-10-02 - Synchronize companion-review architecture summaries (#745)
+
+**Trigger:** `results/telemetry/events.md`, 2026-10-02,
+"Companion-review architecture summaries lagged the route." The sixth PR755
+review attempt timed out without a final verdict; its preserved commentary was
+an observation, not a published finding. MAIN independently confirmed the
+documentation drift against `local/protocols/review.md`.
+
+**Change:** `AGENTS.md`, `local/DESIGN.md` and `local/README.md` now distinguish
+the normal primary-library review chain from the sole explicit
+`Dengnifer/QPBT-comparator` source route. The summaries state that primary PRs
+use complete exact-head local CI, while the companion route uses its pinned
+official Palomar full-CI evidence on the exact head and retains trusted
+primary-main reviewer instructions. The detailed validation contract remains
+centralized in `local/protocols/review.md`; no script or gate semantics changed.
+
+**Expected effect:** operators see the implemented companion exception without
+mistaking arbitrary repositories, branch-supplied verification or an
+unpublished timeout commentary for admissible review evidence.

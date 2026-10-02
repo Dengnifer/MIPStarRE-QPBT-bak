@@ -47,7 +47,7 @@ absolute `MIPSTARRE_LAKE_ROOT` may instead hold branch-private `.lake` products.
 | PR CI (`pr-ci.yml`) on push/PR events | `local/bin/ci.sh <pr-id>` run by the PR lifecycle scripts |
 | Main-build actions cache (main-only save, PR restore) | Hot main cache: single-writer warmer + read-only snapshots + APFS copy-on-write clones per worktree (`build-cache.md`) |
 | `lake exe cache get` (Mathlib cloud cache) | Unchanged — already local |
-| Model-backed PR review chained on CI success | `local/bin/review.sh <pr-number>`: codex CLI with the same `.github/prompts/` review personas, invoked only from green exact-head CI statuses; one COMMENT review plus `local-review/summary` |
+| Model-backed PR review chained on CI success | `local/bin/review.sh <pr-number>`: codex CLI with trusted primary-main personas; primary PRs require green exact-head local CI, while the one comparator companion route requires its pinned official Palomar full-CI evidence; both publish one COMMENT review plus `local-review/summary` (`review.md`) |
 | Auto-fix workflows (CI-fix, blueprint-fix, review-fix) | `local/bin/autofix.sh <pr-id> --mode {ci,blueprint,review,auto}` with the same commit-prefix guards and a combined iteration cap |
 | `@claude`/`@codex` mention responders | `local/bin/agent.sh <id> "instruction"` — human-invoked codex session on the branch worktree |
 | GitHub issues + sub-issues + labels | unchanged — GitHub is the record again (`issues-prs.md`); `issue_new.py` / `issue_close.py` drive it through `gh_common.py` |
@@ -66,10 +66,15 @@ documented failure modes. Sources are cited in `local/protocols/*.md`.
 1. **Single cache writer.** Only the warmer writes the hot main cache; agent
    worktrees consume copy-on-write clones and never write back. (GitHub's
    per-PR cache saves evicted the main entry: pr-ci.yml:138-142.)
-2. **Review only after green CI, on the same head SHA.** The gate reads the
-   exact-head `local-ci/*` statuses; a failed or absent CI summary blocks the
-   review, which then publishes nothing at all — the *absence* of a green
-   `local-review/summary` is the block, never a silent skip. Bot commits with prefix
+2. **Review only after green CI, on the same head SHA.** Primary-library PRs
+   require the complete exact-head `local-ci/*` set and summary. The explicit
+   `Dengnifer/QPBT-comparator` companion route instead requires its own pinned
+   official Palomar full-CI evidence for that exact head. Reviewer instructions
+   remain trusted primary-main content on both routes; branch-supplied workflow,
+   verifier, configuration and protocol bytes cannot weaken admission. A failed
+   or absent gate publishes nothing — the *absence* of a green
+   `local-review/summary` is the block, never a silent skip. See `review.md` for
+   the narrow companion validation contract. Bot commits with prefix
    `[codex-auto-fix]`/`[codex-review-fix]` are not re-reviewed except the final
    fix at the iteration cap, which gets one forced review.
 3. **Serialized fixes.** ci-fix → blueprint-fix → review-fix strictly in order,

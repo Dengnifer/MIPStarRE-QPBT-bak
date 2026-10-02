@@ -10254,3 +10254,16 @@ all 16 related review/native tests. Shell/Python syntax, whitespace, changed-lin
 length, installed-hook and normal pre-commit checks pass. Lesson: external
 evidence IDs are binding keys, never clocks; unknown temporal order must block
 rather than fall through to older green data.
+
+### 2026-10-02 — Companion-review architecture summaries lagged the route
+
+The sixth PR755 review attempt reached its 900-second cap (exit 124) without a
+final review or terminal verdict. Its preserved commentary observed that the
+high-level architecture summaries still described only the primary
+`local-ci/*` route. MAIN independently compared `AGENTS.md`, `local/DESIGN.md`
+and `local/README.md` with the implemented contract in
+`local/protocols/review.md`, then authorized a narrow summary synchronization.
+This observation is not a published review finding or approval. The prose
+change adds no repository, evidence source, verifier, gate or bypass; it only
+documents the existing comparator-specific exception and primary-main trust
+boundary.
