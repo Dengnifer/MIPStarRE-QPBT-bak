@@ -97,9 +97,9 @@ theorem point_encodingPauli_consistency_eq {P : AdmissibleParams} {epsilon : ℝ
     (tauPointMeas W) (tauPointMeas W) S.toStrategy.ψ
     (eprState (PauliRegister P)) (eprState_norm _)
     (tauPointProj_epr_offDiagonal_eq_zero W)
+  simp_rw [encodingPauliMeas_eval_effect_eq_convolution S .bob W]
   simpa only [pointMeasExp, Measurement.ofSumEqOne, expPointOp_eq_convolution,
-    encodingPauliMeas_eval_effect_eq_convolution, tauPointMeas,
-    ExtendedLineGame.pairState] using h
+    tauPointMeas, ExtendedLineGame.pairState] using h
 
 /-- The same exact preservation holds in the Pauli--point orientation. -/
 theorem encodingPauli_point_consistency_eq {P : AdmissibleParams} {epsilon : ℝ}
@@ -119,9 +119,9 @@ theorem encodingPauli_point_consistency_eq {P : AdmissibleParams} {epsilon : ℝ
     (tauPointMeas W) (tauPointMeas W) S.toStrategy.ψ
     (eprState (PauliRegister P)) (eprState_norm _)
     (tauPointProj_epr_offDiagonal_eq_zero W)
+  simp_rw [encodingPauliMeas_eval_effect_eq_convolution S .alice W]
   simpa only [pointMeasExp, Measurement.ofSumEqOne, expPointOp_eq_convolution,
-    encodingPauliMeas_eval_effect_eq_convolution, tauPointMeas,
-    ExtendedLineGame.pairState] using h
+    tauPointMeas, ExtendedLineGame.pairState] using h
 
 /-- Adjoining the same ideal point measurements also preserves point
 self-consistency exactly. -/
@@ -314,13 +314,11 @@ theorem stateQForm_placeSide_alice_tensor_one {P : AdmissibleParams} {epsilon : 
     simp only [placeSide, sixRegExtractionEquiv, reindexOp, place, heteroKron,
       Matrix.kronecker, Matrix.one_apply, mul_ite, ite_mul]
     split_ifs <;> simp_all
-    rfl
   rw [hplace]
   have h := ExtendedLineGame.stateQForm_pairState_eq_AA'_BA'' S A 1 hA
     Matrix.isHermitian_one
   have hone : S.place .BA'' (1 : Op (S.ExpandedLocalSpace .bob)) = 1 := by
     convert S.place_one .BA'' using 1
-    rfl
   rw [hone, Matrix.mul_one] at h
   exact h.symm
 
@@ -337,13 +335,11 @@ theorem stateQForm_placeSide_bob_tensor_one {P : AdmissibleParams} {epsilon : �
     simp only [placeSide, sixRegExtractionEquiv, reindexOp, place, heteroKron,
       Matrix.kronecker, Matrix.one_apply, mul_ite, ite_mul]
     split_ifs <;> simp_all
-    rfl
   rw [hplace]
   have h := ExtendedLineGame.stateQForm_pairState_eq_AB''_BB' S 1 B
     Matrix.isHermitian_one hB
   have hone : S.place .AB'' (1 : Op (S.ExpandedLocalSpace .alice)) = 1 := by
     convert S.place_one .AB'' using 1
-    rfl
   rw [hone, Matrix.one_mul] at h
   exact h.symm
 

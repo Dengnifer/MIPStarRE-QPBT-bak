@@ -39,7 +39,13 @@ formalization-only indexing for the player-dependent notation at paper
 inductive PlayerSide where
   | alice
   | bob
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited
+
+instance : Fintype PlayerSide where
+  elems := {.alice, .bob}
+  complete := by
+    intro side
+    cases side <;> simp
 
 /-- A projective strategy satisfying the winning premise used throughout
 Section `sec:commutation`. The structure retains the distinct player spaces and
@@ -58,7 +64,7 @@ variable {P : AdmissibleParams} {ε : ℝ}
 /-- The local Hilbert-space index type on a specified player side. It indexes
 the side-qualified operators at paper
 `14_analysis_of_the_pauli_basis_test.tex:174-190`. -/
-def LocalSpace (S : ProjectiveSetting P ε) : PlayerSide → Type
+@[reducible] def LocalSpace (S : ProjectiveSetting P ε) : PlayerSide → Type
   | .alice => S.toStrategy.ιA
   | .bob => S.toStrategy.ιB
 
@@ -504,11 +510,15 @@ private theorem leftInvalidMass_le_rejection {P : AdmissibleParams}
       else outcomeWeight S questions.1 questions.2 a b := by
   classical
   rcases questions with ⟨⟨tA, xA⟩, ⟨tB, xB⟩⟩
-  let invalid := Finset.univ.filter
-    (fun a : (pauliBasisTest P).AnswerA => validPauliAnswer tA a = false)
+  change (∑ a ∈ Finset.univ.filter (fun a => validPauliAnswer tA a = false),
+      ∑ b, outcomeWeight S (tA, xA) (tB, xB) a b) ≤
+    ∑ a, ∑ b,
+      if (pauliBasisTest P).decide (tA, xA) (tB, xB) a b then 0
+      else outcomeWeight S (tA, xA) (tB, xB) a b
   calc
-    (∑ a ∈ invalid, ∑ b, outcomeWeight S (tA, xA) (tB, xB) a b) =
-        ∑ a ∈ invalid, ∑ b,
+    (∑ a ∈ Finset.univ.filter (fun a => validPauliAnswer tA a = false),
+        ∑ b, outcomeWeight S (tA, xA) (tB, xB) a b) =
+        ∑ a ∈ Finset.univ.filter (fun a => validPauliAnswer tA a = false), ∑ b,
           if (pauliBasisTest P).decide (tA, xA) (tB, xB) a b then 0
           else outcomeWeight S (tA, xA) (tB, xB) a b := by
       apply Finset.sum_congr rfl
@@ -516,11 +526,9 @@ private theorem leftInvalidMass_le_rejection {P : AdmissibleParams}
       apply Finset.sum_congr rfl
       intro b hb
       have hvalid := (Finset.mem_filter.mp ha).2
-      have hdecide :
-          (pauliBasisTest P).decide (tA, xA) (tB, xB) a b = false := by
-        change pauliWinPredicate P (tA, xA) (tB, xB) a b = false
+      have hwinFalse : pauliWinPredicate P (tA, xA) (tB, xB) a b = false := by
         simp [pauliWinPredicate, hvalid]
-      simp [hdecide]
+      simp [pauliBasisTest, hwinFalse]
     _ ≤ ∑ a, ∑ b,
         if (pauliBasisTest P).decide (tA, xA) (tB, xB) a b then 0
         else outcomeWeight S (tA, xA) (tB, xB) a b := by
@@ -542,23 +550,25 @@ private theorem rightInvalidMass_le_rejection {P : AdmissibleParams}
       else outcomeWeight S questions.1 questions.2 a b := by
   classical
   rcases questions with ⟨⟨tA, xA⟩, ⟨tB, xB⟩⟩
-  let invalid := Finset.univ.filter
-    (fun b : (pauliBasisTest P).AnswerB => validPauliAnswer tB b = false)
+  change (∑ a, ∑ b ∈ Finset.univ.filter (fun b => validPauliAnswer tB b = false),
+      outcomeWeight S (tA, xA) (tB, xB) a b) ≤
+    ∑ a, ∑ b,
+      if (pauliBasisTest P).decide (tA, xA) (tB, xB) a b then 0
+      else outcomeWeight S (tA, xA) (tB, xB) a b
   apply Finset.sum_le_sum
   intro a ha
   calc
-    (∑ b ∈ invalid, outcomeWeight S (tA, xA) (tB, xB) a b) =
-        ∑ b ∈ invalid,
+    (∑ b ∈ Finset.univ.filter (fun b => validPauliAnswer tB b = false),
+        outcomeWeight S (tA, xA) (tB, xB) a b) =
+        ∑ b ∈ Finset.univ.filter (fun b => validPauliAnswer tB b = false),
           if (pauliBasisTest P).decide (tA, xA) (tB, xB) a b then 0
           else outcomeWeight S (tA, xA) (tB, xB) a b := by
       apply Finset.sum_congr rfl
       intro b hb
       have hvalid := (Finset.mem_filter.mp hb).2
-      have hdecide :
-          (pauliBasisTest P).decide (tA, xA) (tB, xB) a b = false := by
-        change pauliWinPredicate P (tA, xA) (tB, xB) a b = false
+      have hwinFalse : pauliWinPredicate P (tA, xA) (tB, xB) a b = false := by
         simp [pauliWinPredicate, hvalid]
-      simp [hdecide]
+      simp [pauliBasisTest, hwinFalse]
     _ ≤ ∑ b,
         if (pauliBasisTest P).decide (tA, xA) (tB, xB) a b then 0
         else outcomeWeight S (tA, xA) (tB, xB) a b := by

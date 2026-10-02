@@ -69,13 +69,13 @@ theorem sum_pullingMeas_eval_mul_pointMeas {P : AdmissibleParams} {epsilon delta
         S.placePlayer .bob ((S.pointMeas .bob W u).effect a)) =
       ∑ g : Poly P, S.place .AA' ((w.marginalPoly .alice W).effect g) *
         S.place .BA'' ((S.pointMeasExp .bob W u).effect (evalPoly g u)) := by
-  simp only [pullingMeas_eval_effect, S.placeSide_alice_finset_sum, Finset.sum_mul]
+  simp_rw [pullingMeas_eval_effect (S := S) w .alice W u]
+  simp only [S.placeSide_alice_finset_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro g _
   simp only [S.placeSide_alice_tensor_mul_placePlayer_bob]
   rw [← Finset.mul_sum, ← S.place_finset_sum, S.pointMeasExp_effect_eq_sum_sub .bob W u]
-  rfl
 
 /-- The reverse-player overlap uses the witness's Bob point-consistency relation, with
 the original `BB'` and `AB''` placements retained. -/
@@ -87,13 +87,13 @@ theorem sum_pointMeas_mul_pullingMeas_eval {P : AdmissibleParams} {epsilon delta
         (((pullingMeas w .bob W).postprocess (fun g => evalPoly g u)).effect a)) =
       ∑ g : Poly P, S.place .BB' ((w.marginalPoly .bob W).effect g) *
         S.place .AB'' ((S.pointMeasExp .alice W u).effect (evalPoly g u)) := by
-  simp only [pullingMeas_eval_effect, S.placeSide_bob_finset_sum, Finset.mul_sum]
+  simp_rw [pullingMeas_eval_effect (S := S) w .bob W u]
+  simp only [S.placeSide_bob_finset_sum, Finset.mul_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro g _
   simp only [S.placePlayer_alice_mul_placeSide_bob_tensor]
   rw [← Finset.mul_sum, ← S.place_finset_sum, S.pointMeasExp_effect_eq_sum_sub .alice W u]
-  rfl
 
 end
 

@@ -49,13 +49,13 @@ theorem pauli_soundness :
   obtain ⟨a, b, ha, hb, hb_one, hsound⟩ := MIPStarRE.QPBT.pauli_soundness
   refine ⟨a, b, ha, hb, hb_one, ?_⟩
   intro P epsilon hepsilon S hvalue
-  let Q := P.toAdmissibleParams
   have hvalue' : 1 - epsilon ≤
-      (pauliStrategyToLibrary Q S).value := by
-    rw [pauliStrategyToLibrary_value]
-    exact hvalue
+      (pauliStrategyToLibrary P.toAdmissibleParams S).value :=
+    hvalue.trans_eq
+      (pauliStrategyToLibrary_value P.toAdmissibleParams S).symm
   obtain ⟨w, hstate, hAlice, hBob⟩ :=
-    hsound Q epsilon hepsilon (pauliStrategyToLibrary Q S) hvalue'
+    hsound P.toAdmissibleParams epsilon hepsilon
+      (pauliStrategyToLibrary P.toAdmissibleParams S) hvalue'
   refine ⟨ExtractionWitness.ofPauliSoundnessWitness w, ?_, ?_, ?_⟩
   · exact (stateError_ofPauliSoundnessWitness w).trans_le hstate
   · intro W
@@ -97,13 +97,13 @@ theorem pauli_soundness_qubit :
     MIPStarRE.QPBT.pauli_soundness_qubit
   refine ⟨a, b, ha, hb, hb_one, ?_⟩
   intro P epsilon hepsilon S hvalue
-  let Q := P.toAdmissibleParams
   have hvalue' : 1 - epsilon ≤
-      (pauliStrategyToLibrary Q S).value := by
-    rw [pauliStrategyToLibrary_value]
-    exact hvalue
+      (pauliStrategyToLibrary P.toAdmissibleParams S).value :=
+    hvalue.trans_eq
+      (pauliStrategyToLibrary_value P.toAdmissibleParams S).symm
   obtain ⟨w, hstate, hAlice, hBob⟩ :=
-    hsound Q epsilon hepsilon (pauliStrategyToLibrary Q S) hvalue'
+    hsound P.toAdmissibleParams epsilon hepsilon
+      (pauliStrategyToLibrary P.toAdmissibleParams S) hvalue'
   refine ⟨ExtractionWitness.ofQubitSoundnessWitness w, ?_, ?_, ?_⟩
   · exact (stateError_ofQubitSoundnessWitness w).trans_le hstate
   · intro W

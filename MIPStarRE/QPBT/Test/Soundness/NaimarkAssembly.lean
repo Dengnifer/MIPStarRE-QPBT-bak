@@ -72,9 +72,11 @@ theorem arbitrary_strategy_isometry_bounds_explicit_baseline
     norm_num
   have haa : pauliBaselineProjectiveConstant ≤
       21 * pauliBaselineProjectiveConstant ^ 2 := by nlinarith
-  obtain ⟨t, hstate, hA, hB⟩ :=
+  have hprojective :=
     projective_setting_isometry_bounds_explicit_baseline P epsilon hepsilon0
       hepsilon1 (pauliNaimarkSetting P epsilon S hwin)
+  simp only [pauliNaimarkSetting] at hprojective
+  obtain ⟨t, hstate, hA, hB⟩ := hprojective
   have hmono :
       deltaQld pauliBaselineProjectiveConstant pauliBaselineProjectivePower
           epsilon P.m P.d P.q ≤
@@ -167,8 +169,9 @@ theorem exists_arbitrary_strategy_isometry_bounds :
   have haa : a ≤ 21 * a ^ 2 := by nlinarith
   refine ⟨21 * a ^ 2, b, by nlinarith, hb, hb1, ?_⟩
   intro P ε hε0 hε1 S hwin
-  obtain ⟨t, hstate, hA, hB⟩ :=
-    hproj P ε hε0 hε1 (pauliNaimarkSetting P ε S hwin)
+  have hprojective := hproj P ε hε0 hε1 (pauliNaimarkSetting P ε S hwin)
+  simp only [pauliNaimarkSetting] at hprojective
+  obtain ⟨t, hstate, hA, hB⟩ := hprojective
   have hmono : deltaQld a b ε P.m P.d P.q ≤
       deltaQld (21 * a ^ 2) b ε P.m P.d P.q :=
     deltaQld_mono ha haa le_rfl hb hε0 hε1

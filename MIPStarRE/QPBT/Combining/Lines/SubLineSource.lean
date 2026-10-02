@@ -75,7 +75,8 @@ theorem lineRepMap_projX_subLineExtLine_point (P : AdmissibleParams)
       (lineRepMap (subLineExtDirection P kind k e) x +
         t • subLineExtDirection P kind k e) =
       lineRepMap (subLineExtDirection P kind k e) x := by
-    rw [lineRepMap_add_smul, lineRepMap_apply_self]
+    rw [lineRepMap_add_smul]
+    apply lineRepMap_apply_self
   have h1 := lineRepMap_projX_directPointToPauli_lineRepMap P
     (subLineExtDirection P kind k e)
     (lineRepMap (subLineExtDirection P kind k e) x +
@@ -112,7 +113,8 @@ theorem lineRepMap_projZ_subLineExtLine_point (P : AdmissibleParams)
       (lineRepMap (subLineExtDirection P kind k e) x +
         t • subLineExtDirection P kind k e) =
       lineRepMap (subLineExtDirection P kind k e) x := by
-    rw [lineRepMap_add_smul, lineRepMap_apply_self]
+    rw [lineRepMap_add_smul]
+    apply lineRepMap_apply_self
   have h1 := lineRepMap_projZ_directPointToPauli_lineRepMap P
     (subLineExtDirection P kind k e)
     (lineRepMap (subLineExtDirection P kind k e) x +

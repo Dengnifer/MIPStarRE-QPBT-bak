@@ -104,6 +104,7 @@ theorem monoid_algebra_sq_eq_dom_congr (hodd : Odd (Nat.card G))
       rw [add_pow_char, hx, hy, map_add]
   | single g r =>
       simp [MonoidAlgebra.single_pow, squareMulEquiv, ZMod.pow_card]
+      rfl
 
 theorem monoid_algebra_sq_bijective (hodd : Odd (Nat.card G)) :
     Function.Bijective (fun x : MonoidAlgebra (ZMod 2) G => x ^ 2) := by

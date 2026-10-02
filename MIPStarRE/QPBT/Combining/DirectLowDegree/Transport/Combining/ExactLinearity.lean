@@ -52,7 +52,7 @@ theorem combiningLinearForm_eq_sum_monomial {K : Type*} [CommSemiring K] {k : �
 vectors. -/
 theorem coeff_combiningLinearForm_eq_zero {K : Type*} [CommSemiring K] {k : ℕ}
     (c : Fin k → K) {μ : Fin k →₀ ℕ} (hμ : ∀ r : Fin k, μ ≠ Finsupp.single r 1) :
-    MvPolynomial.coeff μ (combiningLinearForm c) = 0 := by
+    (combiningLinearForm c).coeff μ = 0 := by
   classical
   rw [combiningLinearForm_eq_sum_monomial, MvPolynomial.coeff_sum]
   refine Finset.sum_eq_zero fun r _ => ?_
@@ -65,13 +65,13 @@ theorem exists_eq_combiningLinearForm_iff {K : Type*} [CommSemiring K] {k : ℕ}
     (P : MvPolynomial (Fin k) K) :
     (∃ c : Fin k → K, P = combiningLinearForm c) ↔
       ∀ μ : Fin k →₀ ℕ, (∀ r : Fin k, μ ≠ Finsupp.single r 1) →
-        MvPolynomial.coeff μ P = 0 := by
+        P.coeff μ = 0 := by
   classical
   constructor
   · rintro ⟨c, rfl⟩ μ hμ
     exact coeff_combiningLinearForm_eq_zero c hμ
   · intro h
-    refine ⟨fun r => MvPolynomial.coeff (Finsupp.single r 1) P, ?_⟩
+    refine ⟨fun r => P.coeff (Finsupp.single r 1), ?_⟩
     rw [combiningLinearForm_eq_sum_monomial]
     exact eq_sum_monomial_single P h
 

@@ -368,7 +368,7 @@ private theorem place_one {P : AdmissibleParams} {ε : ℝ}
     S.place p (1 : Op (S.ExpandedLocalSpace p.side)) = 1 := by
   ext i j
   cases p <;> simp only [ProjectiveSetting.place, Matrix.one_apply, Prod.ext_iff]
-  all_goals split_ifs <;> aesop
+  all_goals split_ifs <;> simp_all [Prod.ext_iff]
 
 /-- A complete measurement remains complete after register placement. -/
 theorem sum_placed_measurement_eq_one {P : AdmissibleParams} {ε : ℝ}

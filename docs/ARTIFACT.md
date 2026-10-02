@@ -108,7 +108,7 @@ ours anywhere else in the snapshot.
 ```sh
 curl https://elan.lean-lang.org/elan-init.sh -sSf | sh   # if elan is not installed
 cd <unpacked snapshot>
-cat lean-toolchain     # leanprover/lean4:v4.32.0 — elan installs this on first use
+cat lean-toolchain     # leanprover/lean4:v4.35.0-rc2 — elan installs this on first use
 ```
 
 ### 2. Fetch the Mathlib build cache, build, and run the audits

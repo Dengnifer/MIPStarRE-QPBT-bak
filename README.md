@@ -19,7 +19,7 @@ commit `abb98018ec07d6ba5896907f5675f716c6e07a05` (September 21, 2026).
 | Registered headline targets | 4, listed below |
 | QPBT axiom assertions | 13 compile-time checks |
 | Proof debt in `MIPStarRE/QPBT/` | no active `sorry`, `admit`, or project `axiom` declaration |
-| Toolchain | Lean `v4.32.0`, Mathlib `v4.32.0`, pinned by the repository |
+| Toolchain | Lean `v4.35.0-rc2`, Mathlib `v4.35.0-rc2`, pinned by the repository |
 | Source size at the audited commit | QPBT: 332 Lean files / 106,458 lines; LDT: 326 files; Quantum: 11 files |
 
 ## What is formalized

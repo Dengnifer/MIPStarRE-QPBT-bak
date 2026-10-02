@@ -90,8 +90,9 @@ temporary path is compiled with the repository's pinned Lean and Mathlib, so a
 byte-current but ill-typed standalone file still fails the gate.
 
 This is a coherent compact prototype, not final Palomar/native verification.
-The regenerated standalone file type-checks under the repository's Lean 4.32
-environment and the supported Lean 4.35.0-rc2 environment.  Final
+The regenerated standalone file type-checked under the previous Lean 4.32
+environment and type-checks under the current pinned Lean 4.35.0-rc2
+environment.  Final
 supported-library integration, native comparison, canonical CI, and a renewed
 independent faithfulness assessment of the new artifact hash remain pending.
 
@@ -173,13 +174,16 @@ questions.  Regeneration checks that the fixture agrees with the current
 library.  `ComparatorChallengeDriftTests.test_ldt_expected_matches_baseline`
 also hashes `expected/Challenge.lean.expected` and requires the preserved LDT
 digest
-`e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b`.
+`d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2`.
 Consequently, a QPBT-only change cannot silently update both the library and the
 generated LDT fixture.
 
 The module-conversion pilot changed the previous digest only because the
 `FiniteMatrix` module and public-section headers shifted two generated source
 line comments. The LDT challenge declarations and target statement were
+unchanged. The Lean/Mathlib v4.35.0-rc2 port changed the pilot digest only
+because compatibility edits shifted the generated source line for
+`Polynomial.toFun`; the LDT declaration and target statement again remained
 unchanged.
 
 For an intentional future LDT change, first regenerate from fresh built

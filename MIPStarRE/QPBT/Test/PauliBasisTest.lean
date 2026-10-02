@@ -62,7 +62,8 @@ quantified field representation.  This is the field representation of
 `def:admissible`, blueprint `ch13_qpbt_test.tex`; paper
 origin `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:958-961`.
 -/
-noncomputable def AdmissibleParams.model (P : AdmissibleParams) : FixedFieldModel P.q :=
+@[reducible] noncomputable def AdmissibleParams.model
+    (P : AdmissibleParams) : FixedFieldModel P.q :=
   fixedFieldModel P.q P.hq
 
 /-- The low-degree parameter tuple determined by an admissible Pauli-test
@@ -71,7 +72,7 @@ parameters are those of `def:ld-game`, blueprint
 `blueprint/src/chapter/ch13_qpbt_test.tex`, paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:958-961`.
 -/
-def AdmissibleParams.toLdParams (P : AdmissibleParams) : LdParams where
+@[reducible] def AdmissibleParams.toLdParams (P : AdmissibleParams) : LdParams where
   q := P.q
   m := P.m
   d := P.d
@@ -293,7 +294,7 @@ private theorem pauliLdIndex_injective (P : AdmissibleParams) (W : PauliKind) :
     Function.Injective (pauliLdIndex P W) := by
   intro a b hab
   cases W <;> rcases a with (j | u) | j <;> rcases b with (j' | u') | j' <;>
-    simp_all [pauliLdIndex]
+    simp_all [pauliLdIndex] <;> injection hab
 
 /-- Formalization-only auxiliary: reading the low-degree register out of an
 ambient Pauli vector is restriction along `pauliLdIndex`; see
@@ -735,7 +736,7 @@ are `def:pauli-question-distribution` and `def:pauli-win-predicate` in
 `blueprint/src/chapter/ch13_qpbt_test.tex`, with paper origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:964-1225`.
 -/
-noncomputable def pauliBasisTest (P : AdmissibleParams) : Game where
+@[reducible] noncomputable def pauliBasisTest (P : AdmissibleParams) : Game where
   QuestionA := PauliQuestion P
   QuestionB := PauliQuestion P
   AnswerA := PauliAnswer P

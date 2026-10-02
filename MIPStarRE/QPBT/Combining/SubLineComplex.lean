@@ -167,7 +167,6 @@ theorem subline_replace_by_ordered_product_direct {P : AdmissibleParams} {ε δQ
       line, joint, ordered, evaluation, point, ProjectiveSetting.placedMeasurement_effect,
       Fintype.sum_prod_type, mul_assoc, Finset.mul_sum]
   simp only [← ProjectiveSetting.pointMeasExpOption_effect_evalOpt]
-  rfl
 
 /-- An opposite-register overlap of positive effects is its real part, embedded
 in the complex numbers. Positivity of the tensor product proves reality. -/

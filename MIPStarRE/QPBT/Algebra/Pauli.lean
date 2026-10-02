@@ -34,8 +34,9 @@ variable {K : Type*} [Field K] [Fintype K] [DecidableEq K]
 inductive PauliKind where
   | X
   | Z
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
+  deriving DecidableEq, Repr, Inhabited
+instance PauliKind.instFintype : Fintype PauliKind :=
+  ⟨{.X, .Z}, by intro x; cases x <;> simp⟩
 /-- The binary character used for generalized Pauli phases; see
 `references/qpbt-paper/04_preliminaries.tex:1052-1081`.
 

@@ -150,7 +150,9 @@ theorem stateError_toQubit (P : AdmissibleParams)
     (S : MIPStarRE.QPBT.Strategy (pauliBasisTest P))
     (w : PauliSoundnessWitness P S) :
     stateError w.toQubit.toPalomar = stateError w.toPalomar := by
-  simpa using qubit_state_error_to_qubit P S w
+  rw [QubitSoundnessWitness.stateError_toPalomar,
+    PauliSoundnessWitness.stateError_toPalomar]
+  exact qubit_state_error_to_qubit P S w
 
 /-- Fixed-basis transport preserves Alice's compact squared operator sum exactly. -/
 theorem pauliAliceOperatorError_toQubit (P : AdmissibleParams)

@@ -106,7 +106,6 @@ theorem sum_pointMeas_mul_tildeM_eq_decoded_overlap
   simp only [S.placePlayer_alice_mul_placeSide_bob_tensor]
   rw [← Finset.mul_sum, ← S.place_finset_sum,
     S.pointMeasExp_effect_eq_sum_sub .alice W u]
-  rfl
 
 /-- The pulled-apart consistency defect is one minus the decoded overlap.
 This combines completeness with the first three lines of the source's

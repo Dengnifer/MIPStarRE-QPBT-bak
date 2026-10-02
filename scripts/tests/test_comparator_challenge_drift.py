@@ -23,7 +23,7 @@ EXTRACTOR = COMPARATOR / "extract_closure.lean"
 LDT_EXPECTED = COMPARATOR / "expected" / "Challenge.lean.expected"
 PALOMAR_EXPECTED = COMPARATOR / "expected" / "palomar" / "Challenge.lean.expected"
 LDT_BASELINE_SHA256 = (
-    "e2680bf19bc3680b73356822b9d8dd84ce73304541a720cc7e83a680463c698b"
+    "d3e815df820cbe2f853781e66dfc744c7b66c6299ac147fe98dfcfdb84dac5d2"
 )
 PALOMAR_BASELINE_SHA256 = (
     "acb66991fbdbc80a9c5d0a7e522f572ba604e6c88b2907f9c43a477438ebe6f8"

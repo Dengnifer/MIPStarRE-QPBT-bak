@@ -64,7 +64,7 @@ theorem exists_common_exceptional_coefficient {n k C D : ℕ}
     have hne : MvPolynomial.map (MvPolynomial.eval z) p ≠ MvPolynomial.C b := by
       intro h
       apply hz
-      have h' := congrArg (MvPolynomial.coeff e) h
+      have h' := congrArg (fun polynomial => polynomial.coeff e) h
       simpa [MvPolynomial.coeff_map, MvPolynomial.coeff_C, Ne.symm he] using h'
     have hd : (MvPolynomial.map (MvPolynomial.eval z) p).totalDegree ≤ D :=
       (Finset.sup_mono (MvPolynomial.support_map_subset _ _)).trans hdegree

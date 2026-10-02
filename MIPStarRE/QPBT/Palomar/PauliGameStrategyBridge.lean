@@ -19,6 +19,12 @@ namespace MIPStarRE.QPBT.Palomar
 
 noncomputable section
 
+local instance compactPauliQuestionDecidableEq
+    (P : MIPStarRE.QPBT.AdmissibleParams) :
+    DecidableEq
+      (PauliQuestion (PauliParams.ofAdmissibleParams P) (MIPStarRE.QPBT.PauliScalar P)) :=
+  instDecidableEqPauliQuestion
+
 namespace PMF
 
 /-- Pushing a PMF through an equivalence preserves its mass at corresponding points. -/
@@ -249,7 +255,6 @@ theorem pauliStrategyToLibrary_value (P : MIPStarRE.QPBT.AdmissibleParams)
       (Strategy.value_ofStrategy (pauliStrategyToLibrary P S)).symm
     _ = S'.value (Game.ofGame (MIPStarRE.QPBT.pauliBasisTest P)) := by
       simp [pauliStrategyToLibrary, S']
-      rfl
     _ = S'.value (Game.relabel
         (pauliGame (PauliParams.ofAdmissibleParams P)
           (MIPStarRE.QPBT.binaryRepresentation P.model)
@@ -257,7 +262,6 @@ theorem pauliStrategyToLibrary_value (P : MIPStarRE.QPBT.AdmissibleParams)
         (pauliQuestionEquiv P) (pauliQuestionEquiv P)
         (pauliAnswerEquivCompact P) (pauliAnswerEquivCompact P)) := by
       rw [pauliGame_relabel_eq]
-      rfl
     _ = S.value (pauliGame (PauliParams.ofAdmissibleParams P)
         (MIPStarRE.QPBT.binaryRepresentation P.model)
         (MIPStarRE.QPBT.fixedBinTrace P.model)) :=
@@ -310,7 +314,6 @@ noncomputable def pauliSymmetricGame (P : MIPStarRE.QPBT.AdmissibleParams) :
           (pauliAnswerEquivCompact P).symm
           (pauliAnswerEquivCompact P).symm := by
       rw [pauliGame_relabel_eq]
-      rfl
     _ = pauliGame (PauliParams.ofAdmissibleParams P)
         (MIPStarRE.QPBT.binaryRepresentation P.model)
         (MIPStarRE.QPBT.fixedBinTrace P.model) :=
@@ -356,7 +359,8 @@ theorem pauliSymmetricStrategyToLibrary_value
       (SymmetricStrategy.value_ofSymmetricStrategy T).symm
     _ = S'.toStrategy.value (Game.ofGame (MIPStarRE.QPBT.pauliBasisTest P)) := by
       rw [show SymmetricStrategy.ofSymmetricStrategy T = S' by
-        simp [T, S']]
+        simp [T, S']
+        rfl]
       rfl
     _ = S'.toStrategy.value (Game.relabel
         (pauliGame (PauliParams.ofAdmissibleParams P)
@@ -365,7 +369,6 @@ theorem pauliSymmetricStrategyToLibrary_value
         (pauliQuestionEquiv P) (pauliQuestionEquiv P)
         (pauliAnswerEquivCompact P) (pauliAnswerEquivCompact P)) := by
       rw [pauliGame_relabel_eq]
-      rfl
     _ = S.toStrategy.value (pauliSymmetricGame P).toGame := by
       rw [pauliSymmetricGame_toGame]
       change (Strategy.relabel S.toStrategy

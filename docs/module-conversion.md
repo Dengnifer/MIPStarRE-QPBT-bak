@@ -1,7 +1,7 @@
 # Lean Module Conversion Pattern
 
 This note records the module-system pattern verified on the
-`MIPStarRE/Quantum/FiniteMatrix/` pilot under Lean and Mathlib v4.32.0. The
+`MIPStarRE/Quantum/FiniteMatrix/` pilot under Lean and Mathlib v4.35.0-rc2. The
 conversion preserves declaration names, types, bodies, proofs, unfolding, and
 aggregate re-exports.
 

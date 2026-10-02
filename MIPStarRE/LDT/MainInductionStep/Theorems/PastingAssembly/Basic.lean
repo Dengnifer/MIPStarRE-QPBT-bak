@@ -523,7 +523,6 @@ lemma family_pointConsistencyError_eq_avg
           avg_congr with x, u
           simp [g, IdxPolyFamily.evaluatedAtNextPoint, polynomialEvaluationFamily,
             IdxProjMeas.toIdxSubMeas]
-          rfl
 
 /-- Point-consistency averaging for answer-valued restricted slices of an
 ordinary ambient successor strategy. -/
@@ -565,7 +564,6 @@ lemma family_answerRestrictedPointConsistencyError_eq_avg
           avg_congr with x, u
           simp [g, IdxPolyFamily.evaluatedAtNextPoint, polynomialEvaluationFamily,
             IdxProjMeas.toIdxSubMeas, xRestrictedAnswerSymStrat]
-          rfl
 
 /-- Answer-valued point-consistency averaging over the last coordinate.
 
@@ -612,7 +610,6 @@ lemma answer_family_pointConsistencyError_eq_avg
           avg_congr with x, u
           simp [g, IdxPolyFamily.evaluatedAtNextPoint, polynomialEvaluationFamily,
             IdxProjMeas.toIdxSubMeas, xRestrictedAnswerSymStratOfAnswer]
-          rfl
 
 /-- Average slice-wise point consistency for an answer-valued successor strategy.
 

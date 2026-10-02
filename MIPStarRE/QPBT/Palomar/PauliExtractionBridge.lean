@@ -23,6 +23,8 @@ namespace MIPStarRE.QPBT.Palomar
 
 noncomputable section
 
+attribute [local instance] compactPauliQuestionDecidableEq
+
 /-- The compact admissibility witness has the registered named proposition. -/
 theorem PauliParams.is_admissible_size (P : PauliParams) :
     MIPStarRE.QPBT.IsAdmissibleSize P.q :=

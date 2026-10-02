@@ -109,13 +109,23 @@ theorem ms_question_weight_ge {xy : MsType × MsType}
 
 /-! ## Rejection mass from the game value -/
 
+private instance msWinFalseDecidableRel (x y : MsType) :
+    DecidableRel (fun a b : MsAnswer => msWinPredicate x y a b = false) :=
+  fun _ _ => inferInstance
+
+private instance msWinTrueDecidableRel (x y : MsType) :
+    DecidableRel (fun a b : MsAnswer => msWinPredicate x y a b = true) :=
+  fun _ _ => inferInstance
+
 /-- The rejection mass conditioned on a question pair. -/
 noncomputable def rejectionMass (S : Strategy msGame) (x y : MsType) : ℝ :=
-  outcomeEventWeight S x y fun a b => msWinPredicate x y a b = false
+  @outcomeEventWeight msGame S x y
+    (fun a b => msWinPredicate x y a b = false) (fun _ _ => inferInstance)
 
 /-- The acceptance mass conditioned on a question pair. -/
 noncomputable def acceptanceMass (S : Strategy msGame) (x y : MsType) : ℝ :=
-  outcomeEventWeight S x y fun a b => msWinPredicate x y a b = true
+  @outcomeEventWeight msGame S x y
+    (fun a b => msWinPredicate x y a b = true) (fun _ _ => inferInstance)
 
 /-- The rejection mass averaged over the Magic Square question distribution. -/
 noncomputable def totalRejectionMass (S : Strategy msGame) : ℝ :=
@@ -140,13 +150,20 @@ theorem acceptance_mass_add_rejection_mass (S : Strategy msGame) (x y : MsType) 
 theorem strategy_value_eq_acceptance_mass (S : Strategy msGame) :
     S.value = avgOver (graphDistribution msEdges msEdges_nonempty) fun xy =>
       acceptanceMass S xy.1 xy.2 := by
-  rfl
+  unfold Strategy.value acceptanceMass outcomeEventWeight msGame
+  apply avgOver_congr
+  intro xy
+  apply Finset.sum_congr rfl
+  intro a _
+  apply Finset.sum_congr rfl
+  intro b _
+  cases h : msWinPredicate xy.1 xy.2 a b <;> simp [h]
 
 /-- Total rejection mass is exactly one minus the strategy value. -/
 theorem total_rejection_mass_eq_one_sub_value (S : Strategy msGame) :
     totalRejectionMass S = 1 - S.value := by
   rw [show S.value = avgOver (graphDistribution msEdges msEdges_nonempty) (fun xy =>
-      acceptanceMass S xy.1 xy.2) by rfl]
+      acceptanceMass S xy.1 xy.2) by exact strategy_value_eq_acceptance_mass S]
   unfold totalRejectionMass
   calc
     avgOver (graphDistribution msEdges msEdges_nonempty) (fun xy =>
@@ -171,7 +188,7 @@ theorem total_rejection_mass_eq_one_sub_value (S : Strategy msGame) :
 /-- Total rejection mass is nonnegative. -/
 theorem total_rejection_mass_nonneg (S : Strategy msGame) :
     0 ≤ totalRejectionMass S := by
-  unfold totalRejectionMass
+  unfold totalRejectionMass rejectionMass
   exact avgOver_nonneg _ _ fun xy => outcome_event_weight_nonneg S xy.1 xy.2 _
 
 /-- Value at least `1 - ε` implies total rejection mass at most `ε`. -/
@@ -223,6 +240,9 @@ theorem outcome_event_weight_le_rejection_mass (S : Strategy msGame) (x y : MsTy
     (E : MsAnswer → MsAnswer → Prop) [DecidableRel E]
     (hE : ∀ a b, E a b → msWinPredicate x y a b = false) :
     outcomeEventWeight S x y E ≤ rejectionMass S x y := by
+  unfold rejectionMass
+  letI : DecidableRel (fun a b : MsAnswer => msWinPredicate x y a b = false) :=
+    fun _ _ => inferInstance
   exact outcome_event_weight_mono S x y E _ hE
 
 /-! ## Malformed answers and cell consistency -/
@@ -241,6 +261,30 @@ def wrongVariableAnswer : MsAnswer → Bool
 def wrongConstraintAnswer : MsAnswer → Bool
   | .triple _ => false
   | .bit _ => true
+
+private instance wrongVariableAnswerLeftDecidableRel :
+    DecidableRel (fun a _ : MsAnswer => wrongVariableAnswer a = true) :=
+  fun _ _ => inferInstance
+
+private instance wrongVariableAnswerRightDecidableRel :
+    DecidableRel (fun _ b : MsAnswer => wrongVariableAnswer b = true) :=
+  fun _ _ => inferInstance
+
+private instance wrongConstraintAnswerLeftDecidableRel :
+    DecidableRel (fun a _ : MsAnswer => wrongConstraintAnswer a = true) :=
+  fun _ _ => inferInstance
+
+private instance wrongConstraintAnswerRightDecidableRel :
+    DecidableRel (fun _ b : MsAnswer => wrongConstraintAnswer b = true) :=
+  fun _ _ => inferInstance
+
+private instance forwardCellMismatchDecidableRel (k : Fin 3) :
+    DecidableRel (fun a b : MsAnswer => constraintBitOrZero k a ≠ msBitOrZero b) :=
+  fun _ _ => inferInstance
+
+private instance reverseCellMismatchDecidableRel (k : Fin 3) :
+    DecidableRel (fun a b : MsAnswer => msBitOrZero a ≠ constraintBitOrZero k b) :=
+  fun _ _ => inferInstance
 
 /-- The three cells in any fixed row or column are distinct. -/
 theorem constraint_vars_injective (i : Fin 6) : Function.Injective (msConstraintVars i) := by
@@ -262,19 +306,23 @@ theorem every_variable_is_incident (j : Fin 9) :
 
 /-- Alice's variable-answer mass folded to zero by `msBitOrZero`. -/
 noncomputable def aliceVariableWrongFormMass (S : Strategy msGame) (j : Fin 9) : ℝ :=
-  aliceEventWeight S (.var j) fun a => wrongVariableAnswer a = true
+  @aliceEventWeight msGame S (.var j)
+    (fun a => wrongVariableAnswer a = true) (fun _ => inferInstance)
 
 /-- Bob's variable-answer mass folded to zero by `msBitOrZero`. -/
 noncomputable def bobVariableWrongFormMass (S : Strategy msGame) (j : Fin 9) : ℝ :=
-  bobEventWeight S (.var j) fun b => wrongVariableAnswer b = true
+  @bobEventWeight msGame S (.var j)
+    (fun b => wrongVariableAnswer b = true) (fun _ => inferInstance)
 
 /-- Alice's single-bit answer mass on a constraint question. -/
 noncomputable def aliceConstraintWrongFormMass (S : Strategy msGame) (i : Fin 6) : ℝ :=
-  aliceEventWeight S (.constraint i) fun a => wrongConstraintAnswer a = true
+  @aliceEventWeight msGame S (.constraint i)
+    (fun a => wrongConstraintAnswer a = true) (fun _ => inferInstance)
 
 /-- Bob's single-bit answer mass on a constraint question. -/
 noncomputable def bobConstraintWrongFormMass (S : Strategy msGame) (i : Fin 6) : ℝ :=
-  bobEventWeight S (.constraint i) fun b => wrongConstraintAnswer b = true
+  @bobEventWeight msGame S (.constraint i)
+    (fun b => wrongConstraintAnswer b = true) (fun _ => inferInstance)
 
 /-- A malformed variable answer rejects a constraint-to-variable incidence;
 this is a formalization-only consequence of the Magic Square verifier in
@@ -359,14 +407,14 @@ theorem bob_constraint_wrong_form_mass_le (S : Strategy msGame) (ε : ℝ)
 /-- The forward-incidence mass on which the two totalized cell bits disagree. -/
 noncomputable def forwardCellMismatchMass (S : Strategy msGame)
     (i : Fin 6) (k : Fin 3) : ℝ :=
-  outcomeEventWeight S (.constraint i) (.var (msConstraintVars i k)) fun a b =>
-    constraintBitOrZero k a ≠ msBitOrZero b
+  @outcomeEventWeight msGame S (.constraint i) (.var (msConstraintVars i k))
+    (fun a b => constraintBitOrZero k a ≠ msBitOrZero b) (fun _ _ => inferInstance)
 
 /-- The reverse-incidence mass on which the two totalized cell bits disagree. -/
 noncomputable def reverseCellMismatchMass (S : Strategy msGame)
     (i : Fin 6) (k : Fin 3) : ℝ :=
-  outcomeEventWeight S (.var (msConstraintVars i k)) (.constraint i) fun a b =>
-    msBitOrZero a ≠ constraintBitOrZero k b
+  @outcomeEventWeight msGame S (.var (msConstraintVars i k)) (.constraint i)
+    (fun a b => msBitOrZero a ≠ constraintBitOrZero k b) (fun _ _ => inferInstance)
 
 private theorem forward_cell_mismatch_rejects (i : Fin 6) (k : Fin 3)
     (a b : MsAnswer) (hmismatch : constraintBitOrZero k a ≠ msBitOrZero b) :
@@ -462,9 +510,18 @@ def constraintParityProduct : MsAnswer → ℝ
 def ConstraintParityFailure (i : Fin 6) (a : MsAnswer) : Prop :=
   constraintParityProduct a ≠ bitSign (msParity i)
 
+private noncomputable instance constraintParityFailureLeftDecidableRel (i : Fin 6) :
+    DecidableRel (fun a _ : MsAnswer => ConstraintParityFailure i a) :=
+  fun a _ => Classical.propDecidable (ConstraintParityFailure i a)
+
+private noncomputable instance constraintParityFailureRightDecidableRel (i : Fin 6) :
+    DecidableRel (fun _ b : MsAnswer => ConstraintParityFailure i b) :=
+  fun _ b => Classical.propDecidable (ConstraintParityFailure i b)
+
 /-- Equality of the real parity signs is classically decidable on the finite
 Magic Square answer alphabet. -/
-noncomputable instance (i : Fin 6) : DecidablePred (ConstraintParityFailure i) :=
+noncomputable instance constraintParityFailureDecidablePred (i : Fin 6) :
+    DecidablePred (ConstraintParityFailure i) :=
   fun a => Classical.propDecidable (ConstraintParityFailure i a)
 
 /-- Every wrong-form constraint answer is included in the parity-failure event. -/
@@ -478,11 +535,13 @@ theorem wrong_constraint_answer_implies_parity_failure (i : Fin 6) (a : MsAnswer
 
 /-- Alice's local failure mass for the row or column sign product. -/
 noncomputable def aliceParityFailureMass (S : Strategy msGame) (i : Fin 6) : ℝ :=
-  aliceEventWeight S (.constraint i) (ConstraintParityFailure i)
+  @aliceEventWeight msGame S (.constraint i) (ConstraintParityFailure i)
+    (constraintParityFailureDecidablePred i)
 
 /-- Bob's local failure mass for the row or column sign product. -/
 noncomputable def bobParityFailureMass (S : Strategy msGame) (i : Fin 6) : ℝ :=
-  bobEventWeight S (.constraint i) (ConstraintParityFailure i)
+  @bobEventWeight msGame S (.constraint i) (ConstraintParityFailure i)
+    (constraintParityFailureDecidablePred i)
 
 /-- Alice's malformed constraint mass is part of her parity-failure mass. -/
 theorem alice_constraint_wrong_form_mass_le_parity_failure_mass (S : Strategy msGame)

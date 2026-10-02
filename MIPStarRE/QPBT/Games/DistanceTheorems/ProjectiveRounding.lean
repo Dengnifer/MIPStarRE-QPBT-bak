@@ -80,7 +80,7 @@ private theorem round_ev_adjoint_mul_self_eq_norm_sq {ι : Type*}
   rw [LinearMap.adjoint_inner_right]
 
 /-- Regard a nonempty finite coordinate set as an LDT finite Hilbert space. -/
-private def roundFiniteHilbertSpace (ι : Type*) [Fintype ι] [DecidableEq ι]
+@[reducible] private def roundFiniteHilbertSpace (ι : Type*) [Fintype ι] [DecidableEq ι]
     [Nonempty ι] : FiniteHilbertSpace :=
   { carrier := ι
     instFintype := inferInstance
@@ -119,51 +119,37 @@ private lemma round_consRel_of_consistencyDefect {ιA ιB α : Type*}
     ConsRel (ψp : QuantumState (ιA × ιB)) (uniformDistribution Unit)
       (constSubMeasFamily A.toSubMeas) (constSubMeasFamily B.toSubMeas) δ := by
     dsimp
+    let Qm : MatrixMeasurement α (roundFiniteHilbertSpace ιA) := Q
+    let Rm : MatrixMeasurement α (roundFiniteHilbertSpace ιB) := R
     constructor
+    change bipartiteConsError
+        (roundPureState ψ hψ : QuantumState (ιA × ιB))
+        (uniformDistribution Unit)
+        (constSubMeasFamily (MatrixMeasurement.toMeasurement Qm).toSubMeas)
+        (constSubMeasFamily (MatrixMeasurement.toMeasurement Rm).toSubMeas) ≤ δ
     rw [show bipartiteConsError
         (roundPureState ψ hψ : QuantumState (ιA × ιB))
         (uniformDistribution Unit)
         (constSubMeasFamily
-          (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιA)
-            Q.toSubmeasurement))
+          (MatrixMeasurement.toMeasurement Qm).toSubMeas)
         (constSubMeasFamily
-          (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιB)
-            R.toSubmeasurement)) =
+          (MatrixMeasurement.toMeasurement Rm).toSubMeas) =
         qBipartiteConsDefect
           (roundPureState ψ hψ : QuantumState (ιA × ιB))
-          (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιA)
-            Q.toSubmeasurement)
-          (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιB)
-            R.toSubmeasurement) by
+          (MatrixMeasurement.toMeasurement Qm).toSubMeas
+          (MatrixMeasurement.toMeasurement Rm).toSubMeas by
       simp [bipartiteConsError, avgOver, uniformDistribution, constSubMeasFamily]]
-    rw [show qBipartiteConsDefect
-        (roundPureState ψ hψ : QuantumState (ιA × ιB))
-        (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιA)
-          Q.toSubmeasurement)
-        (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιB)
-          R.toSubmeasurement) =
-        ev (roundPureState ψ hψ : QuantumState (ιA × ιB)) 1 -
-          qBipartiteMatchMass
-            (roundPureState ψ hψ : QuantumState (ιA × ιB))
-            (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιA)
-              Q.toSubmeasurement)
-            (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιB)
-              R.toSubmeasurement) by
-      simpa using qBipartiteConsDefect_of_measurements
-        (roundPureState ψ hψ : QuantumState (ιA × ιB))
-        (MatrixMeasurement.toMeasurement (H := roundFiniteHilbertSpace ιA) Q)
-        (MatrixMeasurement.toMeasurement (H := roundFiniteHilbertSpace ιB) R)]
+    rw [qBipartiteConsDefect_of_measurements]
     rw [ev_one_of_isNormalized _ (roundPureState ψ hψ).toQuantumState_isNormalized]
     rw [show qBipartiteMatchMass (roundPureState ψ hψ : QuantumState (ιA × ιB))
-        (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιA)
-          Q.toSubmeasurement)
-        (MatrixSubmeasurement.toSubMeas (H := roundFiniteHilbertSpace ιB)
-          R.toSubmeasurement) =
+        (MatrixMeasurement.toMeasurement Qm).toSubMeas
+        (MatrixMeasurement.toMeasurement Rm).toSubMeas =
       ∑ a : α, stateQForm ψ (heteroKron (Q.effect a) (R.effect a)) by
       unfold qBipartiteMatchMass
       apply Finset.sum_congr rfl
       intro a _
-      simpa [MIPStarRE.QPBT.heteroKron, MIPStarRE.LDT.opTensor] using
+      simpa [Qm, Rm, MatrixMeasurement.toMeasurement_outcome,
+        MIPStarRE.QPBT.heteroKron, MIPStarRE.LDT.opTensor] using
         (round_stateQForm_eq_ev ψ hψ (heteroKron (Q.effect a) (R.effect a))).symm]
     have hpoint := point_defect_eq
       (DistanceCalculus.leftPlacedMeasurement (ιB := ιB) Q)

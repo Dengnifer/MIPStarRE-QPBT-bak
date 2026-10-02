@@ -357,10 +357,18 @@ private theorem naimark_lifted_compression_alice
             rw [naimark_compressed_effect S W h]
       _ = _ := hc0
   have hc := hc'
-  dsimp only [pauliNaimarkWitness, pauliNaimarkEmbeddingA]
   have hh := congrArg (fun M => heteroKron M (1 : Op (w.ιB' × PauliRegister P))) hc
-  simp only [liftedAEffect_eq_tensor, heteroKron_mul, Matrix.one_mul] at hh ⊢
-  exact hh
+  calc
+    _ = heteroKron
+        (conjIsometry (pauliNaimarkWitness P S w).φA
+          (((S.A (pauliQuestion P W)).postprocess pauliAnswerOrZero).effect h))
+        (1 : Op ((pauliNaimarkWitness P S w).ιB' × PauliRegister P)) := by
+          apply liftedAEffect_eq_tensor
+    _ = _ := by
+      simp only [pauliNaimarkWitness, pauliNaimarkEmbeddingA,
+        liftedAEffect_eq_tensor, heteroKron_mul, Matrix.one_mul]
+      convert hh using 1
+      simp [pauliNaimarkEmbeddingA]
 
 private theorem naimark_lifted_compression_bob
     (P : AdmissibleParams) (S : Strategy (pauliBasisTest P))
@@ -394,10 +402,18 @@ private theorem naimark_lifted_compression_bob
             rw [naimark_compressed_effect_bob S W h]
       _ = _ := hc0
   have hc := hc'
-  dsimp only [pauliNaimarkWitness, pauliNaimarkEmbeddingB]
   have hh := congrArg (fun M => heteroKron (1 : Op (w.ιA' × PauliRegister P)) M) hc
-  simp only [liftedBEffect_eq_tensor, heteroKron_mul, Matrix.one_mul] at hh ⊢
-  exact hh
+  calc
+    _ = heteroKron
+        (1 : Op ((pauliNaimarkWitness P S w).ιA' × PauliRegister P))
+        (conjIsometry (pauliNaimarkWitness P S w).φB
+          (((S.B (pauliQuestion P W)).postprocess pauliAnswerOrZero).effect h)) := by
+          apply liftedBEffect_eq_tensor
+    _ = _ := by
+      simp only [pauliNaimarkWitness, pauliNaimarkEmbeddingB,
+        liftedBEffect_eq_tensor, heteroKron_mul, Matrix.one_mul]
+      convert hh using 1
+      simp [pauliNaimarkEmbeddingB]
 
 set_option maxHeartbeats 800000 in
 -- Finite-register matrix algebra and nested finite sums make this proof
@@ -425,10 +441,10 @@ theorem pauli_naimark_operator_distanceA_le
         isometryTensor w.φA w.φB (pauliNaimarkStrategy P S).ψ := by
     dsimp only [Q]
     rw [liftedAEffect_eq_tensor, applyOperatorToState_leftTensor_conjIsometry]
-    have hp : (pauliNaimarkStrategy P S).ψ =
-        naimarkDilatedState (PauliAnswer P) S.ψ := by
-      rw [pauliNaimarkStrategy_state]
-      rfl
+    have hp : padState (none : Option (PauliAnswer P))
+        (none : Option (PauliAnswer P)) S.ψ =
+          naimarkDilatedState (PauliAnswer P) S.ψ :=
+      pauliNaimarkStrategy_state P S
     rw [hp]
     erw [applyOperatorToState_leftTensor_groundProjection (PauliAnswer P) S.ψ]
   have hcomm (h : PauliRegister P) : Q * pauliProjOnB'' P W h =
@@ -464,7 +480,7 @@ theorem pauli_naimark_operator_distanceA_le
   have hsub := congrArg
     (fun M : Op ((w.ιA' × PauliRegister P) × (w.ιB' × PauliRegister P)) =>
       ‖applyOperatorToState (M - pauliProjOnA'' P W h) (idealState P w.aux)‖ ^ 2) hcomp
-  convert hsub using 1; rfl
+  convert hsub using 1
 
 set_option maxHeartbeats 800000 in
 -- The symmetric finite-register matrix calculation likewise requires extra
@@ -490,10 +506,10 @@ theorem pauli_naimark_operator_distanceB_le
         isometryTensor w.φA w.φB (pauliNaimarkStrategy P S).ψ := by
     dsimp only [Q]
     rw [liftedBEffect_eq_tensor, applyOperatorToState_rightTensor_conjIsometry]
-    have hp : (pauliNaimarkStrategy P S).ψ =
-        naimarkDilatedState (PauliAnswer P) S.ψ := by
-      rw [pauliNaimarkStrategy_state]
-      rfl
+    have hp : padState (none : Option (PauliAnswer P))
+        (none : Option (PauliAnswer P)) S.ψ =
+          naimarkDilatedState (PauliAnswer P) S.ψ :=
+      pauliNaimarkStrategy_state P S
     rw [hp]
     erw [applyOperatorToState_rightTensor_groundProjection (PauliAnswer P) S.ψ]
   have hcomm (h : PauliRegister P) : Q * pauliProjOnA'' P W h =
@@ -530,7 +546,7 @@ theorem pauli_naimark_operator_distanceB_le
   have hsub := congrArg
     (fun M : Op ((w.ιA' × PauliRegister P) × (w.ιB' × PauliRegister P)) =>
       ‖applyOperatorToState (M - pauliProjOnB'' P W h) (idealState P w.aux)‖ ^ 2) hcomp
-  convert hsub using 1; rfl
+  convert hsub using 1
 
 end
 
