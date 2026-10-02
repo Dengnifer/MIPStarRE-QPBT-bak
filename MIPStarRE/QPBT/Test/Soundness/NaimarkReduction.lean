@@ -162,7 +162,7 @@ theorem pauli_naimark_witness_state_distance_eq (P : AdmissibleParams)
         (pauliNaimarkWitness P S w).φB S.ψ -
       idealState P (pauliNaimarkWitness P S w).aux‖ =
     ‖isometryTensor w.φA w.φB (pauliNaimarkStrategy P S).ψ -
-  idealState P w.aux‖ := by
+      idealState P w.aux‖ := by
   rw [pauli_naimark_witness_state_eq]
 
 end
