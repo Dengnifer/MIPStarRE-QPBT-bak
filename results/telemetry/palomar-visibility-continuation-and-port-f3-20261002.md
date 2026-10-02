@@ -110,3 +110,33 @@ amounts ofremainingnativeevidence. Plannedbudget1,800Solseconds aftercurrent777
 terminal; actualcumulativecostmustbeboundatadmission. Preparedbrief:
 /tmp/palomar-777-xz-headroom.md. Thedecision isinternal underbriefing§9; ordinary
 hooks/wholefinalCI/independentapproval remainmandatory, no gatewaiver.
+
+## Review3 found two remaining port defects
+
+Reviewer-pr778-20261002-03 completed in489seconds and published adverse review
+5389234051 onf01d195b. F3normrepair was accepted as source-faithful with no new
+hypothesis/bound. New findings require aligningdocbuild's still4.32toolchain/
+doc-gen4/manifest withroot4.35rc2and reusing the existing coordinate-direction
+lemma inSubLineBranch. Portreviewcost now1,541seconds. MAIN recorded the repair
+admission in#27comment5947354245:1,800Solseconds, portauthorceiling22,924 from
+actual21,124. /tmp/palomar-756-docbuild-repair.md governs the active writer. No
+approval/mergeclaim; normalfreshCI+fourthreviewremain after the repair.
+
+PR755's all8canonicalCIcontexts andsummary passed at697b5e23. Its sixth repair
+verification is now running normally asreviewer-pr755-20261002-06,900secondcap,
+under the previously recorded narrow no-adjudication exception; allfive adverse
+reviews remain. Log:/tmp/palomar-745-freshness-review.log.
+
+Archiveauthororc-777-20261002-07 finished exit0 in980actualseconds. Its finalprose
+reports938atinterimcheck; actualregistrydurationwins. Total777author is6,126seconds.
+Five-manifestunion passes:2,144files,2,103,481,790sourcebytes,473,500,242gzipbytes.
+NewmanifestSHA25605236c94fae0e11eba1d0f49737d7906ef8fce1b5a8ec9fb760b80fb8d0e3245.
+Thecleanhead834d7962 remains762,834overcap; code/formatrepair isprepared,notadmitted.
+#27comment5947330888 records the XZdecision and1,800secondplannedcost. Bind the
+actual6,126priorcost (newceiling7,926) when the nextslot admits that assignment.
+Currentthreeusefulworkers:753visibility,755review,756docbuildrepair. Nextfree slot
+shouldadmit777XZ unless a newlyapprovedparent requires a more urgent gatedmerge.
+
+The#753buildreleasefileexists. Preparedcompact775currentmainpublication remains
+blocked on normallyapproved/mergedport. Neither the companion nor library source
+pin is final; noPalomarsubmission/contact and no goalpause/completion occurred.
