@@ -1,0 +1,61 @@
+# Trusted route publication and long docs run — 2026-10-02
+
+The previousgoalturn madeprogress: moduleintegratione21adf04 completed, archive
+parents1c830188 passed, andread-onlydocanalysisidentified theincompletecorephase.
+
+Orc-745-20261002-11 completedexit0 in1700seconds. Actual745authorcost10659seconds.
+Thetrustrepaircommittedandpublishedas083dfeed98932b78eb67c5e9489603a24003a1ad:
+27companionfocusedcases,87workflowtests,52relatedreview/dispatchtests andnormal
+926-testhook(9skipped)passed. F1nowvalidatescommittedprimaryinstructions/pinned
+promptrefs andpassivetelemetryboundaries; F2removescompanioncarry-forward soevery
+companionheadreceivesafreshreview. Primarycarry-forward behaviorisunchanged.
+Noapprovalisclaimed; freshcanonicalCIisqueuedas /tmp/palomar-745-trust-ci.log.
+
+Afterthatnormalhookcompleted, MAINstartedtheunchangedfullAPI-doctargetinone
+1800swindowat08:56:40Z. Runner/tmp/palomar-756-docbuild-long-check.sh checks exact
+clean68b5c46a andusestheexistingmkdirlease; verboseonlychangesdiagnostics.
+Log:~/.cache/mipstarre-dev/logs/docbuild-issue756-main-20261002T085640Z-170091.log.
+At08:59:39Z a scopedwalkofALLthreads'childrenidentifiedactualdoc-gen4PID170255,
+with20333CPUticksandcwdinside756/docbuild. The earliermain-thread-onlychildprobe
+missedthisworker-threadchild; itmustnotbeusedtoinferaschedulerdeadlock. Thelong
+runisactivelyanalyzingcoreLean; no docscompletionisclaimedyet. CI755willtakeits
+normalbuildleaseafterthisrunandbeforeitsPythonfixtures,avoidingoverlap.
+
+777'snewbatchphaseisactiveonimmutableprimary4ee7763f. Itsmergepreimage79d502cc86e9...
+passedguardsandpreserved2144archivepayloads/fivemanifests exactly. Exactly13new
+eligiblerawcaptures total40524027bytes. Theexistinghelperissingle-running with
+all5prior-manifestarguments andmustvalidate6-batchunion beforeanysuccessclaim.
+Admission#27comment5948543503:900s,prior8928/ceiling9828. No bytes aredropped.
+
+Normalfinalsourcepublication/review/merges,officialcompanionCIandownerhandoffremain
+pending. Thegoalremainsactive andthekeeperstopmarkerhasnotbeencreated.
+
+## Full docs failure isolated to local source-link setup
+
+The uninterruptedruncompletedcoreDocs in334s andcontinuedthrough8919docmarkers.
+Itendedexit1after796s with exactlyonefailedtarget:MIPStarRE:srcUri.github.
+Thepinneddoc-gen4lakefileexplicitlycallsgetGitRemoteUrlpkg.dir"origin"; this
+project'scommonGitconfigurationhadonlyremote"github". MAINadded thelocalalias
+origin=https://github.com/Dengnifer/MIPStarRE-QPBT.git under§9authority, recordedin
+#27comment5948807518. Thisneitherchangestrackedsource nor contactsanotherrepository;
+theURIrepairwillbevalidatedbythenextfullcommandaftercurrentPythonwindowsclear.
+Allcore/dependencydocrecordsfromthefailedrunremainvalidincrementalinputs.
+
+PR755's083dfeedfreshCIthenpassedall8contextsandsummary. Itsbuildstep's778s includes
+waitingforthedocslease; do nottreatthatelapsedstep as778s ofLeancompilation.
+Eighthindependentreviewisrunningnormallyat1200scap, prior4096s/ceiling5296, under
+#27comment5949020909. Allsixadverseverdictsandthetimeoutremain; no gateoverride.
+
+The newarchivebatch completedat0eb3ae73030f8b2b3318d096dc29b1497f306d87. Actor
+orc-777-20261002-10 actual816s gives777author9744s (itsprose787swasinterim).
+Sixbatchesrecover2144005817rawbytesfrom450261486archivebytes,2157payloads;
+allprior2144payloads unchanged. Tree501920065bytes/headroom22367935. Inventory
+SHA2566215194af10d2a0f6de7890762844d52ba3230c377b54b7676431b49a2e24e41.
+
+Workflow-parentstaging actors also completed:753actor06spent237s (753total10668),
+777actor11spent279s (777total10023). Bothpendingguards/whitespacepassedandproved
+mathematicalcontentunchanged; thearchive's2163-object manifest/payloadreceiptis
+211d699a540499441d96a6b89889dca1db4db4172d3d59037c631c4805db6c50.
+MAINfinishedthe753normalguardedmergeasf742cd66; itsnormalhookpassedandthetreeis
+clean. The777normalcommit hook isstillrunning, sonocommit/headapprovalisclaimed
+forit yet. Nofinalsourcepublication/CI/review/mergeorcompanionreadinessclaimed.
