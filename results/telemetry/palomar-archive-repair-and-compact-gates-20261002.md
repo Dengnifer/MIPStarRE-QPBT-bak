@@ -63,3 +63,52 @@ compatibility validation before publication. No automatic further extension or
 gate waiver. The active #774writer uses a different worktree. A third slot is
 available, but remaining final integration depends on these two inputs; no filler
 assignment is admitted. Main remains the operator and no outside action is made.
+
+
+## Wrapper draft and independent publication preparation
+
+The third slot was subsequently used for concrete wrapper preparation rather
+than left idle (#27comment5945229427). Authororc-776-20261002-02,thread
+01a0fab8-79db-75c0-9e56-d579b53bcfb3, completed in488seconds with clean local
+companion800af3b2989f96d1196e7ff6342469172b12dfbc. Cumulative776author1249seconds;
+the earlier600second coverage scout remains separately charged.
+
+The wrapper has the exact audited Challenge and immutable native caller fixture,
+three compact Solution imports, the six-field configuration, consistent metadata,
+and module headers in allthree actual Lean files. Only the obsolete split
+Challenge mirror and unused legacyverify.sh were removed. Seventeen checker tests
+passed. Its preparation report is deliberately21pass,4fail,4unknown: the retained
+old toolchain/source pin and absent runtime evidence are not final verification.
+No branch publication, CI trigger or submission occurred.
+
+The #7741200second gate phase ended at its cap, exit124, during a second normal
+commit hook. Total774author4131seconds. The first hook had found two integration-
+train fixture assumptions (missing materialized --write output and an old Lake-
+call count); both were repaired. Two focused train tests and17focused gate tests
+pass. Allfive roots pass the exactthree-axiom check, and regenerated standalone
+Challenge compiles at992lines52483bytes with its unchanged hash. The full hook
+and local commit were still unfinished at the deadline. MAIN found no remaining
+commit process or index lock and is running the unchanged staged patch through a
+normal operator commit (handle63560, /tmp/palomar-774-main-commit.log), without
+bypass. No rc2 or canonical approval is implied.
+
+Source-independent #745 review tooling is now scheduled before756completion,
+using the remaining776seconds of its earlier5698second author ceiling,4922spent.
+Authororc-745-20261002-04/thread01a0fac1-3882-7d13-b4cf-c4922f500c9c owns its
+existing worktree and refreshes/publishes the preparedacc repair against
+publisheda2d98834. It retains the two adverse reviews/findings. Normal exact-head
+CI and the already authorized additional1800second independent review still
+follow publication. This scheduling choice changes no verification gate.
+
+Current bounded compiler continuation: orc-756-20261002-07/thread
+01a0fab4-96b0-7ac3-94b3-c63d69d11b56,2700seconds,authorceiling18000.
+It repaired ConditionalCollision and passed a targeted build; the next fullbuild
+exposed further downstream roots and is not yet green. Its log is
+/tmp/qpbt-palomar-756-sixth-tranche.log. No new budget is silently allocated.
+
+Prepared, not admitted, successor briefs:
+/tmp/palomar-753-final-module-integration.md (must bind normally merged756/774,
+actual worktree and budget before use), and
+/tmp/palomar-final-companion-publication-plan.md (preserve exact verifiedH when
+fast-forwarding owncompanionmain; store final local runtime evidence inPRIMARY).
+The finalkeeper stopping rule has not been reached; goal remains active.
