@@ -88,3 +88,28 @@ Confirmed non-gap: official package_allowlist maps the exact Mathlib dependency
 closure back to the Mathlib ROOT repository. The local report's exact Mathlib
 repository profile is correct and should not be widened. Supplied report content
 still does not authenticate its workflow/run/attempt/job/artifact origin.
+
+## Completed preparation receipts adopted later in this turn
+
+Archive777 committed locally at7acfc259c7a0c062f35f6c37c6d997afd573d552,
+clean. Actual committed tree515097226bytes;headroom9190774bytes on frozenbase.
+The normal hook ran903TOTAL tests,9skipped,894executed; worker prose's903passes
+includes skipped cases. Resumed actual1167s plus prior613s=1780s, within1800.
+No fullbuild/push/PR. Newer current-main captures still require the documented
+second batch and exact final sizing before publication/CI/review.
+
+Checker776 committed locally at32d9e248b4086b6e2f829d68b2effc9ce7b47be5,
+clean,4files330insertions/44deletions.17unit tests,zero skips,syntax and diff
+checks pass. Actual wall761s, not the730s estimated in its prose. The old declared
+substantive pinecb97d1f honestly fails at1809506272bytes. Source preservation,
+size and raw-default metadata-path checks are implemented. No wrapper source,
+pin,workflow or metadata revision changed; no publication occurred.
+
+A600s read-only Sol compiler scout is now admitted on primary, frozen port patch
+/tmp/palomar-756-transparency-scout.patch. Installed exact rc2 core documents
+backward.isDefEq.respectTransparency options and instanceSearchTypes workaround.
+The scout may recommend a precise declaration/file-scoped experiment, not edit
+options or relax mathematics/kernel gates. This is additional600s diagnosis cost,
+not a reset of the existing13500s author ceiling. Brief
+/tmp/palomar-756-transparency-scout.md;log
+/tmp/qpbt-palomar-756-transparency-scout.log;handle67316.
