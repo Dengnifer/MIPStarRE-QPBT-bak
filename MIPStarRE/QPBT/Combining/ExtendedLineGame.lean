@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Points
-import MIPStarRE.QPBT.Games.Sandwich.Support
+module
+
+public import MIPStarRE.QPBT.Combining.Points
+public import MIPStarRE.QPBT.Games.Sandwich.Support
 
 /-!
 # A direct-game strategy from supplied extended-line measurements
@@ -21,6 +23,8 @@ recorded in `audits/2026-09-06_extended-line-game-244.md`.
 - Blueprint `lem:qld-4-7` and `rem:qld-4-7-divisibility`.
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

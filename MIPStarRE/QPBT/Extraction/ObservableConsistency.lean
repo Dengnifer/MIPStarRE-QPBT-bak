@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.Consistency
-import MIPStarRE.QPBT.Extraction.PullingDefect
-import MIPStarRE.QPBT.ExplicitConstants
+module
+
+public import MIPStarRE.QPBT.Extraction.Consistency
+public import MIPStarRE.QPBT.Extraction.PullingDefect
+public import MIPStarRE.QPBT.ExplicitConstants
 
 /-!
 # Self-consistency of the pulled-apart observables
@@ -17,6 +19,8 @@ an explicit premise.
 - The joint source obligation for `lem:qld-construct-the-paulis` is stated in
   `Extraction.Construction`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
-import MIPStarRE.QPBT.Games.RestrictedAverage
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
+public import MIPStarRE.QPBT.Games.RestrictedAverage
 
 /-!
 # Consistency defects under finite conditioning
@@ -16,6 +18,8 @@ This is a formalization-only finite-conditioning estimate supporting the line
 comparisons at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:936-963`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

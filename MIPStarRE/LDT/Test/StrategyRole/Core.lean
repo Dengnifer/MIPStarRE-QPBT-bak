@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Test.StrategyCore
+module
+
+public import MIPStarRE.LDT.Test.StrategyCore
 
 /-!
 # Role-register tensor algebra for the low individual degree test
@@ -6,6 +8,8 @@ import MIPStarRE.LDT.Test.StrategyCore
 Role-register operators and strategy symmetrization infrastructure extracted from
 `MIPStarRE.LDT.Test.Strategy`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT
 

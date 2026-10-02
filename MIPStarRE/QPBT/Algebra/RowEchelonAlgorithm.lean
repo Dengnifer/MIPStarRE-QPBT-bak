@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Algebra.RowEchelon
+module
+
+public import MIPStarRE.QPBT.Algebra.RowEchelon
 
 /-!
 # Executable Gauss-Jordan elimination
@@ -23,6 +25,8 @@ program's charged arithmetic and zero tests by `n * (m + n + 2*m*n)`.
   Definition `def:canonical-complement` and its efficiency remark.
 * Issue #690, continuing the algorithmic obligation of issue #676.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

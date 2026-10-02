@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Linearity.Defs
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
+module
+
+public import MIPStarRE.QPBT.Combining.Linearity.Defs
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
 
 /-!
 # Reflections and the state-dependent metric on operators
@@ -36,6 +38,8 @@ blueprint `blueprint/src/chapter/ch13_qpbt_test.tex:224-253`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-652`,
 proved in Coladangelo--Stark, arXiv:1709.09267v2, Theorem 6.9.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

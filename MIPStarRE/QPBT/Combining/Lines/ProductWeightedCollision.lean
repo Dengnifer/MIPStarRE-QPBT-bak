@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
-import MIPStarRE.QPBT.Combining.Lines.WeightedCollision
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedAverage
+public import MIPStarRE.QPBT.Combining.Lines.WeightedCollision
 
 /-!
 # Product-distribution weighted collision bounds
@@ -15,6 +17,8 @@ This is formalization-only conditioning support for `lem:qld-xz-lines`, paper
 the collision hypothesis of `lem:pasting` at
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:504-525`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

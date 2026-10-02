@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.ErrorAndMass
+module
+
+public import MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.ErrorAndMass
 
 /-!
 # Section 12 pasting: over all outcomes — nonglobal-mass decomposition
@@ -12,6 +14,8 @@ the line-consistent residual.
 - `references/ldt-paper/ld-pasting.tex`
 - `blueprint/src/chapter/ch09_pasting.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

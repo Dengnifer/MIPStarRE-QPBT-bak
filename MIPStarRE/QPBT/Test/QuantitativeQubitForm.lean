@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.QuantitativeSoundness
-import MIPStarRE.QPBT.Test.QubitForm
+module
+
+public import MIPStarRE.QPBT.Test.QuantitativeSoundness
+public import MIPStarRE.QPBT.Test.QubitForm
 
 /-!
 # Quantitative qubit form of Pauli basis test soundness
@@ -13,6 +15,8 @@ state norm or either summed squared operator-family distance.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1450-1491`
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1862-1876`
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

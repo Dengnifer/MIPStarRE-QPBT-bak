@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedFiber
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedFiber
 
 /-!
 # Strategy transport for the directly indexed low-degree game
@@ -19,6 +21,8 @@ formulas for both directions of strategy transport.
 - `references/ldt-paper/test_definition.tex:49-151`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

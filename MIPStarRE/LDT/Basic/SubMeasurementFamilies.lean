@@ -1,11 +1,15 @@
-import MIPStarRE.LDT.Basic.Distribution
-import MIPStarRE.LDT.Basic.TensorPlacement
+module
+
+public import MIPStarRE.LDT.Basic.Distribution
+public import MIPStarRE.LDT.Basic.TensorPlacement
 
 /-!
 # Indexed and bipartite submeasurement infrastructure
 
 Indexed measurement families, tensor placements, and lift/placement constructors.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Apply
-import MIPStarRE.QPBT.Combining.QuantitativeNativeGlobalPairScalars
+module
+
+public import MIPStarRE.QPBT.Combining.Apply
+public import MIPStarRE.QPBT.Combining.QuantitativeNativeGlobalPairScalars
 
 /-!
 # Quantitative global polynomial-pair construction
@@ -14,6 +16,8 @@ separate corollary records the polynomial envelope printed in the source.
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1404`
 * blueprint `lem:qld-4-7`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

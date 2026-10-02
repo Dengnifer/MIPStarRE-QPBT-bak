@@ -1,10 +1,14 @@
-import MIPStarRE.LDT.Basic.QuantumState
+module
+
+public import MIPStarRE.LDT.Basic.QuantumState
 
 /-!
 # Core submeasurement structures for the low individual degree test
 
 Foundational measurement, submeasurement, and projective-measurement structures.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

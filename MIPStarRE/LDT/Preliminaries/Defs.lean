@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.Defs
-import MIPStarRE.LDT.Tactic.QuantumNonneg
+module
+
+public import MIPStarRE.LDT.Test.Defs
+public import MIPStarRE.LDT.Tactic.QuantumNonneg
 
 /-!
 # Preliminary definitions and statement structures
@@ -23,6 +25,8 @@ consistency, sandwich, and completion statements in a form used by later files.
 
 - `references/ldt-paper/preliminaries.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

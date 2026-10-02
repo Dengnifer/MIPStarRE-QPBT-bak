@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Observables.LineDefs
-import MIPStarRE.QPBT.Games.DistributionMarginals
-import MIPStarRE.QPBT.Test.PauliBasisTest
+module
+
+public import MIPStarRE.QPBT.Observables.LineDefs
+public import MIPStarRE.QPBT.Games.DistributionMarginals
+public import MIPStarRE.QPBT.Test.PauliBasisTest
 
 /-!
 # Geometry for the directly indexed low-degree game
@@ -15,6 +17,8 @@ The line-point distributions originate in
 The directly indexed repair is documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

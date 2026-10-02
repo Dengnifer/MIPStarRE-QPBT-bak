@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLineSource
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLineSource
 
 /-!
 # The projected mixtures of the sub-line law
@@ -21,6 +23,8 @@ blueprint `lem:qld-sublines`, whose source is
 The restricted laws are `def:ith-restricted-line`, blueprint lines
 1209--1228, paper lines 1038--1048.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

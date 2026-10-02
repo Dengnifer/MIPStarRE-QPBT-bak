@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.GameValue
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.WinPredicate
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.GameValue
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Combining.WinPredicate
 
 /-!
 # The value of the combined strategy
@@ -25,6 +27,8 @@ rejection probability by at most ten.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `blueprint/src/chapter/ch13_qpbt_test.tex:526-568`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

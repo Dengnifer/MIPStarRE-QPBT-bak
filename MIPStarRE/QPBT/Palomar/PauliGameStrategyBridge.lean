@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Palomar.PauliGameBridge
-import MIPStarRE.QPBT.Palomar.LowDegreeGameStrategyBridge
-import MIPStarRE.QPBT.Test.Completeness
+module
+
+public import MIPStarRE.QPBT.Palomar.PauliGameBridge
+public import MIPStarRE.QPBT.Palomar.LowDegreeGameStrategyBridge
+public import MIPStarRE.QPBT.Test.Completeness
 
 /-!
 # Strategy bridge for the compact Pauli basis game
@@ -14,6 +16,8 @@ predicate exactly.
 
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1126-1491`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT.Palomar
 

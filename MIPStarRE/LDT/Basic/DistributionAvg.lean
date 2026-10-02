@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Basic.DistributionUniformSums
-import Mathlib.Probability.ProbabilityMassFunction.Integrals
+module
+
+public import MIPStarRE.LDT.Basic.DistributionUniformSums
+public import Mathlib.Probability.ProbabilityMassFunction.Integrals
 
 /-!
 # Average lemmas for finite-support distributions
@@ -21,6 +23,8 @@ uniform probability mass functions.
 These are formalization-internal finite probability lemmas for the low
 individual degree test development.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

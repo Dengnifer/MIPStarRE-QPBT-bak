@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Points.MarginalContraction
+module
+
+public import MIPStarRE.QPBT.Combining.Points.MarginalContraction
 
 /-!
 # Marginal distances for combined point witnesses
@@ -17,6 +19,8 @@ at lines 918--927, and the symmetric `eq:qld-qxz-close-to-point-2` at lines
 928--930.  The line-measurement-to-point consistency bounds at lines 931--935
 are a separate later step of that proof and are not formalized here.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,13 +1,15 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.Statements
-import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.Conversion
-import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
-import MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
-import MIPStarRE.LDT.Preliminaries.CauchySchwarz
-import MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPStarRE.LDT.Preliminaries.DistanceBounds
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Statements
+public import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.Conversion
+public import MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization
+public import MIPStarRE.LDT.Preliminaries.CauchySchwarz
+public import MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPStarRE.LDT.Preliminaries.DistanceBounds
 
 /-!
 # Section 5 — Locality-preserving projectivization repair
@@ -42,6 +44,8 @@ measurement. It is stated directly in terms of this estimate, rather than in
 terms of a separate repair-input assumption, and provides the unconditional
 repair step used by the orthonormalization theorem.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

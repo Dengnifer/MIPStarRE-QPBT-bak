@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems
-import MIPStarRE.QPBT.Observables.Anticommuting
-import MIPStarRE.QPBT.Observables.Defs
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems
+public import MIPStarRE.QPBT.Observables.Anticommuting
+public import MIPStarRE.QPBT.Observables.Defs
 
 /-!
 # Definitions for winning implications
@@ -15,6 +17,8 @@ The definitions support `lem:qld-win-implications` and
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:192-354` and
 blueprint `lem:qld-win-implications` and `lem:qld-win-implications-obs`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix ComplexOrder
 

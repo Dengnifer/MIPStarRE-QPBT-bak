@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Extraction.SourceUnitary
-import MIPStarRE.QPBT.Test.Soundness.OperatorTransfer
+module
+
+public import MIPStarRE.QPBT.Extraction.SourceUnitary
+public import MIPStarRE.QPBT.Test.Soundness.OperatorTransfer
 
 /-!
 # Pauli isometry bounds for projective settings
@@ -17,6 +19,8 @@ and `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1426-14
 The remaining domain and game-correspondence obligations are recorded in
 `docs/paper-gaps/qpbt_extraction-transfer.tex` (issue #602).
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

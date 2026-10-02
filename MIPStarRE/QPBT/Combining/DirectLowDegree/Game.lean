@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Geometry
-import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Geometry
+public import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
 
 /-!
 # The directly indexed low-degree game
@@ -13,6 +15,8 @@ The underlying game is blueprint
 `def:ld-game`, with source origin
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-391`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

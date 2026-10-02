@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Combining.Lines
-import MIPStarRE.QPBT.Combining.OrderedPoints
-import MIPStarRE.QPBT.Combining.OverlapGap
-import MIPStarRE.QPBT.Combining.Points.Placement
+module
+
+public import MIPStarRE.QPBT.Combining.Lines
+public import MIPStarRE.QPBT.Combining.OrderedPoints
+public import MIPStarRE.QPBT.Combining.OverlapGap
+public import MIPStarRE.QPBT.Combining.Points.Placement
 
 /-!
 # Z-point deficits of the evaluated pair-line measurement
@@ -28,6 +30,8 @@ source `lem:claim-17-3`, paper
 consistency input is `lem:qld-xz-lines` and the ordered products are those of
 `lem:qld-4-10`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

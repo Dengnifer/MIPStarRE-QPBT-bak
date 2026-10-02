@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Points.Placement
+module
+
+public import MIPStarRE.QPBT.Combining.Points.Placement
 
 /-!
 # Pointwise consistency defect bound
@@ -12,6 +14,8 @@ This is a proof-only bound used when restoring discarded sampling mass in
 `lem:qld-xz-lines`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-963`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

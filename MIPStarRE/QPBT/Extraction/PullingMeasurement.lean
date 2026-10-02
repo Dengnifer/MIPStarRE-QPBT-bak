@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Extraction.CharacterConsistency
-import MIPStarRE.QPBT.Extraction.EncodingSupport
-import MIPStarRE.QPBT.Extraction.Observables
-import MIPStarRE.QPBT.Extraction.PolynomialCollision
+module
+
+public import MIPStarRE.QPBT.Extraction.CharacterConsistency
+public import MIPStarRE.QPBT.Extraction.EncodingSupport
+public import MIPStarRE.QPBT.Extraction.Observables
+public import MIPStarRE.QPBT.Extraction.PolynomialCollision
 
 /-!
 # Polynomial outcomes in the pulling argument
@@ -25,6 +27,8 @@ restriction on the original marginal.
 - The collision estimate compares unequal difference polynomials under uniform
   evaluation.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

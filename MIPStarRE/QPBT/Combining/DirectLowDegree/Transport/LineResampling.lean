@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
 
 /-!
 # Affine resampling of directly indexed lines
@@ -13,6 +15,8 @@ uses only translations of finite affine spaces and never cancels a direction.
 - `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:243-287`
 - `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1020-1116`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.PolynomialConsistency
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.PassingValue
-import MIPStarRE.QPBT.Games.GroundCompression
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.PolynomialConsistency
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.PassingValue
+public import MIPStarRE.QPBT.Games.GroundCompression
 
 /-!
 # Consistency of compressed extended-polynomial POVMs
@@ -18,6 +20,8 @@ input `directPassingErrorEnvelope (deltaQ + deltaL) (m*d/q)`.
 * `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`.
 * Issue #513 and `audits/2026-09-12_issue-513_composition-compatibility.md`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

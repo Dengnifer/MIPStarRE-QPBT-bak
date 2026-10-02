@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.PerfectStrategy.Observables
 
 /-!
 # Measurements of the perfect Magic Square strategy
@@ -17,6 +19,8 @@ The source statement is blueprint
 `thm:ms-from-ac`, from
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:654-722`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

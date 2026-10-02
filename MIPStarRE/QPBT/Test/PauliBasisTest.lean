@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Algebra.LowDegreeCode
-import MIPStarRE.QPBT.Algebra.Pauli
-import MIPStarRE.QPBT.Games.TypedCondLinear
-import MIPStarRE.QPBT.Test.LowDegreeGame
-import MIPStarRE.QPBT.Test.MagicSquare
+module
+
+public import MIPStarRE.QPBT.Algebra.LowDegreeCode
+public import MIPStarRE.QPBT.Algebra.Pauli
+public import MIPStarRE.QPBT.Games.TypedCondLinear
+public import MIPStarRE.QPBT.Test.LowDegreeGame
+public import MIPStarRE.QPBT.Test.MagicSquare
 
 /-!
 # The Pauli basis test
@@ -18,6 +20,8 @@ The source-facing nodes are blueprint `def:admissible`,
 `def:pauli-question-distribution`, and `def:pauli-win-predicate`; their paper origin is
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:908-1225`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

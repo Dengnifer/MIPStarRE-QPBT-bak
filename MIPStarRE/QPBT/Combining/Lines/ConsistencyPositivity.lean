@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Witnesses
-import MIPStarRE.QPBT.Combining.Points.Placement
+module
+
+public import MIPStarRE.QPBT.Combining.Witnesses
+public import MIPStarRE.QPBT.Combining.Points.Placement
 
 /-!
 # Positivity of the consistency defect on opposite placements
@@ -27,6 +29,8 @@ nonnegativity is the hypothesis of items 1 and 2 of
 blueprint `lem:restricted-line-mixture-bounds`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1052-1058`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

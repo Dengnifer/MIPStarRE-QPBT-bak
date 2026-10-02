@@ -1,11 +1,13 @@
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError
-import MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
-import MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor
-import MIPStarRE.LDT.CommutativityPoints.Approximation
-import MIPStarRE.LDT.CommutativityPoints.AnswerTheorems
-import MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
-import MIPStarRE.LDT.Tactic.AvgCongr
+module
+
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError
+public import MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
+public import MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor
+public import MIPStarRE.LDT.CommutativityPoints.Approximation
+public import MIPStarRE.LDT.CommutativityPoints.AnswerTheorems
+public import MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero
+public import MIPStarRE.LDT.Tactic.AvgCongr
 
 /-!
 # Section 6 — Pasting Assembly: Averaged Family Fields
@@ -13,6 +15,8 @@ import MIPStarRE.LDT.Tactic.AvgCongr
 This module contains the scalar preliminary bound and the averaged family-field
 lemmas used by the answer-valued successor route.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

@@ -1,9 +1,11 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
-import MIPStarRE.QPBT.Games.DistanceTheorems.ProjectiveRounding
-import MIPStarRE.QPBT.Games.DistanceTheorems.RoundingTransport
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+public import MIPStarRE.QPBT.Games.DistanceTheorems.ProjectiveRounding
+public import MIPStarRE.QPBT.Games.DistanceTheorems.RoundingTransport
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core
 
 /-! # State-dependent distance calculus
 
@@ -22,6 +24,8 @@ The source results run from blueprint `fact:agreement` through
 `:531-540`. The observable conversion lemmas come from
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:95-131`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

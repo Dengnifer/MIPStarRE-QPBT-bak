@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.LowDegreeCodeTheorems
-import MIPStarRE.QPBT.Combining.Defs
+module
+
+public import MIPStarRE.QPBT.Algebra.LowDegreeCodeTheorems
+public import MIPStarRE.QPBT.Combining.Defs
 
 /-! # Polynomial decoding for Pauli extraction
 
@@ -17,6 +19,8 @@ blueprint `sec:separating` and paper
 The restricted decoder identity and its encoding hypothesis are documented in
 `docs/paper-gaps/qpbt_decoding-identity.tex:87-123`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.SoundnessDefs
+module
+
+public import MIPStarRE.QPBT.Test.SoundnessDefs
 
 /-!
 # Scalar absorption of the Naimark transfer constants
@@ -20,6 +22,8 @@ The companion constant adjustments are `deltaQld_mono`
 (`MIPStarRE/QPBT/Test/SoundnessDefs.lean`) and `sqrt_deltaQld_le`
 (`MIPStarRE/QPBT/Combining/RootErrorBounds.lean`).
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

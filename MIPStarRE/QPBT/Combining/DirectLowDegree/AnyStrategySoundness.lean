@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
-import MIPStarRE.QPBT.Games.MeasurementCompression
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Soundness
+public import MIPStarRE.QPBT.Games.MeasurementCompression
 
 /-!
 # Direct low-degree soundness for arbitrary strategies
@@ -30,6 +32,8 @@ The Naimark transport supports the first paragraph of the proof of paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1277-1289`.
 This module is formalization-only support and does not claim completion of that lemma.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

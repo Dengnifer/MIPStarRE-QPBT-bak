@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitSwap
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.AnticommutatorB
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.TwoQubitSwap
 
 /-!
 # Components of a bipartite pair of controlled swaps
@@ -34,6 +36,8 @@ the cited robust self-test is Coladangelo--Stark, arXiv:1709.09267v2,
 Theorem 6.9, `references/cs-paper/self-testing.tex:660-730`.  The one-qubit
 controlled swap is `binarySwapIsometry` in `Rigidity/Swap.lean`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

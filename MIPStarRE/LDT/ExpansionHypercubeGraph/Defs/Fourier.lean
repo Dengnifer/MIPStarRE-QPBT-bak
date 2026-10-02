@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
-import Mathlib.Analysis.Fourier.ZMod
+module
+
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core
+public import Mathlib.Analysis.Fourier.ZMod
 
 /-!
 # Section 7 hypercube graph: Fourier basis
@@ -12,6 +14,8 @@ the hypercube adjacency matrix `K`.
 - `references/ldt-paper/expansion.tex`
 - `blueprint/src/chapter/ch05_expansion.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.ExpansionHypercubeGraph
 

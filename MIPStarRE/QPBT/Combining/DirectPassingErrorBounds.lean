@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.ErrorBounds
-import MIPStarRE.QPBT.Combining.PassingError
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
+module
+
+public import MIPStarRE.QPBT.Combining.ErrorBounds
+public import MIPStarRE.QPBT.Combining.PassingError
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
 
 /-!
 # Absorbing both errors of the directly indexed game
@@ -16,6 +18,8 @@ These scalar estimates do not construct either measurement witness.
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1279-1288,1402`
 * Blueprint `lem:qld-4-7`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

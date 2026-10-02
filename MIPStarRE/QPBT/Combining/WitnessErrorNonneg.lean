@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.StateTransport
 
 /-!
 # Nonnegativity of combining-witness errors
@@ -15,6 +17,8 @@ the genuine bipartite POVMs underlying the completed line-point defect.
 - Blueprint `lem:qld-4-10` and `lem:qld-4-13`.
 - Issue #335.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

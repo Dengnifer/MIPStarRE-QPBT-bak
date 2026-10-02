@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Observables.PointConsistency
-import MIPStarRE.QPBT.Combining.Points.PlacementSupport
+module
+
+public import MIPStarRE.QPBT.Observables.PointConsistency
+public import MIPStarRE.QPBT.Combining.Points.PlacementSupport
 
 /-!
 # Placement calculus on the expanded state
@@ -23,6 +25,8 @@ transfer between the two bipartition schemes without symmetry of the strategy;
 its use for `lem:qld-4-10` is analyzed in
 `docs/paper-gaps/qpbt_combined-points-field-valued.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

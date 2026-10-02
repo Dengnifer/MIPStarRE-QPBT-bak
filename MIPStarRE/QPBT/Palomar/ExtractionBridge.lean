@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Palomar.Bridge
-import MIPStarRE.QPBT.Palomar.Extraction
-import MIPStarRE.QPBT.Test.QubitForm
+module
+
+public import MIPStarRE.QPBT.Palomar.Bridge
+public import MIPStarRE.QPBT.Palomar.Extraction
+public import MIPStarRE.QPBT.Test.QubitForm
 
 /-!
 # Exact bridges for compact extraction errors
@@ -18,6 +20,8 @@ not yet been converted to Lean's module system.
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1431-1491`;
 `references/qpbt-paper/04_preliminaries.tex:1180-1228`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.Observables
-import MIPStarRE.QPBT.Combining.Points.PlacementSupport
-import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
+module
+
+public import MIPStarRE.QPBT.Extraction.Observables
+public import MIPStarRE.QPBT.Combining.Points.PlacementSupport
+public import MIPStarRE.QPBT.Combining.Lines.ConsistencyPositivity
 
 /-!
 # Point consistency after decoding polynomial outcomes
@@ -16,6 +18,8 @@ paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1483-1492`.
 The restriction on the decoder identity is recorded in
 `docs/paper-gaps/qpbt_decoding-identity.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

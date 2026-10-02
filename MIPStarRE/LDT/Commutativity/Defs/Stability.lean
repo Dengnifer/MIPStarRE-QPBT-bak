@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Commutativity.Defs.Core
+module
+
+public import MIPStarRE.LDT.Commutativity.Defs.Core
 
 /-!
 # Section 11 commutativity: stability definitions
@@ -11,6 +13,8 @@ stability reductions, including the weighted reindex of raw operator families.
 - `references/ldt-paper/commutativity-G.tex`
 - `blueprint/src/chapter/ch08_commutativity.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Commutativity
 

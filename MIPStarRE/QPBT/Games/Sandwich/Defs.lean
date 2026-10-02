@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Games.Defs
-import MIPStarRE.QPBT.Games.DistanceTheorems
-import MIPStarRE.QPBT.Games.ErrorFunctions
+module
+
+public import MIPStarRE.QPBT.Games.Defs
+public import MIPStarRE.QPBT.Games.DistanceTheorems
+public import MIPStarRE.QPBT.Games.ErrorFunctions
 
 /-! # Definitions for sandwiched measurements
 
@@ -12,6 +14,8 @@ collision predicate used by the sandwich and pasting lemmas.
 Blueprint `lem:ld-sandwich` and `lem:pasting`; paper
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:465-525`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

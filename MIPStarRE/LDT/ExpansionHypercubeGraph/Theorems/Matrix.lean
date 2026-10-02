@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations
+module
+
+public import MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations
 
 /-!
 # Section 7 hypercube graph: matrix-realization theorems
@@ -12,6 +14,8 @@ realization model.
 - `references/ldt-paper/expansion.tex`
 - `blueprint/src/chapter/ch05_expansion.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.ExpansionHypercubeGraph
 

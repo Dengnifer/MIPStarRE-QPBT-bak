@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Combining.OrderedPolynomialEstimates
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.PassingValue
-import MIPStarRE.QPBT.Combining.DirectLowDegree.AnyStrategySoundness
-import MIPStarRE.QPBT.Games.DistanceTheorems.RoundingTransport
+module
+
+public import MIPStarRE.QPBT.Combining.OrderedPolynomialEstimates
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.PassingValue
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.AnyStrategySoundness
+public import MIPStarRE.QPBT.Games.DistanceTheorems.RoundingTransport
 
 /-!
 # Rounded extended-polynomial ordered estimates
@@ -18,6 +20,8 @@ The directly indexed completed-answer restriction is documented in
 `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex` and
 `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

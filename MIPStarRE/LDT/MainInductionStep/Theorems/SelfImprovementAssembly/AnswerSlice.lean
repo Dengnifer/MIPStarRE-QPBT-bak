@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
+module
+
+public import MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core
 
 /-!
 # Section 6 — Answer-Valued Self-Improvement Slice Transport
@@ -13,6 +15,8 @@ theorem.
 
 - `blueprint/src/chapter/ch10_induction.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

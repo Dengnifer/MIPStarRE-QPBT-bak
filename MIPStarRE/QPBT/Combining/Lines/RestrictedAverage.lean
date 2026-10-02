@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.RestrictedMixture
-import MIPStarRE.QPBT.Combining.Witnesses
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedMixture
+public import MIPStarRE.QPBT.Combining.Witnesses
 
 /-!
 # Error inflation of restricted line-point averages
@@ -16,6 +18,8 @@ The estimates are items 1 and 2 of blueprint
 `lem:restricted-line-mixture-bounds`, formalizing the unlabelled estimates at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1052-1058`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

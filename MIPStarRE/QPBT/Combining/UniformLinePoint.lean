@@ -1,10 +1,12 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
-import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
-import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
-import MIPStarRE.QPBT.Combining.Witnesses
-import MIPStarRE.QPBT.Games.DistributionAux
-import MIPStarRE.QPBT.Games.DistributionMarginals
-import MIPStarRE.LDT.Basic.DistributionAvg
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Questions
+public import MIPStarRE.QPBT.Combining.Lines.SubLineTransport
+public import MIPStarRE.QPBT.Combining.Lines.SubLineUniform
+public import MIPStarRE.QPBT.Combining.Witnesses
+public import MIPStarRE.QPBT.Games.DistributionAux
+public import MIPStarRE.QPBT.Games.DistributionMarginals
+public import MIPStarRE.LDT.Basic.DistributionAvg
 
 /-!
 # A uniform point of the extended space from the sub-line law
@@ -24,6 +26,8 @@ These statements support `lem:claim-17-1` in
 fact at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1159-1166`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

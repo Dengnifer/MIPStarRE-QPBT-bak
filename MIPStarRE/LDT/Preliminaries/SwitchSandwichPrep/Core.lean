@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Preliminaries.ConsistencyBridges
+module
+
+public import MIPStarRE.LDT.Preliminaries.ConsistencyBridges
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 
@@ -7,6 +9,8 @@ namespace MIPStarRE.LDT.Preliminaries
 open MIPStarRE.LDT
 
 /-! ### Bridge lemmas for `prop:switch-sandwich` -/
+
+@[expose] public section
 
 lemma weightedFinsetCauchySchwarz
     {Question Outcome : Type*}

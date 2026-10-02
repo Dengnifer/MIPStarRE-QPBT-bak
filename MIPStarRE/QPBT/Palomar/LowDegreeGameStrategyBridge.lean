@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Palomar.LowDegreeGameBridge
+module
+
+public import MIPStarRE.QPBT.Palomar.LowDegreeGameBridge
 
 /-!
 # Strategy bridge for the compact low individual degree game
@@ -12,6 +14,8 @@ after conversion through the Palomar foundation bridge.
 
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-440`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

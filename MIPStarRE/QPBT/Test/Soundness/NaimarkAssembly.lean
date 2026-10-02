@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Test.Soundness.NaimarkOperatorTransfer
-import MIPStarRE.QPBT.Test.Soundness.ProjectiveSetting
-import MIPStarRE.QPBT.Test.Soundness.ScalarAbsorption
+module
+
+public import MIPStarRE.QPBT.Test.Soundness.NaimarkOperatorTransfer
+public import MIPStarRE.QPBT.Test.Soundness.ProjectiveSetting
+public import MIPStarRE.QPBT.Test.Soundness.ScalarAbsorption
 
 /-!
 # Pauli isometry bounds for arbitrary strategies
@@ -25,6 +27,8 @@ isometry passage is at
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1862-1876`.
 Blueprint `thm:pauli-arbitrary-strategy-isometry-support`; issue #614.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

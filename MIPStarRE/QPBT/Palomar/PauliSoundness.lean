@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Palomar.PauliExtractionBridge
+module
+
+public import MIPStarRE.QPBT.Palomar.PauliExtractionBridge
 
 /-!
 # Compact Pauli basis test soundness
@@ -14,6 +16,8 @@ state norm, and separate unaveraged Alice and Bob squared operator sums.
 paper `thm:pauli` and `cor:pauli-binary`;
 `references/qpbt-paper/04_preliminaries.tex:1163-1208`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT.Palomar
 

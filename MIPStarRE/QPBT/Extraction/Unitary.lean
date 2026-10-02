@@ -1,11 +1,13 @@
-import MIPStarRE.QPBT.Extraction.Consistency
-import MIPStarRE.QPBT.Extraction.EPRState
-import MIPStarRE.QPBT.Extraction.Bounds
-import MIPStarRE.QPBT.Extraction.StateExtraction
-import MIPStarRE.QPBT.Extraction.PauliComparison
-import MIPStarRE.QPBT.Extraction.EvaluatedPauliConsistency
-import MIPStarRE.QPBT.Extraction.ConcretePauliComparison
-import MIPStarRE.QPBT.Test.SoundnessDefs
+module
+
+public import MIPStarRE.QPBT.Extraction.Consistency
+public import MIPStarRE.QPBT.Extraction.EPRState
+public import MIPStarRE.QPBT.Extraction.Bounds
+public import MIPStarRE.QPBT.Extraction.StateExtraction
+public import MIPStarRE.QPBT.Extraction.PauliComparison
+public import MIPStarRE.QPBT.Extraction.EvaluatedPauliConsistency
+public import MIPStarRE.QPBT.Extraction.ConcretePauliComparison
+public import MIPStarRE.QPBT.Test.SoundnessDefs
 
 /-!
 # Extraction by the swap unitaries
@@ -25,6 +27,8 @@ The error-form comparison formalizes `lem:qld-extraction-error-form` and
 supports `rem:pauli-robustness-form` in the blueprint; its paper source is
 lines 1855-1858 and 1868-1876.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

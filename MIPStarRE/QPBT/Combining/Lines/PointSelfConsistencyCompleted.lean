@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.Conditioning
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.Conditioning
 
 /-!
 # Completed point self-consistency
@@ -51,6 +53,8 @@ Their blueprint entries are `lem:qld-completed-point-answers`,
 `lem:qld-completed-point-self-consistency`, and
 `lem:qld-conditioned-completed-point-self-consistency`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

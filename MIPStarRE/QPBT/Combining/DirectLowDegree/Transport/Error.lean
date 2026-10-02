@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Correspondence
-import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
-import MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Correspondence
+public import MIPStarRE.QPBT.Games.DistanceTheorems.TensorSupport
+public import MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds
 
 /-!
 # The scalar error of the low-degree soundness transport
@@ -55,6 +57,8 @@ simultaneous-measurement estimate costs.
 * `references/ldt-paper/test_definition.tex:180-202`
 * `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

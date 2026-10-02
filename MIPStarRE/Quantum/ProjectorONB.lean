@@ -1,5 +1,7 @@
-import MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
-import Mathlib.Analysis.Matrix.Spectrum
+module
+
+public import MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace
+public import Mathlib.Analysis.Matrix.Spectrum
 
 /-!
 # Projector Range Orthonormal Bases
@@ -14,6 +16,8 @@ low-degree-test formalization.
 - `references/ldt-paper/orthonormalization.tex`, lines 570--573.
 - `MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.L2Operator
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.PolynomialFiberBounds
+module
+
+public import MIPStarRE.QPBT.Combining.PolynomialFiberBounds
 
 /-!
 # Retained point mismatch from ordered estimates
@@ -13,6 +15,8 @@ Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1360-1404`,
 `eq:qld-s-good-and-bad` through `eq:qld-sgg-mhat-sandwich`;
 blueprint `lem:qld-4-7`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

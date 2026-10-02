@@ -1,12 +1,16 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair
-import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion
-import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion
+public import MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds
 
 /-!
 # Section 5 — Orthonormalization
 
 The orthonormalization theorem and scalar bookkeeping lemmas from Section 5.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.StrategyCore
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
+module
+
+public import MIPStarRE.LDT.Test.StrategyCore
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Game
 
 /-!
 # Question correspondence for the directly indexed low-degree game
@@ -14,6 +16,8 @@ degree counterparts.
 - `references/ldt-paper/test_definition.tex:98-151`
 - `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

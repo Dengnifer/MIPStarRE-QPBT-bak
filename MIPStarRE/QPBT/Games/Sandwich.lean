@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.Heterogeneous
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.Assembly
-import MIPStarRE.QPBT.Games.Sandwich.Pasting.SchmidtMirror
-import MIPStarRE.QPBT.Games.Sandwich.Quantitative
-import MIPStarRE.QPBT.Games.ErrorFunctions
+module
+
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.Heterogeneous
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.Assembly
+public import MIPStarRE.QPBT.Games.Sandwich.Pasting.SchmidtMirror
+public import MIPStarRE.QPBT.Games.Sandwich.Quantitative
+public import MIPStarRE.QPBT.Games.ErrorFunctions
 
 /-! # Sandwiched measurements and pasting
 
@@ -15,6 +17,8 @@ analysis.
 The source results are blueprint `lem:ld-sandwich` and `lem:pasting`, with paper origin
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:465-525`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

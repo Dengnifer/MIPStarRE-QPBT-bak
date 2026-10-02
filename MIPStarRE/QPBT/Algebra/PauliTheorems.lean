@@ -1,8 +1,10 @@
-import MIPStarRE.QPBT.Algebra.Pauli
-import MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
-import MIPStarRE.QPBT.Algebra.Subspaces
-import MIPStarRE.QPBT.State
-import MIPStarRE.LDT.Preliminaries.FiniteFields
+module
+
+public import MIPStarRE.QPBT.Algebra.Pauli
+public import MIPStarRE.QPBT.Algebra.SelfDualBasisTheorems
+public import MIPStarRE.QPBT.Algebra.Subspaces
+public import MIPStarRE.QPBT.State
+public import MIPStarRE.LDT.Preliminaries.FiniteFields
 
 /-! # Pauli product, commutation, and cancellation identities
 
@@ -12,6 +14,8 @@ The principal results are blueprint `lem:twisted-commutation` and
 general-prime statements use the canonical character `ffChar`; binary
 declarations below are separately named QPBT specializations.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 

@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Linearity.Stability
+module
+
+public import MIPStarRE.QPBT.Combining.Linearity.Stability
 
 /-!
 # The quantum linearity theorem
@@ -43,6 +45,8 @@ provider is Theorem 10 of Natarajan--Vidick, arXiv:1610.03574,
 distance bound is analyzed in
 `docs/paper-gaps/qpbt_linearity-distance-normalization.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

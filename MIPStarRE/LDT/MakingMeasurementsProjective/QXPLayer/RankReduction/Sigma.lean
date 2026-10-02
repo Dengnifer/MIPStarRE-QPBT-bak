@@ -1,9 +1,11 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics
-import MIPStarRE.LDT.Preliminaries.CompletionTransfer
-import MIPStarRE.Quantum.FiniteHilbert
-import MIPStarRE.Quantum.ProjectorONB
-import Mathlib.Analysis.Matrix.Spectrum
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics
+public import MIPStarRE.LDT.Preliminaries.CompletionTransfer
+public import MIPStarRE.Quantum.FiniteHilbert
+public import MIPStarRE.Quantum.ProjectorONB
+public import Mathlib.Analysis.Matrix.Spectrum
 
 /-!
 # Section 5 — Q/X/XHat/P rank reduction
@@ -11,6 +13,8 @@ import Mathlib.Analysis.Matrix.Spectrum
 Sigma-space projectors and rank-reduction lemmas for the paper's `Q/X/XHat/P`
 intermediate layer.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
-import MIPStarRE.LDT.Preliminaries.CompletionTransfer
+module
+
+public import MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core
+public import MIPStarRE.LDT.Preliminaries.CompletionTransfer
 
 /-!
 # Section 5 — Projective Non-Measurement from Spectral Truncation
@@ -15,6 +17,8 @@ and the zero family in the large-error regime.
 - Blueprint: Chapter 4 (`blueprint/src/chapter/ch04_projective.tex`)
 - Related downstream applications: #422 (mainFormal), #834 (Step 6)
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

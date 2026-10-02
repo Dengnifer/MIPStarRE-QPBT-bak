@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Linearity.NaimarkRounding
+module
+
+public import MIPStarRE.QPBT.Combining.Linearity.NaimarkRounding
 
 /-!
 # Boolean representation stability
@@ -58,6 +60,8 @@ defect and the outgoing average squared state-dependent operator distance
 carry the same constant, is recorded in
 `docs/paper-gaps/qpbt_linearity-distance-normalization.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Games.MeasurementCompression
-import MIPStarRE.QPBT.Observables.Defs
-import MIPStarRE.QPBT.Test.SoundnessDefs
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Dilation
+module
+
+public import MIPStarRE.QPBT.Games.MeasurementCompression
+public import MIPStarRE.QPBT.Observables.Defs
+public import MIPStarRE.QPBT.Test.SoundnessDefs
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Dilation
 
 /-!
 # Naimark reduction for Pauli-test strategies
@@ -20,6 +22,8 @@ Paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1426-
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:160-190,1862-1876`.
 Blueprint `thm:pauli-naimark-reduction-support`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

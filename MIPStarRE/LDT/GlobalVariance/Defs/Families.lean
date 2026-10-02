@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.GlobalVariance.Defs.Operators
+module
+
+public import MIPStarRE.LDT.GlobalVariance.Defs.Operators
 
 /-!
 # Section 8 global variance: operator families
@@ -11,6 +13,8 @@ operator families used to build the global-variance comparisons.
 - `references/ldt-paper/expansion.tex`
 - `blueprint/src/chapter/ch06_variance.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.GlobalVariance
 

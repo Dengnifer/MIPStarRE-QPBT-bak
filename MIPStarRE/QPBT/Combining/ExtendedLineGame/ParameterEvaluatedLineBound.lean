@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.LineResampling
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.LineNoneMass
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterCompletion
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.LineResampling
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.LineNoneMass
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.ParameterCompletion
 
 /-!
 # Bounds for independently parameter-evaluated line answers
@@ -21,6 +23,8 @@ proof of `lem:qld-4-7`.
 - Blueprint `lem:qld-4-7`.
 - Issue #341.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder ComplexOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Extraction.BlockMeasurement
-import MIPStarRE.QPBT.Extraction.PullingPointConsistency
+module
+
+public import MIPStarRE.QPBT.Extraction.BlockMeasurement
+public import MIPStarRE.QPBT.Extraction.PullingPointConsistency
 
 /-!
 # Evaluated consistency of the difference-polynomial measurements
@@ -15,6 +17,8 @@ player's point measurement with the consistency supplied by the global witness.
   witness is supplied here, not constructed. This module was originally
   filed under issue #520, now closed.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder Classical
 

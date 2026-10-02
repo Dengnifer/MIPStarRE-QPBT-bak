@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Extraction.Defs
-import MIPStarRE.QPBT.Extraction.EPRState
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
+module
+
+public import MIPStarRE.QPBT.Extraction.Defs
+public import MIPStarRE.QPBT.Extraction.EPRState
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.GroundSlice
 
 /-!
 # Register transport for extraction
@@ -24,6 +26,8 @@ Blueprint `lem:qld-unitary` and
 especially the auxiliary-state construction at lines 1769-1784 and the register
 placements in Equations `eq:qld-unitary-6` through `eq:qld-unitary-9`.
 -/
+
+@[expose] public section
 
 open scoped Matrix
 

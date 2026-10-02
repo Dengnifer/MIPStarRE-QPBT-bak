@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Palomar.ExtractionBridge
-import MIPStarRE.QPBT.Palomar.PauliExtraction
-import MIPStarRE.QPBT.Palomar.PauliGameStrategyBridge
+module
+
+public import MIPStarRE.QPBT.Palomar.ExtractionBridge
+public import MIPStarRE.QPBT.Palomar.PauliExtraction
+public import MIPStarRE.QPBT.Palomar.PauliGameStrategyBridge
 
 /-!
 # Exact bridges for compact Pauli extraction quantities
@@ -18,6 +20,8 @@ have not yet been converted to Lean's module system.
 `references/qpbt-paper/04_preliminaries.tex:1052-1208`;
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1229-1491`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT.Palomar
 

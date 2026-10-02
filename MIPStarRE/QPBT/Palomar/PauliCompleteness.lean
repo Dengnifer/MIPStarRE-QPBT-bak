@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Palomar.PauliExtractionBridge
+module
+
+public import MIPStarRE.QPBT.Palomar.PauliExtractionBridge
 
 /-!
 # Compact Pauli basis test completeness
@@ -13,6 +15,8 @@ occur only in the proof.
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:1229-1421`,
 paper `lem:pauli-completeness`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT.Palomar
 

@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Games.ErrorFunctions
-import MIPStarRE.QPBT.Test.PauliBasisTest
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+module
+
+public import MIPStarRE.QPBT.Games.ErrorFunctions
+public import MIPStarRE.QPBT.Test.PauliBasisTest
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 
 /-! # Obstruction to absorbing the combined-line dimension factor
 
@@ -20,6 +22,8 @@ The scaling argument is recorded in
 the numerical domain of `PrintedExtendedLinesWitnessClaim`, the unasserted
 proposition that records the printed error form.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

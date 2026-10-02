@@ -1,7 +1,9 @@
-import MIPStarRE.QPBT.Games.ErrorFunctions
-import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
-import MIPStarRE.QPBT.Test.SoundnessDefs
-import Mathlib.Analysis.MeanInequalitiesPow
+module
+
+public import MIPStarRE.QPBT.Games.ErrorFunctions
+public import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+public import MIPStarRE.QPBT.Test.SoundnessDefs
+public import Mathlib.Analysis.MeanInequalitiesPow
 
 /-! # Scalar error bounds for combining polynomial measurements
 
@@ -23,6 +25,8 @@ in `lem:qld-xz-lines`, `lem:qld-4-13`, and `lem:qld-4-7` of
 and `:1278-1288,1402`. The corrected error notation and the retained dimension
 factor are documented in `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

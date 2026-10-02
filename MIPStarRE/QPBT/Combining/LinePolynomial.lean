@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.SubLineExtended
 
 /-!
 # Line projections and polynomial combination
@@ -21,6 +23,8 @@ line, even after compatible affine parameters have been constructed.
 - Issue #695 and `docs/paper-gaps/qpbt_subline-claims-line-marginal.tex` for the
   separate question of evaluating coefficient answers on singleton lines.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

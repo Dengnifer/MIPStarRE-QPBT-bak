@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Palomar.LowDegreeConsistencyBridge
+module
+
+public import MIPStarRE.QPBT.Palomar.LowDegreeConsistencyBridge
 
 /-!
 # Compact low-degree soundness
@@ -12,6 +14,8 @@ quantifier order, and three separate consistency conclusions.
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-440`,
 paper `lem:ld-soundness`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT.Palomar
 

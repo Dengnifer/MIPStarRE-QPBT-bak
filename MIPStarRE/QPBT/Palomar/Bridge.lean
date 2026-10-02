@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Palomar.Foundation
-import MIPStarRE.QPBT.Games.StrategyClasses
-import MIPStarRE.LDT.Basic.DistributionPMF
+module
+
+public import MIPStarRE.QPBT.Palomar.Foundation
+public import MIPStarRE.QPBT.Games.StrategyClasses
+public import MIPStarRE.LDT.Basic.DistributionPMF
 
 /-!
 # Exact bridges for the compact Palomar game foundation
@@ -17,6 +19,8 @@ itself uses the public module surface required by the Palomar extraction.
 
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:10-57,68-180`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder
 

@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Algebra.PauliTheorems
-import MIPStarRE.QPBT.Observables.Defs
+module
+
+public import MIPStarRE.QPBT.Algebra.PauliTheorems
+public import MIPStarRE.QPBT.Observables.Defs
 
 /-!
 # Expanded registers and point measurements
@@ -16,6 +18,8 @@ The constructions formalize blueprint `def:expanded-state`,
 `def:expanded-point-trace-projection`. Their paper source is
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:367-418`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

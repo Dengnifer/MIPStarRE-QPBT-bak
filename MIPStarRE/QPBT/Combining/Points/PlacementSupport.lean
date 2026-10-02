@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.LineMeasurement
+module
+
+public import MIPStarRE.QPBT.Observables.LineMeasurement
 
 /-!
 # Placement calculus on the expanded state
@@ -22,6 +24,8 @@ placement module proves EPR-exchange invariance for the involution
 `lem:qld-4-10` is analyzed in
 `docs/paper-gaps/qpbt_linearity-theorem-quotation.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,9 +1,11 @@
-import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
-import MIPStarRE.QPBT.Combining.Lines.SubLineMixture
-import MIPStarRE.QPBT.Combining.Points
-import MIPStarRE.QPBT.Combining.Lines.PointwiseDefect
-import MIPStarRE.QPBT.Games.RestrictedAverage
-import MIPStarRE.QPBT.Combining.Points.MarginalContraction
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.DiagonalResampling
+public import MIPStarRE.QPBT.Combining.Lines.SubLineMixture
+public import MIPStarRE.QPBT.Combining.Points
+public import MIPStarRE.QPBT.Combining.Lines.PointwiseDefect
+public import MIPStarRE.QPBT.Games.RestrictedAverage
+public import MIPStarRE.QPBT.Combining.Points.MarginalContraction
 
 /-!
 # Point and line marginal comparisons
@@ -20,6 +22,8 @@ blueprint `lem:qld-xz-lines`. The source and completed-answer distinctions remai
 as documented in
 `docs/paper-gaps/qpbt_combined-lines-error-term.tex`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

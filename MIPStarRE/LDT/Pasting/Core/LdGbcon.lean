@@ -1,6 +1,8 @@
-import MIPStarRE.LDT.Pasting.Statements
-import MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
-import MIPStarRE.LDT.Preliminaries.Triangles.SimEq
+module
+
+public import MIPStarRE.LDT.Pasting.Statements
+public import MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions
+public import MIPStarRE.LDT.Preliminaries.Triangles.SimEq
 
 /-!
 # Section 12 pasting: vertical-line consistency transfer
@@ -9,6 +11,8 @@ The `ldGbcon` transfer compares the slice family `G^x` with the vertical-line
 answers `B^u`.  It combines the conditioned axis-parallel consistency estimate
 with the point-to-vertical-line state-dependent-distance bound.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Pasting
 

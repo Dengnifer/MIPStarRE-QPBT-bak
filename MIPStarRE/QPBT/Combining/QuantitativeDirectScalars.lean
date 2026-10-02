@@ -1,5 +1,7 @@
-import MIPStarRE.LDT.Test.MainTheorem.LinearTriangle.MainFormal
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
+module
+
+public import MIPStarRE.LDT.Test.MainTheorem.LinearTriangle.MainFormal
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Error
 
 /-!
 # Direct quantitative scalar bounds for QPBT
@@ -14,6 +16,8 @@ shared with the subsequent global-pair calculation.
 * `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:413-458`
 * `references/ldt-paper/test_definition.tex:180-202`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

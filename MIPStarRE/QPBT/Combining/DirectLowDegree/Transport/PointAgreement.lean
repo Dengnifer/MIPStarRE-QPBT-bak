@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.BranchComparison
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Compression
-import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedFiberValue
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.BranchComparison
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.Consistency.Compression
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.Transport.SeedFiberValue
 
 /-!
 # The point-agreement branch as a consistency estimate
@@ -35,6 +37,8 @@ branch is what links the two point measurements to each other.
 * `blueprint/src/chapter/ch13_qpbt_test.tex:137-167`
 * `docs/paper-gaps/qpbt_ld-dimension-divisibility.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

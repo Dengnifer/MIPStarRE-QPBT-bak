@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Palomar.LowDegreeGame
-import MIPStarRE.QPBT.Palomar.Bridge
-import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
+module
+
+public import MIPStarRE.QPBT.Palomar.LowDegreeGame
+public import MIPStarRE.QPBT.Palomar.Bridge
+public import MIPStarRE.QPBT.Test.LowDegreeGameMeasurements
 
 /-!
 # Exact bridge for the compact low individual degree game
@@ -14,6 +16,8 @@ of the Boolean verifier, and the value of every compact strategy exactly.
 
 `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:31-440`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

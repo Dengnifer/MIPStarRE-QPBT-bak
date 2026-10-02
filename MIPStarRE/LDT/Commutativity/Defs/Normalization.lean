@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Commutativity.Defs.Stability
+module
+
+public import MIPStarRE.LDT.Commutativity.Defs.Stability
 
 /-!
 # Section 11 commutativity: normalization definitions
@@ -11,6 +13,8 @@ indexed submeasurement family used in `lem:normalization-condition`.
 - `references/ldt-paper/commutativity-G.tex`
 - `blueprint/src/chapter/ch08_commutativity.tex`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.Commutativity
 

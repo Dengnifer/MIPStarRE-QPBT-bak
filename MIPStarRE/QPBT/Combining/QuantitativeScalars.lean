@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.QuantitativeNativeFractionalScalars
+module
+
+public import MIPStarRE.QPBT.Combining.QuantitativeNativeFractionalScalars
 
 /-!
 # Quantitative global-pair scalar bounds for QPBT
@@ -15,6 +17,8 @@ It provides the coefficient-`30` direct low-degree estimates and their exponents
 * `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1404`
 * `references/ldt-paper/test_definition.tex:180-202`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Preliminaries.Polynomials
+module
+
+public import MIPStarRE.LDT.Preliminaries.Polynomials
 
 /-!
 # The combining map on tuples of low individual degree polynomials
@@ -41,6 +43,8 @@ coordinates precede the `k` combining coordinates.
 * `blueprint/src/chapter/ch13_qpbt_test.tex:240-250`
 * `docs/paper-gaps/qpbt_ld-simultaneous-sandwich.tex`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

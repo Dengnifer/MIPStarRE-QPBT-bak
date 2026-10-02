@@ -1,6 +1,8 @@
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Averaging
-import MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
+module
+
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Averaging
+public import MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
 
 /-!
 # Section 6 — Averaged Slice Error Bounds: Core Estimates
@@ -8,6 +10,8 @@ import MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors
 This module contains the Jensen and averaging estimates for ordinary and
 answer-valued restricted slice errors.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT.MainInductionStep
 

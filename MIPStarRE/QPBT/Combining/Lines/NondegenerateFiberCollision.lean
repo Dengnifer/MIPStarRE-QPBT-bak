@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Lines.WeightedCollision
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.WeightedCollision
 
 /-!
 # Collision bounds on a fixed nondegenerate line fiber
@@ -11,6 +13,8 @@ line-point distribution to the indicator of one fixed line.
 The estimate is the Schwartz--Zippel step in `lem:qld-xz-lines`,
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:950-955`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

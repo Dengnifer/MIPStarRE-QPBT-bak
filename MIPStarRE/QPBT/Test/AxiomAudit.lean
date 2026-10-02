@@ -1,20 +1,22 @@
-import Lean
-import MIPStarRE.QPBT.Test.Soundness
-import MIPStarRE.QPBT.Test.QubitForm
-import MIPStarRE.QPBT.Test.QuantitativeSoundness
-import MIPStarRE.QPBT.Test.QuantitativeQubitForm
-import MIPStarRE.QPBT.Test.LowDegreeGameTheorems
-import MIPStarRE.QPBT.Test.Completeness
-import MIPStarRE.QPBT.Test.Soundness.ProjectiveSetting
-import MIPStarRE.QPBT.Test.Soundness.NaimarkAssembly
-import MIPStarRE.QPBT.Test.Soundness.OperatorTransfer
-import MIPStarRE.QPBT.Combining.Lines
-import MIPStarRE.QPBT.Combining.Apply
-import MIPStarRE.QPBT.Combining.ActualErrorBounds
-import MIPStarRE.QPBT.Games.Symmetrization
-import MIPStarRE.QPBT.Palomar.PauliCompleteness
-import MIPStarRE.QPBT.Palomar.LowDegreeSoundness
-import MIPStarRE.QPBT.Palomar.PauliSoundness
+module
+
+public meta import Lean
+public import MIPStarRE.QPBT.Test.Soundness
+public import MIPStarRE.QPBT.Test.QubitForm
+public import MIPStarRE.QPBT.Test.QuantitativeSoundness
+public import MIPStarRE.QPBT.Test.QuantitativeQubitForm
+public import MIPStarRE.QPBT.Test.LowDegreeGameTheorems
+public import MIPStarRE.QPBT.Test.Completeness
+public import MIPStarRE.QPBT.Test.Soundness.ProjectiveSetting
+public import MIPStarRE.QPBT.Test.Soundness.NaimarkAssembly
+public import MIPStarRE.QPBT.Test.Soundness.OperatorTransfer
+public import MIPStarRE.QPBT.Combining.Lines
+public import MIPStarRE.QPBT.Combining.Apply
+public import MIPStarRE.QPBT.Combining.ActualErrorBounds
+public import MIPStarRE.QPBT.Games.Symmetrization
+public import MIPStarRE.QPBT.Palomar.PauliCompleteness
+public import MIPStarRE.QPBT.Palomar.LowDegreeSoundness
+public import MIPStarRE.QPBT.Palomar.PauliSoundness
 
 /-!
 # Axiom audits for the quantum Pauli basis test
@@ -84,6 +86,8 @@ recorded in `docs/paper-gaps/qpbt-gap-register.md`; they are audited here
 precisely because they are the statements that were repaired against the source,
 so a regression in them is the one most likely to go unnoticed.
 -/
+
+public meta section
 
 open Lean Elab Command
 

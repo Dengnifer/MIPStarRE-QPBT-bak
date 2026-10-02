@@ -1,6 +1,8 @@
-import MIPStarRE.LDT.Basic.Distribution
-import Mathlib.Analysis.MeanInequalitiesPow
-import Mathlib.Probability.ProbabilityMassFunction.Monad
+module
+
+public import MIPStarRE.LDT.Basic.Distribution
+public import Mathlib.Analysis.MeanInequalitiesPow
+public import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
 # PMF-weighted finite expectation identities
@@ -44,6 +46,8 @@ low individual degree test averaging layer.
 These are formalization-internal finite probability lemmas for the low
 individual degree test development.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

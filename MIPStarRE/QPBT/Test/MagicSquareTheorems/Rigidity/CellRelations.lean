@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Reflections
+module
+
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Reflections
 
 /-!
 # The Magic Square cell relations on the dilated strategy
@@ -27,6 +29,8 @@ proved in Coladangelo--Stark, arXiv:1709.09267v2, Theorem 6.9.  The variable and
 constraint indices are zero-based, so the paper's first and fifth variables are
 the cells `0` and `4`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

@@ -1,6 +1,8 @@
-import MIPStarRE.QPBT.Algebra.Decoding
-import MIPStarRE.QPBT.Observables.ExpandedDefs
-import MIPStarRE.QPBT.Observables.WinImplications.Setup
+module
+
+public import MIPStarRE.QPBT.Algebra.Decoding
+public import MIPStarRE.QPBT.Observables.ExpandedDefs
+public import MIPStarRE.QPBT.Observables.WinImplications.Setup
 
 /-! # Encoding-supported Pauli reference measurements
 
@@ -22,6 +24,8 @@ answer replacement of the expanded point measurement at
 The corrected use in `lem:qld-construct-the-paulis` is recorded in blueprint
 `eq:qld-nonencoding-mass` and `docs/paper-gaps/qpbt_decoding-identity.tex`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

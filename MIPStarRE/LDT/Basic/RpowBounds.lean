@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Basic.ParametersBase
+module
+
+public import MIPStarRE.LDT.Basic.ParametersBase
 
 /-!
 # A real power against exponential decay
@@ -7,6 +9,8 @@ A small reusable envelope bound: a fixed real power of `x` is dominated by an
 exponential in `x`, with an explicit constant depending only on the exponent
 and on the decay rate.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.LDT
 

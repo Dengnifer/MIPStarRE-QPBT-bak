@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingDistribution
-import MIPStarRE.QPBT.Combining.Lines.RestrictedConsistency
+module
+
+public import MIPStarRE.QPBT.Combining.Lines.NondegeneratePastingDistribution
+public import MIPStarRE.QPBT.Combining.Lines.RestrictedConsistency
 
 /-!
 # Exact discarded-mass restoration for nondegenerate-line pasting
@@ -14,6 +16,8 @@ Formalization-only support for the pasting argument in `lem:qld-xz-lines`,
 the pasting lemma is in
 `references/qpbt-paper/06_nonlocal_games_and_mipstar.tex:504-525`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

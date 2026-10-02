@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.Linearity.Stability
+module
+
+public import MIPStarRE.QPBT.Combining.Linearity.Stability
 
 /-!
 # Printed linearity claims and the four-point obstruction
@@ -14,6 +16,8 @@ counterexample applies to both readings, on every finite ancillary extension.
 * `references/nv-paper/fullpaper.tex:873-875,1074-1088`, `thm:qblr`.
 * `docs/paper-gaps/qpbt_linearity-distance-normalization.tex`, issue #694.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

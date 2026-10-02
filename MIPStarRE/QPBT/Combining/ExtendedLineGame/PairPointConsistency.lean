@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.RetainedPointMass
-import MIPStarRE.QPBT.Combining.OverlapGap
+module
+
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.RetainedPointMass
+public import MIPStarRE.QPBT.Combining.OverlapGap
 
 /-!
 # Point consistency of the completed polynomial-pair measurements
@@ -13,6 +15,8 @@ Paper `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1375-1404`,
 `eq:qld-sgg-completeness` and `eq:qld-sgg-mhat-sandwich`;
 blueprint `lem:qld-4-7`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder
 

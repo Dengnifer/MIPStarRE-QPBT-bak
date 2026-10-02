@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Witnesses
-import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
+module
+
+public import MIPStarRE.QPBT.Combining.Witnesses
+public import MIPStarRE.QPBT.Games.DistanceTheorems.Calculus
 
 /-!
 # The ordered point product on a single placement
@@ -18,6 +20,8 @@ The statement is `lem:qld-4-10-same-placement` in
 `Z`-then-`X` display of `lem:qld-4-10`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:689-709`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

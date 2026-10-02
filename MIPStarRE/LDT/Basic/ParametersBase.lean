@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Basic parameters and scalar infrastructure for the low individual degree test
@@ -10,6 +12,8 @@ of `mainFormal`, which must elaborate in the same environment as the
 Mathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow
 it.  See `docs/comparator.md`, "Environment alignment".
 -/
+
+@[expose] public section
 
 open scoped BigOperators MatrixOrder Matrix ComplexOrder
 

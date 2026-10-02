@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Observables.ExpandedPlacement
-import MIPStarRE.QPBT.Observables.LineMeasurement.Restriction
+module
+
+public import MIPStarRE.QPBT.Observables.ExpandedPlacement
+public import MIPStarRE.QPBT.Observables.LineMeasurement.Restriction
 
 /-!
 # Pauli-register line projectors
@@ -21,6 +23,8 @@ perfect self-consistency on an EPR pair is the ancillary input to item 1 of
 `lem:qld-comm-line-cons`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:527-532`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

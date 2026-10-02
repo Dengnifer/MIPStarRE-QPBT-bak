@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Observables.LineMeasurement.EvalClassConsistency
+module
+
+public import MIPStarRE.QPBT.Observables.LineMeasurement.EvalClassConsistency
 
 /-!
 # Consistency of expanded line effects with selected expanded point effects
@@ -16,6 +18,8 @@ Item 2 of `lem:qld-comm-line-cons`, paper
 `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:534-539`,
 blueprint `eq:qld-comm-line-pt-cons`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

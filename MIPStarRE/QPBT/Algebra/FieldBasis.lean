@@ -1,4 +1,6 @@
-import MIPStarRE.LDT.Basic.ParametersBase
+module
+
+public import MIPStarRE.LDT.Basic.ParametersBase
 
 /-!
 # Finite-field bases and the fixed binary representation
@@ -14,6 +16,8 @@ The declarations correspond to blueprint `def:admissible-size`,
 and `def:binary-representation`.
 Their paper origin is `references/qpbt-paper/04_preliminaries.tex:433-502,653-728`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

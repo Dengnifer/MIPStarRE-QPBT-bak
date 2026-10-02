@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars
+module
+
+public import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars
 
 /-!
 # Separated native global-pair bounds for QPBT
@@ -13,6 +15,8 @@ and finite-field collision term remain unchanged.
   `references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex:1267-1404`
 * Blueprint `thm:qld-native-small-regime-global-pair`
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 

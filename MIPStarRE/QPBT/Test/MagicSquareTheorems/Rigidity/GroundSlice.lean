@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Games.DistanceTheorems
-import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Dilation
+module
+
+public import MIPStarRE.QPBT.Games.DistanceTheorems
+public import MIPStarRE.QPBT.Test.MagicSquareTheorems.Rigidity.Dilation
 
 /-!
 # Contractions, isometries and the ground slice of the dilation
@@ -30,6 +32,8 @@ the calculus needed to compare the dilated projective strategy of
 blueprint `thm:ms-rigidity`,
 paper `references/qpbt-paper/08_classical_and_quantum_low_degree_tests.tex:612-652`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators Matrix MatrixOrder ComplexOrder
 

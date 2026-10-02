@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars.Core
-import MIPStarRE.QPBT.Combining.QuantitativeScalars
+module
+
+public import MIPStarRE.QPBT.Combining.QuantitativeNativeScalars.Core
+public import MIPStarRE.QPBT.Combining.QuantitativeScalars
 
 /-!
 # Quantitative global-pair scalar bounds for QPBT

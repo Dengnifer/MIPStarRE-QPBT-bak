@@ -1,4 +1,6 @@
-import MIPStarRE.QPBT.Algebra.LowDegreeCode
+module
+
+public import MIPStarRE.QPBT.Algebra.LowDegreeCode
 
 /-! # Decoding maps for the low-degree code
 
@@ -8,6 +10,8 @@ This file supplies `def:decoding-map` and the Boolean cube embedding from
 polynomial representatives is `decodeFqRep`; its restriction to the bounded
 class `Poly` is defined in `Algebra/Decoding`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 
