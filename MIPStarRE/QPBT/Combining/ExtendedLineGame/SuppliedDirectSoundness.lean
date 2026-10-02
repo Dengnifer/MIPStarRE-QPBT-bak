@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.DirectLowDegree.AnyStrategySoundness
-import MIPStarRE.QPBT.Combining.ExtendedLineGame.PassingValue
+module
+
+public import MIPStarRE.QPBT.Combining.DirectLowDegree.AnyStrategySoundness
+public import MIPStarRE.QPBT.Combining.ExtendedLineGame.PassingValue
 
 /-!
 # Direct low-degree soundness for supplied extended-line witnesses
@@ -20,6 +22,8 @@ POVMs or a global paired measurement.
 - Issues #360, #527, and #598
 - Original proof commit `0ca9cfca`
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

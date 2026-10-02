@@ -1,5 +1,7 @@
-import MIPStarRE.QPBT.Combining.Apply
-import MIPStarRE.QPBT.Extraction.Unitary
+module
+
+public import MIPStarRE.QPBT.Combining.Apply
+public import MIPStarRE.QPBT.Extraction.Unitary
 
 /-!
 # Extraction from a projective Pauli-test strategy
@@ -14,6 +16,8 @@ Blueprint `lem:qld-unitary`; paper
 The numerical corrections are documented in
 `docs/paper-gaps/qpbt_extraction-transfer.tex`.
 -/
+
+@[expose] public section
 
 namespace MIPStarRE.QPBT
 
