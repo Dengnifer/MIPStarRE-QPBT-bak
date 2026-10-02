@@ -29,3 +29,33 @@ Admission#27comment5948543503:900s,prior8928/ceiling9828. No bytes aredropped.
 
 Normalfinalsourcepublication/review/merges,officialcompanionCIandownerhandoffremain
 pending. Thegoalremainsactive andthekeeperstopmarkerhasnotbeencreated.
+
+## Full docs failure isolated to local source-link setup
+
+The uninterruptedruncompletedcoreDocs in334s andcontinuedthrough8919docmarkers.
+Itendedexit1after796s with exactlyonefailedtarget:MIPStarRE:srcUri.github.
+Thepinneddoc-gen4lakefileexplicitlycallsgetGitRemoteUrlpkg.dir"origin"; this
+project'scommonGitconfigurationhadonlyremote"github". MAINadded thelocalalias
+origin=https://github.com/Dengnifer/MIPStarRE-QPBT.git under§9authority, recordedin
+#27comment5948807518. Thisneitherchangestrackedsource nor contactsanotherrepository;
+theURIrepairwillbevalidatedbythenextfullcommandaftercurrentPythonwindowsclear.
+Allcore/dependencydocrecordsfromthefailedrunremainvalidincrementalinputs.
+
+PR755's083dfeedfreshCIthenpassedall8contextsandsummary. Itsbuildstep's778s includes
+waitingforthedocslease; do nottreatthatelapsedstep as778s ofLeancompilation.
+Eighthindependentreviewisrunningnormallyat1200scap, prior4096s/ceiling5296, under
+#27comment5949020909. Allsixadverseverdictsandthetimeoutremain; no gateoverride.
+
+The newarchivebatch completedat0eb3ae73030f8b2b3318d096dc29b1497f306d87. Actor
+orc-777-20261002-10 actual816s gives777author9744s (itsprose787swasinterim).
+Sixbatchesrecover2144005817rawbytesfrom450261486archivebytes,2157payloads;
+allprior2144payloads unchanged. Tree501920065bytes/headroom22367935. Inventory
+SHA2566215194af10d2a0f6de7890762844d52ba3230c377b54b7676431b49a2e24e41.
+
+Workflow-parentstaging actors also completed:753actor06spent237s (753total10668),
+777actor11spent279s (777total10023). Bothpendingguards/whitespacepassedandproved
+mathematicalcontentunchanged; thearchive's2163-object manifest/payloadreceiptis
+211d699a540499441d96a6b89889dca1db4db4172d3d59037c631c4805db6c50.
+MAINfinishedthe753normalguardedmergeasf742cd66; itsnormalhookpassedandthetreeis
+clean. The777normalcommit hook isstillrunning, sonocommit/headapprovalisclaimed
+forit yet. Nofinalsourcepublication/CI/review/mergeorcompanionreadinessclaimed.
