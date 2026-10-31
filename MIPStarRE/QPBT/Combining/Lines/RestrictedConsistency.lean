@@ -31,10 +31,11 @@ This is a formalization-only generic finite-conditioning estimate supporting
 `lem:qld-xz-lines`, paper
 `14_analysis_of_the_pauli_basis_test.tex:950-963`. Completeness of the two
 measurement families supplies the pointwise unit bound; no separate bound on
-the consistency defect is assumed. -/
+the consistency defect is assumed. Only the finite support of `dist` is used;
+the ambient sample type need not be finite. -/
 theorem consistencyDefect_le_restrict_add_discarded_mass
     {P : AdmissibleParams} {ε : ℝ}
-    {Sample Outcome : Type*} [Fintype Sample] [DecidableEq Sample]
+    {Sample Outcome : Type*} [DecidableEq Sample]
     [Fintype Outcome] [DecidableEq Outcome]
     (S : ProjectiveSetting P ε) (dist : Distribution Sample)
     (good : Sample -> Prop) [DecidablePred good]
