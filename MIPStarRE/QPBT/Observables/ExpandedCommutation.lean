@@ -30,16 +30,6 @@ noncomputable section
 
 /-! ## Algebraic preliminaries -/
 
-/-- The binary phase is its own inverse. Paper
-`references/qpbt-paper/04_preliminaries.tex:1052-1081`. -/
-theorem phaseSign_mul_self (t : ZMod 2) : phaseSign t * phaseSign t = 1 := by
-  by_cases h : t = 0 <;> simp [phaseSign, h]
-
-/-- The binary phase is a real scalar. Paper
-`references/qpbt-paper/04_preliminaries.tex:1052-1081`. -/
-theorem star_phaseSign' (t : ZMod 2) : star (phaseSign t) = phaseSign t := by
-  by_cases h : t = 0 <;> simp [phaseSign, h]
-
 /-- The generalized Pauli observables are self-adjoint. A private copy of this
 statement, phrased through `Matrix.IsHermitian`, belongs to
 `Observables/ExpandedDefs.lean`; this form is the one used by
@@ -51,7 +41,7 @@ theorem tauObservable_conjTranspose {K ι : Type*} [Field K] [Fintype K]
     (tauObservable W v)ᴴ = tauObservable W v := by
   rw [tauObservable_eq_sum_pauliProj, Matrix.conjTranspose_sum]
   refine Finset.sum_congr rfl (fun e _ => ?_)
-  rw [Matrix.conjTranspose_smul, star_phaseSign']
+  rw [Matrix.conjTranspose_smul, star_phaseSign]
   congr 1
   exact (Matrix.posSemidef_vecMulVec_self_star (pauliVec W e)).isHermitian.eq
 
@@ -255,7 +245,7 @@ theorem exists_twistedCommutator_avg_le :
                   (phaseSign (gammaValue P ω.1 ω.2.1 ω.2.2.1 ω.2.2.2) •
                     (S.pointObs .bob .Z ω.2.2.2 ω.2.1 *
                       S.pointObs .bob .X ω.2.2.1 ω.1)) :=
-            MagicSquareRigidity.heteroKron_sub_right _ _ _
+            MIPStarRE.QPBT.heteroKron_sub_right _ _ _
           rw [← MagicSquareRigidity.heteroKron_smul_right]
           exact h1
         rw [hop]

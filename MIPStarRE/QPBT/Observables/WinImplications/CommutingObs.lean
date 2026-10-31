@@ -375,7 +375,7 @@ theorem exists_pointTrace_commutator_comm_le :
         rw [unitProd_postprocess_effect]
       · obtain ⟨⟨⟩, b⟩ := ab
         congr 1
-        rw [hBdef, measurement_postprocess_comp_effect]
+        rw [hBdef, MIPStarRE.Quantum.Measurement.postprocess_comp]
         rw [MIPStarRE.Quantum.Measurement.postprocess_effect,
           MIPStarRE.Quantum.Measurement.postprocess_effect]
         refine Finset.sum_congr ?_ (fun _ _ => rfl)
@@ -407,7 +407,7 @@ theorem exists_pointTrace_commutator_comm_le :
         rw [unitProd_postprocess_effect]
       · obtain ⟨⟨⟩, c⟩ := ac
         congr 1
-        rw [hBdef, measurement_postprocess_comp_effect]
+        rw [hBdef, MIPStarRE.Quantum.Measurement.postprocess_comp]
         rw [MIPStarRE.Quantum.Measurement.postprocess_effect,
           MIPStarRE.Quantum.Measurement.postprocess_effect]
         refine Finset.sum_congr ?_ (fun _ _ => rfl)

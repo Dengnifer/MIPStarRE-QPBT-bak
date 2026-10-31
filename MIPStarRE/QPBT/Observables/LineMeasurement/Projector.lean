@@ -104,20 +104,6 @@ theorem tauLineProj_mul_tauLineProj (P : AdmissibleParams) (W : PauliKind)
     apply hfg
     rw [← (Finset.mem_filter.mp he).2, ← (Finset.mem_filter.mp he').2, hee']
 
-/-- The generalized Pauli eigenspace projectors of one register sum to the
-identity. Private copies of this fact (`tauObservable_zero`,
-`sum_pauliProj_eq_one`) belong to `Observables/ExpandedDefs.lean`; the
-argument is restated here because those copies are not exported. -/
-private theorem sum_pauliProj_eq_one (P : AdmissibleParams) (W : PauliKind) :
-    ∑ e : PauliRegister P, pauliProj W e = 1 := by
-  have hzero : tauObservable W (0 : PauliRegister P) = 1 := by
-    have hmul := tauObservable_mul W (0 : PauliRegister P) 0
-    rw [add_zero, tauObservable_sq] at hmul
-    exact hmul.symm
-  have h := tauObservable_eq_sum_pauliProj W (0 : PauliRegister P)
-  rw [hzero] at h
-  simpa [dotProduct, phaseSign] using h.symm
-
 /-- The line fibers partition the complete family of Pauli eigenspace
 projectors. This is the completeness of the ancillary measurement in
 `def:expanded-line-measurement`, paper
@@ -133,7 +119,7 @@ theorem sum_tauLineProj_eq_one (P : AdmissibleParams) (W : PauliKind)
       (fun e : PauliRegister P =>
         restrictToLine P.toLdParams line (lowDegreeEncoding e))
       (fun e => pauliProj W e)]
-  exact sum_pauliProj_eq_one P W
+  exact sum_pauliProj_eq_one (K := PauliScalar P) W
 
 /-- The projective line measurement on one Pauli register obtained by
 measuring the generalized Pauli basis and restricting the low-degree encoding
