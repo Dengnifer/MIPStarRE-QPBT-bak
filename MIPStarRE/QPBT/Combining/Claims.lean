@@ -1,5 +1,6 @@
 import MIPStarRE.QPBT.Combining.OrderedPoints
 import MIPStarRE.QPBT.Combining.OverlapGap
+import MIPStarRE.QPBT.Combining.Lines.CombinedMeasurement
 import MIPStarRE.QPBT.Combining.SubLineZDeficit
 import MIPStarRE.QPBT.Combining.UniformLinePoint
 import MIPStarRE.QPBT.Combining.Witnesses
@@ -541,6 +542,21 @@ theorem subline_replace_by_ordered_product :
       Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
   rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4), h4, Real.sqrt_eq_rpow]
   exact le_rfl
+
+/-- Summing the concrete X-Z-X sandwich over its Z answer recovers the
+outer X-line effect.  This is the marginal identity used in the proof of
+`lem:claim-17-2`, paper lines 1188--1194. -/
+private theorem combinedLineMeasurement_sum_Z {P : AdmissibleParams} {ε : ℝ}
+    (S : ProjectiveSetting P ε) (side : PlayerSide)
+    (lineX lineZ : LineDesc P.toLdParams)
+    (fX : DegPoly P.toLdParams (P.m * P.d)) :
+    (∑ fZ, (S.combinedLineMeasurement side lineX lineZ).effect (fX, fZ)) =
+      (S.lineMeasExp side .X lineX).effect fX := by
+  classical
+  simp only [ProjectiveSetting.combinedLineMeasurement_effect]
+  rw [← Finset.sum_mul, ← Finset.mul_sum,
+    (S.lineMeasExp side .Z lineZ).sum_eq_one, mul_one,
+    (S.lineMeasExp_isProjective side .X lineX fX).isIdempotentElem.eq]
 
 /-- Removing the trailing `X`-point factor costs the square root of the
 line-consistency error, with the source factor `m`.  This is
