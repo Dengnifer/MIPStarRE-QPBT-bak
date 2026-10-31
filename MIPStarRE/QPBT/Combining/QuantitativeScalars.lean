@@ -9,8 +9,7 @@ This module records the fixed coefficient estimates, the uncapped direct-game
 passing bound, and the eighth-root projective-rounding calculation used to
 construct the quantitative global polynomial-pair witness.
 
-It re-exports `QuantitativeDirectScalars`, which contains the coefficient-`30`
-direct low-degree specialization and the shared quantitative powers.
+It provides the coefficient-`30` direct low-degree estimates and their exponents.
 
 ## References
 

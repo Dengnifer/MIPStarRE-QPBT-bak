@@ -7128,6 +7128,7 @@ alphabet.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-baseline-scalar-bounds}
 Use the expanded line--point comparison twice, condition on nonzero direction,
 apply Theorem~\ref{thm:qld-pasting-explicit}, and restore the discarded mass.
 The final scalar inequality is included in
@@ -7180,6 +7181,7 @@ bound.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-baseline-scalar-bounds}
 Use the subline measurement and the paired-overlap estimate, then absorb the
 result with the scalar combining inequality of
 Theorem~\ref{thm:qld-baseline-scalar-bounds}.
@@ -7457,8 +7459,6 @@ dimension growth into the coefficient $C$.
 \label{thm:qld-global-pair-witness-explicit}
 \lean{MIPStarRE.QPBT.exists_global_pair_witness_explicit}
 \leanok
-\uses{thm:qld-combined-points-explicit, thm:qld-extended-lines-explicit,
-thm:qld-rounded-polynomials-explicit, thm:qld-baseline-scalar-bounds}
 Every projective Pauli-test setting has a projective global polynomial-pair
 witness with error
 \[
@@ -7470,6 +7470,8 @@ hypotheses of this statement.
 \end{theorem}
 \begin{proof}
 \leanok
+\uses{thm:qld-combined-points-explicit, thm:qld-extended-lines-explicit,
+thm:qld-rounded-polynomials-explicit, thm:qld-baseline-scalar-bounds}
 Construct the point and extended-line witnesses, apply the rounded pair
 construction, and use the final inequality of
 Theorem~\ref{thm:qld-baseline-scalar-bounds}.
@@ -7864,7 +7866,7 @@ asserted.
 \leanok
 \uses{thm:qld-native-direct-soundness, thm:qld-rounded-polynomials-explicit}
 Use native arbitrary-strategy soundness in the existing projective-rounding
-constructor.  The scalar concentration, variable separation, and completion
+construction.  The scalar concentration, variable separation, and completion
 arguments preserve the displayed ordered error without a common-exponent
 replacement.
 \end{proof}
