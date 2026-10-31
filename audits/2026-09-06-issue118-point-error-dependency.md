@@ -1,5 +1,272 @@
 # Issue 118: point-error audit and immutable dependency boundary
 
+## Attempt 13: indicator-weighted projectors and scalar-linearity concentration
+
+Session `mathfix-118-20260906-13`, started **2026-09-06T10:05:04Z**,
+continues from `0f4ef05370350f4017439ebd839ef0561f13130f`. The task and
+main's disposition in the primary checkout at
+`results/telemetry/owner-messages/qpbt-b8-attempt13-20260906.md` authorize
+exactly attempt **13/13**, at most **2700 seconds**, carrying **24242
+completed working seconds** and the unchanged anchor
+**2026-09-05T19:24:00Z**. The cumulative ceiling is **26942 seconds**.
+There is no authorized next attempt or automatic extension. All twelve
+earlier attempts and their proofs remain unchanged below.
+
+**Verdict:** the requested ordered-projector identity and its summed uniform
+exceptional estimate are proved. The new file also proves the first
+scalar-linearity estimate from actual coefficient polynomials and an explicit
+mass inequality whose conclusion retains the actual ordered-correlation
+error. **The aggregate source correction is not converged or adopted.**
+The stronger source line error and the complete global witness remain open.
+
+### Source and local obstruction
+
+The canonical source is
+`references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex`.
+`lem:qld-4-7`, lines 1267--1274, asserts universal constants `a>1` and
+`0<b<1` such that every admissible tuple and projective passing strategy
+admits a projective global polynomial-pair measurement on each expanded
+player space. Its two bases and both opposite-player uniform-point
+consistencies have error
+`a*(md)^a*(epsilon^b + q^(-b) + 2^(-bmd))`.
+Its preceding line-error defect is unchanged: the printed
+`poly(m^2*epsilon,md/q)` at `lem:qld-4-13` (1020--1034) is not supplied
+by the proved first-route `C*m*poly(epsilon,md/q)` or the second route's
+unsupported joint restricted-product law. No counterexample to either
+printed existence theorem has been established.
+
+The present obligation is local to `eq:qld-g-42`, `eq:qld-g-43`, and
+`eq:qld-g-prime` at 1289--1318. For complete projective measurements X,Z,
+write `A = sum_{b,c} 1_{alpha*b+beta*c=a} X_b Z_c` and
+`T = sum_{b,c} 1_{alpha*b+beta*c=a} Z_c X_b Z_c`. The source asserts
+the diagonal norm computation for `beta != 0`, with exceptional average
+`1/q`. An exact identity at `beta=0` would be false: in dimension two,
+take Z to be the standard basis, X to be the plus/minus basis,
+`phi=(1,1)/sqrt(2)`, `alpha=1`, and `beta=a=0` over `F_2`.
+Then `||A phi||^2=1` but `<phi,T phi>=1/2`. The source includes the
+exceptional average, so this example does not disprove its printed claim.
+Using a unit bound separately for every g would instead leave an
+uncontrolled number-of-labels factor after summation.
+
+### Proved statements and argument
+
+The new module is `MIPStarRE/QPBT/Combining/PolynomialImageBounds.lean`.
+It defines the actual ordered and diagonal indicator sums and proves:
+
+1. `orderedIndicator_gram_of_ne_zero`: `A* A = T` for `beta != 0`,
+   where `A*` denotes the adjoint. X orthogonality removes unequal first
+   outcomes; cancellation of the nonzero field coefficient removes unequal
+   second outcomes. Only projectivity of X is needed for this identity;
+   positivity of Z already supplies self-adjointness.
+2. `abs_orderedIndicator_norm_sq_sub_diagonal_le`: for every vector phi,
+   `abs(||A phi||^2 - <phi,T phi>) <= 1_{beta=0} ||phi||^2`.
+   For zero beta, completeness gives the coarse-grained X projection.
+   The complete sandwich POVM bounds T between zero and the identity.
+   Both quadratic forms are in `[0,||phi||^2]`.
+3. `avg_uniform_sum_abs_projective_orderedIndicator_le`: for
+   `phi_g=S_g psi` and a complete projective S, the genuine uniform law
+   on base points and both field coefficients gives summed absolute error
+   at most `||psi||^2/q`. The answer can depend arbitrarily on every
+   sampled variable and the label. The proof uses
+   `sum_projective_state_norm_sq`, not a bound involving the label count.
+4. `orderedIndicator_reverse` exchanges X,Z and alpha,beta. Together
+   with the preceding theorems it covers the reversed order and its
+   exceptional alpha. Generic ambient spaces and arbitrary placement
+   instantiations cover both player orientations.
+5. `exists_nonzero_nonlinear_coeff` and
+   `specialization_ne_linear_of_coeff` choose a nonzero coefficient of
+   a polynomial `p in F[u][alpha,beta]` outside the two monomials alpha
+   and beta. This coefficient is unchanged by subtracting
+   `alpha*b+beta*c` for any b,c. Its zero set in u is therefore one
+   exceptional set valid simultaneously for all outcomes.
+6. `avg_diagonalIndicator_le_of_not_linear` and
+   `avg_orderedIndicator_norm_sq_le_of_not_linear` give respectively
+   `(D_p+E_p)/q * ||phi||^2` and `(D_p+E_p+1)/q * ||phi||^2`, where
+   `D_p` is the maximum total degree of the base-point coefficients and
+   `E_p=max(1,p.totalDegree)` in the two scalar variables. On the common
+   exceptional set use the sandwich unit bound. Outside it apply
+   Schwartz--Zippel to every actual specialized difference, then sum
+   against nonnegative sandwich weights of total `||phi||^2`.
+7. `avg_sum_orderedIndicator_norm_sq_le_of_not_linear` retains an
+   arbitrary finite set B of nonlinear labels and their state masses.
+   `nonlinear_mass_le_ordered_error` concludes
+   `sum_{g in B} ||phi_g||^2 <= 2*eta_B +
+    2*sum_{g in B} (D_g+E_g+1)/q * ||phi_g||^2`,
+   where eta_B is the actual uniform average of
+   `sum_{g in B} ||phi_g-A_g phi_g||^2`. The squared triangle
+   inequality proves this last step. No correlation estimate or collision
+   bound is assumed as a theorem input.
+
+For the paper's individual-degree-d representatives, group x,z into
+`u in F^(2m)`. The coefficient expansion gives `D_p<=2md` and
+`E_p<=2d` because `d>=1`. Thus the new diagonal estimate implies the
+paper's `2(2m+2)d/q` estimate, with room to spare. With
+`phi_g=S_g psi`, completeness makes the degree-weighted sum `O(md/q)`
+for a unit state. Deriving `eta_B=O(deltaLd+deltaQ)` from the actual
+measurements in `eq:qld-g-42` gives `eq:qld-g-prime-bound`.
+The new Lean theorems use the actual nested coefficient-polynomial ring,
+without assumed probability estimates. Reindexing the existing
+`Fin (2m+2)` polynomial carrier to that nested ring, transporting its
+degree bounds, and deriving the correlation chain remain to be assembled
+inside the existing global theorem. They are not claimed as completed
+consumers of this file.
+
+### Edge cases, minimality, and statement integrity
+
+The universal proofs include zero vectors, either zero coefficient, both
+zero coefficients, noncommuting measurements, unequal player spaces,
+small finite fields, and high polynomial degrees. At alpha=beta=0 the
+two operators are both the identity for answer zero and both zero
+otherwise. The zero-beta example above rules out discarding the exception.
+A formal polynomial such as `alpha^q-alpha` can vanish as a function;
+the degree-over-q bounds may then be at least one, as required. The proof
+uses formal nonzero polynomials, never injectivity of evaluation at high
+degree. For a nonzero constant p, E_p must still allow the degree-one
+answer polynomial being subtracted. No exhaustive search over strategies
+or numerical claim of optimal constants is made.
+
+An independent bad set for each b,c would not control outcome weights
+depending on u; the fixed nonlinear coefficient removes that obstruction.
+Excluding beta zero, normalizing each phi_g separately, assuming
+commutation of X and Z, and postulating a uniform collision estimate are
+unnecessary. The proved bounds introduce none of them. No strictly weaker
+sufficient repair of the complete source theorem has been established;
+global minimality remains unresolved.
+
+Statement audit: the paper assumes the constructed soundness measurement
+and the ordered correlations and concludes concentration on the full
+separated polynomial image, then both bases' two-player consistencies.
+The auxiliary Lean statements assume actual complete projective
+measurements, arbitrary state vectors, and actual polynomials outside the
+scalar-linear image where applicable. They conclude exact local algebra,
+the mass-weighted exceptional bound, degree-explicit averages, and a mass
+inequality containing the actual error. Verdict: **proved auxiliary with
+faithful domain hypotheses, not a replacement for the paper theorem**.
+No existing public statement, definition, game, witness field, or source
+completion marker is changed. Both original `Apply.lean` admissions
+remain. Issues 277--279 and their files are untouched and not assumed done.
+
+### Complete consumer inventory and discharge plan
+
+The complete source and blueprint inventory from attempt 12 is retained.
+The present results discharge a local calculation, not these consumers:
+
+- Paper 1058--1061, 1118--1132, and 1134--1241: restricted consistency,
+  extended-line construction/degree, and both first-route orientations
+  retain their previously proved versions. The stronger second route at
+  1241--1246 remains unsupported. Scalar substitutions at 1278--1288
+  and 1402 remain proved from attempt 12.
+- Paper 1316--1318: the first scalar-linearity estimate is supplied in
+  coefficient form; actual carrier/degree transport and the measured
+  correlation in 1289--1298 remain to be connected. Paper 1341--1363
+  still needs the exclusions of coefficients depending on the wrong
+  variable block. Paper 1364--1404 still needs restriction, completion,
+  and both bases' point consistencies in both player orientations.
+- Paper 1423, 1465--1492, 1584, 1627, and 1671: extraction uses still
+  depend on the complete global pair witness, not only scalar linearity.
+- Blueprint Chapter 15: `lem:restricted-line-mixture-bounds`,
+  `lem:qld-sublines-one-point-deficit`, `lem:claim-17-1`,
+  `lem:claim-17-2`, `lem:claim-17-3`, `lem:qld-4-13`,
+  `lem:qld-4-13-established`, and `lem:qld-4-7`.
+- Blueprint Chapter 16: `def:s-w-marginals`,
+  `lem:s-w-marginals-projective`, `def:tilde-m-measurement`,
+  `lem:tilde-m-projective`, `def:tilde-w-observables`,
+  `lem:tildew-product-form`, `lem:qld-nonencoding-mass-bound`,
+  `lem:qld-constructing-the-paulis-helper`, `lem:qld-construct-the-paulis`,
+  `def:v-swap-unitary`, `lem:v-swap-conjugation`, `lem:qld-unitary`,
+  `lem:qld-unitary-given-global-pair`, `lem:qld-extraction-error-form`,
+  and `thm:pauli`.
+- Blueprint Chapter 13: `cor:pauli-binary`, `def:introparams`,
+  and `lem:delta-bound`. Actual prose references include
+  `rem:claim-17-2-line-marginal`, `rem:qld-4-13-source-defects`,
+  and `rem:qld-4-7-divisibility`. The eight completed auxiliary nodes
+  listed in attempt 12 remain unchanged. The global entry stays `notready`.
+- Lean: no existing module imports the new standalone auxiliary yet.
+  `Apply.lean` remains the intended mathematical consumer, with import
+  consumers `MIPStarRE/QPBT.lean` and `MIPStarRE.lean`.
+  `Extraction/Unitary.lean` obtains a supplied global witness, not a
+  newly proved construction. There are no new blueprint declaration links
+  or completion claims in this narrowly scoped addition.
+
+The discharge plan remains to construct and transport the actual soundness
+measurement on the required spaces, derive both ordered correlations,
+apply the present coefficient estimates after actual polynomial reindexing,
+prove wrong-block separation, and complete the image submeasurement with
+both bases and both player orientations. Only after those steps can the
+established first-route correction be certified sufficient for the full
+inventory. The independent compression, rounding, and completion tasks
+277--279 retain their own ownership. This attempt does not change any game
+or mathematical domain to bypass the source correspondence obligations.
+
+### Validation and budget checkpoint
+
+At **2026-09-06T10:33:21Z**, elapsed time is **1697 seconds** and
+cumulative working time is **25939 seconds**. There are **1003 seconds**
+left in this final attempt's authorization. The runtime does not expose
+a reliable per-attempt token count or remaining token allowance through
+the available tools; no token count, service identity, or credential claim
+is inferred or probed. Final dispatcher accounting remains authoritative.
+
+The final Lean source checks with the pinned **Lean 4.32.0** (the general
+AGENTS quick-start version is older). The private artifact is
+`/tmp/issue118-lean-validation/lib/MIPStarRE/QPBT/Combining/PolynomialImageBounds.olean`.
+Set this private library prefix **inside** the `lake env` child, because
+Lake prepends its paths to an inherited `LEAN_PATH`. The initial incorrect
+prefix selected older API artifacts; correcting the prefix resolved the
+missing public quadratic-form helpers without rebuilding or editing them.
+All final targeted checks use the proper private prefix.
+
+All **21 public declarations** have axiom closure exactly `propext`,
+`Classical.choice`, and `Quot.sound`, with no `sorryAx`; the one private
+Schwartz--Zippel averaging helper is included transitively. The additional
+file `/tmp/issue118-attempt13-check.lean` imports both the project root and
+the new module and instantiates both product orders on an arbitrary actual
+`Placement`. Its log is `/tmp/issue118-attempt13-axioms-and-placements.log`.
+`Apply`, `QPBT`, and the root separately type-check against the existing
+private artifacts. Apply reports only its two preserved admissions, at
+the stronger line theorem and the global witness. These checks do not
+prove either admitted target. No new proof hole or kernel bypass occurs.
+
+The paper-gap style check, public source-header guard, paper-origin guard,
+100-column Lean formatting, whitespace check, and installed-hook check
+pass. The gap-note PDF builds with bibliography to **24 pages**, under
+`/tmp/issue118-attempt13-gap/`. Static blueprint synchronization exits 1
+with the same **231 recorded pre-existing issues**. It is not reported as
+a clean synchronization check. Blueprint source and declaration lists are
+unchanged; no new `leanok` marker is added. No full build is run: the
+existing imports are unchanged, and the normal shared build directory and
+machine-wide lock are outside this session's writable roots. Locked CI,
+publication gates, and independent review remain main's responsibility.
+
+### Operator packet
+
+Unposted #27 line: **Attempt 13 proves the indicator-weighted projective
+identity, the summed uniform `1/q` exception, and coefficient-based
+scalar-linearity concentration; the complete B8 correction remains open.**
+No adopted-correction event or design-decision entry is warranted.
+The operator should retain this local auxiliary for independent review
+and carry the unresolved consumer list, the previous twelve attempt
+records, and the unchanged budget anchor into the #26 disposition packet.
+No next attempt is authorized. No push, post, runtime-state write, commit,
+shared-cache write, or collaboration tool is used by this attempt.
+
+Final validation checkpoint: **2026-09-06T10:40:45Z**, elapsed **2141
+seconds (35m 41s)**, cumulative **26383 seconds (7h 19m 43s)**, leaving
+**559 seconds** below the fixed ceiling. The task is handed off within
+attempt 13 rather than consuming that remainder on another construction.
+The conclusion-shaped-hypothesis check reports zero findings among 20
+theorems, and the paper-facing proof-debt gate also passes. The final
+24-page PDF has no overfull box in the new section after shortening its
+declaration citations; older-section overfull boxes and some underfull
+line-breaking diagnostics remain. Static blueprint synchronization also
+retains the **15 existing header-only completion warnings**, in addition
+to its 231 stale entries. No runtime token allowance or per-attempt token
+counter became available. The final report and dispatcher retain the
+terminal accounting; the mathematical verdict remains local success and
+global nonconvergence requiring operator disposition, with no next attempt.
+
+---
+
 ## Attempt 12: global-pair scalar sufficiency and final authorized handoff
 
 Session `mathfix-118-20260906-12` starts at **2026-09-06T05:57:44Z**

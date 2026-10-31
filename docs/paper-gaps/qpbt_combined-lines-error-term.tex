@@ -35,6 +35,10 @@
   proved, and the established two-player witness is assembled and checked
   in Lean. Absorption of the established error through low-degree soundness
   into the stated global-pair error is also proved, including large errors.
+  The indicator-weighted ordered-projector identity, its zero-coefficient
+  average, and the coefficient-polynomial estimate for scalar linearity
+  are now proved as auxiliary results. The source correlation chain and
+  the subsequent separation of the two variable blocks remain open.
   Aggregate consumer sufficiency remains open.
   The printed existence theorem is not disproved; no final correction
   of the extended-line theorem is adopted by these results.
@@ -972,6 +976,142 @@ with the original September 5, 2026, 19:24 UTC anchor unchanged. The
 authorized continuation has no automatic further extension. Its final
 validation, cumulative budget, and owner handoff are recorded in the
 matching audit and captured session report.
+
+\section{Indicator-weighted projective estimates}
+
+Let $\{X_b\}_{b\in\F_q}$ and $\{Z_c\}_{c\in\F_q}$ be complete
+projective measurements on a finite-dimensional complex Hilbert space.
+For $\alpha,\beta,a\in\F_q$ put
+\[
+ A_{\alpha,\beta,a}=\sum_{b,c}
+  1_{\alpha b+\beta c=a}X_bZ_c,
+ \qquad
+ T_{\alpha,\beta,a}=\sum_{b,c}
+  1_{\alpha b+\beta c=a}Z_cX_bZ_c.
+\]
+The calculation following the two ordered correlations in the source uses
+$A_{\alpha,\beta,a}^*A_{\alpha,\beta,a}=T_{\alpha,\beta,a}$ when
+$\beta\ne0$. Indeed, expansion of the product first eliminates terms
+with different $b$ by orthogonality of the $X$ projections. In each
+remaining term the two indicators force $\beta c=\beta c'$, hence
+$c=c'$. No commutation of the two measurements is used. In fact the
+exact identity only needs the second measurement to have self-adjoint
+effects, which follows already from positivity.%
+\footnote{The source is
+\path{references/qpbt-paper/14_analysis_of_the_pauli_basis_test.tex},
+lines 1289--1320, especially \path{eq:qld-g-42}, \path{eq:qld-g-43},
+and \path{eq:qld-g-prime}. The auxiliary formalizations are in
+\path{MIPStarRE/QPBT/Combining/PolynomialImageBounds.lean}; the exact
+identity is
+\leanid{MIPStarRE.QPBT.PolynomialImageBounds.orderedIndicator\_gram\_of\_ne\_zero}.}
+
+The exceptional coefficient must be retained in the uniform law. When
+$\beta=0$, completeness of $Z$ gives
+$A_{\alpha,0,a}=\sum_{b:\alpha b=a}X_b$, a projection, whereas
+$T_{\alpha,0,a}$ is a sum of effects of the sandwich POVM and therefore
+lies between zero and the identity. Consequently, for every vector $\phi$,
+without a normalization assumption,
+\[
+ \left|\|A_{\alpha,\beta,a}\phi\|^2
+       -\langle\phi,T_{\alpha,\beta,a}\phi\rangle\right|
+ \leq 1_{\beta=0}\|\phi\|^2.
+\]
+For example, over $\F_2$ take $Z$ to be the standard basis measurement
+on $\C^2$, take $X_0$ to project onto
+$\phi=(1,1)/\sqrt2$, and take $X_1=\Id-X_0$. With
+$\alpha=1$, $\beta=a=0$, the two quantities are respectively $1$
+and $1/2$. Thus an exact identity at zero coefficient would be false;
+this example does not contradict the source's averaged estimate.
+
+Let $\phi_g=S_g\psi$ for an arbitrary complete projective measurement
+$\{S_g\}$, including every polynomial label. Completeness gives
+$\sum_g\|\phi_g\|^2=\|\psi\|^2$. The genuine uniform field law gives
+$\Pr(\beta=0)=1/q$, so averaging the preceding inequality and summing
+over all labels costs at most $\|\psi\|^2/q$, not the number of labels
+divided by $q$. This remains true when $a$ depends on the label, the
+base point, and both scalar coefficients. Both point measurements may
+depend on the base point. Reversing their order exchanges $X,Z$ and
+$\alpha,\beta$, giving the corresponding estimate with exceptional
+coefficient $\alpha$. The estimates apply on every register placement,
+including both player orientations, without identifying their local spaces.
+
+\paragraph{The common coefficient and the first image estimate.}
+Write a polynomial as
+$p(u,\alpha,\beta)=\sum_{i,j}c_{i,j}(u)\alpha^i\beta^j$,
+where $u\in\F_q^n$. Suppose it is not of the form
+$\alpha r(u)+\beta s(u)$. Some coefficient $c_e$ with
+$e\notin\{(1,0),(0,1)\}$ is then nonzero. Choose this coefficient
+before choosing $b,c$. Subtracting $\alpha b+\beta c$ leaves $c_e$
+unchanged. Thus whenever $c_e(u)\ne0$, the specialized difference is
+a nonzero formal polynomial for every outcome pair simultaneously.
+This uniform choice is necessary for the weighted sum: a separate
+exceptional set depending on $b,c$ would not justify summing against
+measurement weights that depend on $u$.
+
+Let $D_p=\max_e\deg c_e$ and
+$E_p=\max\{1,\deg_{\alpha,\beta}p\}$. Schwartz--Zippel bounds the
+common exceptional set by $D_p/q$, and, off that set, bounds the scalar
+agreement probability for each outcome by $E_p/q$. At every base point
+the nonnegative weights
+$\langle\phi,Z_cX_bZ_c\phi\rangle$ sum to $\|\phi\|^2$.
+The two bounds therefore give
+\begin{align*}
+ \E_{u,\alpha,\beta}
+  \langle\phi,T_{\alpha,\beta,p(u,\alpha,\beta)}\phi\rangle
+ &\leq \frac{D_p+E_p}{q}\|\phi\|^2, \\
+ \E_{u,\alpha,\beta}
+  \|A_{\alpha,\beta,p(u,\alpha,\beta)}\phi\|^2
+ &\leq \frac{D_p+E_p+1}{q}\|\phi\|^2.
+\end{align*}
+These inequalities are proved in the actual nested polynomial ring
+$\F_q[u][\alpha,\beta]$, using Mathlib's Schwartz--Zippel theorem;
+no collision estimate is an assumption. They allow arbitrarily small
+fields and degrees at least $q$: in those cases the degree bound may
+be vacuous, but no assertion equating formal polynomials with polynomial
+functions is made. The maximum with one also covers nonzero constant
+polynomials when subtracting a linear answer polynomial.
+
+For the source's individual-degree-$d$ polynomials with $n=2m$ and
+$d\geq1$, the coefficient expansion gives $D_p\leq2md$ and
+$E_p\leq2d$. Thus the diagonal bound is at most $(2m+2)d/q$, in
+particular no greater than the source's $2(2m+2)d/q$ estimate.
+The encoding of this coefficient expansion from the existing extended
+polynomial carrier has not yet been assembled in the source theorem.
+For any collection $B$ of nonlinear labels, put
+$\eta_B=\E\sum_{g\in B}\|\phi_g-A_g\phi_g\|^2$. The squared
+triangle inequality and the proved finite-label estimate give
+\[
+ \sum_{g\in B}\|\phi_g\|^2
+ \leq 2\eta_B+2\sum_{g\in B}
+           \frac{D_{p_g}+E_{p_g}+1}{q}\|\phi_g\|^2.
+\]
+This is a proved inequality with the actual correlation error in its
+conclusion, not an assumed correlation bound. Applied to the source
+degree class and $\phi_g=S_g\psi$, the second term is
+$O(md/q)\|\psi\|^2$. Deriving $\eta_B=O(\delta_{\mathrm{ld}}+\delta_Q)$
+from \path{eq:qld-g-42} still requires the source's preceding
+measurement comparison chain.%
+\footnote{In the namespace
+\leanid{MIPStarRE.QPBT.PolynomialImageBounds}, the finite-label conclusion is
+\leanid{nonlinear\_mass\_le\_ordered\_error}.
+The corresponding diagonal and ordered estimates are
+\leanid{avg\_diagonalIndicator\_le\_of\_not\_linear} and
+\leanid{avg\_orderedIndicator\_norm\_sq\_le\_of\_not\_linear}.}
+
+\paragraph{Scope and remaining uses.}
+The source assumes the constructed soundness measurement and its
+correlations and concludes small mass outside the desired polynomial
+image. The new auxiliaries assume only their displayed projective
+measurements, actual polynomials outside the scalar-linear image, and
+arbitrary vectors; they prove the norm, average, and explicit-error
+inequalities above. The verdict is a proved local calculation with
+faithful domain hypotheses, not a corrected global theorem. The later
+wrong-variable-block exclusions at source lines 1341--1363, the
+restriction and completion at 1364--1402, and all extraction uses still
+require their own constructions. Neither the stronger extended-line
+error nor the complete global witness is discharged. The full use and
+validation record, and the exhausted attempt-count handoff, are in
+\path{audits/2026-09-06-issue118-point-error-dependency.md}.
 
 \section{Conclusion}
 

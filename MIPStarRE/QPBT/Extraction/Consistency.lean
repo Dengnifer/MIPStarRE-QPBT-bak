@@ -44,7 +44,19 @@ The source absorbs constant factors and the game error into `deltaS`. Here
 
 **Proof obligation:** issue #47 tracks the agreement calculation converting
 `GlobalPairWitness.point_consistent_alice`, its Bob-side counterpart, and the
-register-placement transfers into all four identity estimates. -/
+register-placement transfers into all four identity estimates. The direct
+`AA'`--`BA''` and `BB'`--`AB''` cases are available from the marginal-agreement
+route; the remaining `BA''`--`AA'` and `AB''`--`BB'` cases require a named
+simultaneous register-transport lemma for a marginal-versus-point product.
+Name this missing construction `eprCrossSwap_marginal_point`: it must
+simultaneously transport, for every `u` and `g`, the displayed product from
+`BA''` to `AA'` and its register-swapped counterpart from `AB''` to `BB'`,
+uniformly over the directed opposite placements, with the aggregate
+state-dependent error required by this theorem. This is a proof obligation to
+be derived from the witness consistency fields, not an additional theorem
+hypothesis or a bridge assumption.
+The existing same-side norm transports and extraction register reindexing do
+not supply that statement. -/
 theorem sum_marginalPoly_pointMeas_approx_id :
     ∃ C : ℝ, 1 ≤ C ∧
       ∀ (P : AdmissibleParams) (epsilon deltaG : ℝ),
